@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import sitemap from '@astrojs/sitemap';
 
 // The one base-path literal in this repository. Everything that needs the base
 // path imports BASE from here — including vitest.config.ts and, later, Pagefind.
@@ -12,4 +13,5 @@ export default defineConfig({
   base: BASE,
   output: 'static',
   trailingSlash: 'always',
+  integrations: [sitemap()],
 });
