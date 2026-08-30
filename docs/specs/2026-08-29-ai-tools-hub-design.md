@@ -291,8 +291,9 @@ wearing a skill's name. Verified in the prototype: with repo-level signals domin
 `trailofbits` skills tied at 92. After rebalancing so per-skill signals outweigh repo-level
 ones (55/45), they separate to 93 / 92 / 90 / 77.
 
-**The formula is published on the site and every card's breakdown is openable.** An opaque score
-is exactly the failure we criticise in the incumbent (which grades 100% of its top 5,000 entries
+**The formula is published at `/methodology` (§10.6) and every card's breakdown is openable**, with
+the score chip itself linking to the formula. An opaque score is exactly the failure we criticise in
+the incumbent (which grades 100% of its top 5,000 entries
 "S" and reports `security_scan {total: 203479, passed: 203479, failed: 0}`). 📄
 
 Default sort is **Score**; Stars / Forks / Newest / Updated are sibling tabs. Rank numbers
@@ -368,7 +369,8 @@ kills the refresh cron. Use a 1-year PAT with a calendar reminder, or a GitHub A
 Recall is solved and worthless; precision is unsolved. The filter answers *"is this meant to be
 reused by strangers?"* — lives in a skills-dedicated repo or is referenced by a
 `.claude-plugin/marketplace.json`; has a README; non-trivial, non-repo-specific description;
-not under `.claude/skills/`; ≥N stars or an org account. **Publish these rules.**
+not under `.claude/skills/`; ≥N stars or an org account. **These rules are published at
+`/methodology` (§10.6)** — a filter nobody can inspect is indistinguishable from taste.
 
 ### 6.5 Cron hygiene
 
@@ -517,6 +519,31 @@ copyable install command · resolved license with *Not declared* in hazard orang
 already renders. The justification is shareable links, bookmarks and a working back button — not
 search traffic (§11.3).
 
+### 10.6 `/methodology` — the published ruleset
+
+The spec promises to "publish" a rule in five separate places — the safety ruleset (§4.3), the score
+formula (§5), the inclusion filter (§6.4), a dated counting-methodology note and the safety ruleset
+again (§13). **One page discharges all five.** Without it those are five promises with no address,
+and a catalog whose entire moat is auditability would be asking to be taken on trust — which is the
+failure it accuses the incumbent of.
+
+One route per locale, `/{lang}/methodology/`, containing:
+
+| Section | Content | Discharges |
+|---|---|---|
+| **Score** | The formula, all four weights, how each component is computed, and why safety is deliberately not an input | §5 |
+| **Inclusion filter** | What makes a skill eligible — *"is this meant to be reused by strangers?"* — as the explicit rule list | §6.4 |
+| **Safety surface** | How `executes code` / `network` / `reads env` are derived from repo contents rather than read from frontmatter, and why there is never a green badge | §4.3, §13 |
+| **Counting** | Symlinks skipped, blob-SHA dedupe, `.claude/skills/` excluded — so headline counts are reproducible and dated | §13 |
+| **Taxonomy** | The naming rule, `PROTECTED`, `ALIASES`, minimum mass | §3.5, §10.1 |
+| **Provenance & freshness** | What `owner/repo@sha:path` means, which sources were harvested, last crawl and last classification | §6.1 |
+
+**Access is the requirement, not just existence.** The score chip on every card links to the score
+section's anchor, and a persistent footer link reaches the page from anywhere. A reader who has just
+seen a number is one click from how it was produced.
+
+Content is hand-written in both locales (§8) — it is our own editorial text, never machine-translated.
+
 ### 10.5 Accessibility
 
 - WCAG 2.2 **2.5.8**: facet rows and chips need ≥24×24 px hit areas.
@@ -597,8 +624,8 @@ Each answers a failure observed in a real catalog.
 | **Solo maintenance.** Every incumbent has failed this. | Committing cron keeps itself alive; no human-in-the-loop step that can become a queue. |
 | **Classification depends on a human account.** The scheduled Claude session is not a robot; if the maintainer stops, new entries queue unclassified. | Harvest stays in Actions so data never goes stale on its own; unclassified entries land in the domain's `general` leaf rather than disappearing, and the staleness banner reports the classification lag separately from the crawl date. |
 | **PAT expiry silently kills the crawler.** | 1-year fine-grained PAT + calendar reminder, or a GitHub App. Staleness banner driven by `updated_at`. |
-| **Symlink / phantom-catalog count inflation.** | Skip mode-120000, dedupe by blob SHA, publish counts with a dated methodology note. |
-| **Claiming more safety than we verify.** | Descriptive signals only; publish the ruleset; never a green badge. |
+| **Symlink / phantom-catalog count inflation.** | Skip mode-120000, dedupe by blob SHA, and publish the counting rules with a date at `/methodology` (§10.6). |
+| **Claiming more safety than we verify.** | Descriptive signals only; the ruleset is published at `/methodology` (§10.6); never a green badge. |
 | **Copyright on curated prose.** | Extract facts only; author descriptions verbatim and attributed; takedown path before launch. |
 | **Two independent base-path configs.** | Base-aware `<Link>` helper before the first page; assert Astro `base` and Pagefind `baseUrl` agree in CI. |
 | **SEP-2640 (Skills-over-MCP)** could let servers self-advertise skills, eroding third-party directories. | Own judgment and curation — the one layer no protocol serves. Make generated per-category `marketplace.json` bundles a first-class output. |
