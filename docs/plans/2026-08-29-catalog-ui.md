@@ -66,6 +66,7 @@ Those three are shared identity, not home-page copy, so they are single-sourced 
 
 ---
 
+
 ### Task B1.1: i18n directory — locale constants, namespace merge, and the two guards
 
 **Files:**
@@ -1769,6 +1770,8 @@ committed — an empty catalog, the seeded one, or a full nightly harvest.
 
 ---
 
+---
+
 ### Task B2.1: The `home` i18n namespace
 
 Every string this section prints that no other namespace owns lives here — including the four stat
@@ -1887,9 +1890,10 @@ const en = {
     'Present, and honestly thin. A domain link opens the catalog filtered to everything beneath it.',
   'home.nodeThin': 'below minimum mass',
   'home.nodeEmpty': 'no entries yet',
-  // No day count in the prose: STALE_DAYS (src/lib/format.ts, B1) is the only place the
-  // threshold is written, and a number here would silently drift away from it.
-  'home.staleNote': 'this figure is stale — the nightly refresh may be stuck',
+  // No day count and no cadence in the prose: STALE_DAYS (src/lib/format.ts, B1) is the only
+  // place the threshold is written, and the schedule (a local systemd timer every 4h, with the
+  // weekly Action as fallback — §6.1) lives in ops/, not in a string.
+  'home.staleNote': 'this figure is stale — the refresh may be stuck',
   'stats.skills': 'Skills indexed',
   'stats.sources': 'Sources',
   'stats.domains': 'Domains',
@@ -1907,7 +1911,7 @@ const pt: Record<keyof typeof en, string> = {
     'Presentes, e honestamente rasos. O link de um domínio abre o catálogo filtrado por tudo que está abaixo dele.',
   'home.nodeThin': 'abaixo da massa mínima',
   'home.nodeEmpty': 'sem entradas ainda',
-  'home.staleNote': 'este número está defasado — a atualização noturna pode ter parado',
+  'home.staleNote': 'este número está defasado — a atualização pode ter parado',
   'stats.skills': 'Skills indexadas',
   'stats.sources': 'Fontes',
   'stats.domains': 'Domínios',
@@ -1942,8 +1946,13 @@ git commit -m "feat(i18n): home namespace and the stats labels, with EN/pt-BR pa
 This task appends the three pure functions the home grid needs: how many entries a slug holds, how
 many a whole domain holds, and which of the three honest states a count maps to. A count includes
 `primary` **and** every `also` — spec §3.1: the entry really does appear in those lists — counted
-once per skill. This is a `Modify` against a file A3 owns, so both edits are anchored on strings
-that appear verbatim in A3.2 and A3.3 and the edit refuses to run if either anchor is missing.
+once per skill, and **only when `listed` is true**. An entry the per-subdomain cap evicted (§5.1)
+keeps its row, its score and its page, but it is counted nowhere: otherwise an evicted entry could
+prop a node above minimum mass and make a node navigable on the strength of entries it does not
+list. Both counting functions apply that filter themselves, so no call site can forget it.
+
+This is a `Modify` against a file A3 owns, so both edits are anchored on strings that appear
+verbatim in A3.2 and A3.3 and the edit refuses to run if either anchor is missing.
 
 **Files:**
 - Modify: `src/lib/taxonomy.ts` — anchor 1 is the type-import line A3.3 leaves behind,
@@ -1952,8 +1961,8 @@ that appear verbatim in A3.2 and A3.3 and the edit refuses to run if either anch
 - Test: `tests/lib/taxonomy-counts.test.ts`
 
 **Interfaces:**
-- Consumes: `Skill` from `src/types.ts`
-- Produces, from `src/lib/taxonomy.ts`:
+- Consumes: `Skill` from `src/types.ts` (A1), including the `listed: boolean` flag §5.1 adds
+- Produces, from `src/lib/taxonomy.ts` — every count below is a count of **listed** entries:
   - `export type NodeState = 'active' | 'thin' | 'empty'`
   - `export function countBySlug(skills: Skill[]): Map<string, number>`
   - `export function countDomain(skills: Skill[], domainSlug: string): number`
@@ -1969,9 +1978,15 @@ import type { Skill } from '../../src/types.ts';
 /**
  * A fixture Skill the score contract accepts: score === breakdown.total and every
  * component inside its cap (adoption 25, maintenance 30, provenance 25, completeness 20).
- * Every slug used below exists in data/taxonomy.json.
+ * Every slug used below exists in data/taxonomy.json. `listed` defaults to true; pass false
+ * for an entry the per-subdomain cap evicted (§5.1).
  */
-function makeSkill(name: string, primary: string, also: string[] = []): Skill {
+function makeSkill(
+  name: string,
+  primary: string,
+  also: string[] = [],
+  listed = true,
+): Skill {
   return {
     id: `owner/repo@abc1234:${name}/SKILL.md`,
     type: 'skill',
@@ -2002,6 +2017,7 @@ function makeSkill(name: string, primary: string, also: string[] = []): Skill {
     securityRelevant: true,
     score: 78,
     breakdown: { adoption: 18, maintenance: 27, provenance: 13, completeness: 20, total: 78 },
+    listed,
   };
 }
 
@@ -2038,6 +2054,15 @@ describe('countBySlug', () => {
   it('returns an empty map for an empty catalog', () => {
     expect(countBySlug([]).size).toBe(0);
   });
+
+  it('ignores an entry the cap evicted, on its primary and on every also', () => {
+    const counts = countBySlug([
+      makeSkill('a', 'security/supply-chain'),
+      makeSkill('b', 'security/supply-chain', ['security/cicd-pipeline'], false),
+    ]);
+    expect(counts.get('security/supply-chain')).toBe(1);
+    expect(counts.get('security/cicd-pipeline')).toBeUndefined();
+  });
 });
 
 describe('countDomain', () => {
@@ -2064,6 +2089,14 @@ describe('countDomain', () => {
   it('does not treat a shared prefix as the same domain', () => {
     expect(countDomain([makeSkill('a', 'security-theatre/general')], 'security')).toBe(0);
   });
+
+  it('ignores an evicted entry, so a domain count is a count of what is listed', () => {
+    const skills = [
+      makeSkill('a', 'security/supply-chain'),
+      makeSkill('b', 'security/threat-modeling', [], false),
+    ];
+    expect(countDomain(skills, 'security')).toBe(1);
+  });
 });
 
 describe('nodeState', () => {
@@ -2083,6 +2116,22 @@ describe('nodeState', () => {
 
   it('treats a negative count as empty rather than throwing', () => {
     expect(nodeState(-1, 5)).toBe('empty');
+  });
+});
+
+describe('eviction and minimum mass', () => {
+  it('never lets an evicted entry prop a node above minimum mass', () => {
+    const slug = 'security/threat-modeling';
+    const count =
+      countBySlug([
+        makeSkill('a', slug),
+        makeSkill('b', slug),
+        makeSkill('c', slug),
+        makeSkill('d', slug, [], false),
+        makeSkill('e', slug, [], false),
+      ]).get(slug) ?? 0;
+    expect(count).toBe(3);
+    expect(nodeState(count, 5)).toBe('thin');
   });
 });
 TS
@@ -2111,10 +2160,15 @@ block = """
 /** The three honest states a taxonomy node can render in (spec §10.1). */
 export type NodeState = 'active' | 'thin' | 'empty';
 
-/** Entries per taxonomy slug: `primary` plus every `also`, counted once per skill (spec §3.1). */
+/**
+ * Entries per taxonomy slug: `primary` plus every `also`, counted once per skill (spec §3.1).
+ * Listed entries only: a row the per-subdomain cap evicted (§5.1) keeps its page and keeps being
+ * re-scored, but counting it here would let it prop a node above minimum mass.
+ */
 export function countBySlug(skills: Skill[]): Map<string, number> {
   const counts = new Map<string, number>();
   for (const skill of skills) {
+    if (!skill.listed) continue;
     for (const slug of new Set<string>([skill.primary, ...skill.also])) {
       counts.set(slug, (counts.get(slug) ?? 0) + 1);
     }
@@ -2122,11 +2176,12 @@ export function countBySlug(skills: Skill[]): Map<string, number> {
   return counts;
 }
 
-/** Entries anywhere under a top-level domain, counted once per skill. */
+/** Entries anywhere under a top-level domain, counted once per skill; listed only (§5.1). */
 export function countDomain(skills: Skill[], domainSlug: string): number {
   const prefix = `${domainSlug}/`;
   let total = 0;
   for (const skill of skills) {
+    if (!skill.listed) continue;
     const slugs = [skill.primary, ...skill.also];
     if (slugs.some((slug) => slug === domainSlug || slug.startsWith(prefix))) total += 1;
   }
@@ -2146,7 +2201,7 @@ PY
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/lib/taxonomy-counts.test.ts`
-Expected: PASS — 13 tests.
+Expected: PASS — 16 tests.
 
 - [ ] **Step 5: Confirm A3's own taxonomy tests still pass**
 Run: `npx vitest run tests/lib/taxonomy-load.test.ts tests/lib/node-name.test.ts`
@@ -2694,6 +2749,11 @@ navigates is the same lie with extra steps.
 The component takes no `label` prop: `nodeName(slug, lang)` is the only way any page in this project
 renders a taxonomy label (A3.3), and it throws on an unknown slug rather than rendering a blank.
 
+Every number here is a count of **listed** entries: `countBySlug` (B2.2) drops anything the §5.1 cap
+evicted, so a node's state describes what a visitor can actually browse to and an evicted entry
+cannot push a node over minimum mass. The evicted entry keeps its own page (B4) — it is only gone
+from the grid.
+
 **Files:**
 - Create: `src/components/TaxonomyNode.astro`
 - Modify: `src/pages/[lang]/index.astro` (five anchored edits, below)
@@ -2784,6 +2844,21 @@ describe('the expanded security grid', () => {
   it('counts primary and also placements, exactly as countBySlug does', () => {
     for (const node of nodes(en, 'security')) {
       expect(node.count, `${node.slug} count`).toBe(counts.get(node.slug) ?? 0);
+    }
+  });
+
+  it('counts only listed entries, so an evicted one cannot prop a node above minimum mass', () => {
+    const listedCounts = new Map<string, number>();
+    for (const skill of skills) {
+      if (!skill.listed) continue;
+      for (const slug of new Set<string>([skill.primary, ...skill.also])) {
+        listedCounts.set(slug, (listedCounts.get(slug) ?? 0) + 1);
+      }
+    }
+    for (const node of nodes(en, 'security')) {
+      expect(node.count, `${node.slug} counts an entry the cap evicted`).toBe(
+        listedCounts.get(node.slug) ?? 0,
+      );
     }
   });
 
@@ -3103,7 +3178,7 @@ PY
 
 - [ ] **Step 5: Run test to verify it passes**
 Run: `npx vitest run tests/build/home-taxonomy.test.ts`
-Expected: PASS — 10 tests.
+Expected: PASS — 11 tests.
 
 - [ ] **Step 6: Type-check**
 Run: `npm run typecheck`
@@ -3120,9 +3195,11 @@ git commit -m "feat(home): expand Security into a grid whose three states never 
 ### Task B2.6: The other domains, present and honestly thin
 
 Below Security sit the remaining top-level domains. They reuse the same component and the same
-three states, but at domain granularity: a domain's count aggregates everything filed anywhere
-beneath it, counted once per skill, since one skill can hold two slugs in the same domain. Their
-links carry `?domain=` rather than `?subdomain=`, so the catalog filters to the whole subtree.
+three states, but at domain granularity: a domain's count aggregates every **listed** entry filed
+anywhere beneath it, counted once per skill, since one skill can hold two slugs in the same domain.
+`countDomain` (B2.2) applies the `listed` filter itself, so an entry the §5.1 cap evicted cannot
+lift a domain over minimum mass here either. Their links carry `?domain=` rather than `?subdomain=`,
+so the catalog filters to the whole subtree.
 
 **Files:**
 - Modify: `src/pages/[lang]/index.astro` (three anchored edits, below)
@@ -3201,6 +3278,19 @@ describe('the other top-level domains', () => {
   it('counts everything filed anywhere beneath a domain, once per skill', () => {
     for (const node of nodes(en, 'domains')) {
       expect(node.count, `${node.slug} count`).toBe(countDomain(skills, node.slug));
+    }
+  });
+
+  it('counts only listed entries, so an evicted one cannot prop a domain above minimum mass', () => {
+    for (const node of nodes(en, 'domains')) {
+      const listed = skills.filter(
+        (skill) =>
+          skill.listed &&
+          [skill.primary, ...skill.also].some(
+            (slug) => slug === node.slug || slug.startsWith(`${node.slug}/`),
+          ),
+      ).length;
+      expect(node.count, `${node.slug} counts an entry the cap evicted`).toBe(listed);
     }
   });
 
@@ -3317,7 +3407,7 @@ PY
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/build/home-domains.test.ts`
-Expected: PASS — 7 tests.
+Expected: PASS — 8 tests.
 
 - [ ] **Step 5: Type-check and run the whole suite**
 Run: `npm run typecheck && npx vitest run`
@@ -3357,6 +3447,8 @@ only reads `dist/`.
 
 ---
 
+---
+
 ### Task B4.1: Per-skill identity and source URLs
 
 **Files:**
@@ -3385,7 +3477,7 @@ import { officialFileUrl, rawFileUrl, skillHref, skillSlug } from '../../src/lib
 
 const SHA = 'a71b0c3d5e2f48916d84ab0c5f7e3d2190b46c8a';
 
-/** A contract-valid Skill: score === breakdown.total, every component inside its cap. */
+/** A contract-valid Skill: score === breakdown.total, every component inside its cap, listed. */
 function makeSkill(overrides: Partial<Skill> = {}): Skill {
   const repo = overrides.repo ?? 'anthropics/skills';
   const path = overrides.path ?? 'document-skills/pdf/SKILL.md';
@@ -3420,6 +3512,7 @@ function makeSkill(overrides: Partial<Skill> = {}): Skill {
     securityRelevant: false,
     score: 86,
     breakdown: { adoption: 25, maintenance: 27, provenance: 20, completeness: 14, total: 86 },
+    listed: true,
     ...overrides,
   };
 }
@@ -3755,10 +3848,19 @@ git commit -m "feat(i18n): hand-written EN and pt-BR strings for the skill card"
 - Test: `tests/build/skill-page-routes.test.ts`
 
 **Interfaces:**
-- Consumes: `Collection`, `Lang`, `Skill` from `src/types.ts` (A1); `withBase` from `src/lib/link.ts` (A1); `nodeName(slug: string, lang: Lang): string` from `src/lib/taxonomy.ts` (A3); `loadSkills(): Skill[]`, `loadCollections(): Collection[]` from `src/lib/data.ts` (A6); `Layout.astro` from `src/components/Layout.astro` (B1) with `Props { lang: Lang; title: string; description?: string; path?: string }`; `skillSlug` from `src/lib/slug.ts`; the default export of `src/lib/i18n/skill.ts`
+- Consumes: `Collection`, `Lang`, `Skill` from `src/types.ts` (A1); `withBase` from `src/lib/link.ts` (A1); `nodeName(slug: string, lang: Lang): string` from `src/lib/taxonomy.ts` (A3); `loadSkills(): Skill[]`, `loadCollections(): Collection[]` from `src/lib/data.ts` (A6); `Layout.astro` from `src/components/Layout.astro` (B1) with `Props { lang: Lang; title: string; description?: string; path?: string }` and its named slot `head`; the `Skill.listed` field (A1, §5.1); `skillSlug` from `src/lib/slug.ts`; the default export of `src/lib/i18n/skill.ts`
 - Produces: `src/components/SkillCard.astro` with
   `Props { skill: Skill; lang: Lang; rank?: number | null; collection?: Collection | null; expanded?: boolean; filteredCategory?: string | null }`;
   the routes `/{lang}/skills/{skillSlug}/`; the test helper module every later task reuses
+- **A page for every skill, listed or not (§5.1):** eviction from the per-subdomain cap sets
+  `listed` to false; it never removes the row, so this route keeps generating the page from the
+  skill's current score and dates. The only thing `listed` changes here is one line in `<head>`:
+  when `!skill.listed` the page emits `<meta name="robots" content="noindex">` through the layout's
+  `head` slot, so a search engine is not offered an entry the catalog does not list. **No banner, no
+  tombstone styling, no dimming** — the page renders exactly as a listed one. That is a product
+  decision, not an oversight: the entry is still real, still scored and still dated, it simply is not
+  one of the 60 its subdomain lists. Task B4.13 drops the Pagefind block on the same condition, and
+  those two are the route's only branches on `listed`.
 - **The score chip is a link, emitted here (RULE 8, §10.6):** the chip is
 
   ```astro
@@ -3947,7 +4049,7 @@ import strings from '../../src/lib/i18n/skill.ts';
 import { withBase } from '../../src/lib/link.ts';
 import { nodeName } from '../../src/lib/taxonomy.ts';
 import {
-  cardOf, elementWith, mainOf, pageFor, ranked, summaryOf, tagWith, text,
+  cardOf, classesOf, elementWith, mainOf, pageFor, ranked, summaryOf, tagWith, text,
 } from '../helpers/skill-card.ts';
 
 const SKILLS = loadSkills();
@@ -3970,6 +4072,22 @@ describe('the per-skill static page', () => {
       for (const skill of SKILLS) {
         expect(cardOf(pageFor(lang, skill))).toContain(`data-skill-id="${skill.id}"`);
       }
+    }
+  });
+
+  it('noindexes an evicted entry and leaves a listed one indexable', () => {
+    for (const lang of LOCALES) {
+      for (const skill of SKILLS) {
+        const noindexed = /<meta[^>]+name="robots"[^>]+content="noindex"/.test(pageFor(lang, skill));
+        expect(noindexed, skill.id).toBe(!skill.listed);
+      }
+    }
+  });
+
+  it('gives every card the same class list, so an evicted entry gets no tombstone styling', () => {
+    for (const skill of SKILLS) {
+      const tag = tagWith(cardOf(pageFor('en', skill)), 'data-skill-id=');
+      expect(classesOf(tag), skill.id).toEqual(['skill-card']);
     }
   });
 
@@ -4048,7 +4166,7 @@ Run: `npx vitest run tests/build/skill-page-routes.test.ts`
 
 Expected: FAIL — the route does not exist, so the global build emits no per-skill pages and
 `pageFor` throws `Error: no built page at` followed by the missing `dist/en/skills/<slug>/index.html`
-path. Ten of the eleven tests fail this way; `has a corpus to render at all` passes.
+path. Twelve of the thirteen tests fail this way; `has a corpus to render at all` passes.
 
 - [ ] **Step 4: Write the card**
 
@@ -4204,6 +4322,9 @@ const showNode = skill.primary !== domainSlug;
   description={skill.description}
   path={`/skills/${skillSlug(skill)}/`}
 >
+  {/* §5.1: an evicted row keeps this page, with its current score and dates, and leaves every
+      index. Head only — nothing visible changes, and there is no tombstone. */}
+  {!skill.listed && <meta slot="head" name="robots" content="noindex" />}
   <nav class="crumbs" data-field="crumbs" aria-label={s['skill.breadcrumb']}>
     <a class="crumbs__home" href={withBase(`/${lang}/`)}>{s['skill.home']}</a>
     <span class="crumbs__domain" data-field="crumb-domain">{nodeName(domainSlug, lang)}</span>
@@ -4232,7 +4353,7 @@ const showNode = skill.primary !== domainSlug;
 
 Run: `npx vitest run tests/build/skill-page-routes.test.ts`
 
-Expected: PASS — 11 tests.
+Expected: PASS — 13 tests.
 
 - [ ] **Step 7: Commit**
 
@@ -5901,11 +6022,12 @@ git commit -m "feat(card): fetch the author body on expand and render it as text
 - Test: `tests/build/skill-page-pagefind.test.ts`
 
 **Interfaces:**
-- Consumes: `Collection`, `Skill` from `src/types.ts` (A1) — both already in scope on this route as `Astro.props`
-- Produces: on every built skill page, exactly one `data-pagefind-body` block carrying
+- Consumes: `Collection`, `Skill` from `src/types.ts` (A1) — both already in scope on this route as `Astro.props`; `skill.listed` (§5.1)
+- Produces: on every **listed** skill page, exactly one `data-pagefind-body` block carrying
   `data-pagefind-meta="id[<skill id>]"`, the five flat `data-pagefind-filter` keys
   `domain`, `subdomain`, `runtime`, `risk`, `license`, and the five zero-padded
-  `data-pagefind-sort` keys `score`, `stars`, `forks`, `newest`, `updated`
+  `data-pagefind-sort` keys `score`, `stars`, `forks`, `newest`, `updated` — and, on an unlisted
+  page, no block at all
 
 Pagefind's unit of indexing is a **page**, so the filter and sort attributes belong on the per-skill
 page — this file, which B4 owns and which is built before B3 exists (RULE 4). B3 reads the built
@@ -5918,9 +6040,14 @@ vocabulary and *this* markup agree — so a divergence fails B3's suite rather t
 rail value the index does not carry.
 
 Because at least one page carries `data-pagefind-body`, Pagefind indexes **only** skill pages: the
-catalog, home and methodology routes drop out of the index for free. The block is clipped rather than
-`display: none`, because Pagefind reads the built HTML and must be able to see the text, and it is
-`aria-hidden` so a screen reader does not hear the card's content twice.
+catalog, home and methodology routes drop out of the index for free. And only **listed** skill pages
+carry it (§5.1). An evicted entry keeps its page but emits no block, so it leaves the search index
+exactly as it leaves the listings and the facet counts, while Task B4.3's `noindex` keeps search
+engines off that same page — those two conditions are the route's only branches on `listed`.
+
+The block is clipped rather than `display: none`, because Pagefind reads the built HTML and must be
+able to see the text, and it is `aria-hidden` so a screen reader does not hear the card's content
+twice.
 
 Every filter value is a slug or a raw runtime name, never a taxonomy **display** name, so Task B4.7's
 "named exactly once inside main" assertion is untouched by this block.
@@ -5935,6 +6062,8 @@ import { loadCollections, loadSkills } from '../../src/lib/data.ts';
 import { pageFor } from '../helpers/skill-card.ts';
 
 const SKILLS = loadSkills();
+const LISTED = SKILLS.filter((skill) => skill.listed);
+const UNLISTED = SKILLS.filter((skill) => !skill.listed);
 const BY_REPO = new Map(loadCollections().map((collection) => [collection.repo, collection]));
 const FILTER_KEYS = ['domain', 'subdomain', 'runtime', 'risk', 'license'];
 const SORT_KEYS = ['score', 'stars', 'forks', 'newest', 'updated'];
@@ -5945,16 +6074,28 @@ function pairs(html: string, attribute: string): Array<[string, string]> {
 }
 
 describe('the Pagefind index block', () => {
-  it('marks exactly one indexable body per skill page, in both locales', () => {
+  it('has a listed skill to index at all', () => {
+    expect(LISTED.length).toBeGreaterThan(0);
+  });
+
+  it('marks exactly one indexable body per listed skill page, in both locales', () => {
     for (const lang of ['en', 'pt'] as const) {
-      for (const skill of SKILLS) {
+      for (const skill of LISTED) {
         expect((pageFor(lang, skill).match(/data-pagefind-body/g) ?? []).length, skill.id).toBe(1);
       }
     }
   });
 
+  it('leaves an evicted skill out of the index while still building its page', () => {
+    for (const lang of ['en', 'pt'] as const) {
+      for (const skill of UNLISTED) {
+        expect(pageFor(lang, skill), skill.id).not.toContain('data-pagefind-body');
+      }
+    }
+  });
+
   it('emits all five flat filter keys and nothing outside that vocabulary', () => {
-    for (const skill of SKILLS) {
+    for (const skill of LISTED) {
       const keys = pairs(pageFor('en', skill), 'filter').map(([key]) => key);
       expect(keys.length).toBeGreaterThan(0);
       for (const key of keys) expect(FILTER_KEYS).toContain(key);
@@ -5963,7 +6104,7 @@ describe('the Pagefind index block', () => {
   });
 
   it('derives domain, subdomain, runtime and license from the skill itself', () => {
-    for (const skill of SKILLS) {
+    for (const skill of LISTED) {
       const found = pairs(pageFor('en', skill), 'filter');
       const values = (key: string): string[] => found.filter(([k]) => k === key).map(([, v]) => v);
       const nodes = [skill.primary, ...skill.also];
@@ -5975,7 +6116,7 @@ describe('the Pagefind index block', () => {
   });
 
   it('names an executing skill executes-code and a quiet one no-code-execution', () => {
-    for (const skill of SKILLS) {
+    for (const skill of LISTED) {
       const risk = pairs(pageFor('en', skill), 'filter')
         .filter(([key]) => key === 'risk')
         .map(([, value]) => value);
@@ -5987,7 +6128,7 @@ describe('the Pagefind index block', () => {
   });
 
   it('zero-pads every sort value so Pagefind string order matches numeric order', () => {
-    for (const skill of SKILLS) {
+    for (const skill of LISTED) {
       const sorts = new Map(pairs(pageFor('en', skill), 'sort'));
       expect([...sorts.keys()]).toEqual(SORT_KEYS);
       const collection = BY_REPO.get(skill.repo);
@@ -6000,13 +6141,13 @@ describe('the Pagefind index block', () => {
   });
 
   it('carries the skill id as metadata, so a result maps back onto its card', () => {
-    for (const skill of SKILLS) {
+    for (const skill of LISTED) {
       expect(pageFor('en', skill)).toContain(`data-pagefind-meta="id[${skill.id}]"`);
     }
   });
 
   it('indexes the text a reader would actually search for', () => {
-    for (const skill of SKILLS) {
+    for (const skill of LISTED) {
       const html = pageFor('en', skill);
       expect(html).toContain(`${skill.repo} ${skill.path}`);
       expect(html).toContain(skill.name);
@@ -6014,7 +6155,7 @@ describe('the Pagefind index block', () => {
   });
 
   it('keeps the block out of the visual and the accessibility tree', () => {
-    const html = pageFor('en', SKILLS[0]);
+    const html = pageFor('en', LISTED[0]);
     const at = html.indexOf('<div data-pagefind-body');
     expect(at).toBeGreaterThan(-1);
     const block = html.slice(at, at + 400);
@@ -6028,12 +6169,18 @@ describe('the Pagefind index block', () => {
 
 Run: `npx vitest run tests/build/skill-page-pagefind.test.ts`
 
-Expected: FAIL — all 8 tests. The route emits no index block, so the body count is zero
+Expected: FAIL — 8 of the 10 tests. The route emits no index block, so the body count is zero
 (`AssertionError: expected +0 to be 1`), every `pairs()` call returns an empty array
 (`AssertionError: expected +0 to be greater than +0`, and
 `AssertionError: expected [] to deeply equal [ 'score', 'stars', 'forks', 'newest', 'updated' ]`),
 and `keeps the block out of the visual and the accessibility tree` fails with
 `AssertionError: expected -1 to be greater than -1`.
+
+The other two pass now and must keep passing: `has a listed skill to index at all` reads the corpus
+rather than the build, and `leaves an evicted skill out of the index while still building its page`
+is true before any block exists — it is a regression guard on Step 4's condition, and it goes
+vacuous when the shipped corpus holds no evicted row, which is why the assertion above it pins the
+listed side on every row.
 
 - [ ] **Step 3: Derive the index values**
 
@@ -6092,29 +6239,31 @@ In `src/pages/[lang]/skills/[...slug].astro`, insert immediately before the line
 `</Layout>` — the file's only occurrence of that closing tag:
 
 ```astro
-  <div
-    data-pagefind-body
-    aria-hidden="true"
-    style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"
-  >
-    <span data-pagefind-meta={`id[${skill.id}]`}></span>
-    {indexFilters.map(([key, value]) => <span data-pagefind-filter={`${key}[${value}]`}></span>)}
-    {indexSorts.map(([key, value]) => <span data-pagefind-sort={`${key}[${value}]`}></span>)}
-    {indexText.map((line) => <p>{line}</p>)}
-  </div>
+  {skill.listed && (
+    <div
+      data-pagefind-body
+      aria-hidden="true"
+      style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"
+    >
+      <span data-pagefind-meta={`id[${skill.id}]`}></span>
+      {indexFilters.map(([key, value]) => <span data-pagefind-filter={`${key}[${value}]`}></span>)}
+      {indexSorts.map(([key, value]) => <span data-pagefind-sort={`${key}[${value}]`}></span>)}
+      {indexText.map((line) => <p>{line}</p>)}
+    </div>
+  )}
 ```
 
 - [ ] **Step 5: Run test to verify it passes**
 
 Run: `npx vitest run tests/build/skill-page-pagefind.test.ts`
 
-Expected: PASS — 8 tests.
+Expected: PASS — 10 tests.
 
 - [ ] **Step 6: Commit**
 
 ```bash
 git add "src/pages/[lang]/skills/[...slug].astro" tests/build/skill-page-pagefind.test.ts
-git commit -m "feat(skills): index every skill page with flat parallel pagefind filters"
+git commit -m "feat(skills): index every listed skill page with flat parallel pagefind filters"
 ```
 
 ---
@@ -6270,6 +6419,8 @@ once, in `tests/global-setup.ts`.
 git add tests/build/hazard-token.test.ts
 git commit -m "test(theme): confine the hazard token to safety, staleness and undeclared license"
 ```
+
+---
 
 ---
 
@@ -6600,6 +6751,11 @@ in the UI and absent from the index. Keys are flat and parallel (`domain`, `subd
 `risk`, `license`) — nesting is a UI concern only, and nesting the index is cheap now and expensive
 once a thousand entries are tagged.
 
+`listedSkills` lands here too, beside the derivation it guards. §5.1 evicts an entry by setting
+`listed` false rather than deleting the row: the skill stays in `data/skills.json`, keeps being
+re-scored, and keeps its page (B4). Every catalog surface — the grid, the facet counts, the Pagefind
+index — is built from the filtered array, so an evicted entry leaves all of them at once.
+
 **Files:**
 - Modify: `src/lib/facets.ts`
 - Test: `tests/catalog/facets-index.test.ts`
@@ -6611,6 +6767,7 @@ once a thousand entries are tagged.
   `collectionFor(repo: string, collections: Collection[]): Collection | null`,
   `riskValues(safety: Safety, portable: boolean): RiskValue[]`,
   `indexValues(skill: Skill): Record<IndexFilterKey, string[]>`,
+  `listedSkills(skills: Skill[]): Skill[]`,
   `countValues(skills: Skill[], key: IndexFilterKey): Map<string, number>`,
   `sortValues(skill: Skill, collection: Collection | null): SortValues`.
 
@@ -6627,6 +6784,7 @@ import {
   collectionFor,
   countValues,
   indexValues,
+  listedSkills,
   riskValues,
   sortValues,
 } from '../../src/lib/facets.ts';
@@ -6660,6 +6818,8 @@ export function skill(over: Partial<Skill> = {}): Skill {
     also: ['devops-infra/general'],
     tags: ['sbom'],
     securityRelevant: true,
+    // §5.1: false once the per-subdomain cap evicts it. The row survives, the listing does not.
+    listed: true,
     // score === breakdown.total, every component inside its 25/30/25/20 cap.
     score: 91,
     breakdown: { adoption: 20, maintenance: 26, provenance: 25, completeness: 20, total: 91 },
@@ -6723,6 +6883,20 @@ describe('indexValues', () => {
   it('de-duplicates a domain shared by primary and also', () => {
     const v = indexValues(skill({ primary: 'security/supply-chain', also: ['security/cicd-pipeline'] }));
     expect(v.domain).toEqual(['security']);
+  });
+});
+
+describe('listedSkills', () => {
+  it('drops the entries the per-subdomain cap evicted', () => {
+    const kept = skill();
+    const evicted = skill({ id: 'acme/kit@abc123:skills/old/SKILL.md', listed: false });
+    expect(listedSkills([kept, evicted])).toEqual([kept]);
+  });
+
+  it('keeps everything when nothing was evicted, without mutating the input', () => {
+    const all = [skill(), skill({ id: 'acme/kit@abc123:skills/two/SKILL.md' })];
+    expect(listedSkills(all)).toEqual(all);
+    expect(all).toHaveLength(2);
   });
 });
 
@@ -6838,6 +7012,16 @@ export function indexValues(skill: Skill): Record<IndexFilterKey, string[]> {
   };
 }
 
+/**
+ * §5.1: eviction by the per-subdomain cap sets `listed` false and leaves the row in
+ * data/skills.json — it keeps being re-scored and it keeps its page (B4). Every catalog surface
+ * is built from this filtered array, so an evicted entry disappears from the grid, the facet
+ * counts and the search index at once, and returns whole if its score recovers.
+ */
+export function listedSkills(skills: Skill[]): Skill[] {
+  return skills.filter((skill) => skill.listed);
+}
+
 export function countValues(skills: Skill[], key: IndexFilterKey): Map<string, number> {
   const counts = new Map<string, number>();
   for (const skill of skills) {
@@ -6877,7 +7061,7 @@ export function sortValues(skill: Skill, collection: Collection | null): SortVal
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/catalog/facets-index.test.ts`
-Expected: PASS, 16 tests.
+Expected: PASS, 18 tests.
 
 - [ ] **Step 5: Commit**
 ```bash
@@ -6897,6 +7081,12 @@ payload a skill page must carry, built from the same `indexValues` the rail is b
 tests here assert B4's built pages against it. A value checkable in the rail but missing from the
 index turns this task red, which is the whole point.
 
+§5.1 adds one more thing to assert. B4 generates a page for **every** skill, listed or not, but emits
+the index block only for a listed one; an evicted skill's page instead carries
+`<meta name="robots" content="noindex">`. The two must move together, so the invariant asserted here
+is *body if and only if not noindex* — a page that is indexed by Pagefind but hidden from search
+engines, or the reverse, is a bug in B4's route.
+
 **Files:**
 - Modify: `src/lib/facets.ts`
 - Test: `tests/catalog/pagefind-filters.test.ts`
@@ -6905,7 +7095,8 @@ index turns this task red, which is the whole point.
 - Consumes: `INDEX_FILTER_KEYS`, `indexValues`, `sortValues` from `src/lib/facets.ts`; the built
   output of `src/pages/[lang]/skills/[...slug].astro` (B4) under `dist/`.
 - Produces: `PagefindPair`, `PagefindIndexAttrs`,
-  `pagefindIndexAttrs(skill: Skill, collection: Collection | null): PagefindIndexAttrs`.
+  `pagefindIndexAttrs(skill: Skill, collection: Collection | null): PagefindIndexAttrs`; the test
+  helpers `skillPages()` and `indexedSkillPages()`, which B3.14 reuses.
 
 - [ ] **Step 1: Write the failing test**
 ```ts
@@ -6918,7 +7109,8 @@ import { skill } from './facets-index.test.ts';
 
 const root = resolve(__dirname, '../..');
 
-function skillPages(): string[] {
+/** Every built skill page, listed or evicted — B4 generates one for each row (§5.1). */
+export function skillPages(): string[] {
   const start = resolve(root, 'dist/en/skills');
   if (!existsSync(start)) throw new Error('dist/en/skills not found; A1 global setup did not build the site');
   const out: string[] = [];
@@ -6932,6 +7124,19 @@ function skillPages(): string[] {
   walk(start);
   if (out.length === 0) throw new Error('no built skill page found under dist/en/skills');
   return out;
+}
+
+/** Only the pages Pagefind will actually index — an evicted skill's page carries no block. */
+export function indexedSkillPages(): string[] {
+  const indexed = skillPages().filter((page) => page.includes('data-pagefind-body'));
+  if (indexed.length === 0) {
+    throw new Error('no built skill page carries data-pagefind-body; the search index would be empty');
+  }
+  return indexed;
+}
+
+function isNoindex(page: string): boolean {
+  return (page.match(/<meta[^>]*content="noindex"[^>]*>/)?.[0] ?? '').includes('name="robots"');
 }
 
 describe('pagefindIndexAttrs', () => {
@@ -6952,10 +7157,20 @@ describe('pagefindIndexAttrs', () => {
 
 describe('B4 skill pages carry the payload this vocabulary describes', () => {
   const pages = skillPages();
-  const html = pages[0];
+  const indexed = indexedSkillPages();
+  const html = indexed[0];
 
-  it('marks exactly one indexable body on every skill page', () => {
+  it('indexes a page if and only if search engines may index it too', () => {
     for (const page of pages) {
+      expect(
+        page.includes('data-pagefind-body'),
+        'an evicted page must carry robots=noindex and no data-pagefind-body, and a listed page neither',
+      ).toBe(!isNoindex(page));
+    }
+  });
+
+  it('marks exactly one indexable body on every listed skill page', () => {
+    for (const page of indexed) {
       expect((page.match(/data-pagefind-body/g) ?? []).length).toBe(1);
     }
   });
@@ -7007,7 +7222,9 @@ export interface PagefindIndexAttrs {
 /**
  * The attribute payload one skill page's Pagefind index block must carry. Kept here, beside
  * indexValues and sortValues, so the rail can never offer a value the index does not carry. B4's
- * per-skill route emits the block; this is the definition its built output is asserted against.
+ * per-skill route emits the block — and emits it only for a listed skill, since an evicted row
+ * keeps its page but leaves the index (§5.1). This is the definition its built output is
+ * asserted against.
  */
 export function pagefindIndexAttrs(skill: Skill, collection: Collection | null): PagefindIndexAttrs {
   const values = indexValues(skill);
@@ -7041,12 +7258,12 @@ export function pagefindIndexAttrs(skill: Skill, collection: Collection | null):
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/catalog/pagefind-filters.test.ts`
-Expected: PASS, 7 tests.
+Expected: PASS, 8 tests.
 
 If a `B4 skill pages carry the payload` assertion fails, the per-skill route is not emitting the full
-index block. The fix belongs in B4's task that owns
-`src/pages/[lang]/skills/[...slug].astro` — B3 must not edit that file, and duplicating the block
-from the catalog side would index the page twice.
+index block, or it is emitting one on a page it also marked `noindex`. The fix belongs in B4's task
+that owns `src/pages/[lang]/skills/[...slug].astro` — B3 must not edit that file, and duplicating the
+block from the catalog side would index the page twice.
 
 - [ ] **Step 5: Commit**
 ```bash
@@ -7563,6 +7780,11 @@ it reads them from `indexValues`, the same function `pagefindIndexAttrs` uses. D
 from the `Taxonomy` object passed in, never from `src/lib/taxonomy.ts`: that module reads `node:fs`,
 and `facets.ts` is bundled into the browser.
 
+It also filters through `listedSkills` before counting anything. A count is a promise about what
+clicking will return, and an entry evicted by the per-subdomain cap (§5.1) returns nothing — it is
+absent from the Pagefind index, so a count that included it would be a lie the first time a reader
+checked the box.
+
 **Files:**
 - Modify: `src/lib/facets.ts`
 - Test: `tests/catalog/facets-groups.test.ts`
@@ -7677,6 +7899,15 @@ describe('buildFacetGroups', () => {
   it('localises the undeclared license label', () => {
     const pt = buildFacetGroups([skill({ license: null })], taxonomy, 'pt');
     expect(pt[3].options[0].label).toBe('Não declarada');
+  });
+
+  it('counts only listed entries, so no count promises a row the cap evicted', () => {
+    const evicted = skill({ id: 'evicted', listed: false, license: null, runtimes: ['codex'] });
+    const withEvicted = buildFacetGroups([skill(), evicted], taxonomy, 'en');
+    expect(withEvicted[0].options[0].count).toBe(1);
+    expect(withEvicted[1].options[0].count).toBe(1);
+    expect(withEvicted[2].options.find((o) => o.value === 'codex')?.count).toBe(0);
+    expect(withEvicted[3].options.map((o) => o.value)).toEqual(['MIT']);
   });
 
   it('reads taxonomy names from the argument, so nothing here touches the filesystem', () => {
@@ -7800,8 +8031,11 @@ function licenseOptions(skills: Skill[], lang: Lang): FacetOption[] {
 }
 
 export function buildFacetGroups(skills: Skill[], taxonomy: Taxonomy, lang: Lang): FacetGroup[] {
-  const riskCounts = countValues(skills, 'risk');
-  const runtimeCounts = countValues(skills, 'runtime');
+  // A count is a promise about what checking the box returns, and an evicted entry is absent from
+  // the Pagefind index (§5.1) — so it contributes to nothing here, whatever the caller passed.
+  const listed = listedSkills(skills);
+  const riskCounts = countValues(listed, 'risk');
+  const runtimeCounts = countValues(listed, 'runtime');
   const hint = t('catalog.anyOf', lang);
   return [
     {
@@ -7815,7 +8049,7 @@ export function buildFacetGroups(skills: Skill[], taxonomy: Taxonomy, lang: Lang
         group: null,
       })),
     },
-    { key: 'subdomain', label: t(FACET_LABEL_KEYS.subdomain, lang), hint, options: subdomainOptions(skills, taxonomy, lang) },
+    { key: 'subdomain', label: t(FACET_LABEL_KEYS.subdomain, lang), hint, options: subdomainOptions(listed, taxonomy, lang) },
     {
       key: 'runtime',
       label: t(FACET_LABEL_KEYS.runtime, lang),
@@ -7827,7 +8061,7 @@ export function buildFacetGroups(skills: Skill[], taxonomy: Taxonomy, lang: Lang
         group: null,
       })),
     },
-    { key: 'license', label: t(FACET_LABEL_KEYS.license, lang), hint, options: licenseOptions(skills, lang) },
+    { key: 'license', label: t(FACET_LABEL_KEYS.license, lang), hint, options: licenseOptions(listed, lang) },
   ];
 }
 
@@ -7851,7 +8085,7 @@ export function chipLabelMap(
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/catalog/facets-groups.test.ts`
-Expected: PASS, 14 tests.
+Expected: PASS, 15 tests.
 
 - [ ] **Step 5: Commit**
 ```bash
@@ -7868,6 +8102,11 @@ answer. WCAG 2.2 SC 2.5.8 requires every facet row to be at least 24 × 24 CSS p
 requires a focused row to clear the sticky header — both are asserted here rather than eyeballed.
 The route also ships the Pagefind config and the chip labels to the browser as one JSON block.
 
+The route reads `listedSkills(loadSkills())`. The filter happens once, at the source, so nothing
+downstream has to remember it: `data/skills.json` still carries every evicted row with its current
+score and dates (§5.1), and B4 still builds a page for each, but the catalog is a listing and an
+evicted entry is not listed.
+
 The page content sits inside B1's `Layout`, whose `<main id="results">` is the skip-link target, so
 the catalog's own column is a `<div class="catalog-main">` and never a second `<main>`.
 
@@ -7881,7 +8120,8 @@ the catalog's own column is a `<div class="catalog-main">` and never a second `<
   `{ lang: Lang; title: string; description?: string; path?: string }` — `description` is optional,
   so the catalog passes `lang`, `title` and `path` only; `loadSkills()` and `loadCollections()` from
   `src/lib/data.ts` (A6); `loadTaxonomy()` from `src/lib/taxonomy.ts` (A3); `withBase` from
-  `src/lib/link.ts` (A1); `t` from `src/lib/i18n/index.ts` (B1).
+  `src/lib/link.ts` (A1); `t` from `src/lib/i18n/index.ts` (B1); `listedSkills` from
+  `src/lib/facets.ts` (B3.3).
 - Produces: `src/components/FacetRail.astro` with props `{ lang: Lang; groups: FacetGroup[] }`,
   rendering `label[data-facet-key][data-facet-value]` containing `input[data-facet-check]` and
   `span[data-facet-count]`; the route `/{lang}/catalog/` emitting
@@ -7938,6 +8178,16 @@ describe('FacetRail', () => {
     const counts = (html.match(/data-facet-count/g) ?? []).length;
     expect(rows).toBeGreaterThan(0);
     expect(counts).toBe(rows);
+  });
+
+  it('counts only listed entries, so an evicted row cannot inflate the rail', () => {
+    const rows = JSON.parse(readFileSync(resolve(root, 'data/skills.json'), 'utf8')) as { listed: boolean }[];
+    const listed = rows.filter((row) => row.listed).length;
+    const countOf = (value: string): number =>
+      Number(html.match(new RegExp(`data-facet-value="${value}"[\\s\\S]*?data-facet-count>(\\d+)<`))?.[1] ?? -1);
+    // Every skill emits exactly one of these two mutually exclusive risk values (§4.3), so their
+    // sum is the size of the listing and nothing else.
+    expect(countOf('no-code-execution') + countOf('executes-code')).toBe(listed);
   });
 
   it('tags each row with the key and value the controller needs', () => {
@@ -7999,7 +8249,7 @@ describe('the two Pagefind path values reach the browser', () => {
 Run: `npx vitest run tests/catalog/facet-rail.test.ts`
 Expected: FAIL — `src/pages/[lang]/catalog.astro` does not exist, so nothing is emitted under
 `dist/en/catalog/` and `builtCatalog('en')` throws
-`Error: built catalog page for "en" not found under dist/en/`. All 11 tests fail with that error.
+`Error: built catalog page for "en" not found under dist/en/`. All 12 tests fail with that error.
 
 - [ ] **Step 3: Create `src/components/FacetRail.astro`**
 ```astro
@@ -8096,7 +8346,7 @@ const { lang, groups } = Astro.props;
 import type { Lang } from '../../types.ts';
 import Layout from '../../components/Layout.astro';
 import FacetRail from '../../components/FacetRail.astro';
-import { PAGEFIND_BASE_URL, PAGEFIND_BUNDLE_PATH, PAGE_SIZE, buildFacetGroups, chipLabelMap } from '../../lib/facets.ts';
+import { PAGEFIND_BASE_URL, PAGEFIND_BUNDLE_PATH, PAGE_SIZE, buildFacetGroups, chipLabelMap, listedSkills } from '../../lib/facets.ts';
 import { loadSkills } from '../../lib/data.ts';
 import { loadTaxonomy } from '../../lib/taxonomy.ts';
 import { withBase } from '../../lib/link.ts';
@@ -8107,7 +8357,10 @@ export function getStaticPaths() {
 }
 
 const lang = Astro.params.lang as Lang;
-const skills = loadSkills();
+// §5.1: an entry evicted by the per-subdomain cap keeps its row in data/skills.json and keeps its
+// page, but it is not listed — so it leaves the grid, the facet counts and the search index. Filter
+// once, here, and nothing downstream has to remember.
+const skills = listedSkills(loadSkills());
 const taxonomy = loadTaxonomy();
 const groups = buildFacetGroups(skills, taxonomy, lang);
 const catalogPath = withBase(`/${lang}/catalog/`);
@@ -8140,7 +8393,7 @@ const config = {
 
 - [ ] **Step 5: Run test to verify it passes**
 Run: `npx vitest run tests/catalog/facet-rail.test.ts`
-Expected: PASS, 11 tests.
+Expected: PASS, 12 tests.
 
 - [ ] **Step 6: Commit**
 ```bash
@@ -8158,6 +8411,10 @@ only shows, hides, reorders and renumbers what is already in the HTML. Rank live
 (§10.3), so the wrapper carries `data-rank` for ordering and the controller rewrites the card's own
 rank element.
 
+One wrapper is rendered per **listed** skill. An evicted entry has no wrapper at all, which is what
+makes the client side simple: the DOM and the Pagefind index hold exactly the same set, so a result
+always resolves onto a card and a card is never left orphaned.
+
 `id="results"` belongs to B1's `<main>` — it is the skip-link target and appears exactly once in the
 document. The catalog's own heading is `id="results-heading"`, which is what the controller focuses
 after a clear-all and what B5's focus assertions look for.
@@ -8170,7 +8427,8 @@ after a clear-all and what B5's focus assertions look for.
 - Consumes: `SkillCard.astro` from `src/components/SkillCard.astro` (B4.3) with props
   `{ skill: Skill; rank: number; lang: Lang; collection: Collection | null }`, rendering its rank
   inside an element that carries both `data-field="rank"` and `data-rank` — B3 uses the `data-rank`
-  hook and never touches `data-field`; `loadCollections()` from `src/lib/data.ts` (A6).
+  hook and never touches `data-field`; `loadCollections()` from `src/lib/data.ts` (A6);
+  `listedSkills` from `src/lib/facets.ts` (B3.3).
 - Produces: `li[data-catalog-item][data-skill-id][data-rank]` wrappers, the
   `a[data-sort-tab]` tab strip, the `#results-heading` heading and `p[data-count]`.
 
@@ -8178,7 +8436,11 @@ after a clear-all and what B5's focus assertions look for.
 ```ts
 // tests/catalog/catalog-page.test.ts
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { allBuiltCss, builtCatalog } from './facet-rail.test.ts';
+
+const root = resolve(__dirname, '../..');
 
 describe('catalog sort tabs', () => {
   const html = builtCatalog('en');
@@ -8234,6 +8496,19 @@ describe('catalog card grid', () => {
     expect(new Set(ids).size).toBe(ids.length);
   });
 
+  it('lists only the entries that survived the per-subdomain cap', () => {
+    const rows = JSON.parse(readFileSync(resolve(root, 'data/skills.json'), 'utf8')) as {
+      id: string;
+      listed: boolean;
+    }[];
+    const evicted = new Set(rows.filter((row) => !row.listed).map((row) => row.id));
+    for (const tag of items) {
+      const id = tag.match(/data-skill-id="([^"]+)"/)?.[1] ?? '';
+      expect(evicted.has(id), `evicted skill "${id}" is still on the catalog`).toBe(false);
+    }
+    expect(items.length).toBe(rows.length - evicted.size);
+  });
+
   it('orders every wrapper explicitly and hides only what falls past the first page', () => {
     items.forEach((tag, i) => {
       expect(tag).toContain(`style="order:${i}"`);
@@ -8284,6 +8559,7 @@ import {
   buildFacetGroups,
   chipLabelMap,
   collectionFor,
+  listedSkills,
   serializeQuery,
   sortCards,
   sortLabel,
@@ -8299,7 +8575,10 @@ export function getStaticPaths() {
 }
 
 const lang = Astro.params.lang as Lang;
-const skills = loadSkills();
+// §5.1: an entry evicted by the per-subdomain cap keeps its row in data/skills.json and keeps its
+// page, but it is not listed — so it leaves the grid, the facet counts and the search index. Filter
+// once, here, and nothing downstream has to remember.
+const skills = listedSkills(loadSkills());
 const collections = loadCollections();
 const taxonomy = loadTaxonomy();
 const groups = buildFacetGroups(skills, taxonomy, lang);
@@ -8416,7 +8695,7 @@ const config = {
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/catalog/catalog-page.test.ts`
-Expected: PASS, 12 tests.
+Expected: PASS, 13 tests.
 
 - [ ] **Step 5: Commit**
 ```bash
@@ -8966,6 +9245,10 @@ Pagefind is the single authority for which skills match, in what order, and how 
 controller never re-renders a card: it maps each Pagefind result back onto the server-rendered
 wrapper by `data-skill-id`, then shows, orders and renumbers.
 
+It needs no notion of `listed`. An entry evicted by the per-subdomain cap is absent from both sides
+at once — B3.9 rendered no wrapper for it and B4 emitted no index block on its page — so the two sets
+agree by construction and the controller has nothing to filter.
+
 **Files:**
 - Modify: `src/pages/[lang]/catalog.astro`
 - Test: `tests/catalog/catalog-controller.test.ts`
@@ -9295,7 +9578,8 @@ than on every interaction (§10.5).
 
 **Interfaces:**
 - Consumes: the `catalog:rendered` CustomEvent from B3.13; `activeChips`, `facetCount` from
-  `src/lib/facets.ts`; `config.labels` from the `#catalog-config` block.
+  `src/lib/facets.ts`; `config.labels` from the `#catalog-config` block; `indexedSkillPages()` from
+  `tests/catalog/pagefind-filters.test.ts` (B3.4).
 - Produces: `li.filter-chip[data-chip-key][data-chip-value]` instances; live text in
   `[data-facet-count]` and `[data-count]`.
 
@@ -9303,12 +9587,9 @@ than on every interaction (§10.5).
 ```ts
 // tests/catalog/catalog-a11y.test.ts
 import { describe, expect, it } from 'vitest';
-import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { resolve } from 'node:path';
 import { builtCatalog } from './facet-rail.test.ts';
 import { bundleFor } from './catalog-controller.test.ts';
-
-const root = resolve(__dirname, '../..');
+import { indexedSkillPages } from './pagefind-filters.test.ts';
 
 describe('live facet counts', () => {
   const js = bundleFor('catalog-config') ?? '';
@@ -9360,18 +9641,8 @@ describe('page-level accessibility contract', () => {
   });
 
   it('keeps every one of the five flat filter keys live in the built index markup', () => {
-    const dir = resolve(root, 'dist/en/skills');
-    expect(existsSync(dir), 'dist/en/skills not found').toBe(true);
-    const pages: string[] = [];
-    const walk = (at: string): void => {
-      for (const entry of readdirSync(at, { withFileTypes: true })) {
-        const full = resolve(at, entry.name);
-        if (entry.isDirectory()) walk(full);
-        else if (entry.name === 'index.html') pages.push(readFileSync(full, 'utf8'));
-      }
-    };
-    walk(dir);
-    expect(pages.length).toBeGreaterThan(0);
+    // Only the listed pages carry an index block (§5.1) — an evicted page has none to inspect.
+    const pages = indexedSkillPages();
     for (const key of ['domain', 'subdomain', 'runtime', 'risk', 'license']) {
       expect(pages[0]).toContain(`data-pagefind-filter="${key}[`);
     }
@@ -9487,13 +9758,15 @@ Expected: PASS, 8 tests.
 
 - [ ] **Step 5: Run the whole catalog suite as a regression check**
 Run: `npx vitest run tests/catalog`
-Expected: PASS, 154 tests across 14 files.
+Expected: PASS, 160 tests across 14 files.
 
 - [ ] **Step 6: Commit**
 ```bash
 git add "src/pages/[lang]/catalog.astro" tests/catalog/catalog-a11y.test.ts
 git commit -m "feat(catalog): paint live facet counts, chips and a polite result count"
 ```
+
+---
 
 ---
 
@@ -9627,7 +9900,7 @@ git commit -m "feat(i18n): hand-written EN and pt-BR strings for search and pipe
 
 ### Task B5.2: Rescue index documents — names and aliases only
 
-The MiniSearch rescue index exists because Pagefind 1.5.2 has **zero typo tolerance** (spec §11): `kubernets`, `terrafrom` and `clude code` return nothing. The index carries only entry **names** and **aliases** — never descriptions or bodies — so it stays in the tens of KB and can be fetched on the first keystroke.
+The MiniSearch rescue index exists because Pagefind 1.5.2 has **zero typo tolerance** (spec §11): `kubernets`, `terrafrom` and `clude code` return nothing. The index carries only entry **names** and **aliases** — never descriptions or bodies — so it stays in the tens of KB and can be fetched on the first keystroke. It also carries only **listed** entries (spec §5.1): an entry evicted by the per-subdomain cap keeps its row in `data/skills.json` and keeps its page, but leaves every search surface.
 
 Each document stores a **base-relative site path**, not a finished href. `withBase` reads `import.meta.env.BASE_URL`, which does not exist under plain Node, and `scripts/build-rescue-index.ts` (Task B5.6) runs under Node. Taxonomy nodes point at the catalog with a `?subdomain=` query, never at a per-node route: Rule 4 makes the catalog the only list surface, so `/{lang}/{slug}/` would 404.
 
@@ -9636,7 +9909,7 @@ Each document stores a **base-relative site path**, not a finished href. `withBa
 - Test: `tests/lib/rescue.test.ts`
 
 **Interfaces:**
-- Consumes: `Lang`, `Skill`, `Taxonomy`, `TaxonomyNode` from `src/types.ts`; `skillSlug(skill: Skill): string` from `src/lib/slug.ts` (B4) — the single slug function (Rule 4)
+- Consumes: `Lang`, `Skill`, `Taxonomy`, `TaxonomyNode` from `src/types.ts` — including the required `Skill.listed` flag (§5.1, A1 owns the field); `skillSlug(skill: Skill): string` from `src/lib/slug.ts` (B4) — the single slug function (Rule 4)
 - Produces: `interface RescueDoc { id: string; kind: 'skill' | 'node'; name: string; aliases: string; path: string }`; `buildRescueDocs(skills: Skill[], taxonomy: Taxonomy, lang: Lang): RescueDoc[]`
 
 - [ ] **Step 1: Install MiniSearch at the pinned version**
@@ -9680,6 +9953,7 @@ export function makeSkill(over: Partial<Skill> = {}): Skill {
     securityRelevant: true,
     score: 71,
     breakdown: { adoption: 12, maintenance: 26, provenance: 13, completeness: 20, total: 71 },
+    listed: true,
     ...over,
   };
 }
@@ -9756,6 +10030,14 @@ describe('buildRescueDocs', () => {
     }
   });
 
+  it('indexes only listed entries — an evicted skill keeps its page, not its search presence', () => {
+    const evicted = makeSkill({ id: 'gone/here@ddd4444:z/SKILL.md', name: 'Evicted Drift Tool', listed: false });
+    const docs = buildRescueDocs([makeSkill(), evicted], taxonomy, 'en');
+    expect(docs.filter((d) => d.kind === 'skill')).toHaveLength(1);
+    expect(docs.map((d) => d.name)).not.toContain('Evicted Drift Tool');
+    expect(docs.filter((d) => d.kind === 'node')).toHaveLength(3);
+  });
+
   it('keys skill docs by the skill id so the index dedupes on re-crawl', () => {
     expect(buildRescueDocs(skills, taxonomy, 'en').find((d) => d.kind === 'skill')?.id)
       .toBe('acme/tools@abc1234:kit/SKILL.md');
@@ -9829,7 +10111,8 @@ export function buildRescueDocs(skills: Skill[], taxonomy: Taxonomy, lang: Lang)
     });
   }
 
-  for (const skill of skills) {
+  // §5.1: an entry evicted by the per-subdomain cap keeps its page but leaves every search surface.
+  for (const skill of skills.filter((entry) => entry.listed)) {
     docs.push({
       id: skill.id,
       kind: 'skill',
@@ -9845,7 +10128,7 @@ export function buildRescueDocs(skills: Skill[], taxonomy: Taxonomy, lang: Lang)
 
 - [ ] **Step 5: Run test to verify it passes**
 Run: `npx vitest run tests/lib/rescue.test.ts`
-Expected: PASS — 8 tests
+Expected: PASS — 9 tests
 
 - [ ] **Step 6: Commit**
 ```bash
@@ -9986,7 +10269,7 @@ export function suggestRescue(
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/lib/rescue.test.ts`
-Expected: PASS — 14 tests
+Expected: PASS — 15 tests
 
 - [ ] **Step 5: Commit**
 ```bash
@@ -10054,7 +10337,7 @@ export function loadRescueIndex(json: string): MiniSearch<RescueDoc> {
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/lib/rescue.test.ts`
-Expected: PASS — 17 tests
+Expected: PASS — 18 tests
 
 - [ ] **Step 5: Commit**
 ```bash
@@ -10136,7 +10419,7 @@ export function rescueDecision(
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/lib/rescue.test.ts`
-Expected: PASS — 20 tests
+Expected: PASS — 21 tests
 
 - [ ] **Step 5: Commit**
 ```bash
@@ -10148,12 +10431,13 @@ git commit -m "feat(search): show did-you-mean only when Pagefind returns zero r
 
 ### Task B5.6: `scripts/build-rescue-index.ts` — a committed, per-locale artifact
 
-The artifact is generated by a Node script, written into `public/rescue-index/`, and **committed**, exactly like `data/skills.json`. Astro copies `public/` verbatim, so `npx astro build` alone puts the file where the client expects it. The nightly crawl regenerates it in the same commit that refreshes the catalog, and a drift test fails loudly if the two ever separate.
+The artifact is generated by a Node script, written into `public/rescue-index/`, and **committed**, exactly like `data/skills.json`. Astro copies `public/` verbatim, so `npx astro build` alone puts the file where the client expects it. **Both** harvest schedules regenerate it in the same commit that refreshes the catalog — the local systemd run every 4 h, which spec §6.1 now makes the primary, and the weekly `crawl.yml` fallback — and a drift test fails loudly if artifact and catalog ever separate.
 
 **Files:**
 - Create: `scripts/build-rescue-index.ts`
 - Create: `public/rescue-index/en.json`, `public/rescue-index/pt.json` (generated by Step 3)
 - Modify: `.github/workflows/crawl.yml` (A6) — one added step and one changed `git add`
+- Reads (never writes): `scripts/harvest/run.ts` and `ops/` (A6) — asserted on, so the primary local schedule cannot drift
 - Test: `tests/build/rescue-index.test.ts`
 
 **Interfaces:**
@@ -10207,7 +10491,7 @@ describe('the committed rescue index', () => {
   });
 });
 
-describe('the crawl regenerates it', () => {
+describe('the weekly fallback crawl regenerates it', () => {
   const yml = readFileSync('.github/workflows/crawl.yml', 'utf8');
 
   it('rebuilds the rescue index before committing', () => {
@@ -10216,6 +10500,20 @@ describe('the crawl regenerates it', () => {
 
   it('commits the regenerated artifact alongside the catalog data', () => {
     expect(yml).toContain('git add data/skills.json data/meta.json public/rescue-index');
+  });
+});
+
+describe('the primary local schedule regenerates it too', () => {
+  const localChain = ['scripts/harvest/run.ts', 'ops/ai-tools-hub-harvest.service', 'ops/install-schedule.sh']
+    .filter((file) => existsSync(file))
+    .map((file) => readFileSync(file, 'utf8'))
+    .join('\n');
+
+  it('rebuilds the artifact on the local run, not only in the weekly Action', () => {
+    expect(
+      localChain,
+      'the local systemd run is the primary schedule (§6.1): if it commits data/skills.json without rebuilding public/rescue-index, the sync test above fails every 4 hours. Reconcile with A6, which owns scripts/harvest/run.ts and ops/ — do not weaken this test',
+    ).toContain('build-rescue-index');
   });
 });
 ```
@@ -10264,7 +10562,15 @@ npx tsx /home/kyo/projects/ai-tools-hub/scripts/build-rescue-index.ts
 ```
 Expected: two `wrote ` lines, one per locale.
 
-- [ ] **Step 4: Wire the regeneration into the nightly crawl**
+- [ ] **Step 4: Wire the regeneration into the weekly fallback crawl**
+A6 rewrote this workflow's schedule to weekly in the same plan, so confirm both anchors survived before editing:
+```bash
+cd /home/kyo/projects/ai-tools-hub
+grep -c '      - name: Commit the refreshed catalog' .github/workflows/crawl.yml
+grep -c '          git add data/skills.json data/meta.json' .github/workflows/crawl.yml
+```
+Expected: `1` and `1`. If either differs, stop and reconcile with A6 rather than guessing a new anchor.
+
 In `.github/workflows/crawl.yml`, replace this exact line:
 ```yaml
       - name: Commit the refreshed catalog
@@ -10287,7 +10593,7 @@ with:
 
 - [ ] **Step 5: Run test to verify it passes**
 Run: `npx vitest run tests/build/rescue-index.test.ts`
-Expected: PASS — 8 tests
+Expected: PASS — 10 tests
 
 - [ ] **Step 6: Commit**
 ```bash
@@ -11275,7 +11581,7 @@ git commit -m "feat(a11y): clear-all focus, live header measurement and scroll o
 
 ### Task B5.13: Staleness evaluation — crawl date and classification lag, separately
 
-Spec §6.1 and §13: harvest runs in Actions without the maintainer; classification runs on the maintainer's scheduled Claude session. They rot independently, so a single "last updated" number would be a lie. This module never combines them.
+Spec §6.1 and §13: harvest runs on a schedule that needs nobody watching — a local systemd timer every 4 h, backed by a weekly `crawl.yml` fallback so the machine being off for days cannot silence it — while classification runs on the maintainer's scheduled Claude session. They rot independently, so a single "last updated" number would be a lie. This module never combines them.
 
 Seam S12: there is exactly one staleness line on the site — `STALE_DAYS` in `src/lib/format.ts` (B1) — and both rows are graded against it. Nothing here hardcodes a day count.
 
@@ -11401,7 +11707,7 @@ Expected: FAIL — `Error: Failed to load url ../../src/lib/staleness.ts (resolv
 // src/lib/staleness.ts
 import { STALE_DAYS } from './format.ts';
 
-/** Shape of data/meta.json. Written by crawl.yml and by the classification PR. */
+/** Shape of data/meta.json. Written by the harvest run and by the classification PR. */
 export interface SiteMeta {
   crawledAt: string;
   classifiedAt: string | null;
@@ -11471,7 +11777,8 @@ function grade(days: number, warnAt: number, staleAt: number): FreshnessState {
 
 /**
  * Crawl date and classification lag are reported separately and never merged.
- * Harvest survives the maintainer's absence; classification does not (§6.1, §13).
+ * Harvest keeps running on the weekly Action even when the maintainer's machine is off;
+ * classification does not (§6.1, §13).
  */
 export function evaluateStaleness(meta: SiteMeta | null, now: Date): StalenessReport {
   if (!meta) {
@@ -12626,6 +12933,12 @@ describe('classification session runbook', () => {
   it('requires the rescue index to be regenerated when names change', () => {
     expect(doc()).toContain('scripts/build-rescue-index.ts');
   });
+
+  it('forbids hand-editing the listing flag the harvest computes', () => {
+    const text = doc();
+    expect(text).toContain('**never** hand-edited');
+    expect(text).toContain('per-subdomain cap');
+  });
 });
 ```
 
@@ -12639,8 +12952,10 @@ mkdir -p /home/kyo/projects/ai-tools-hub/docs/operations
 cat > /home/kyo/projects/ai-tools-hub/docs/operations/classification-session.md <<'MARKDOWN'
 # Runbook — scheduled classification and translation session
 
-Harvest is a public GitHub Action that runs whether or not anyone is watching. Classification and
-pt-BR translation are not: they need judgment, so they run as a **scheduled Claude Code session on
+Harvest runs whether or not anyone is watching: a systemd user timer on the maintainer's machine
+every 4 hours, backed by a weekly public GitHub Action so days with the machine off cannot silence
+it. Classification and
+pt-BR translation are not like that: they need judgment, so they run as a **scheduled Claude Code session on
 the maintainer's subscription** — deliberately **not a metered API key**, and never inside the Pages
 build, which has a hard 10-minute deploy timeout.
 
@@ -12653,14 +12968,14 @@ workflow file cannot express.
 - After any large harvest, when the status banner shows a growing classification lag.
 - On demand, whenever the banner reports entries queued unclassified.
 
-The crawl runs nightly and is unaffected by this schedule. The two rot independently, and the banner
+The harvest runs every 4 hours locally and weekly in Actions, and is unaffected by this schedule. The two rot independently, and the banner
 reports them as two separate rows for exactly that reason.
 
 ## Inputs
 
 | File | Role |
 |---|---|
-| `data/skills.json` | a bare `Skill[]` of every harvested skill, written by `crawl.yml` |
+| `data/skills.json` | a bare `Skill[]` of every harvested skill, written by the harvest (`scripts/harvest/run.ts` locally, `crawl.yml` weekly) |
 | `data/taxonomy.json` | the closed vocabulary: 13 domains, the 15 security leaves, `protected`, `aliases`, `minimumMass` |
 | `data/assignments.json` | what previous sessions already decided; the cache |
 | `data/meta.json` | `crawledAt`, `classifiedAt`, `skillCount`, `sourceCount` |
@@ -12694,6 +13009,9 @@ Rules the session must hold to:
   security-relevant, and its translated description — live on the skill record, not here.
 - A skill with no entry here is not lost: it renders in its domain's named `general` leaf and is
   counted in the banner's "queued unclassified" row.
+- `Skill.listed` is **never** hand-edited. The harvest recomputes it from the per-subdomain cap on
+  every run (§5.1). An entry evicted from its listing still needs a classification, still keeps its
+  page, and still counts in the queued-unclassified row.
 
 ### Translation rules
 
@@ -12764,7 +13082,7 @@ MARKDOWN
 
 - [ ] **Step 4: Run test to verify it passes**
 Run: `npx vitest run tests/docs/runbook.test.ts`
-Expected: PASS — 12 tests
+Expected: PASS — 13 tests
 
 - [ ] **Step 5: Run the full suite and a clean build**
 Run: `npx astro build && npx vitest run`
@@ -12775,5 +13093,278 @@ Expected: PASS — the whole suite, with `tests/global-setup.ts` performing the 
 git add docs/operations/classification-session.md tests/docs/runbook.test.ts
 git commit -m "docs(ops): runbook for the scheduled classification and translation session"
 ```
+
+---
+
+### Task B5.20: Drop entries evicted by the per-subdomain cap from the sitemap
+
+Spec §5.1: an evicted entry disappears from listings, facet counts, the search index **and the
+sitemap**, and its page carries `noindex`. B4 keeps generating that page — the row is still in
+`data/skills.json` with a current score and dates — and emits the `noindex` meta itself; B3 keeps it
+out of Pagefind; Task B5.2 keeps it out of the rescue index. The sitemap is the one surface none of
+them can reach, because `@astrojs/sitemap` enumerates every route the build produced. So B5 supplies
+the `filter`.
+
+The matcher is deliberately base-agnostic: it recognises a per-skill route by its trailing
+`/{lang}/skills/{slug}/` shape rather than by a full path, so it keeps working under
+`/ai-tools-hub/`, under a custom domain with no base, and in the unit test with neither.
+
+**Files:**
+- Create: `src/lib/sitemap.ts`
+- Modify: `astro.config.mjs` (A1) — one import line and the `sitemap()` call
+- Test: `tests/lib/sitemap.test.ts`, `tests/build/sitemap.test.ts`
+
+**Interfaces:**
+- Consumes: `Skill` from `src/types.ts` — the required `Skill.listed` flag (§5.1); `skillSlug(skill: Skill): string` from `src/lib/slug.ts` (B4) — the single slug function (Rule 4); `loadSkills(): Skill[]` from `src/lib/data.ts` (A6)
+- Produces: `SKILL_URL_PATTERN: RegExp`; `unlistedSkillSlugs(skills: Skill[]): string[]`; `makeSitemapFilter(unlistedSlugs: Iterable<string>): (url: string) => boolean`
+
+- [ ] **Step 1: Verify both anchors exist exactly once in A1's config**
+```bash
+cd /home/kyo/projects/ai-tools-hub
+grep -c "import sitemap from '@astrojs/sitemap';" astro.config.mjs
+grep -c 'sitemap()' astro.config.mjs
+```
+Expected: `1` and `1`. If either count differs, stop and reconcile with A1 before editing — do not guess a replacement anchor, and never add a second `sitemap()` integration.
+
+- [ ] **Step 2: Write the failing unit test**
+```ts
+// tests/lib/sitemap.test.ts
+import { describe, it, expect } from 'vitest';
+import { SKILL_URL_PATTERN, makeSitemapFilter, unlistedSkillSlugs } from '../../src/lib/sitemap.ts';
+import { skillSlug } from '../../src/lib/slug.ts';
+import type { Skill } from '../../src/types.ts';
+
+/** Local fixture: importing a *.test.ts would re-register that file's suites inside this one. */
+function makeSkill(over: Partial<Skill> = {}): Skill {
+  return {
+    id: 'acme/tools@abc1234:kit/SKILL.md',
+    type: 'skill',
+    name: 'Terraform Drift Detector',
+    description: 'Detects drift between Terraform state and deployed cloud resources.',
+    descriptionPt: null,
+    longPt: null,
+    repo: 'acme/tools',
+    path: 'kit/SKILL.md',
+    sha: 'abc1234',
+    updatedDays: 12,
+    indexedAt: '2026-08-29',
+    license: 'MIT',
+    licenseSource: 'repo',
+    portable: true,
+    runtimes: ['claude'],
+    safety: {
+      executesCode: false, scriptCount: 0, languages: [],
+      network: false, readsEnv: false, declaredTools: null,
+    },
+    primary: 'security/iac-config',
+    also: [],
+    tags: ['terraform'],
+    securityRelevant: true,
+    score: 71,
+    breakdown: { adoption: 12, maintenance: 26, provenance: 13, completeness: 20, total: 71 },
+    listed: true,
+    ...over,
+  };
+}
+
+describe('unlistedSkillSlugs', () => {
+  it('returns the slug of every evicted entry and nothing else', () => {
+    const listed = makeSkill({ repo: 'acme/tools', path: 'kit/SKILL.md' });
+    const evicted = makeSkill({ repo: 'acme/tools', path: 'old/SKILL.md', listed: false });
+    expect(unlistedSkillSlugs([listed, evicted])).toEqual([skillSlug(evicted)]);
+  });
+
+  it('is empty when every entry is listed', () => {
+    expect(unlistedSkillSlugs([makeSkill()])).toEqual([]);
+  });
+});
+
+describe('makeSitemapFilter', () => {
+  const filter = makeSitemapFilter(['evicted-drift-tool']);
+
+  it('drops an unlisted skill URL in either locale', () => {
+    expect(filter('https://example.com/ai-tools-hub/en/skills/evicted-drift-tool/')).toBe(false);
+    expect(filter('https://example.com/ai-tools-hub/pt/skills/evicted-drift-tool/')).toBe(false);
+  });
+
+  it('keeps a listed skill URL', () => {
+    expect(filter('https://example.com/ai-tools-hub/en/skills/terraform-drift-detector/')).toBe(true);
+  });
+
+  it('works under any deployment base, including none', () => {
+    expect(filter('https://example.com/en/skills/evicted-drift-tool/')).toBe(false);
+    expect(filter('https://example.com/deep/nested/base/en/skills/evicted-drift-tool/')).toBe(false);
+  });
+
+  it('never touches a URL that is not a per-skill page', () => {
+    for (const url of [
+      'https://example.com/ai-tools-hub/en/catalog/',
+      'https://example.com/ai-tools-hub/en/methodology/',
+      'https://example.com/ai-tools-hub/pt/',
+      'https://example.com/ai-tools-hub/en/skills/evicted-drift-tool/extra/',
+    ]) {
+      expect(filter(url), url).toBe(true);
+    }
+  });
+
+  it('keeps everything when nothing has been evicted', () => {
+    const permissive = makeSitemapFilter([]);
+    expect(permissive('https://example.com/ai-tools-hub/en/skills/evicted-drift-tool/')).toBe(true);
+  });
+
+  it('exposes the route pattern it matches on', () => {
+    // Multi-segment: skillSlug() emits `owner/repo/dir/name`, so a one-segment
+    // pattern silently matches nothing real and no evicted entry ever leaves the sitemap.
+    expect(SKILL_URL_PATTERN.exec('/ai-tools-hub/en/skills/anthropics/skills/document-skills/pdf/')?.[2])
+      .toBe('anthropics/skills/document-skills/pdf');
+    expect(SKILL_URL_PATTERN.exec('/ai-tools-hub/en/skills/kube-bench-runner/')?.[2])
+      .toBe('kube-bench-runner');
+  });
+});
+```
+
+- [ ] **Step 3: Run test to verify it fails**
+Run: `npx vitest run tests/lib/sitemap.test.ts`
+Expected: FAIL — `Error: Failed to load url ../../src/lib/sitemap.ts (resolved id: ../../src/lib/sitemap.ts). Does the file exist?`
+
+- [ ] **Step 4: Write minimal implementation**
+```ts
+// src/lib/sitemap.ts
+import type { Skill } from '../types.ts';
+import { skillSlug } from './slug.ts';
+
+/**
+ * A built per-skill route, recognised by its tail rather than by a full path so the same regex
+ * works under /ai-tools-hub/, under a custom domain with no base, and in tests with neither.
+ * No `g` flag: exec() must stay stateless across calls.
+ */
+export const SKILL_URL_PATTERN = /\/(en|pt)\/skills\/(.+?)\/?$/;
+
+/** Slugs of entries evicted by the per-subdomain cap (§5.1). Their pages still build. */
+export function unlistedSkillSlugs(skills: Skill[]): string[] {
+  return skills.filter((skill) => !skill.listed).map((skill) => skillSlug(skill));
+}
+
+/**
+ * @astrojs/sitemap filter: return false to drop a URL. An evicted entry keeps its page and the
+ * noindex meta B4 puts on it, but the catalog must not advertise an entry it does not list.
+ */
+export function makeSitemapFilter(unlistedSlugs: Iterable<string>): (url: string) => boolean {
+  const unlisted = new Set(unlistedSlugs);
+  return (url: string): boolean => {
+    let pathname: string;
+    try {
+      pathname = new URL(url).pathname;
+    } catch {
+      pathname = url;
+    }
+    const match = SKILL_URL_PATTERN.exec(pathname);
+    if (!match) return true;
+    return !unlisted.has(match[2]);
+  };
+}
+```
+
+- [ ] **Step 5: Run test to verify it passes**
+Run: `npx vitest run tests/lib/sitemap.test.ts`
+Expected: PASS — 8 tests
+
+- [ ] **Step 6: Write the failing build test**
+```ts
+// tests/build/sitemap.test.ts
+import { describe, it, expect } from 'vitest';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { loadSkills } from '../../src/lib/data.ts';
+import { skillSlug } from '../../src/lib/slug.ts';
+
+function sitemapXml(): string {
+  const files = existsSync('dist')
+    ? readdirSync('dist').filter((file) => file.startsWith('sitemap') && file.endsWith('.xml'))
+    : [];
+  if (files.length === 0) {
+    throw new Error('No dist/sitemap*.xml — @astrojs/sitemap did not run, or the site was not built');
+  }
+  return files.map((file) => readFileSync(join('dist', file), 'utf8')).join('\n');
+}
+
+describe('the sitemap advertises only listed entries', () => {
+  const skills = loadSkills();
+
+  it('wires the filter through astro.config.mjs, reading data only through the A6 loader', () => {
+    const config = readFileSync('astro.config.mjs', 'utf8');
+    expect(
+      config.includes("from './src/lib/sitemap.ts'"),
+      'astro.config.mjs does not import src/lib/sitemap.ts: the sitemap still advertises unlisted entries',
+    ).toBe(true);
+    expect(config).toContain("import { loadSkills } from './src/lib/data.ts';");
+    expect(config).toContain('filter: makeSitemapFilter(unlistedSkillSlugs(loadSkills()))');
+  });
+
+  it('lists every listed skill page', () => {
+    const xml = sitemapXml();
+    for (const skill of skills.filter((entry) => entry.listed)) {
+      expect(xml, `${skill.id} is listed but missing from the sitemap`)
+        .toContain(`/en/skills/${skillSlug(skill)}/`);
+    }
+  });
+
+  it('advertises no entry evicted by the per-subdomain cap', () => {
+    const xml = sitemapXml();
+    for (const skill of skills.filter((entry) => !entry.listed)) {
+      expect(xml, `${skill.id} is unlisted but still in the sitemap`)
+        .not.toContain(`/en/skills/${skillSlug(skill)}/`);
+    }
+  });
+
+  it('still builds the page for an evicted entry', () => {
+    for (const skill of skills.filter((entry) => !entry.listed)) {
+      expect(
+        existsSync(`dist/en/skills/${skillSlug(skill)}/index.html`),
+        `${skill.id} lost its page: §5.1 drops the listing, never the page`,
+      ).toBe(true);
+    }
+  });
+});
+```
+
+- [ ] **Step 7: Run test to verify it fails**
+Run: `npx astro build && npx vitest run tests/build/sitemap.test.ts`
+Expected: FAIL — `AssertionError: astro.config.mjs does not import src/lib/sitemap.ts: the sitemap still advertises unlisted entries: expected false to be true`
+
+- [ ] **Step 8: Modify `astro.config.mjs`**
+Astro loads its config through Vite, so a relative TypeScript import resolves there exactly as it does inside `src/` — and carries the `.ts` extension for the same reason every other relative import in this plan does.
+
+Replace this exact line:
+```js
+import sitemap from '@astrojs/sitemap';
+```
+with:
+```js
+import sitemap from '@astrojs/sitemap';
+import { loadSkills } from './src/lib/data.ts';
+import { makeSitemapFilter, unlistedSkillSlugs } from './src/lib/sitemap.ts';
+```
+Replace this exact text:
+```js
+sitemap()
+```
+with:
+```js
+sitemap({ filter: makeSitemapFilter(unlistedSkillSlugs(loadSkills())) })
+```
+Add nothing else. `site`, `base` and every other integration are A1's.
+
+- [ ] **Step 9: Rebuild and run test to verify it passes**
+Run: `npx astro build && npx vitest run tests/build/sitemap.test.ts`
+Expected: PASS — 4 tests
+
+- [ ] **Step 10: Commit**
+```bash
+git add src/lib/sitemap.ts tests/lib/sitemap.test.ts tests/build/sitemap.test.ts astro.config.mjs
+git commit -m "feat(sitemap): drop entries evicted by the per-subdomain cap"
+```
+
+---
 
 ---

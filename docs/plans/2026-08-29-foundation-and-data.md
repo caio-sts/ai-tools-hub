@@ -27,6 +27,7 @@
 ---
 
 
+
 ### Task A1.1: npm project and Vitest harness
 
 **Files:**
@@ -496,6 +497,11 @@ git commit -m "test: build the site once in globalSetup instead of per test file
 
 Spec §11.3 cuts SEO to exactly this one integration.
 
+`integrations: [sitemap()],` in Step 4 is written on exactly that one line, and it is the verbatim
+anchor B5's `Modify` step matches when it passes `sitemap({ filter })` — the filter that keeps
+unlisted skill URLs out of the sitemap (spec §5.1). Do not reflow, wrap or reorder that line: a
+reformatted anchor turns B5's Modify step into an edit that matches nothing.
+
 - [ ] **Step 1: Install the sitemap integration**
 
 Run: `npm install @astrojs/sitemap@3.7.3`
@@ -708,11 +714,18 @@ git commit -m "chore: add strict typescript config and typecheck script"
 
 **Interfaces:**
 - Consumes: `tsconfig.json` and the `typecheck` npm script from Task A1.5
-- Produces: `src/types.ts` exporting `Lang`, `Runtime`, `TreeFile`, `RepoRef`, `Collection`, `Safety`, `ScoreBreakdown`, `RawSkill`, `Skill`, `TaxonomyNode`, `Taxonomy`, `Meta`, `Assignment`, `Assignments` — the only place any of these is declared. A6's `src/lib/data.ts` imports `Skill`, `Collection`, `Meta` and `Assignments` from here for `loadSkills(): Skill[]`, `loadCollections(): Collection[]`, `loadMeta(): Meta`, `loadAssignments(): Assignments`. A6's `scripts/harvest/run.ts` imports `Assignment` from here too — nothing outside this file re-declares any of them.
+- Produces: `src/types.ts` exporting `Lang`, `Runtime`, `TreeFile`, `RepoRef`, `Collection`, `Safety`, `ScoreBreakdown`, `RawSkill`, `Skill`, `TaxonomyNode`, `Taxonomy`, `Meta`, `Assignment`, `Assignments` — the only place any of these is declared. A6's `src/lib/data.ts` imports `Skill`, `Collection`, `Meta` and `Assignments` from here for `loadSkills(): Skill[]`, `loadCollections(): Collection[]`, `loadMeta(): Meta`, `loadAssignments(): Assignments`. A6's `scripts/harvest/run.ts` imports `Assignment` from here too, and A6's `src/lib/rank.ts` imports `Skill` — `applyListing` there is the **only** writer of `Skill.listed`; B2, B3, B4 and B5 only read that flag. Nothing outside this file re-declares any of these types.
 
 The types are erased at runtime, so `tsc --noEmit` is one red/green signal — but the test also does a runtime `import()` of the module, so `npx vitest run` is red before the file exists and green after, and the fixtures lock in the field semantics (`id` shape, `also` cap, breakdown caps and sum, assignment keying).
 
 `Runtime` is written in `RUNTIME_ORDER` — claude, openclaw, codex, cursor, generic — and deliberately does **not** export a `RUNTIME_ORDER` constant; that lives in `src/lib/safety.ts` (A5). Nothing sorts runtimes alphabetically.
+
+`listed` (spec §5.1, §4.2) is **required, never optional**. Eviction by the per-subdomain cap is a
+flag, not a deletion: the row stays in `data/skills.json`, keeps being re-scored and re-dated, and
+its page keeps building. An optional field would let a writer omit it, and an omitted flag is
+indistinguishable from a listed entry at every read site. Required means `tsc` fails on any fixture
+or writer that does not state it — which is exactly how A6's `applyListing` and B2/B3/B4/B5's read
+sites stay honest.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -808,6 +821,7 @@ const skill: Skill = {
   securityRelevant: true,
   score: 91,
   breakdown,
+  listed: true,
 };
 
 const assignments: Assignments = {
@@ -871,6 +885,17 @@ describe('shared types', () => {
       breakdown.adoption + breakdown.maintenance + breakdown.provenance + breakdown.completeness,
     ).toBe(breakdown.total);
     expect(skill.score).toBe(breakdown.total);
+  });
+
+  // Spec §5.1: eviction is a flag, not a deletion — the row keeps its id, its
+  // original indexedAt (provenance, not a listing timestamp) and its score.
+  it('flags an evicted entry instead of deleting it', () => {
+    expect(skill.listed).toBe(true);
+    const evicted: Skill = { ...skill, listed: false };
+    expect(evicted.listed).toBe(false);
+    expect(evicted.id).toBe(skill.id);
+    expect(evicted.indexedAt).toBe(skill.indexedAt);
+    expect(evicted.score).toBe(skill.score);
   });
 
   it('keys assignments by the skill id, not by an array index', () => {
@@ -978,6 +1003,9 @@ export interface Skill {
   securityRelevant: boolean;
   score: number;
   breakdown: ScoreBreakdown;
+  /** False once evicted by the per-subdomain cap (§5.1). The row survives and keeps
+   *  being re-scored; only the listing goes away. */
+  listed: boolean;
 }
 
 export interface TaxonomyNode {
@@ -1016,7 +1044,7 @@ export interface Meta {
 
 Run: `npm run typecheck && npx vitest run tests/types.test.ts`
 
-Expected: PASS — typecheck prints nothing and 10 tests pass.
+Expected: PASS — typecheck prints nothing and 11 tests pass.
 
 - [ ] **Step 5: Commit**
 
@@ -1480,6 +1508,8 @@ and no step runs `astro build` by hand — `npx vitest run …` is sufficient an
 block rather than inside `@theme`, so Tailwind cannot emit a `bg-hazard` utility and the
 reservation is enforced by construction instead of by discipline. Its only permitted consumers are
 the safety strip, stale dates (>60 days) and the undeclared-license value.
+
+---
 
 ---
 
@@ -3772,6 +3802,8 @@ No A3 test reads or writes `dist/`, so nothing here races the build (RULE 6).
 
 ---
 
+---
+
 ### Task A3.1: Taxonomy data file
 
 The hand-written source of truth: 13 domains, `security` fully expanded into its 15 subdomains
@@ -5687,6 +5719,8 @@ seven `PASS` lines and `7 check(s) passed over 40 nodes and 0 assignments`, exit
 git add .github/workflows/ci.yml tests/ci/workflow.test.ts
 git commit -m "ci: run unit tests and the 7 taxonomy governance checks on push and PR"
 ```
+
+---
 
 ---
 
@@ -8692,6 +8726,8 @@ git commit -m "feat(harvest): enumerateSkills with commit-pinned refs and the in
 
 ---
 
+---
+
 ### Task A5.1: Aliased GraphQL enrichment query builder
 
 **Files:**
@@ -10326,6 +10362,8 @@ git commit -m "feat(safety): deriveSafety with required frontmatter for declared
 
 ---
 
+---
+
 ### Task A6.1: Composite score model
 
 **Files:**
@@ -10911,6 +10949,11 @@ classification PR writes nothing else. `securityRelevant` is therefore always de
 `descriptionPt` / `longPt` are always `null` out of harvest: the harvest is deterministic and never
 invents a translation.
 
+`listed` is set to `true` here, and that value is **provisional**. `applyListing` (Task A6.9) is the
+authority on the field, and `runHarvest` (Task A6.10) applies it over the whole catalog — carried-
+forward entries included — after scoring and before writing. A newly built entry is listed unless
+the per-subdomain cap says otherwise.
+
 - [ ] **Step 1: Write the failing test**
 
 ```ts
@@ -10990,6 +11033,7 @@ describe('buildSkill', () => {
       also: [],
       tags: [],
       securityRelevant: true,
+      listed: true,
       score: 90,
       breakdown: { adoption: 18, maintenance: 27, provenance: 25, completeness: 20, total: 90 },
     });
@@ -11180,6 +11224,9 @@ export function buildSkill(input: BuildSkillInput): Skill {
     also: (assignment?.also ?? []).slice(0, MAX_ALSO),
     tags: (assignment?.tags ?? []).slice(0, MAX_TAGS),
     securityRelevant: isSecurityRelevant(`${name} ${description}`),
+    // Provisional. applyListing (A6.9) is the authority on this field and runHarvest applies
+    // it over the whole catalog before writing, so the cap decides what is listed (spec §5.1).
+    listed: true,
     score: breakdown.total,
     breakdown,
   };
@@ -11224,7 +11271,7 @@ sibling path in `treePaths` — `scripts/*`, `LICENSE*` — is a HEAD path, and 
 SKILL.md last changed simply does not exist at the per-path commit. Content and sibling-LICENSE
 fetches are therefore pinned to the repository head commit, resolved once per repo by A4.19's
 `fetchHeadCommit` — **the one head-commit fetcher in the codebase**. This section imports it
-(in Task A6.9) and writes no second implementation.
+(in Task A6.10) and writes no second implementation.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -11877,6 +11924,7 @@ function skill(repo: string, id: string): Skill {
     also: [],
     tags: [],
     securityRelevant: false,
+    listed: true,
     // adoption 10 + maintenance 30 + provenance 5 (license) + completeness 20 (portable+license+description)
     score: 65,
     breakdown: { adoption: 10, maintenance: 30, provenance: 5, completeness: 20, total: 65 },
@@ -11993,7 +12041,346 @@ git commit -m "feat(harvest): skip repos whose pushedAt is unchanged"
 
 ---
 
-### Task A6.9: runHarvest — the pipeline
+### Task A6.9: The per-subdomain cap — applyListing
+
+**Files:**
+- Create: `src/lib/rank.ts`
+- Test: `tests/lib/rank.test.ts`
+
+**Interfaces:**
+- Consumes: `ScoreBreakdown`, `Skill` from `src/types.ts` (A1.6) — including the required `listed: boolean` field A1.6 declares
+- Produces:
+  - `export const SUBDOMAIN_CAP = 60` and `export const EVICT_RANK = 72`
+  - `export function applyListing(skills: Skill[], previous: Set<string>, minimumMass: number): Skill[]`
+
+`applyListing` groups by `primary`, ranks each group by `score` descending (ties by `id`, the same
+comparator the catalog itself is sorted with), and returns the same skills — **in the input order**,
+so a sorted catalog stays sorted — each with `listed` set. Eviction is a flag, never a deletion: the
+row stays in `data/skills.json`, keeps being re-scored and re-dated, and its page keeps building
+(spec §5.1). The cap is per subdomain rather than global because browsing is per subdomain.
+
+Three rules, one red/green cycle each:
+
+1. **Cap** — rank ≤ `SUBDOMAIN_CAP` is listed.
+2. **Hysteresis** — an id in `previous` (listed on the last committed run) stays listed until its
+   rank passes `EVICT_RANK`. Entering is harder than staying, so boundary entries do not flap week
+   to week.
+3. **Minimum-mass floor** — eviction may never take a subdomain's listed count below `minimumMass`.
+   The cap is a ceiling, never a floor.
+
+`previous` is the set of ids where `listed === true` in the last committed `data/skills.json`;
+Task A6.10 derives it and passes `loadTaxonomy().minimumMass` (5, A3.2) as the floor. Nothing here
+reads a file: the caller supplies both, so this module stays a pure function of its inputs.
+
+- [ ] **Step 1: Write the failing test — the cap**
+
+```ts
+// tests/lib/rank.test.ts
+import { describe, expect, it } from 'vitest';
+import type { ScoreBreakdown, Skill } from '../../src/types.ts';
+import { EVICT_RANK, SUBDOMAIN_CAP, applyListing } from '../../src/lib/rank.ts';
+
+/** Any total in 0..100 split into components that respect the 25/30/25/20 caps. */
+function breakdownFor(total: number): ScoreBreakdown {
+  const adoption = Math.min(25, total);
+  const maintenance = Math.min(30, total - adoption);
+  const provenance = Math.min(25, total - adoption - maintenance);
+  const completeness = total - adoption - maintenance - provenance;
+  return { adoption, maintenance, provenance, completeness, total };
+}
+
+function id(primary: string, rank: number): string {
+  return `owner/repo@abc1234:${primary}/${rank}/SKILL.md`;
+}
+
+/**
+ * Every fixture starts `listed: true`, so an entry that comes back false proves the flag was
+ * recomputed from rank rather than passed through from the input.
+ */
+function entry(primary: string, rank: number, score: number): Skill {
+  return {
+    id: id(primary, rank),
+    type: 'skill',
+    name: `entry-${rank}`,
+    description: 'A catalog entry with a description long enough to be real.',
+    descriptionPt: null,
+    longPt: null,
+    repo: 'owner/repo',
+    path: `${primary}/${rank}/SKILL.md`,
+    sha: 'abc1234',
+    updatedDays: 1,
+    indexedAt: '2026-08-01T00:00:00.000Z',
+    license: 'MIT',
+    licenseSource: 'repo',
+    portable: true,
+    runtimes: ['generic'],
+    safety: { executesCode: false, scriptCount: 0, languages: [], network: false, readsEnv: false, declaredTools: null },
+    primary,
+    also: [],
+    tags: [],
+    securityRelevant: false,
+    listed: true,
+    score,
+    breakdown: breakdownFor(score),
+  };
+}
+
+/** `count` entries in one subdomain scored 100, 99, 98 …, so rank N is `id(primary, N)`. */
+function ladder(primary: string, count: number): Skill[] {
+  return Array.from({ length: count }, (_unused, i) => entry(primary, i + 1, 100 - i));
+}
+
+function isListed(result: Skill[], primary: string, rank: number): boolean {
+  const found = result.find((skill) => skill.id === id(primary, rank));
+  if (found === undefined) throw new Error(`no entry at rank ${rank} of ${primary}`);
+  return found.listed;
+}
+
+function listedCount(result: Skill[], primary: string): number {
+  return result.filter((skill) => skill.primary === primary && skill.listed).length;
+}
+
+describe('the cap lists the top SUBDOMAIN_CAP of each subdomain (spec §5.1)', () => {
+  it('pins the two thresholds', () => {
+    expect(SUBDOMAIN_CAP).toBe(60);
+    expect(EVICT_RANK).toBe(72);
+  });
+
+  it('lists rank 60 and drops rank 61 when nothing was listed before', () => {
+    const result = applyListing(ladder('security/supply-chain', 80), new Set(), 5);
+    expect(isListed(result, 'security/supply-chain', 1)).toBe(true);
+    expect(isListed(result, 'security/supply-chain', 60)).toBe(true);
+    expect(isListed(result, 'security/supply-chain', 61)).toBe(false);
+    expect(isListed(result, 'security/supply-chain', 80)).toBe(false);
+    expect(listedCount(result, 'security/supply-chain')).toBe(60);
+  });
+
+  it('caps per subdomain, so a populous node cannot crowd out a thin one', () => {
+    const result = applyListing(
+      [...ladder('security/supply-chain', 80), ...ladder('security/threat-modeling', 7)],
+      new Set(),
+      5,
+    );
+    expect(listedCount(result, 'security/supply-chain')).toBe(60);
+    expect(listedCount(result, 'security/threat-modeling')).toBe(7);
+  });
+
+  it('ranks by score, not by input order', () => {
+    const result = applyListing([...ladder('security/supply-chain', 80)].reverse(), new Set(), 5);
+    expect(isListed(result, 'security/supply-chain', 1)).toBe(true);
+    expect(isListed(result, 'security/supply-chain', 61)).toBe(false);
+  });
+
+  it('returns the entries in the input order, so a sorted catalog stays sorted', () => {
+    const input = ladder('security/supply-chain', 80);
+    const result = applyListing(input, new Set(), 5);
+    expect(result.map((skill) => skill.id)).toEqual(input.map((skill) => skill.id));
+  });
+});
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `npx vitest run tests/lib/rank.test.ts`
+
+Expected: FAIL — `src/lib/rank.ts` does not exist, so the import cannot be resolved. Vitest reports `Failed to load url ../../src/lib/rank.ts` and no test in the file runs.
+
+- [ ] **Step 3: Write the cap**
+
+```ts
+// src/lib/rank.ts
+import type { Skill } from '../types.ts';
+
+/** An entry joins a subdomain's listing at rank <= 60 (spec §5.1). */
+export const SUBDOMAIN_CAP = 60;
+
+/** … and is only dropped once it falls past rank 72. Applied in Step 6. */
+export const EVICT_RANK = 72;
+
+/** The catalog's own order: score descending, ties by id, so ranking is reproducible. */
+function byScoreThenId(a: Skill, b: Skill): number {
+  return b.score - a.score || a.id.localeCompare(b.id);
+}
+
+export function applyListing(skills: Skill[], previous: Set<string>, minimumMass: number): Skill[] {
+  const groups = new Map<string, Skill[]>();
+  for (const skill of skills) {
+    const group = groups.get(skill.primary);
+    if (group === undefined) groups.set(skill.primary, [skill]);
+    else group.push(skill);
+  }
+
+  const listed = new Set<string>();
+
+  for (const group of groups.values()) {
+    const ranked = [...group].sort(byScoreThenId);
+    for (let i = 0; i < ranked.length && i < SUBDOMAIN_CAP; i += 1) {
+      listed.add(ranked[i]!.id);
+    }
+  }
+
+  return skills.map((skill) => ({ ...skill, listed: listed.has(skill.id) }));
+}
+```
+
+- [ ] **Step 4: Run test to verify it passes**
+
+Run: `npx vitest run tests/lib/rank.test.ts`
+
+Expected: PASS — 5 tests.
+
+- [ ] **Step 5: Add the hysteresis test**
+
+Append to `tests/lib/rank.test.ts`:
+
+```ts
+describe('hysteresis: entering is harder than staying (spec §5.1)', () => {
+  // Only the supply-chain entries were listed on the previous run. threat-modeling is a
+  // brand-new subdomain, so the same rank has to behave differently in the two groups.
+  const previous = new Set([
+    id('security/supply-chain', 60),
+    id('security/supply-chain', 65),
+    id('security/supply-chain', 72),
+    id('security/supply-chain', 73),
+  ]);
+  const result = applyListing(
+    [...ladder('security/supply-chain', 80), ...ladder('security/threat-modeling', 80)],
+    previous,
+    5,
+  );
+
+  it('keeps a previously listed entry that has slipped to rank 65', () => {
+    expect(isListed(result, 'security/supply-chain', 65)).toBe(true);
+  });
+
+  it('drops the same rank 65 when it was not listed before', () => {
+    expect(isListed(result, 'security/threat-modeling', 65)).toBe(false);
+  });
+
+  it('holds a previously listed entry at rank 72 and drops it at rank 73', () => {
+    expect(isListed(result, 'security/supply-chain', 72)).toBe(true);
+    expect(isListed(result, 'security/supply-chain', 73)).toBe(false);
+  });
+});
+```
+
+- [ ] **Step 6: Run test to verify it fails**
+
+Run: `npx vitest run tests/lib/rank.test.ts`
+
+Expected: FAIL — 2 of the 3 new tests fail with `expected false to be true`: under the cap alone,
+rank 65 and rank 72 are dropped whether or not they were listed before. The middle test
+("drops the same rank 65 when it was not listed before") already passes, because the cap alone
+gets that case right.
+
+- [ ] **Step 7: Write the hysteresis**
+
+In `src/lib/rank.ts`, replace exactly this loop:
+
+```ts
+    const ranked = [...group].sort(byScoreThenId);
+    for (let i = 0; i < ranked.length && i < SUBDOMAIN_CAP; i += 1) {
+      listed.add(ranked[i]!.id);
+    }
+```
+
+with:
+
+```ts
+    const ranked = [...group].sort(byScoreThenId);
+    for (let i = 0; i < ranked.length; i += 1) {
+      const candidate = ranked[i]!;
+      const rank = i + 1;
+      // Joining takes rank <= 60; staying only takes rank <= 72, so a boundary entry
+      // does not flap in and out week to week (spec §5.1).
+      const threshold = previous.has(candidate.id) ? EVICT_RANK : SUBDOMAIN_CAP;
+      if (rank <= threshold) listed.add(candidate.id);
+    }
+```
+
+- [ ] **Step 8: Run test to verify it passes**
+
+Run: `npx vitest run tests/lib/rank.test.ts`
+
+Expected: PASS — 8 tests.
+
+- [ ] **Step 9: Add the minimum-mass test**
+
+Append to `tests/lib/rank.test.ts`:
+
+```ts
+describe('the cap is a ceiling, never a floor (spec §5.1, §10.1)', () => {
+  it('keeps a three-entry subdomain fully listed however badly it scores', () => {
+    const thin = [
+      entry('security/threat-modeling', 1, 2),
+      entry('security/threat-modeling', 2, 1),
+      entry('security/threat-modeling', 3, 0),
+    ];
+    const result = applyListing(thin, new Set(), 5);
+    expect(listedCount(result, 'security/threat-modeling')).toBe(3);
+    expect(result.every((skill) => skill.listed)).toBe(true);
+  });
+
+  it('fills back up to minimumMass when the cap would leave a subdomain short', () => {
+    // The only shape in which the floor is observable. Production runs a minimumMass of 5,
+    // far below a cap of 60, so the guard can never bite there — and without this case the
+    // guard could be deleted with every other test in this file still green.
+    const result = applyListing(ladder('security/supply-chain', 100), new Set(), 70);
+    expect(listedCount(result, 'security/supply-chain')).toBe(70);
+    expect(isListed(result, 'security/supply-chain', 70)).toBe(true);
+    expect(isListed(result, 'security/supply-chain', 71)).toBe(false);
+  });
+});
+```
+
+- [ ] **Step 10: Run test to verify it fails**
+
+Run: `npx vitest run tests/lib/rank.test.ts`
+
+Expected: FAIL — one new test fails, "fills back up to minimumMass when the cap would leave a
+subdomain short", with `expected 60 to be 70`. The three-entry case already passes: with 3 entries
+every rank is under the cap, which is exactly the property it pins — a low score alone never unlists
+anything.
+
+- [ ] **Step 11: Write the minimum-mass floor**
+
+In `src/lib/rank.ts`, insert immediately after the ranking loop, still inside the
+`for (const group of groups.values())` body:
+
+```ts
+    // A ceiling, never a floor: eviction may not take a subdomain below the minimum mass
+    // §10.1 needs for it to be navigable, so refill from the top until it is met (spec §5.1).
+    for (let i = 0; i < ranked.length && countIn(listed, ranked) < minimumMass; i += 1) {
+      listed.add(ranked[i]!.id);
+    }
+```
+
+and add this helper above `applyListing`:
+
+```ts
+function countIn(listed: Set<string>, ranked: Skill[]): number {
+  let count = 0;
+  for (const skill of ranked) if (listed.has(skill.id)) count += 1;
+  return count;
+}
+```
+
+- [ ] **Step 12: Run the whole rank suite**
+
+Run: `npx vitest run tests/lib/rank.test.ts`
+
+Expected: PASS — 10 tests.
+
+- [ ] **Step 13: Commit**
+
+```bash
+git add src/lib/rank.ts tests/lib/rank.test.ts
+git commit -m "feat(rank): cap each subdomain at 60 listings with hysteresis and a minimum-mass floor"
+```
+
+---
+
+### Task A6.10: runHarvest — the pipeline
 
 **Files:**
 - Modify: `scripts/harvest/run.ts` (replace the whole import header with the block in Step 3, then append the rest)
@@ -12007,6 +12394,8 @@ git commit -m "feat(harvest): skip repos whose pushedAt is unchanged"
   - `deriveSafety(files, contents, frontmatter)` (A5.9), `isPortable(frontmatter)` (A5.8) and `scriptFilesFor(tree, skillPath)` (A5.5) from `src/lib/safety.ts`
   - `resolveLicense(input)` (A5.4) and `siblingLicensePath(skillPath, treePaths)` (A6.5 Step 3) from `src/lib/license.ts`
   - `scoreSkill(input)` from `src/lib/score.ts` (A6.1)
+  - `applyListing(skills, previous, minimumMass)` from `src/lib/rank.ts` (A6.9)
+  - `loadTaxonomy()` from `src/lib/taxonomy.ts` (A3.2) — for `minimumMass`, which is taxonomy governance and has exactly one home
   - `loadSkills`, `loadCollections`, `loadMeta`, `loadAssignments` from `src/lib/data.ts` (A6.6)
   - `buildSkill`, `fetchScriptContents`, `writeCatalog`, `writeMeta`, `pushedAtIndex`, `partitionRepos`, `carryForward`, `skillId` from `scripts/harvest/run.ts`
 - Produces:
@@ -12014,12 +12403,14 @@ git commit -m "feat(harvest): skip repos whose pushedAt is unchanged"
   - `export interface HarvestOptions { token: string; dataDir: string; allowlist?: string[] | null; deps?: Partial<HarvestDeps> }`
   - `export async function runHarvest(options: HarvestOptions): Promise<{ skills: Skill[]; collections: Collection[]; meta: Meta }>`
 
-Two invariants this task exists to hold. **Sibling content is fetched at the repository head
+Three invariants this task exists to hold. **Sibling content is fetched at the repository head
 commit, never at `raw.sha`**: `raw.sha` is a valid commit sha (A4.20 guarantees it), but it is
 *this SKILL.md's* commit, while `treePaths` came from `git/trees/HEAD` (A4.12) — a `scripts/` file
-added after the SKILL.md last changed does not exist at that older commit. And **frontmatter reaches
+added after the SKILL.md last changed does not exist at that older commit. **Frontmatter reaches
 `deriveSafety`**, so `safety.declaredTools` is populated for the 9% of skills that declare
-`allowed-tools` (spec §4.3).
+`allowed-tools` (spec §4.3). And **`applyListing` runs over the whole catalog** — freshly built and
+carried-forward entries alike — after the sort and before writing, so `listed` reflects this run's
+ranking rather than `buildSkill`'s provisional `true` or a stale flag from the previous file.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -12072,6 +12463,9 @@ function cachedSkill(): Skill {
     also: [],
     tags: [],
     securityRelevant: false,
+    // Deliberately false on disk: it was evicted on the previous run. It is rank 1 in its
+    // subdomain now, so applyListing has to bring it back (spec §5.1).
+    listed: false,
     score: 100,
     breakdown: { adoption: 25, maintenance: 30, provenance: 25, completeness: 20, total: 100 },
   };
@@ -12218,6 +12612,24 @@ describe('runHarvest', () => {
     expect(fresh?.indexedAt).toBe('2026-08-29T06:37:00.000Z');
   });
 
+  it('re-lists a previously evicted entry, keeping its original indexedAt (spec §5.1)', async () => {
+    const dir = await seededDataDir();
+    const { skills } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['cached/repo', 'fresh/repo'],
+      deps: deps(spy()),
+    });
+
+    const cached = skills.find((k) => k.id === 'cached/repo@old:SKILL.md');
+    // It was written to disk with listed: false. Only applyListing can turn it back on,
+    // and indexedAt is provenance, not a listing timestamp, so it must not move.
+    expect(cached?.listed).toBe(true);
+    expect(cached?.indexedAt).toBe('2026-08-01T00:00:00.000Z');
+    expect(skills.every((k) => k.listed)).toBe(true);
+    expect(loadSkills(dir).every((k) => k.listed)).toBe(true);
+  });
+
   it('sorts by score descending, then by id', async () => {
     const dir = await seededDataDir();
     const { skills } = await runHarvest({
@@ -12284,8 +12696,10 @@ import type {
 } from '../../src/types.ts';
 import { loadAssignments, loadCollections, loadMeta, loadSkills } from '../../src/lib/data.ts';
 import { resolveLicense, siblingLicensePath } from '../../src/lib/license.ts';
+import { applyListing } from '../../src/lib/rank.ts';
 import { deriveSafety, isPortable, scriptFilesFor } from '../../src/lib/safety.ts';
 import { scoreSkill } from '../../src/lib/score.ts';
+import { loadTaxonomy } from '../../src/lib/taxonomy.ts';
 import { discoverRepos } from './discover.ts';
 import { enumerateSkills, fetchHeadCommit, fetchRawFile, fetchTree, type EnumerateDeps } from './enumerate.ts';
 import { detectRuntimes, enrichCollections } from './enrich.ts';
@@ -12392,18 +12806,25 @@ export async function runHarvest(
 
   skills.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
 
+  // Survival (spec §5.1). The cap decides what is LISTED, never what is stored: every row stays
+  // in skills.json and keeps being re-scored. `previous` is what the last committed run listed,
+  // which is what makes eviction hysteretic instead of a rank-60 knife edge. applyListing
+  // preserves the order it was given, so the sort above survives.
+  const previouslyListed = new Set(previous.skills.filter((entry) => entry.listed).map((entry) => entry.id));
+  const listed = applyListing(skills, previouslyListed, loadTaxonomy().minimumMass);
+
   const meta: Meta = {
     crawledAt: indexedAt,
     // Harvest never classifies; the classification PR owns this field (spec §6.1).
     classifiedAt: previousMeta.classifiedAt,
-    skillCount: skills.length,
+    skillCount: listed.length,
     sourceCount: collections.length,
   };
 
-  await writeCatalog(dataDir, { skills, collections });
+  await writeCatalog(dataDir, { skills: listed, collections });
   await writeMeta(dataDir, meta);
 
-  return { skills, collections, meta };
+  return { skills: listed, collections, meta };
 }
 ```
 
@@ -12411,7 +12832,7 @@ export async function runHarvest(
 
 Run: `npx vitest run tests/harvest/run-harvest.test.ts`
 
-Expected: PASS — 6 tests.
+Expected: PASS — 7 tests.
 
 - [ ] **Step 6: Run the whole harvest and lib suite**
 
@@ -12423,12 +12844,12 @@ Expected: PASS — every file green, including A4's and A5's.
 
 ```bash
 git add scripts/harvest/run.ts tests/harvest/run-harvest.test.ts
-git commit -m "feat(harvest): wire discover, enumerate, enrich, safety and score into runHarvest"
+git commit -m "feat(harvest): wire discover, enumerate, enrich, safety, score and listing into runHarvest"
 ```
 
 ---
 
-### Task A6.10: Harvest CLI entrypoint
+### Task A6.11: Harvest CLI entrypoint
 
 **Files:**
 - Modify: `scripts/harvest/run.ts` (append the block in Step 3; add the import line shown there)
@@ -12436,7 +12857,7 @@ git commit -m "feat(harvest): wire discover, enumerate, enrich, safety and score
 - Test: `tests/harvest/cli.test.ts`
 
 **Interfaces:**
-- Consumes: `runHarvest(options: HarvestOptions)` from `scripts/harvest/run.ts` (A6.9); `"type": "module"` and `engines.node ">=22.18.0"` from `package.json` (A1.1); the `"typecheck": "tsc --noEmit"` line in the `"scripts"` object (A1.5)
+- Consumes: `runHarvest(options: HarvestOptions)` from `scripts/harvest/run.ts` (A6.10); `"type": "module"` and `engines.node ">=22.18.0"` from `package.json` (A1.1); the `"typecheck": "tsc --noEmit"` line in the `"scripts"` object (A1.5)
 - Produces:
   - `export function parseArgs(argv: string[]): { allowlist: string[] | null; dataDir: string }`
   - `export async function main(argv: string[], env: Record<string, string | undefined>): Promise<number>` — returns the process exit code
@@ -12512,7 +12933,7 @@ Expected: FAIL — the module loads but the symbol is missing: `does not provide
 - [ ] **Step 3: Write minimal implementation**
 
 Add this import at the top of `scripts/harvest/run.ts`. `node:url` appears in no other import line,
-so this is purely additive to the header Task A6.9 installed:
+so this is purely additive to the header Task A6.10 installed:
 
 ```ts
 import { pathToFileURL } from 'node:url';
@@ -12613,15 +13034,250 @@ git commit -m "feat(harvest): add the CLI entrypoint and the npm harvest script"
 
 ---
 
-### Task A6.11: crawl.yml — the nightly self-sustaining crawl
+### Task A6.12: The local-first schedule — systemd user units and the installer
+
+**Files:**
+- Create: `ops/ai-tools-hub-harvest.service`
+- Create: `ops/ai-tools-hub-harvest.timer`
+- Create: `ops/install-schedule.sh`
+- Test: `tests/ops/schedule.test.ts`
+
+**Interfaces:**
+- Consumes: the `harvest` npm script from Task A6.11 (`node scripts/harvest/run.ts`), and `CATALOG_PAT` — read from `~/.config/ai-tools-hub/harvest.env`, never from the repository
+- Produces: a systemd **user** timer inside WSL plus a Windows Task Scheduler logon task, installed idempotently by `ops/install-schedule.sh`
+
+**Why the schedule is local and why it has two halves (spec §6.1).** The primary schedule runs on the
+maintainer's machine because that is where the Claude Code subscription lives, which makes each run
+free. WSL2 shuts itself down when idle, so a timer alone is not enough: the Windows task at logon
+runs `wsl.exe -d Ubuntu-26.04 -- true`, whose only job is to start WSL so systemd can take over.
+
+**`Persistent=true` is load-bearing and a reader will want to delete it.** It records the last
+trigger on disk so a window that passed while the machine was off is caught up rather than silently
+skipped, and `OnBootSec=2min` is what fires that catch-up shortly after the machine comes back.
+`cron` has no equivalent: a missed run there is simply lost. Keep both lines — a silently skipped
+run is the failure §13 calls the largest risk. (For the record: systemd documents `Persistent=` as
+taking effect for calendar-based triggers, so on this timer `OnBootSec=2min` does the observable
+work. The spec requires the line, it costs nothing, and it is correct the moment an `OnCalendar=`
+trigger is ever added.)
+
+- [ ] **Step 1: Write the failing test**
+
+```ts
+// tests/ops/schedule.test.ts
+import { readFileSync, statSync } from 'node:fs';
+import { describe, expect, it } from 'vitest';
+
+const service = readFileSync('ops/ai-tools-hub-harvest.service', 'utf8');
+const timer = readFileSync('ops/ai-tools-hub-harvest.timer', 'utf8');
+const install = readFileSync('ops/install-schedule.sh', 'utf8');
+
+describe('the timer fires on the schedule §6.1 specifies', () => {
+  it('starts 2 minutes after boot and repeats every 4 hours', () => {
+    expect(timer).toContain('OnBootSec=2min');
+    expect(timer).toContain('OnUnitActiveSec=4h');
+  });
+
+  it('carries Persistent=true, with the reason written next to it', () => {
+    expect(timer).toContain('Persistent=true');
+    expect(timer).toMatch(/do not "simplify" away/i);
+  });
+
+  it('is a user timer that installs into timers.target', () => {
+    expect(timer).toContain('[Install]');
+    expect(timer).toContain('WantedBy=timers.target');
+    expect(timer).not.toContain('WantedBy=multi-user.target');
+  });
+});
+
+describe('the service runs the harvest and publishes the result', () => {
+  it('is a oneshot that runs the harvest npm script', () => {
+    expect(service).toContain('Type=oneshot');
+    expect(service).toContain('ExecStart=/usr/bin/env npm run harvest');
+  });
+
+  it('reads CATALOG_PAT from a file outside the repository', () => {
+    expect(service).toContain('EnvironmentFile=%h/.config/ai-tools-hub/harvest.env');
+    expect(service).not.toContain('CATALOG_PAT=');
+  });
+
+  it('rebases before pushing, because crawl.yml writes the same three files', () => {
+    expect(service).toContain('git add data/skills.json data/collections.json data/meta.json');
+    expect(service).toContain('git pull --rebase --autostash');
+    expect(service).toContain('git push');
+  });
+
+  it('keeps the checkout path substitutable instead of hard-coded', () => {
+    expect(service).toContain('WorkingDirectory=@REPO_DIR@');
+    expect(install).toContain('s|@REPO_DIR@|$REPO_DIR|g');
+  });
+});
+
+describe('install-schedule.sh installs both halves of the trigger', () => {
+  it('is executable and fails fast', () => {
+    expect(statSync('ops/install-schedule.sh').mode & 0o111).not.toBe(0);
+    expect(install).toContain('set -euo pipefail');
+  });
+
+  it('installs the units as user units and enables the timer now', () => {
+    expect(install).toContain('systemd/user');
+    expect(install).toContain('systemctl --user daemon-reload');
+    expect(install).toContain('systemctl --user enable --now ai-tools-hub-harvest.timer');
+  });
+
+  it('registers the Windows logon task idempotently', () => {
+    expect(install).toContain('powershell.exe -NoProfile -Command');
+    expect(install).toContain("-Execute 'wsl.exe'");
+    expect(install).toContain('-AtLogOn');
+    expect(install).toContain('Unregister-ScheduledTask');
+    // "Unregister-ScheduledTask" does not contain "Register-ScheduledTask" — the capital R
+    // differs — so this really does find the registration call, and it comes second.
+    expect(install.indexOf('Unregister-ScheduledTask')).toBeLessThan(
+      install.indexOf('Register-ScheduledTask -TaskName'),
+    );
+  });
+});
+```
+
+- [ ] **Step 2: Run test to verify it fails**
+
+Run: `npx vitest run tests/ops/schedule.test.ts`
+
+Expected: FAIL — `readFileSync` throws while the file is being collected: `ENOENT: no such file or directory, open 'ops/ai-tools-hub-harvest.service'`. All 10 tests error rather than fail individually.
+
+- [ ] **Step 3: Write the two units**
+
+```bash
+mkdir -p ops
+cat > ops/ai-tools-hub-harvest.service <<'UNIT'
+[Unit]
+Description=ai-tools-hub catalog harvest
+
+[Service]
+Type=oneshot
+# Rewritten by ops/install-schedule.sh, so the unit is not tied to one hard-coded checkout.
+WorkingDirectory=@REPO_DIR@
+# Created chmod 600 by the installer and never committed: it carries the fine-grained PAT.
+EnvironmentFile=%h/.config/ai-tools-hub/harvest.env
+ExecStart=/usr/bin/env npm run harvest
+ExecStart=/usr/bin/env git add data/skills.json data/collections.json data/meta.json
+ExecStart=/usr/bin/env git commit --allow-empty -m "chore(crawl): local refresh"
+# crawl.yml commits the same three files weekly, so rebase before pushing.
+ExecStart=/usr/bin/env git pull --rebase --autostash
+ExecStart=/usr/bin/env git push
+UNIT
+cat > ops/ai-tools-hub-harvest.timer <<'UNIT'
+[Unit]
+Description=Harvest the ai-tools-hub catalog every 4 hours
+
+[Timer]
+Unit=ai-tools-hub-harvest.service
+OnBootSec=2min
+OnUnitActiveSec=4h
+# Load-bearing, do not "simplify" away. WSL2 shuts itself down when idle, so 4-hour windows
+# pass with the machine off. Persistent=true records the last trigger on disk and
+# OnBootSec=2min fires shortly after the machine comes back, so a missed window is caught up
+# instead of silently skipped — the failure §13 names as the largest risk. cron cannot do this.
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+UNIT
+```
+
+- [ ] **Step 4: Write the installer**
+
+```bash
+cat > ops/install-schedule.sh <<'SH'
+#!/usr/bin/env bash
+# Installs the local-first harvest schedule (spec §6.1): a systemd *user* timer inside WSL,
+# plus a Windows Task Scheduler task at logon whose only job is to start WSL so systemd can
+# take over. Idempotent — safe to re-run after moving the checkout or editing a unit.
+set -euo pipefail
+
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+UNIT_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/systemd/user"
+ENV_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/ai-tools-hub"
+DISTRO="${WSL_DISTRO_NAME:-Ubuntu-26.04}"
+TASK_NAME="ai-tools-hub-wsl-boot"
+
+mkdir -p "$UNIT_DIR" "$ENV_DIR"
+
+if [ ! -f "$ENV_DIR/harvest.env" ]; then
+  printf 'CATALOG_PAT=\n' > "$ENV_DIR/harvest.env"
+  chmod 600 "$ENV_DIR/harvest.env"
+  echo "created $ENV_DIR/harvest.env — put the fine-grained PAT in it before the next run"
+fi
+
+sed "s|@REPO_DIR@|$REPO_DIR|g" "$REPO_DIR/ops/ai-tools-hub-harvest.service" > "$UNIT_DIR/ai-tools-hub-harvest.service"
+cp "$REPO_DIR/ops/ai-tools-hub-harvest.timer" "$UNIT_DIR/ai-tools-hub-harvest.timer"
+
+# Without lingering the user manager dies with the last session, and the timer with it.
+loginctl enable-linger "$(id -un)" || echo "enable-linger failed — the timer will only run while a session is open"
+
+systemctl --user daemon-reload
+systemctl --user enable --now ai-tools-hub-harvest.timer
+
+if command -v powershell.exe > /dev/null 2>&1; then
+  powershell.exe -NoProfile -Command "if (Get-ScheduledTask -TaskName '$TASK_NAME' -ErrorAction SilentlyContinue) { Unregister-ScheduledTask -TaskName '$TASK_NAME' -Confirm:\$false }; \$action = New-ScheduledTaskAction -Execute 'wsl.exe' -Argument '-d $DISTRO -- true'; \$trigger = New-ScheduledTaskTrigger -AtLogOn; Register-ScheduledTask -TaskName '$TASK_NAME' -Action \$action -Trigger \$trigger -Description 'Starts WSL at logon so the ai-tools-hub systemd timer can run.' | Out-Null" > /dev/null
+  echo "registered the Windows logon task $TASK_NAME"
+else
+  echo "powershell.exe not on PATH — skipped the Windows logon task, the systemd timer is still installed"
+fi
+
+systemctl --user list-timers ai-tools-hub-harvest.timer --no-pager
+SH
+chmod +x ops/install-schedule.sh
+```
+
+- [ ] **Step 5: Run test to verify it passes**
+
+Run: `npx vitest run tests/ops/schedule.test.ts`
+
+Expected: PASS — 10 tests.
+
+- [ ] **Step 6: Install the schedule for real**
+
+```bash
+bash ops/install-schedule.sh
+systemctl --user is-enabled ai-tools-hub-harvest.timer
+```
+
+Expected: the installer prints `registered the Windows logon task ai-tools-hub-wsl-boot` and a
+`list-timers` table, then `is-enabled` prints `enabled`.
+
+- [ ] **Step 7: Confirm the Windows half exists**
+
+```bash
+powershell.exe -NoProfile -Command "(Get-ScheduledTask -TaskName 'ai-tools-hub-wsl-boot').State"
+```
+
+Expected: `Ready`.
+
+- [ ] **Step 8: Commit**
+
+```bash
+git add ops/ai-tools-hub-harvest.service ops/ai-tools-hub-harvest.timer ops/install-schedule.sh tests/ops/schedule.test.ts
+git commit -m "ci(schedule): run the harvest locally on a persistent systemd user timer"
+```
+
+---
+
+### Task A6.13: crawl.yml — the weekly fallback crawl
 
 **Files:**
 - Create: `.github/workflows/crawl.yml`
 - Test: `tests/workflows/crawl.test.ts`
 
 **Interfaces:**
-- Consumes: `node scripts/harvest/run.ts [--allowlist=<csv>]` from Task A6.10; the repository secret `CATALOG_PAT`
-- Produces: `.github/workflows/crawl.yml` — a nightly `schedule` at `37 6 * * *` plus `workflow_dispatch`, committing `data/skills.json`, `data/collections.json` and `data/meta.json`
+- Consumes: `node scripts/harvest/run.ts [--allowlist=<csv>]` from Task A6.11; the repository secret `CATALOG_PAT`
+- Produces: `.github/workflows/crawl.yml` — a **weekly** `schedule` at `37 6 * * 1` plus `workflow_dispatch`, committing `data/skills.json`, `data/collections.json` and `data/meta.json`
+
+**Weekly, not nightly, and secondary rather than primary.** Since §6.1 the primary schedule is the
+local systemd timer installed by Task A6.12. This workflow is the fallback that bounds how stale the
+catalog can get regardless, because a local-only schedule is silent in exactly the case that matters
+— the machine being off for days, which §13 names the largest risk. It costs nothing on a public
+repo, and its commit is still the repository activity that keeps its own schedule from being
+auto-disabled after 60 days.
 
 **Operational prerequisite — not a step in this task.** The workflow cannot run until the secret
 exists: create a fine-grained PAT with **Public repositories (read-only)** access and a 1-year
@@ -12644,15 +13300,26 @@ describe('crawl.yml schedule hygiene (spec §6.5)', () => {
     expect(yml).not.toMatch(/\t/);
   });
 
-  it('runs off the hour, in an off-peak UTC window', () => {
-    const match = yml.match(/cron:\s*'(\d{1,2})\s+(\d{1,2})\s+\*\s+\*\s+\*'/);
+  it('runs weekly, off the hour, in an off-peak UTC window', () => {
+    // Five fields, and the fifth is a day of the week rather than `*` — that is what makes
+    // this weekly. A nightly `37 6 * * *` no longer matches.
+    const match = yml.match(/cron:\s*'(\d{1,2})\s+(\d{1,2})\s+\*\s+\*\s+(\d)'/);
     expect(match).not.toBeNull();
     const minute = Number(match![1]);
     const hour = Number(match![2]);
+    const weekday = Number(match![3]);
     expect(minute).toBeGreaterThan(0);
     expect(minute).toBeLessThan(60);
     expect(hour).toBeGreaterThanOrEqual(3);
     expect(hour).toBeLessThanOrEqual(9);
+    expect(weekday).toBeGreaterThanOrEqual(0);
+    expect(weekday).toBeLessThanOrEqual(6);
+  });
+
+  it('says in the file why it is the fallback and not the primary (spec §6.1)', () => {
+    expect(yml).toContain('fallback');
+    expect(yml).toContain('ops/install-schedule.sh');
+    expect(yml).toContain('machine is off');
   });
 
   it('always offers the manual escape hatch', () => {
@@ -12711,7 +13378,7 @@ describe('crawl.yml pins its actions and never injects inputs into a shell', () 
 
 Run: `npx vitest run tests/workflows/crawl.test.ts`
 
-Expected: FAIL — `ENOENT: no such file or directory, open '.github/workflows/crawl.yml'`. `readFileSync` throws while the file is being collected, so all 10 tests error rather than fail individually.
+Expected: FAIL — `ENOENT: no such file or directory, open '.github/workflows/crawl.yml'`. `readFileSync` throws while the file is being collected, so all 11 tests error rather than fail individually.
 
 - [ ] **Step 3: Write minimal implementation**
 
@@ -12721,10 +13388,13 @@ name: crawl
 
 on:
   schedule:
-    # 06:37 UTC. Off the hour on purpose: schedule events at :00 are dropped under
-    # load, and the nightly commit below is itself the repository activity that keeps
-    # this schedule from being auto-disabled after 60 days (spec §6.5).
-    - cron: '37 6 * * *'
+    # Mondays 06:37 UTC — WEEKLY, and deliberately not nightly. The primary schedule is the
+    # local systemd timer installed by ops/install-schedule.sh (spec §6.1); this workflow is
+    # the fallback that bounds staleness when the machine is off for days, which §13 names as
+    # the largest risk. Off the hour on purpose: schedule events at :00 are dropped under
+    # load, and the commit below is itself the repository activity that keeps this schedule
+    # from being auto-disabled after 60 days (spec §6.5).
+    - cron: '37 6 * * 1'
   workflow_dispatch:
     inputs:
       allowlist:
@@ -12788,26 +13458,26 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           gh issue create \
-            --title "P1: nightly crawl failed on $(date -u +%Y-%m-%d)" \
-            --body "The nightly harvest failed. A silent crawler is a P1 bug, not a maintenance chore (spec §13). Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            --title "P1: weekly fallback crawl failed on $(date -u +%Y-%m-%d)" \
+            --body "The weekly fallback harvest failed, so the catalog now depends entirely on the local timer. A silent crawler is a P1 bug, not a maintenance chore (spec §13). Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
 ```
 
 - [ ] **Step 4: Run test to verify it passes**
 
 Run: `npx vitest run tests/workflows/crawl.test.ts`
 
-Expected: PASS — 10 tests.
+Expected: PASS — 11 tests.
 
 - [ ] **Step 5: Commit**
 
 ```bash
 git add .github/workflows/crawl.yml tests/workflows/crawl.test.ts
-git commit -m "ci(crawl): add the nightly self-sustaining harvest workflow"
+git commit -m "ci(crawl): add the weekly fallback harvest workflow"
 ```
 
 ---
 
-### Task A6.12: Catalog invariants, and a real three-repo harvest
+### Task A6.14: Catalog invariants, and a real three-repo harvest
 
 **Files:**
 - Modify: `scripts/harvest/run.ts` (append the block in Step 3)
@@ -12817,7 +13487,7 @@ git commit -m "ci(crawl): add the nightly self-sustaining harvest workflow"
 - Test: `tests/harvest/catalog-shape.test.ts`
 
 **Interfaces:**
-- Consumes: `Collection`, `Meta`, `ScoreBreakdown`, `Skill` from `src/types.ts` (A1.6); `loadCollections`, `loadMeta`, `loadSkills` from `src/lib/data.ts` (A6.6); the `harvest` npm script from Task A6.10
+- Consumes: `Collection`, `Meta`, `ScoreBreakdown`, `Skill` from `src/types.ts` (A1.6); `EVICT_RANK` from `src/lib/rank.ts` (A6.9); `loadCollections`, `loadMeta`, `loadSkills` from `src/lib/data.ts` (A6.6); the `harvest` npm script from Task A6.11
 - Produces:
   - `export interface CatalogProblem { id: string; problem: string }`
   - `export function validateCatalog(skills: Skill[], collections: Collection[], meta: Meta): CatalogProblem[]` — empty means the committed data is internally consistent
@@ -12833,12 +13503,18 @@ proves something different:
 | `trailofbits/skills` | per-path score separation — several skills, one repo, one star count (spec §5) |
 | `heilcheng/awesome-agent-skills` | the phantom-catalog guard — an abandoned awesome-list contributes 0 skills (spec §6.3) |
 
+One listing invariant is included, and it is the one that catches the whole survival rule failing
+open: if `applyListing` is ever dropped from `runHarvest`, every entry keeps `buildSkill`'s
+provisional `listed: true` and a subdomain can list hundreds. Nothing else in the suite would
+notice. Note that *monotonicity is deliberately not asserted* — under hysteresis an entry at rank 65
+can be listed while rank 61 is not, and that is correct, not a bug.
+
 - [ ] **Step 1: Write the failing test**
 
 ```ts
 // tests/harvest/catalog-shape.test.ts
 import { describe, expect, it } from 'vitest';
-import type { Collection, Meta, Skill } from '../../src/types.ts';
+import type { Collection, Meta, ScoreBreakdown, Skill } from '../../src/types.ts';
 import { loadCollections, loadMeta, loadSkills } from '../../src/lib/data.ts';
 import { validateCatalog } from '../../scripts/harvest/run.ts';
 
@@ -12852,6 +13528,15 @@ const collection: Collection = {
   isOrg: false,
   curated: false,
 };
+
+/** Any total in 0..100 split into components that respect the 25/30/25/20 caps. */
+function breakdownFor(total: number): ScoreBreakdown {
+  const adoption = Math.min(25, total);
+  const maintenance = Math.min(30, total - adoption);
+  const provenance = Math.min(25, total - adoption - maintenance);
+  const completeness = total - adoption - maintenance - provenance;
+  return { adoption, maintenance, provenance, completeness, total };
+}
 
 function skill(overrides: Partial<Skill> = {}): Skill {
   const base: Skill = {
@@ -12875,6 +13560,7 @@ function skill(overrides: Partial<Skill> = {}): Skill {
     also: [],
     tags: [],
     securityRelevant: false,
+    listed: true,
     score: 65,
     breakdown: { adoption: 10, maintenance: 30, provenance: 5, completeness: 20, total: 65 },
   };
@@ -12951,6 +13637,28 @@ describe('validateCatalog catches every way the pipeline can lie', () => {
     expect(problems([low, skill()], [collection], meta({ skillCount: 2 }))).toContain('not sorted by score descending');
   });
 
+  it('catches a non-boolean listed flag surviving from a hand-edited file', () => {
+    // The loaders cast rather than validate, so this shape really can reach the site.
+    const bad = { ...skill(), listed: 'yes' } as unknown as Skill;
+    expect(problems([bad], [collection], meta())).toContain('listed is not a boolean');
+  });
+
+  it('catches a subdomain listing more entries than the cap could ever allow', () => {
+    // 80 entries, all listed: what the file looks like if applyListing is ever dropped from
+    // runHarvest and buildSkill's provisional `listed: true` survives to disk (spec §5.1).
+    const many = Array.from({ length: 80 }, (_u, i) =>
+      skill({
+        id: `a/b@abc1234:s${i}/SKILL.md`,
+        path: `s${i}/SKILL.md`,
+        score: 100 - i,
+        breakdown: breakdownFor(100 - i),
+      }),
+    );
+    expect(problems(many, [collection], meta({ skillCount: 80 }))).toContain(
+      'more listed entries than the subdomain cap allows',
+    );
+  });
+
   it('catches meta counts and a non-ISO crawl date', () => {
     const found = problems([skill()], [collection], meta({ skillCount: 9, sourceCount: 9, crawledAt: 'last tuesday' }));
     expect(found).toContain('meta.skillCount does not match the catalog');
@@ -12990,6 +13698,12 @@ import type {
 } from '../../src/types.ts';
 ```
 
+and replace the `src/lib/rank.ts` import line with exactly:
+
+```ts
+import { EVICT_RANK, applyListing } from '../../src/lib/rank.ts';
+```
+
 Append to `scripts/harvest/run.ts`:
 
 ```ts
@@ -13017,6 +13731,7 @@ export function validateCatalog(skills: Skill[], collections: Collection[], meta
 
   const seenIds = new Set<string>();
   const repos = new Set(collections.map((collection) => collection.repo));
+  const listedPerPrimary = new Map<string, number>();
 
   for (const skill of skills) {
     if (seenIds.has(skill.id)) add(skill.id, 'duplicate id');
@@ -13042,6 +13757,9 @@ export function validateCatalog(skills: Skill[], collections: Collection[], meta
     if (skill.also.length > 2) add(skill.id, 'more than 2 also entries');
     if (skill.tags.length > 10) add(skill.id, 'more than 10 tags');
 
+    if (typeof skill.listed !== 'boolean') add(skill.id, 'listed is not a boolean');
+    else if (skill.listed) listedPerPrimary.set(skill.primary, (listedPerPrimary.get(skill.primary) ?? 0) + 1);
+
     const safety = skill.safety;
     if (
       typeof safety.executesCode !== 'boolean' ||
@@ -13053,6 +13771,13 @@ export function validateCatalog(skills: Skill[], collections: Collection[], meta
     ) {
       add(skill.id, 'incomplete safety surface');
     }
+  }
+
+  // Hysteresis lets a listing run to rank 72, never past it, and the minimum-mass floor (5)
+  // is far below that — so no subdomain can legitimately list more than EVICT_RANK entries.
+  // Monotonicity is deliberately NOT asserted: rank 65 listed while rank 61 is not is correct.
+  for (const [primary, count] of listedPerPrimary) {
+    if (count > EVICT_RANK) add(primary, 'more listed entries than the subdomain cap allows');
   }
 
   for (let i = 1; i < skills.length; i += 1) {
@@ -13080,7 +13805,7 @@ export function validateCatalog(skills: Skill[], collections: Collection[], meta
 
 Run: `npx vitest run tests/harvest/catalog-shape.test.ts`
 
-Expected: PASS — 12 tests. The last one passes over the empty seed committed in Task A6.6, and will
+Expected: PASS — 14 tests. The last one passes over the empty seed committed in Task A6.6, and will
 keep passing over real data.
 
 - [ ] **Step 5: Run the harvest for real against the three-repo allowlist**
@@ -13097,7 +13822,7 @@ Expected: one summary line on stdout of the form
 `harvest: <n> skills from 3 sources at <ISO timestamp>`, with `<n>` in the tens. The exact count
 tracks upstream and is not asserted anywhere.
 
-- [ ] **Step 6: Read the three things this run exists to prove**
+- [ ] **Step 6: Read the four things this run exists to prove**
 
 ```bash
 node --input-type=module -e '
@@ -13119,6 +13844,7 @@ console.log("2. per-path separation: adoption", [...new Set(tob.map((s) => s.bre
             "totals", tob.map((s) => s.score).sort((a, b) => b - a));
 
 console.log("3. phantom catalog:", collections.filter((c) => skills.every((s) => s.repo !== c.repo)).map((c) => c.repo));
+console.log("4. listing:", skills.filter((s) => s.listed).length, "listed of", skills.length);
 console.log("meta:", readFileSync("data/meta.json", "utf8").trim());
 '
 ```
@@ -13131,6 +13857,9 @@ Expected, and worth reading rather than skimming:
    totals differ. If every total is identical, ranking has collapsed back to repo-level signals.
 3. **Phantom catalog** — `heilcheng/awesome-agent-skills` is listed as the repo with zero skills. It
    contributes provenance and nothing else, exactly as intended.
+4. **Listing** — with three repos every subdomain is far under the 60-entry cap, so listed equals
+   the total. A smaller number here means a subdomain has already filled, which at this size would
+   mean `applyListing` is mis-grouping.
 
 - [ ] **Step 7: Re-run the harvest to prove the incremental skip**
 
@@ -13142,13 +13871,14 @@ git diff --stat data/
 
 Expected: the same skill count, and `git diff --stat data/` lists **only** `data/meta.json` (a new
 `crawledAt`). No repo's `pushedAt` moved between the two runs, so every repo was skipped and every
-skill was carried forward untouched.
+skill was carried forward untouched — with the same `listed` flags, because the same scores produce
+the same ranks.
 
 - [ ] **Step 8: Run the invariants over the real data**
 
 Run: `npx vitest run tests/harvest/catalog-shape.test.ts`
 
-Expected: PASS — 12 tests, now including real entries in the last one.
+Expected: PASS — 14 tests, now including real entries in the last one.
 
 - [ ] **Step 9: Run the full suite**
 
@@ -13163,5 +13893,7 @@ Expected: PASS — every file green. The Astro build runs once, in the `globalSe
 git add scripts/harvest/run.ts tests/harvest/catalog-shape.test.ts data/skills.json data/collections.json data/meta.json
 git commit -m "feat(data): add catalog invariants and seed from a real three-repo harvest"
 ```
+
+---
 
 ---
