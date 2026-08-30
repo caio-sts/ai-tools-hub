@@ -18,6 +18,20 @@ published to GitHub Pages. Security-first at launch.
 **We do not compete on entry count.** Any feature that trades precision for coverage is
 rejected by default.
 
+### 1.0 Who this is for, and what success means
+
+**Built for the maintainer first.** The success criterion is *"I open this to find a skill, and it
+is current and correct."* Public reach is a side effect of hosting on GitHub Pages, not a goal.
+
+This is a deliberate choice, not a fallback. A catalog with one known user has a real quality bar
+and no growth obligation — and it means **the self-updating pipeline is the product**, not a
+supporting feature. A catalog that has to be maintained by hand is worth less than the awesome-list
+it replaces; one that stays current on its own is worth more. Everything in §6 exists to serve that.
+
+What this removes from scope: SEO work beyond a sitemap, marketing surfaces, growth metrics, and
+any feature justified by attracting strangers (§11.3). What it does not remove: precision,
+provenance and the safety surface — those are why the maintainer would trust it at all.
+
 ### 1.1 Why this positioning
 
 Evidence gathered 2026-08-29. Figures marked ✅ were verified directly against the GitHub
@@ -65,14 +79,16 @@ Topic corpus sizes: `agent-skills` **18,503** · `openclaw` **8,972** · `claude
 
 This is why the catalog is **runtime-agnostic**, not Claude-specific.
 
-### 1.3 The unaddressed risk: distribution
+### 1.3 Distribution — explicitly not a goal
 
-Every incumbent is fed by a star funnel or by being a runtime's own registry. A zero-star
-Pages site with no inbound links gets no first visitor, and correctness is invisible without
-one. The security-first framing exists partly because *"the only catalog that tells you what
-a skill can do to your machine"* is linkable in a way that *"another skills directory"* is not.
+Every incumbent is fed by a star funnel or by being a runtime's own registry, and a zero-star Pages
+site gets no first visitor. Earlier drafts treated that as the project's largest risk. **Per §1.0 it
+is not a risk at all, because reach is not an objective.**
 
-**This remains the project's largest open risk.** No acquisition plan is specified here.
+The security-first framing still earns its place — it is what makes the catalog *deep enough to be
+worth opening*, and 15 real subdomains beat one flat `### Security` dump whether one person or a
+thousand are reading. Should the project ever want an audience, the framing is already there. It is
+simply not what any decision optimises for.
 
 ---
 
@@ -497,9 +513,9 @@ copyable install command · resolved license with *Not declared* in hazard orang
 `/skills/<slug>/`, and Astro generates a static page at that same URL from the same data. Click
 = instant expand; direct visit or shared link = full static page.
 
-**This is load-bearing, not a nicety.** Without per-skill URLs there is no long-tail SEO
-(`"sbom diff claude skill"`) and nothing to share — and distribution is the project's largest
-risk (§1.3).
+**Both are cheap, so ship both.** Astro generates the static page from the same data the expansion
+already renders. The justification is shareable links, bookmarks and a working back button — not
+search traffic (§11.3).
 
 ### 10.5 Accessibility
 
@@ -543,12 +559,17 @@ independent `bundle-path`/`baseUrl` config that must agree, or the search bundle
 
 A custom domain later removes `base` and adds `public/CNAME` — a one-commit upgrade.
 
-### 11.3 SEO
+### 11.3 SEO — cut to the sitemap
 
-`BreadcrumbList` (the taxonomy maps directly) + `ItemList` on category pages + per-entry OG/Twitter
-meta + sitemap. Emit `SoftwareApplication` for machine readability but expect no rich result —
-Google requires `aggregateRating`, and synthesising ratings from GitHub stars is a guidelines
-violation. **Do not do it.**
+**Out of scope per §1.0.** Structured data (`BreadcrumbList`, `ItemList`, `SoftwareApplication`),
+per-entry OG/Twitter meta and any rich-result work existed to attract search traffic the project is
+not seeking. Ship `@astrojs/sitemap` because it is one config line, and stop there.
+
+Per-skill static pages stay (§10.4) — but on their own merits: a shareable link, a working back
+button, and a bookmarkable address. Not for search.
+
+*(If this ever reverses: never synthesise `aggregateRating` from GitHub stars to chase a rich
+result. It is a Google guidelines violation subject to manual action.)*
 
 ---
 
@@ -572,8 +593,8 @@ Each answers a failure observed in a real catalog.
 
 | Risk | Mitigation |
 |---|---|
-| **Distribution — no first visitor.** Largest risk; unaddressed. | Security-first framing makes the site linkable. **An acquisition plan is still owed.** |
-| **Solo maintenance.** Every incumbent has failed this. | Committing cron keeps itself alive; `workflow_dispatch` escape hatch; no human-in-the-loop step that can become a queue. |
+| **The pipeline silently stops. This is now the largest risk.** Per §1.0 the self-updating flow *is* the product: a catalog frozen in September is worse than none, because it is trusted and wrong. | Every failure must be loud. Staleness banner driven by `updated_at`, reporting crawl date and classification lag separately (§6.1); `workflow_dispatch` as a manual escape hatch; the nightly commit is itself the repository activity that keeps the schedule alive. **Treat a silent crawler as a P1 bug, not a maintenance chore.** |
+| **Solo maintenance.** Every incumbent has failed this. | Committing cron keeps itself alive; no human-in-the-loop step that can become a queue. |
 | **Classification depends on a human account.** The scheduled Claude session is not a robot; if the maintainer stops, new entries queue unclassified. | Harvest stays in Actions so data never goes stale on its own; unclassified entries land in the domain's `general` leaf rather than disappearing, and the staleness banner reports the classification lag separately from the crawl date. |
 | **PAT expiry silently kills the crawler.** | 1-year fine-grained PAT + calendar reminder, or a GitHub App. Staleness banner driven by `updated_at`. |
 | **Symlink / phantom-catalog count inflation.** | Skip mode-120000, dedupe by blob SHA, publish counts with a dated methodology note. |
@@ -595,10 +616,18 @@ and no directory does this. Not in v1, but nothing in this design precludes it.
 
 ## 15. Open questions
 
-1. **Acquisition plan.** How does the first visitor arrive? Unanswered.
-2. **Demand evidence.** No research modality measured whether anyone *uses* a skills directory —
-   no traffic estimates, no interviews. Stars measure GitHub attention, which we already argued is
-   a poor proxy.
+**None blocking.** The two that stood here — how the first visitor arrives, and whether anyone uses
+a skills directory — were dissolved rather than answered: per §1.0 the project is built for its
+maintainer, so neither question gates anything. They would return the day the project wants an
+audience.
+
+Remaining judgment calls, all safe to settle during implementation:
+
+1. **Minimum-mass threshold.** Set at 5 (§10.1) on reasoning, not measurement. Revisit once the
+   real distribution of entries per subdomain is known.
+2. **Score weights.** 25/30/25/20 is defensible but unvalidated against a real corpus; the first
+   full harvest is the moment to sanity-check that the ranking matches the maintainer's own
+   judgment of the top 20.
 **Resolved 2026-08-29:** translation runs on the maintainer's Claude Code subscription rather than
 a metered API key, so there is no budget to cap (§6.1, §8); and there is **no** editorial override —
 order is the formula alone (§5).
