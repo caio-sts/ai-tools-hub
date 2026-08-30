@@ -17,3 +17,22 @@ describe('sitemap output', () => {
     expect(xml).not.toContain('ai-tools-hub/ai-tools-hub');
   });
 });
+
+describe('base-aware links in the built HTML', () => {
+  const html = (): string => readFileSync(distFile('base-check/index.html'), 'utf8');
+
+  it('prefixes every generated href with the project-page base', () => {
+    expect(html()).toContain('href="/ai-tools-hub/"');
+    expect(html()).toContain('href="/ai-tools-hub/en/"');
+    expect(html()).toContain('href="/ai-tools-hub/pt/"');
+  });
+
+  it('emits no root-relative href that would 404 on Pages', () => {
+    expect(html()).not.toContain('href="/en/"');
+    expect(html()).not.toContain('href="/pt/"');
+  });
+
+  it('never doubles the base path', () => {
+    expect(html()).not.toContain('/ai-tools-hub/ai-tools-hub/');
+  });
+});

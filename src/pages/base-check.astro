@@ -1,5 +1,10 @@
 ---
-const title = 'base check';
+import { withBase } from '../lib/link.ts';
+
+// Every link on this page is written by withBase(). If Astro's `base` and the
+// helper ever disagree, tests/build/output.test.ts fails before deploy.
+const root = withBase('/');
+const locales = ['en', 'pt'].map((lang) => ({ lang, href: withBase(`/${lang}/`) }));
 ---
 
 <!doctype html>
@@ -8,9 +13,16 @@ const title = 'base check';
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
-    <title>{title}</title>
+    <title>base check</title>
   </head>
   <body>
-    <h1>{title}</h1>
+    <h1>base check</h1>
+    <p>Every link below was written by <code>withBase()</code>.</p>
+    <ul>
+      <li><a data-check="root" href={root}>{root}</a></li>
+      {locales.map(({ lang, href }) => (
+        <li><a data-check={lang} href={href}>{href}</a></li>
+      ))}
+    </ul>
   </body>
 </html>
