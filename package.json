@@ -9,9 +9,15 @@
   },
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
   },
   "devDependencies": {
     "vitest": "^3.2.7"
+  },
+  "dependencies": {
+    "astro": "^7.2.9"
   }
 }
