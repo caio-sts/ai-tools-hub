@@ -5629,7 +5629,7 @@ const WORKFLOW = readFileSync(
 
 describe('.github/workflows/ci.yml', () => {
   it('runs on push to main and on every pull request', () => {
-    expect(WORKFLOW).toContain('branches: [main]');
+    expect(WORKFLOW).toContain('branches: [main, master]');
     expect(WORKFLOW).toContain('pull_request:');
     expect(WORKFLOW).toContain('workflow_dispatch:');
   });
@@ -5672,7 +5672,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   pull_request:
   workflow_dispatch:
 
