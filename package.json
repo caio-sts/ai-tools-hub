@@ -12,9 +12,11 @@
     "test:watch": "vitest",
     "dev": "astro dev",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "typescript": "^5.9.3",
     "vitest": "^3.2.7"
   },
   "dependencies": {
