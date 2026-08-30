@@ -133,13 +133,13 @@ labels are citable rather than invented.
 | `secrets-credentials` | secret scanning, push protection, vaults, rotation | CIS 5 |
 | `supply-chain` | SCA, SBOM, malicious packages, SLSA provenance | OWASP A03:2025 |
 | `iac-config` | Terraform/Helm/CFN scanning, CIS benchmarks, drift | OWASP A02 |
-| `cloud-posture` | CSPM, CIEM, IAM least-privilege, permission warnings | NIST PR.AA |
+| `cloud-permissions` | CSPM, CIEM, IAM least-privilege, permission warnings, attack paths | NIST PR.AA |
 | `containers-kubernetes` | image scanning, KSPM, OPA/Kyverno | Gartner CNAPP |
 | `cicd-pipeline` | build integrity, runner hardening, OIDC, action pinning | OWASP A08; SLSA |
 | `identity-access` | OAuth/OIDC/SSO/MFA, session & token, RBAC | OWASP A07; CIS 6 |
 | `data-protection` | PII/DLP, encryption & KMS, GDPR mapping | NIST PR.DS; CIS 3 |
 | `offensive-testing` | DAST, fuzzing, recon, red-team simulation | MITRE ATT&CK; CIS 18 |
-| `detection-ir` | SIEM query, alert triage, threat intel, forensics | NIST DE.CM/RS.* |
+| `detection-forensics` | SIEM query, alert triage, threat intel, incident response, forensics | NIST DE.CM/RS.* |
 | `compliance-grc` | SOC2/ISO/HIPAA/PCI evidence, policy-as-code | NIST GOVERN |
 | **`ai-agent-security`** | prompt-injection testing, skill/MCP vetting, tool-poisoning | OWASP LLM:2025 |
 | `threat-modeling` | STRIDE, attack trees, architecture review | OWASP SAMM |
@@ -150,6 +150,34 @@ bucket** and formed exactly this cluster. 📄
 
 **Do not hard-code OWASP AST01–AST10 as a badge vocabulary.** That project is an Incubator
 proposal, 189 stars, created 2026-03-21 ✅ — too young to build UI on. Cite it as reference only.
+
+### 3.5 Naming rule — translate language, preserve technical terms
+
+Each node carries hand-written `name.en` and `name.pt` (never machine-translated; §8 applies
+only to skill descriptions). Two lists make the rule enforceable rather than a matter of taste:
+
+```js
+PROTECTED = ["CI/CD","Kubernetes","Supply Chain","IaC","SBOM","SLSA",
+             "OWASP","MCP","DAST","SAST","IAM"]
+ALIASES   = {grc:"compliance-grc", k8s:"containers-kubernetes", appsec:"code-application",
+             cspm:"cloud-permissions", ciem:"cloud-permissions", posture:"cloud-permissions",
+             ir:"detection-forensics", siem:"detection-forensics", sca:"supply-chain"}
+```
+
+- **PROTECTED** — terms practitioners say verbatim in both languages. If one appears in a
+  label in either locale it must appear in the other. Without this, someone eventually
+  "improves" `CI/CD` into *Integração Contínua* and the taxonomy silently diverges.
+  `supply-chain` is on this list because Brazilian AppSec says *"ataque de supply chain"*;
+  *"cadeia de suprimentos"* is logistics language, not security language.
+- **ALIASES** — acronyms deliberately kept *out* of visible labels but still searchable.
+  The test applied: **if a label needs explaining, the label failed.** `GRC` and `IR` were
+  removed from labels on that basis (becoming *Compliance, Risk & Audit* and
+  *Detection & Forensics*); both remain findable via alias.
+- Node labels avoid literal translation where it produces language nobody speaks —
+  `cloud-permissions` rather than *Cloud Posture* / *Postura em Nuvem*.
+
+Slugs remain stable IDs decoupled from display names. These renames are free only because
+nothing is published yet; after launch each one costs a redirect.
 
 ### 3.3 Top-level domains (13)
 
@@ -508,10 +536,12 @@ Each answers a failure observed in a real catalog.
 1. **Minimum mass** — a subdomain is hidden from navigation until it holds ≥5 entries.
 2. **Named overflow** — every domain has a `general` leaf.
 3. **Unique slug** — `awesome-mcp-servers` shipped a duplicated section.
-4. **Alias map** — `k8s→kubernetes`, `appsec→code-application`, `grc→compliance-grc`.
+4. **Alias map** — see §3.5.
 5. **Versioned taxonomy + redirects** — slugs are stable IDs, display names may change.
 6. **Referential integrity** — every `primary`/`also` resolves in `taxonomy.json`; `also.length ≤ 2`;
    free tags never drive navigation; no node named `all`/`any`/`none`/`not`.
+7. **Protected-term parity** — every term in `PROTECTED` that appears in a label in one locale
+   must appear in the other (§3.5), and every `ALIASES` key must resolve to a real node.
 
 ---
 
