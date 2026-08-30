@@ -228,7 +228,8 @@ silently break filtering. 📄
 `alirezarezvani/claude-skills` contains 846 `SKILL.md` paths; `anthropics/skills` contains 20. 📄
 So the catalog atom is the **Skill**, not the repo.
 
-- **Skill** — one per `SKILL.md`. Carries taxonomy, safety, per-path dates. Primary key is
+- **Skill** — one per `SKILL.md`. Carries taxonomy, safety, per-path dates, and `listed:
+  boolean` (§5.1 — false once evicted; the row survives, the listing does not). Primary key is
   synthesised: **`owner/repo@sha:path`** (skills have no version and no namespace primitive).
 - **Collection** — the repo/marketplace. Carries provenance, stars, forks, license fallback.
 
@@ -299,6 +300,29 @@ the incumbent (which grades 100% of its top 5,000 entries
 Default sort is **Score**; Stars / Forks / Newest / Updated are sibling tabs. Rank numbers
 **renumber on sort change** — a number that never changes is ornament, not information.
 
+### 5.1 Survival — a per-subdomain cap, not an unbounded index
+
+The catalog has a **ceiling of 60 entries per subdomain**, filled by score. A new skill that outranks
+a listed one takes its place. The cap is per subdomain rather than global because browsing is per
+subdomain: one global limit would let a populous node (supply-chain) crowd out a thin one
+(threat-modeling), and a category nobody can fill is a dead end.
+
+Three rules keep it from misbehaving:
+
+- **Hysteresis.** An entry joins at rank ≤ 60 but is only dropped once it falls past rank 72.
+  Entering is harder than staying, so entries at the boundary do not flap in and out week to week.
+- **The cap never breaches minimum mass.** It is a ceiling, never a floor: eviction may not take a
+  subdomain below the 5 entries §10.1 requires for it to be navigable.
+- **Eviction is a flag, not a deletion.** `Skill.listed` goes false. The entry stays in
+  `data/skills.json`, keeps being re-scored and re-dated every run, and its page keeps building —
+  removing it from the data would leave nothing to build the page from. It disappears from listings,
+  facet counts, the search index and the sitemap, and its page carries `noindex` so search engines
+  do not surface an entry the catalog does not list. If its score recovers past rank 60 it returns,
+  with its original `indexedAt` intact — that date is provenance, not a listing timestamp.
+
+Scores are recomputed for every entry on every run. Only maintenance decays with time, so ranks
+drift on their own without any input changing.
+
 **There is no editorial override.** Order is always and only the composite, with no manual pinning
 or burying. When the ranking is wrong, **fix the formula, not the result** — that is what keeps
 *"the order is reproducible, run it yourself"* true. A hand-adjusted order would make the published
@@ -310,7 +334,24 @@ formula decorative, which is precisely the failure we call out in §1.1.
 
 ### 6.1 Pipeline — two workflows, never one
 
-**`crawl.yml`** — nightly, off-peak minute, plus `workflow_dispatch`.
+**Where the harvest runs.** The primary schedule is **local**, on the maintainer's machine, because
+that is where the Claude Code subscription lives and it makes each run free. WSL2 shuts itself down
+when idle, so the trigger has two halves:
+
+- A **systemd timer inside WSL** with `OnBootSec=2min`, `OnUnitActiveSec=4h` and — the load-bearing
+  part — **`Persistent=true`**, so a window missed while the machine was off fires as soon as it
+  comes back rather than being silently skipped. `cron` has no equivalent: a missed run is simply lost.
+- A **Windows Task Scheduler task at logon** whose only job is `wsl.exe -d Ubuntu-26.04 -- true`.
+  It starts WSL; systemd does the rest. Without it, "every time the PC turns on" is not a trigger
+  WSL can observe.
+
+**`crawl.yml` runs weekly as a fallback**, not as the primary. §13 names a silently stopped pipeline
+as the largest risk, and a local-only schedule is silent in exactly the case that matters — the
+machine being off for days. The Action costs nothing on a public repo, and its commit doubles as the
+repository activity that keeps its own schedule from being auto-disabled after 60 days. The staleness
+banner reports which of the two ran last.
+
+The workflow fires on an off-peak, non-zero minute, plus `workflow_dispatch`.
 
 - **Discovery (weekly):** `search/repositories` on `topic:` qualifiers, **star-partitioned** to
   beat the hard 1,000-result cap. A `stars>=10` floor reduces `topic:claude-skills` from 7,626
@@ -620,6 +661,7 @@ Each answers a failure observed in a real catalog.
 
 | Risk | Mitigation |
 |---|---|
+| **Local runs stop when the machine is off.** | The weekly Action fallback (§6.1) bounds how stale the catalog can get regardless, and `Persistent=true` makes the local timer catch up rather than skip. |
 | **The pipeline silently stops. This is now the largest risk.** Per §1.0 the self-updating flow *is* the product: a catalog frozen in September is worse than none, because it is trusted and wrong. | Every failure must be loud. Staleness banner driven by `updated_at`, reporting crawl date and classification lag separately (§6.1); `workflow_dispatch` as a manual escape hatch; the nightly commit is itself the repository activity that keeps the schedule alive. **Treat a silent crawler as a P1 bug, not a maintenance chore.** |
 | **Solo maintenance.** Every incumbent has failed this. | Committing cron keeps itself alive; no human-in-the-loop step that can become a queue. |
 | **Classification depends on a human account.** The scheduled Claude session is not a robot; if the maintainer stops, new entries queue unclassified. | Harvest stays in Actions so data never goes stale on its own; unclassified entries land in the domain's `general` leaf rather than disappearing, and the staleness banner reports the classification lag separately from the crawl date. |
