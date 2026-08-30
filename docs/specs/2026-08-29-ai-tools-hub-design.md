@@ -282,6 +282,11 @@ is exactly the failure we criticise in the incumbent (which grades 100% of its t
 Default sort is **Score**; Stars / Forks / Newest / Updated are sibling tabs. Rank numbers
 **renumber on sort change** — a number that never changes is ornament, not information.
 
+**There is no editorial override.** Order is always and only the composite, with no manual pinning
+or burying. When the ranking is wrong, **fix the formula, not the result** — that is what keeps
+*"the order is reproducible, run it yourself"* true. A hand-adjusted order would make the published
+formula decorative, which is precisely the failure we call out in §1.1.
+
 ---
 
 ## 6. Data acquisition
@@ -300,9 +305,23 @@ Default sort is **Score**; Stars / Forks / Newest / Updated are sibling tabs. Ra
 - **Content:** `raw.githubusercontent.com` — unauthenticated, CORS `*`. Frontmatter at build;
   full bodies fetched client-side on expand, which also sidesteps rehosting concerns.
 
-**`classify.yml`** — separate workflow that **commits** `data/assignments.json`. Never inside the
-Pages build (hard 10-minute deploy timeout). LLM proposes → human reviews the PR diff → build
-reads it. Cache by content hash so only new skills cost anything.
+**Classification and translation** — a **scheduled Claude Code session** on the maintainer's
+subscription, not an API-key workflow. It proposes `data/assignments.json` and the pt-BR
+translations, opens a PR, and a human merges the diff. Never inside the Pages build (hard
+10-minute deploy timeout). Cached by content hash, so only new or changed skills are ever
+reprocessed.
+
+**Why this split matters.** Harvest is deterministic and must survive the maintainer's absence, so
+it lives in a public Action that anyone can read and that runs regardless. Classification and
+translation need judgment, so they run where judgment is cheap — and reach the repo as a reviewable
+PR either way. Running them on the subscription removes the per-token cost entirely.
+
+Two constraints follow:
+- **Subscription usage limits.** The first full pass over the backlog may exceed them; split it
+  across several runs. Steady state is tens of entries per run and fits comfortably.
+- **This step depends on a human account.** If the maintainer stops, classification stalls while
+  harvest keeps running — the site's data stays fresh but new entries queue unclassified. That is
+  the correct failure mode: stale-but-honest, never silently wrong. See §13.
 
 ### 6.2 Measured rate limits 📄
 
@@ -362,9 +381,13 @@ Schedule off the hour. Always add `workflow_dispatch`. Drive a staleness banner 
 - **Locales:** `en` (default) and `pt-BR`, routed as `/en/` and `/pt/`.
 - **Hand-written in both:** all UI chrome, taxonomy display names, facet labels, our editorial
   notes, and the score-model explanation.
-- **Machine-translated at build, cached by content hash:** skill descriptions (short and long).
-  Only re-translated when the author changes the source. Every translated block is marked
+- **Machine-translated, cached by content hash:** skill descriptions (short and long). Only
+  re-translated when the author changes the source. Every translated block is marked
   *machine-translated* and carries a **see original** control; English stays canonical.
+- **Produced by the scheduled Claude Code session** (§6.1), not by a metered API key — so
+  translation has no per-token cost. Model choice is therefore a quality decision, not a budget
+  one. The `PROTECTED` list (§3.5) is part of the translation prompt, and protected-term parity
+  is enforced in CI (§12) rather than trusted to the model.
 - Language choice persists across visits.
 
 ---
@@ -551,6 +574,7 @@ Each answers a failure observed in a real catalog.
 |---|---|
 | **Distribution — no first visitor.** Largest risk; unaddressed. | Security-first framing makes the site linkable. **An acquisition plan is still owed.** |
 | **Solo maintenance.** Every incumbent has failed this. | Committing cron keeps itself alive; `workflow_dispatch` escape hatch; no human-in-the-loop step that can become a queue. |
+| **Classification depends on a human account.** The scheduled Claude session is not a robot; if the maintainer stops, new entries queue unclassified. | Harvest stays in Actions so data never goes stale on its own; unclassified entries land in the domain's `general` leaf rather than disappearing, and the staleness banner reports the classification lag separately from the crawl date. |
 | **PAT expiry silently kills the crawler.** | 1-year fine-grained PAT + calendar reminder, or a GitHub App. Staleness banner driven by `updated_at`. |
 | **Symlink / phantom-catalog count inflation.** | Skip mode-120000, dedupe by blob SHA, publish counts with a dated methodology note. |
 | **Claiming more safety than we verify.** | Descriptive signals only; publish the ruleset; never a green badge. |
@@ -575,10 +599,9 @@ and no directory does this. Not in v1, but nothing in this design precludes it.
 2. **Demand evidence.** No research modality measured whether anyone *uses* a skills directory —
    no traffic estimates, no interviews. Stars measure GitHub attention, which we already argued is
    a poor proxy.
-3. **Translation budget.** Build-time LLM translation is one-time per skill but non-zero; the cap
-   and provider are unspecified.
-4. **Curated order.** The composite score defines default rank. Whether a manual editorial override
-   exists on top of it is undecided.
+**Resolved 2026-08-29:** translation runs on the maintainer's Claude Code subscription rather than
+a metered API key, so there is no budget to cap (§6.1, §8); and there is **no** editorial override —
+order is the formula alone (§5).
 
 ---
 
