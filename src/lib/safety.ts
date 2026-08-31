@@ -64,3 +64,43 @@ export function scriptFilesFor(tree: TreeFile[], skillPath: string): TreeFile[] 
   const prefix = dir === '' ? 'scripts/' : `${dir}/scripts/`;
   return tree.filter((file) => file.path.startsWith(prefix) && isScriptEntry(file));
 }
+
+/**
+ * Published ruleset for the "network reach" row (spec §4.3). No `g` flag anywhere: a global
+ * regex keeps lastIndex between .test() calls and starts returning false negatives.
+ */
+export const NETWORK_PATTERNS: readonly RegExp[] = [
+  /\bhttps?:\/\//i,
+  /\bcurl\b/,
+  /\bwget\b/,
+  /\bfetch\s*\(/,
+  /\brequests\s*\.\s*(?:get|post|put|patch|delete|head|request|session|Session)\b/,
+  /\burllib\b/,
+  /\bhttp\.client\b/,
+  /\baxios\b/,
+  /\bnode-fetch\b/,
+  /\bnet\/http\b/,
+  /\bHttpClient\b/,
+  /\bsocket\s*\.\s*(?:connect|create_connection)\b/,
+  /\bInvoke-(?:WebRequest|RestMethod)\b/i,
+];
+
+/** Published ruleset for the "credential reach" row (spec §4.3). */
+export const ENV_PATTERNS: readonly RegExp[] = [
+  /\bprocess\.env\b/,
+  /\bos\.environ\b/,
+  /\bgetenv\s*\(/,
+  /\bENV\[/,
+  /\$ENV\b/,
+  /\bSystem\.getenv\b/,
+  /\bDeno\.env\b/,
+  /\$\{?[A-Z0-9_]*(?:TOKEN|SECRET|API_KEY|APIKEY|PASSWORD|PASSWD|CREDENTIAL)[A-Z0-9_]*\}?/,
+];
+
+export function scansNetwork(source: string): boolean {
+  return NETWORK_PATTERNS.some((pattern) => pattern.test(source));
+}
+
+export function readsEnvironment(source: string): boolean {
+  return ENV_PATTERNS.some((pattern) => pattern.test(source));
+}
