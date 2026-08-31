@@ -2,7 +2,7 @@
 import type { Lang } from '../../types.ts';
 import Layout from '../../components/Layout.astro';
 import { loadMeta } from '../../lib/data.ts';
-import { compactNumber, relativeDays } from '../../lib/format.ts';
+import { STALE_DAYS, compactNumber, relativeDays } from '../../lib/format.ts';
 import { DEFAULT_LANG, LANGS, isLang, t } from '../../lib/i18n/index.ts';
 import { withBase } from '../../lib/link.ts';
 import { loadTaxonomy } from '../../lib/taxonomy.ts';
@@ -20,6 +20,11 @@ const crawledAtMs = Date.parse(meta.crawledAt);
 const crawlDays = Number.isNaN(crawledAtMs)
   ? 0
   : Math.max(0, Math.floor((Date.now() - crawledAtMs) / 86_400_000));
+
+/* Spec §9.2: past the one shared threshold the cell renders in hazard orange and says so in
+   words. STALE_DAYS lives in src/lib/format.ts (B1) and is the only definition of it in the
+   project; B5's rescue banner reads the same constant. */
+const stale = crawlDays > STALE_DAYS;
 
 const stats = [
   { key: 'skills', label: t('stats.skills', lang), value: compactNumber(meta.skillCount, lang) },
@@ -55,7 +60,15 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
     }
     <div class="stat">
       <dt class="stat__label">{t('stats.lastRefresh', lang)}</dt>
-      <dd class="stat__value" data-stat="refresh" data-days={crawlDays}>{relativeDays(crawlDays, lang)}</dd>
+      <dd
+        class:list={['stat__value', stale && 'meta__updated--stale']}
+        data-stat="refresh"
+        data-days={crawlDays}
+        data-stale={stale ? 'true' : 'false'}
+      >
+        {relativeDays(crawlDays, lang)}
+        {stale && <span class="stat__flag">{t('home.staleNote', lang)}</span>}
+      </dd>
     </div>
   </dl>
 </Layout>
@@ -108,5 +121,19 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
     font-family: var(--font-mono);
     font-size: var(--text-xl);
     font-variant-numeric: tabular-nums;
+  }
+  /* Hazard orange means one thing (§9.2). `.meta__updated--stale` is one of the three
+     selectors allowed to read the token; the site-wide allowlist lives in
+     tests/build/hazard-token.test.ts (B4.13). No fallback: a fallback would hide this
+     usage from that guard. */
+  .meta__updated--stale {
+    color: var(--color-hazard);
+  }
+  .stat__flag {
+    display: block;
+    margin-top: 0.25rem;
+    font-family: var(--font-sans);
+    font-size: var(--text-xs);
+    color: var(--muted-foreground);
   }
 </style>
