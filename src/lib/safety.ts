@@ -1,4 +1,4 @@
-import type { Runtime, TreeFile } from '../types.ts';
+import type { Runtime, Safety, TreeFile } from '../types.ts';
 
 /**
  * The single runtime ordering used everywhere. Never sort runtimes alphabetically.
@@ -138,4 +138,45 @@ export function declaredTools(frontmatter: Record<string, unknown>): string[] | 
   }
   const cleaned = tools.filter((tool) => tool !== '');
   return cleaned.length > 0 ? cleaned : null;
+}
+
+/**
+ * The derived safety surface (spec §4.3). Derived, never declared: `allowed-tools` exists on only
+ * 9% of skills. All three parameters are required — dropping `frontmatter` is what made
+ * declaredTools null for the entire corpus. `files` may be the output of scriptFilesFor or every
+ * entry under the skill dir; isScriptEntry re-filters either way. A script whose content was not
+ * fetched contributes no network/env signal; this module never claims a skill is safe.
+ */
+export function deriveSafety(
+  files: TreeFile[],
+  contents: Map<string, string>,
+  frontmatter: Record<string, unknown>,
+): Safety {
+  const scripts = files.filter(isScriptEntry);
+  const languages = [
+    ...new Set(
+      scripts
+        .map((file) => languageOf(file.path))
+        .filter((language): language is string => language !== null),
+    ),
+  ].sort();
+
+  let network = false;
+  let readsEnv = false;
+  for (const file of scripts) {
+    const source = contents.get(file.path);
+    if (source === undefined) continue;
+    if (!network && scansNetwork(source)) network = true;
+    if (!readsEnv && readsEnvironment(source)) readsEnv = true;
+    if (network && readsEnv) break;
+  }
+
+  return {
+    executesCode: scripts.length > 0,
+    scriptCount: scripts.length,
+    languages,
+    network,
+    readsEnv,
+    declaredTools: declaredTools(frontmatter),
+  };
 }
