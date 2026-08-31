@@ -7,3 +7,98 @@
 export const SITE_BASE = '/ai-tools-hub/';
 export const PAGEFIND_BASE_URL = SITE_BASE;
 export const PAGEFIND_BUNDLE_PATH = `${SITE_BASE}pagefind/pagefind.js`;
+
+import type { Collection, Runtime, Safety, Skill } from '../types.ts';
+
+export const INDEX_FILTER_KEYS = ['domain', 'subdomain', 'runtime', 'risk', 'license'] as const;
+export type IndexFilterKey = (typeof INDEX_FILTER_KEYS)[number];
+
+/** Rail order is decision frequency: "hide anything that executes code" comes first (§10.2). */
+export const RAIL_FILTER_KEYS = ['risk', 'subdomain', 'runtime', 'license'] as const;
+export type RailFilterKey = (typeof RAIL_FILTER_KEYS)[number];
+
+export const RISK_VALUES = [
+  'no-code-execution',
+  'executes-code',
+  'network',
+  'reads-env',
+  'declared-tools',
+  'portable',
+] as const;
+export type RiskValue = (typeof RISK_VALUES)[number];
+
+/** LED order (§10.3). Never sort runtimes alphabetically. */
+export const RUNTIME_ORDER: readonly Runtime[] = ['claude', 'openclaw', 'codex', 'cursor', 'generic'];
+
+export const LICENSE_UNSPECIFIED = 'unspecified';
+
+export function collectionFor(repo: string, collections: Collection[]): Collection | null {
+  return collections.find((c) => c.repo === repo) ?? null;
+}
+
+export function riskValues(safety: Safety, portable: boolean): RiskValue[] {
+  const out: RiskValue[] = [];
+  out.push(safety.executesCode ? 'executes-code' : 'no-code-execution');
+  if (safety.network) out.push('network');
+  if (safety.readsEnv) out.push('reads-env');
+  if (safety.declaredTools && safety.declaredTools.length > 0) out.push('declared-tools');
+  if (portable) out.push('portable');
+  return out;
+}
+
+export function indexValues(skill: Skill): Record<IndexFilterKey, string[]> {
+  const slugs = [skill.primary, ...skill.also].filter(Boolean);
+  return {
+    domain: [...new Set(slugs.map((s) => s.split('/')[0]))],
+    subdomain: [...new Set(slugs)],
+    runtime: [...new Set(skill.runtimes)],
+    risk: riskValues(skill.safety, skill.portable),
+    license: [skill.license ?? LICENSE_UNSPECIFIED],
+  };
+}
+
+/**
+ * §5.1: eviction by the per-subdomain cap sets `listed` false and leaves the row in
+ * data/skills.json — it keeps being re-scored and it keeps its page (B4). Every catalog surface
+ * is built from this filtered array, so an evicted entry disappears from the grid, the facet
+ * counts and the search index at once, and returns whole if its score recovers.
+ */
+export function listedSkills(skills: Skill[]): Skill[] {
+  return skills.filter((skill) => skill.listed);
+}
+
+export function countValues(skills: Skill[], key: IndexFilterKey): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const skill of skills) {
+    for (const value of indexValues(skill)[key]) {
+      counts.set(value, (counts.get(value) ?? 0) + 1);
+    }
+  }
+  return counts;
+}
+
+export interface SortValues {
+  score: string;
+  stars: string;
+  forks: string;
+  newest: string;
+  updated: string;
+}
+
+function pad(n: number, width: number): string {
+  const safe = Number.isFinite(n) ? Math.max(0, Math.round(n)) : 0;
+  return String(safe).padStart(width, '0');
+}
+
+/** Pagefind sorts sort values as strings, so every numeric value is zero-padded to a fixed width. */
+export function sortValues(skill: Skill, collection: Collection | null): SortValues {
+  const iso = typeof skill.indexedAt === 'string' ? skill.indexedAt.slice(0, 10) : '';
+  const newest = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.replace(/-/g, '') : '00000000';
+  return {
+    score: pad(skill.score, 3),
+    stars: pad(collection?.stars ?? 0, 9),
+    forks: pad(collection?.forks ?? 0, 9),
+    newest,
+    updated: pad(skill.updatedDays, 6),
+  };
+}
