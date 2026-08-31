@@ -102,3 +102,51 @@ export function sortValues(skill: Skill, collection: Collection | null): SortVal
     updated: pad(skill.updatedDays, 6),
   };
 }
+
+export interface PagefindPair {
+  key: string;
+  value: string;
+}
+
+export interface PagefindIndexAttrs {
+  id: string;
+  filters: PagefindPair[];
+  sorts: PagefindPair[];
+  text: string[];
+}
+
+/**
+ * The attribute payload one skill page's Pagefind index block must carry. Kept here, beside
+ * indexValues and sortValues, so the rail can never offer a value the index does not carry. B4's
+ * per-skill route emits the block — and emits it only for a listed skill, since an evicted row
+ * keeps its page but leaves the index (§5.1). This is the definition its built output is
+ * asserted against.
+ */
+export function pagefindIndexAttrs(skill: Skill, collection: Collection | null): PagefindIndexAttrs {
+  const values = indexValues(skill);
+  const sorts = sortValues(skill, collection);
+  const filters: PagefindPair[] = [];
+  for (const key of INDEX_FILTER_KEYS) {
+    for (const value of values[key]) filters.push({ key, value });
+  }
+  const text = [
+    skill.name,
+    skill.description,
+    skill.descriptionPt ?? '',
+    skill.longPt ?? '',
+    skill.tags.join(' '),
+    `${skill.repo} ${skill.path}`,
+  ].filter((line) => line.trim().length > 0);
+  return {
+    id: skill.id,
+    filters,
+    sorts: [
+      { key: 'score', value: sorts.score },
+      { key: 'stars', value: sorts.stars },
+      { key: 'forks', value: sorts.forks },
+      { key: 'newest', value: sorts.newest },
+      { key: 'updated', value: sorts.updated },
+    ],
+    text,
+  };
+}
