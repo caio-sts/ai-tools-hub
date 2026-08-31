@@ -1,0 +1,106 @@
+---
+import type { Lang } from '../types.ts';
+import { t } from '../lib/i18n/index.ts';
+import { withBase } from '../lib/link.ts';
+import { nodeName, nodeState } from '../lib/taxonomy.ts';
+
+interface Props {
+  slug: string;
+  count: number;
+  minimumMass: number;
+  lang: Lang;
+  /** `subdomain` filters the catalog to one leaf, `domain` to everything beneath a domain. */
+  filterKey?: 'subdomain' | 'domain';
+}
+
+const { slug, count, minimumMass, lang, filterKey = 'subdomain' } = Astro.props;
+
+const state = nodeState(count, minimumMass);
+// nodeName throws on an unknown slug, so a taxonomy typo fails the build instead of
+// rendering a blank tile (A3.3).
+const label = nodeName(slug, lang);
+const href = withBase(`/${lang}/catalog/?${filterKey}=${encodeURIComponent(slug)}`);
+const ratio = `${count} / ${minimumMass}`;
+---
+
+<li class="node" data-slug={slug} data-state={state} data-count={count}>
+  {
+    state === 'active' && (
+      <a class="node__link" href={href}>
+        <span class="node__label">{label}</span>
+        <span class="node__count">{count}</span>
+      </a>
+    )
+  }
+  {
+    state === 'thin' && (
+      <div class="node__body">
+        <span class="node__label">{label}</span>
+        <span class="node__count">{ratio}</span>
+        <span class="node__note">{t('home.nodeThin', lang)}</span>
+      </div>
+    )
+  }
+  {
+    state === 'empty' && (
+      <div class="node__body">
+        <span class="node__label">{label}</span>
+        <span class="node__count" aria-hidden="true">—</span>
+        <span class="node__note">{t('home.nodeEmpty', lang)}</span>
+      </div>
+    )
+  }
+</li>
+
+<style>
+  .node {
+    list-style: none;
+    border: 1px solid var(--border);
+    background: var(--card);
+  }
+  .node[data-state='active'] {
+    border-color: var(--color-a-7);
+  }
+  /* An absence gets no card fill: the tile reads as a gap in the grid, not as a result. */
+  .node[data-state='empty'] {
+    background: none;
+  }
+  .node__link,
+  .node__body {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.5rem;
+    /* WCAG 2.2 2.5.8 asks for 24px; the grid is the primary navigation, so 44. */
+    min-height: 44px;
+    padding: 0.625rem 0.75rem;
+  }
+  .node__link {
+    color: var(--color-a-11);
+    text-decoration: none;
+    transition: background-color var(--motion-state) var(--motion-ease);
+  }
+  .node__link:hover {
+    background: var(--accent);
+  }
+  .node__link:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: -2px;
+  }
+  /* Dimming is a token swap, not an opacity: the label keeps its contrast ratio (§10.5). */
+  .node__body {
+    color: var(--muted-foreground);
+  }
+  .node__label {
+    flex: 1 1 auto;
+  }
+  .node__count {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+  .node__note {
+    flex: 1 0 100%;
+    font-size: var(--text-xs);
+    letter-spacing: 0.02em;
+  }
+</style>

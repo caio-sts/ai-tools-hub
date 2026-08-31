@@ -1,11 +1,12 @@
 ---
 import type { Lang } from '../../types.ts';
 import Layout from '../../components/Layout.astro';
-import { loadMeta } from '../../lib/data.ts';
+import TaxonomyNode from '../../components/TaxonomyNode.astro';
+import { loadMeta, loadSkills } from '../../lib/data.ts';
 import { STALE_DAYS, compactNumber, relativeDays } from '../../lib/format.ts';
 import { DEFAULT_LANG, LANGS, isLang, t } from '../../lib/i18n/index.ts';
 import { withBase } from '../../lib/link.ts';
-import { loadTaxonomy } from '../../lib/taxonomy.ts';
+import { countBySlug, loadTaxonomy, nodeName } from '../../lib/taxonomy.ts';
 
 export function getStaticPaths() {
   return LANGS.map((value) => ({ params: { lang: value } }));
@@ -14,6 +15,13 @@ export function getStaticPaths() {
 const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : DEFAULT_LANG;
 const meta = loadMeta();
 const taxonomy = loadTaxonomy();
+const skills = loadSkills();
+const counts = countBySlug(skills);
+const security = taxonomy.domains.find((domain) => domain.slug === 'security');
+if (security === undefined) {
+  throw new Error('data/taxonomy.json has no "security" domain: the home page cannot expand it');
+}
+const securityChildren = security.children ?? [];
 
 // A6 always writes an ISO crawledAt; an unparsable one reads as 0 days rather than NaN.
 const crawledAtMs = Date.parse(meta.crawledAt);
@@ -71,6 +79,23 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
       </dd>
     </div>
   </dl>
+
+  <section id="taxonomy" class="domain" aria-labelledby="security-heading">
+    <h2 class="domain__title" id="security-heading">{nodeName('security', lang)}</h2>
+    <p class="domain__lead">{t('home.securityLead', lang)}</p>
+    <ul class="grid" data-grid="security">
+      {
+        securityChildren.map((child) => (
+          <TaxonomyNode
+            slug={child.slug}
+            count={counts.get(child.slug) ?? 0}
+            minimumMass={taxonomy.minimumMass}
+            lang={lang}
+          />
+        ))
+      }
+    </ul>
+  </section>
 </Layout>
 
 <style>
@@ -135,5 +160,30 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
     font-family: var(--font-sans);
     font-size: var(--text-xs);
     color: var(--muted-foreground);
+  }
+  .domain {
+    margin-block: 2.5rem;
+    /* WCAG 2.2 2.4.11: a sticky header must not cover the node a link jumps to. */
+    scroll-margin-top: 5rem;
+  }
+  .domain__title {
+    margin: 0 0 0.25rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-lg);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .domain__lead {
+    margin: 0 0 1rem;
+    max-width: 62ch;
+    font-size: var(--text-sm);
+    color: var(--muted-foreground);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
   }
 </style>
