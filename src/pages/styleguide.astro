@@ -1,5 +1,59 @@
 ---
 import '../styles/theme.css';
+
+const RAMP_ROLES: Record<number, string> = {
+  1: 'app background',
+  2: 'app background',
+  3: 'component bg',
+  4: 'hover',
+  5: 'pressed / selected',
+  6: 'subtle border',
+  7: 'interactive border',
+  8: 'focus ring',
+  9: 'solid',
+  10: 'solid hover',
+  11: 'low-contrast text',
+  12: 'high-contrast text',
+};
+
+const NEUTRAL = Array.from({ length: 12 }, (_, i) => `--color-n-${i + 1}`);
+const ACCENT = Array.from({ length: 12 }, (_, i) => `--color-a-${i + 1}`);
+const SEMANTIC = [
+  '--background', '--foreground', '--card', '--card-foreground', '--popover',
+  '--popover-foreground', '--primary', '--primary-foreground', '--secondary',
+  '--secondary-foreground', '--muted', '--muted-foreground', '--accent',
+  '--accent-foreground', '--destructive', '--destructive-foreground',
+  '--border', '--input', '--ring',
+];
+const TEXT = ['xs', 'sm', 'base', 'lg', 'xl', '2xl', '3xl', '4xl', '5xl'];
+const MOTION = ['--motion-state', '--motion-enter', '--motion-overlay', '--motion-ease'];
+
+const BUTTON_STATES = ['rest', 'hover', 'focus', 'pressed', 'disabled'];
+
+// RUNTIME_ORDER (§9.2 status LEDs) — never alphabetical.
+const RUNTIMES = ['claude', 'openclaw', 'codex', 'cursor', 'generic'];
+
+// hazard: true marks the three consumers the token is reserved for.
+const SAFETY_ROWS = [
+  { key: 'executes-code', label: 'Executes code', value: '3 scripts · python, bash', hazard: true },
+  { key: 'network', label: 'Network', value: 'HTTP calls found', hazard: true },
+  { key: 'reads-env', label: 'Reads env', value: 'no', hazard: false },
+  { key: 'not-declared', label: 'Declared tools', value: 'not declared', hazard: true },
+];
+const SCORES = [
+  { key: 'adoption', label: 'Adoption', value: 21, max: 25 },
+  { key: 'maintenance', label: 'Maintenance', value: 26, max: 30 },
+  { key: 'provenance', label: 'Provenance', value: 25, max: 25 },
+  { key: 'completeness', label: 'Completeness', value: 20, max: 20 },
+];
+const NODE_STATES = [
+  { state: 'active', label: 'Supply Chain & Dependencies', detail: '31' },
+  { state: 'below-mass', label: 'Threat Modeling', detail: '2 · below minimum mass' },
+  { state: 'empty', label: 'Vertical Domain', detail: 'no entries yet' },
+];
+const FACETS = ['Executes code', 'Network access', 'Reads env', 'Portable'];
+
+const HAZARD_STYLE = 'color: var(--color-hazard);';
 ---
 
 <!doctype html>
@@ -7,10 +61,510 @@ import '../styles/theme.css';
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
     <title>Styleguide — ai-tools-hub</title>
   </head>
   <body class="bg-background text-foreground">
     <span class="bg-red-500 bg-indigo-500 bg-hazard text-hazard rounded-lg shadow-lg" hidden data-guard="palette-wipe">palette guard</span>
-    <h1>Styleguide</h1>
+
+    <main class="sg-page">
+      <header class="sg-head">
+        <h1 class="sg-h1">Styleguide</h1>
+        <p class="sg-lede">
+          Every design token and every component state rendered from
+          <code>src/styles/theme.css</code>. If a swatch is blank, the token is gone.
+        </p>
+        <div class="sg-toolbar">
+          <button type="button" class="sg-btn" data-set-theme="light">Light</button>
+          <button type="button" class="sg-btn" data-set-theme="dark">Dark</button>
+          <button type="button" class="sg-btn" data-set-theme="system">System</button>
+        </div>
+      </header>
+
+      <section data-section="ramp-neutral">
+        <h2 class="sg-h2">Neutral ramp</h2>
+        <div class="sg-ramp">
+          {NEUTRAL.map((token, i) => (
+            <div class="sg-swatch" data-token={token}>
+              <div class="sg-chip" style={`background: var(${token});`}></div>
+              <code class="sg-name">{token}</code>
+              <span class="sg-role">{RAMP_ROLES[i + 1]}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section data-section="ramp-accent">
+        <h2 class="sg-h2">Accent ramp</h2>
+        <div class="sg-ramp">
+          {ACCENT.map((token, i) => (
+            <div class="sg-swatch" data-token={token}>
+              <div class="sg-chip" style={`background: var(${token});`}></div>
+              <code class="sg-name">{token}</code>
+              <span class="sg-role">{RAMP_ROLES[i + 1]}</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section data-section="hazard">
+        <h2 class="sg-h2">Hazard</h2>
+        <p class="sg-note">
+          One token, <code>--color-hazard</code>, for the safety module only. Permitted consumers:
+          the safety strip, a stale date over 60 days, and an undeclared licence. It lives outside
+          <code>@theme</code> on purpose, so no <code>bg-hazard</code> utility can ever exist.
+        </p>
+        <div class="sg-ramp">
+          <div class="sg-swatch" data-token="--color-hazard">
+            <div class="sg-chip" style="background: var(--color-hazard);"></div>
+            <code class="sg-name">--color-hazard</code>
+          </div>
+        </div>
+      </section>
+
+      <section data-section="semantic">
+        <h2 class="sg-h2">Semantic aliases</h2>
+        <div class="sg-ramp">
+          {SEMANTIC.map((token) => (
+            <div class="sg-swatch" data-token={token}>
+              <div class="sg-chip" style={`background: var(${token});`}></div>
+              <code class="sg-name">{token}</code>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section data-section="geometry">
+        <h2 class="sg-h2">Geometry</h2>
+        <div class="sg-ramp">
+          <div class="sg-swatch" data-token="--radius">
+            <div class="sg-chip" style="background: var(--color-a-9); border-radius: var(--radius);"></div>
+            <code class="sg-name">--radius</code>
+            <span class="sg-role">0 — Industrial Console has no radius</span>
+          </div>
+          <div class="sg-swatch" data-token="--spacing">
+            <div class="sg-chip" style="background: var(--color-n-6); height: calc(var(--spacing) * 4);"></div>
+            <code class="sg-name">--spacing</code>
+            <span class="sg-role">0.25rem base unit</span>
+          </div>
+        </div>
+      </section>
+
+      <section data-section="type">
+        <h2 class="sg-h2">Type scale</h2>
+        {TEXT.map((step) => (
+          <p
+            class="sg-type"
+            data-token={`--text-${step}`}
+            style={`font-size: var(--text-${step}); line-height: var(--text-${step}--line-height);`}
+          >
+            <span>text-{step}</span> <code class="sg-name">owner/repo@sha:path/SKILL.md</code>
+          </p>
+        ))}
+      </section>
+
+      <section data-section="fonts">
+        <h2 class="sg-h2">Families</h2>
+        <p class="sg-sans" data-token="--font-sans">
+          Archivo carries prose. Depth over breadth. Judgment over recall.
+        </p>
+        <p class="sg-mono" data-token="--font-mono">
+          JetBrains Mono carries every identifier, path, count, command and metric. 0123456789
+        </p>
+      </section>
+
+      <section data-section="motion">
+        <h2 class="sg-h2">Motion</h2>
+        <div class="sg-ramp">
+          {MOTION.map((token) => (
+            <div class="sg-swatch" data-token={token}>
+              <code class="sg-name">{token}</code>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section data-section="buttons">
+        <h2 class="sg-h2">Button states</h2>
+        <div class="sg-row">
+          {BUTTON_STATES.map((state) => (
+            <button type="button" class="sg-btn sg-btn-primary" data-state={state} disabled={state === 'disabled'}>
+              {state}
+            </button>
+          ))}
+        </div>
+        <div class="sg-row">
+          {BUTTON_STATES.map((state) => (
+            <button type="button" class="sg-btn" data-state={state} disabled={state === 'disabled'}>
+              {state}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section data-section="input">
+        <h2 class="sg-h2">Input</h2>
+        <div class="sg-row">
+          <input class="sg-input" type="text" data-state="rest" value="kubernetes" />
+          <input class="sg-input" type="text" data-state="focus" value="kubernetes" />
+          <input class="sg-input" type="text" data-state="disabled" value="kubernetes" disabled />
+        </div>
+      </section>
+
+      <section data-section="leds">
+        <h2 class="sg-h2">Runtime LEDs — RUNTIME_ORDER</h2>
+        <div class="sg-row">
+          {RUNTIMES.map((runtime) => (
+            <span class="sg-led-row" data-led={runtime}>
+              <span class="sg-led"></span>
+              <code class="sg-name">{runtime}</code>
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <section data-section="card">
+        <h2 class="sg-h2">Panel card</h2>
+        <article class="sg-card">
+          <div class="sg-card-top">
+            <code class="sg-name">#4</code>
+            <code class="sg-name">92</code>
+            {RUNTIMES.slice(0, 3).map((runtime) => (
+              <span class="sg-led" data-led-chip={runtime}></span>
+            ))}
+          </div>
+          <h3 class="sg-card-name">sbom-diff</h3>
+          <p class="sg-card-desc">
+            Diffs two CycloneDX SBOMs and reports added, removed and version-shifted components
+            with their advisory status.
+          </p>
+          <ul class="sg-safety">
+            {SAFETY_ROWS.map((row) => (
+              <li data-safety={row.key} style={row.hazard ? HAZARD_STYLE : ''}>
+                <span>{row.label}</span>
+                <code class="sg-name">{row.value}</code>
+              </li>
+            ))}
+          </ul>
+          <div class="sg-card-meta">
+            <code class="sg-name">trailofbits/skills</code>
+            <code class="sg-name">6908 ★ · 412 ⑂</code>
+            <code class="sg-name" data-stale="true" style={HAZARD_STYLE}>updated 214d ago</code>
+          </div>
+          <div class="sg-card-meta">
+            <code class="sg-name" data-license="resolved">Apache-2.0</code>
+            <code class="sg-name" data-license="not-declared" style={HAZARD_STYLE}>Not declared</code>
+          </div>
+        </article>
+      </section>
+
+      <section data-section="scores">
+        <h2 class="sg-h2">Score breakdown</h2>
+        {SCORES.map((score) => (
+          <div class="sg-score" data-score={score.key}>
+            <code class="sg-name">{score.label}</code>
+            <div class="sg-score-track">
+              <div class="sg-score-fill" style={`width: ${(score.value / score.max) * 100}%;`}></div>
+            </div>
+            <code class="sg-name">{score.value}/{score.max}</code>
+          </div>
+        ))}
+      </section>
+
+      <section data-section="nodes">
+        <h2 class="sg-h2">Taxonomy node states</h2>
+        <p class="sg-note">Three states, none of which lie (§10.1). Minimum mass is 5.</p>
+        <div class="sg-row">
+          {NODE_STATES.map((node) => (
+            <span class="sg-node" data-node-state={node.state}>
+              <span class="sg-node-label">{node.label}</span>
+              <code class="sg-name">{node.state === 'empty' ? '—' : node.detail}</code>
+              {node.state === 'empty' && <span class="sg-role">no entries yet</span>}
+              {node.state === 'below-mass' && <span class="sg-role">{node.detail}</span>}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <section data-section="facets">
+        <h2 class="sg-h2">Facet rows — 24px hit area</h2>
+        <div class="sg-facets">
+          {FACETS.map((facet) => (
+            <label class="sg-facet" data-hit="24" style="min-height: calc(var(--spacing) * 6);">
+              <input type="checkbox" />
+              <span>{facet}</span>
+              <code class="sg-name">128</code>
+            </label>
+          ))}
+        </div>
+      </section>
+    </main>
+
+    <script is:inline>
+      document.querySelectorAll('[data-set-theme]').forEach(function (el) {
+        el.addEventListener('click', function () {
+          var mode = el.getAttribute('data-set-theme');
+          if (mode === 'system') document.documentElement.removeAttribute('data-theme');
+          else document.documentElement.setAttribute('data-theme', mode);
+        });
+      });
+    </script>
+
+    <style>
+      .sg-page {
+        max-width: 76rem;
+        margin: 0 auto;
+        padding: calc(var(--spacing) * 8);
+      }
+      .sg-head {
+        border-bottom-width: 1px;
+        padding-bottom: calc(var(--spacing) * 4);
+        margin-bottom: calc(var(--spacing) * 8);
+      }
+      .sg-h1 {
+        font-family: var(--font-mono);
+        font-size: var(--text-3xl);
+        letter-spacing: -0.01em;
+      }
+      .sg-h2 {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--muted-foreground);
+        border-bottom-width: 1px;
+        padding-bottom: calc(var(--spacing) * 2);
+        margin-bottom: calc(var(--spacing) * 4);
+      }
+      section {
+        margin-bottom: calc(var(--spacing) * 10);
+      }
+      .sg-lede,
+      .sg-note {
+        color: var(--muted-foreground);
+        font-size: var(--text-sm);
+        max-width: 56ch;
+        margin-bottom: calc(var(--spacing) * 4);
+      }
+      .sg-toolbar,
+      .sg-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(var(--spacing) * 2);
+        align-items: center;
+        margin-bottom: calc(var(--spacing) * 3);
+      }
+      .sg-ramp {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+        gap: calc(var(--spacing) * 2);
+      }
+      .sg-swatch {
+        border-width: 1px;
+        padding: calc(var(--spacing) * 2);
+        background: var(--card);
+      }
+      .sg-chip {
+        height: calc(var(--spacing) * 12);
+        border-width: 1px;
+        margin-bottom: calc(var(--spacing) * 2);
+      }
+      .sg-name {
+        display: block;
+        font-family: var(--font-mono);
+        font-size: var(--text-xs);
+      }
+      .sg-role {
+        display: block;
+        font-size: var(--text-xs);
+        color: var(--muted-foreground);
+      }
+      .sg-type {
+        margin-bottom: calc(var(--spacing) * 2);
+      }
+      .sg-sans {
+        font-family: var(--font-sans);
+        font-size: var(--text-lg);
+      }
+      .sg-mono {
+        font-family: var(--font-mono);
+        font-size: var(--text-lg);
+      }
+
+      .sg-btn {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        border-width: 1px;
+        padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 3);
+        min-height: calc(var(--spacing) * 6);
+        background: var(--secondary);
+        color: var(--secondary-foreground);
+        transition: background-color var(--motion-state) var(--motion-ease);
+      }
+      .sg-btn[data-state='hover'] {
+        background: var(--color-n-4);
+      }
+      .sg-btn[data-state='pressed'] {
+        background: var(--color-n-5);
+      }
+      .sg-btn[data-state='focus'] {
+        outline: 2px solid var(--ring);
+      }
+      .sg-btn[data-state='disabled'] {
+        color: var(--muted-foreground);
+        border-color: var(--color-n-5);
+      }
+      .sg-btn-primary {
+        background: var(--primary);
+        color: var(--primary-foreground);
+        border-color: var(--primary);
+      }
+      .sg-btn-primary[data-state='hover'] {
+        background: var(--color-a-10);
+      }
+      .sg-btn-primary[data-state='pressed'] {
+        background: var(--color-a-11);
+      }
+      .sg-btn-primary[data-state='disabled'] {
+        background: var(--color-n-5);
+        border-color: var(--color-n-5);
+        color: var(--muted-foreground);
+      }
+
+      .sg-input {
+        font-family: var(--font-mono);
+        font-size: var(--text-sm);
+        border-width: 1px;
+        border-color: var(--input);
+        background: var(--background);
+        color: var(--foreground);
+        padding: calc(var(--spacing) * 1.5) calc(var(--spacing) * 2);
+        min-height: calc(var(--spacing) * 6);
+      }
+      .sg-input[data-state='focus'] {
+        outline: 2px solid var(--ring);
+      }
+      .sg-input[data-state='disabled'] {
+        color: var(--muted-foreground);
+      }
+
+      .sg-led {
+        display: inline-block;
+        width: calc(var(--spacing) * 2);
+        height: calc(var(--spacing) * 2);
+        background: var(--color-a-9);
+        border-width: 1px;
+      }
+      .sg-led-row {
+        display: inline-flex;
+        align-items: center;
+        gap: calc(var(--spacing) * 1.5);
+        border-width: 1px;
+        padding: calc(var(--spacing) * 1) calc(var(--spacing) * 2);
+      }
+      [data-led='generic'] .sg-led,
+      .sg-led[data-led-chip='generic'] {
+        background: var(--color-n-8);
+      }
+
+      .sg-card {
+        border-width: 1px;
+        background: var(--card);
+        color: var(--card-foreground);
+        padding: calc(var(--spacing) * 3);
+        max-width: 26rem;
+      }
+      .sg-card-top {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--spacing) * 2);
+        margin-bottom: calc(var(--spacing) * 2);
+      }
+      .sg-card-name {
+        font-family: var(--font-mono);
+        font-size: var(--text-lg);
+      }
+      .sg-card-desc {
+        font-size: var(--text-sm);
+        color: var(--muted-foreground);
+        margin: calc(var(--spacing) * 2) 0;
+      }
+      /* The strip is one of the three places allowed to reach for the hazard
+         token; the row colours themselves are set inline, per row. */
+      .sg-safety {
+        border-width: 1px;
+        border-color: var(--color-hazard);
+        padding: calc(var(--spacing) * 2);
+        margin-bottom: calc(var(--spacing) * 2);
+      }
+      .sg-safety li {
+        display: flex;
+        justify-content: space-between;
+        gap: calc(var(--spacing) * 2);
+        font-size: var(--text-xs);
+      }
+      .sg-card-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: calc(var(--spacing) * 2);
+        margin-bottom: calc(var(--spacing) * 1);
+      }
+
+      .sg-score {
+        display: grid;
+        grid-template-columns: 9rem 1fr 5rem;
+        align-items: center;
+        gap: calc(var(--spacing) * 2);
+        margin-bottom: calc(var(--spacing) * 2);
+      }
+      .sg-score-track {
+        height: calc(var(--spacing) * 2);
+        background: var(--color-n-3);
+        border-width: 1px;
+      }
+      .sg-score-fill {
+        height: 100%;
+        background: var(--color-a-9);
+      }
+
+      .sg-node {
+        display: inline-flex;
+        flex-direction: column;
+        gap: calc(var(--spacing) * 1);
+        border-width: 1px;
+        padding: calc(var(--spacing) * 2) calc(var(--spacing) * 3);
+        min-height: calc(var(--spacing) * 6);
+      }
+      .sg-node[data-node-state='active'] {
+        border-color: var(--color-a-7);
+        color: var(--color-a-11);
+      }
+      .sg-node[data-node-state='below-mass'] {
+        color: var(--muted-foreground);
+        border-color: var(--color-n-5);
+      }
+      .sg-node[data-node-state='empty'] {
+        color: var(--muted-foreground);
+        border-color: var(--color-n-4);
+      }
+
+      .sg-facets {
+        display: flex;
+        flex-direction: column;
+        max-width: 20rem;
+      }
+      .sg-facet {
+        display: flex;
+        align-items: center;
+        gap: calc(var(--spacing) * 2);
+        font-size: var(--text-sm);
+        border-bottom-width: 1px;
+        padding: calc(var(--spacing) * 1) 0;
+      }
+      .sg-facet code {
+        margin-left: auto;
+        color: var(--muted-foreground);
+      }
+    </style>
   </body>
 </html>
