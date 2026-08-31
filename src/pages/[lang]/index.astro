@@ -1,0 +1,112 @@
+---
+import type { Lang } from '../../types.ts';
+import Layout from '../../components/Layout.astro';
+import { loadMeta } from '../../lib/data.ts';
+import { compactNumber, relativeDays } from '../../lib/format.ts';
+import { DEFAULT_LANG, LANGS, isLang, t } from '../../lib/i18n/index.ts';
+import { withBase } from '../../lib/link.ts';
+import { loadTaxonomy } from '../../lib/taxonomy.ts';
+
+export function getStaticPaths() {
+  return LANGS.map((value) => ({ params: { lang: value } }));
+}
+
+const lang: Lang = isLang(Astro.params.lang) ? Astro.params.lang : DEFAULT_LANG;
+const meta = loadMeta();
+const taxonomy = loadTaxonomy();
+
+// A6 always writes an ISO crawledAt; an unparsable one reads as 0 days rather than NaN.
+const crawledAtMs = Date.parse(meta.crawledAt);
+const crawlDays = Number.isNaN(crawledAtMs)
+  ? 0
+  : Math.max(0, Math.floor((Date.now() - crawledAtMs) / 86_400_000));
+
+const stats = [
+  { key: 'skills', label: t('stats.skills', lang), value: compactNumber(meta.skillCount, lang) },
+  { key: 'sources', label: t('stats.sources', lang), value: compactNumber(meta.sourceCount, lang) },
+  {
+    key: 'domains',
+    label: t('stats.domains', lang),
+    value: compactNumber(taxonomy.domains.length, lang),
+  },
+];
+
+const catalogHref = withBase(`/${lang}/catalog/`);
+const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
+---
+
+<Layout lang={lang} title={title} description={t('home.description', lang)}>
+  <section class="intro">
+    <h1 class="intro__thesis">{t('site.thesis', lang)}</h1>
+    <p class="intro__support">{t('site.support', lang)}</p>
+    <p class="intro__actions">
+      <a class="intro__catalog" href={catalogHref}>{t('nav.catalog', lang)}</a>
+    </p>
+  </section>
+
+  <dl class="stats">
+    {
+      stats.map((stat) => (
+        <div class="stat">
+          <dt class="stat__label">{stat.label}</dt>
+          <dd class="stat__value" data-stat={stat.key}>{stat.value}</dd>
+        </div>
+      ))
+    }
+    <div class="stat">
+      <dt class="stat__label">{t('stats.lastRefresh', lang)}</dt>
+      <dd class="stat__value" data-stat="refresh" data-days={crawlDays}>{relativeDays(crawlDays, lang)}</dd>
+    </div>
+  </dl>
+</Layout>
+
+<style>
+  .intro {
+    max-width: 62ch;
+  }
+  .intro__thesis {
+    margin: 0 0 0.5rem;
+    font-size: var(--text-3xl);
+    line-height: var(--text-3xl--line-height);
+  }
+  .intro__support {
+    margin: 0;
+    color: var(--muted-foreground);
+  }
+  .intro__actions {
+    margin: 1rem 0 0;
+  }
+  .intro__catalog {
+    color: var(--color-a-11);
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1px;
+    margin: 2rem 0 3rem;
+    padding: 0;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .stat {
+    flex: 1 1 9rem;
+    padding: 0.75rem 1rem;
+    background: var(--card);
+  }
+  .stat__label {
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .stat__value {
+    margin: 0.25rem 0 0;
+    font-family: var(--font-mono);
+    font-size: var(--text-xl);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

@@ -1,15 +1,28 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Lang, Skill, Taxonomy, TaxonomyNode } from '../types.ts';
 
-const TAXONOMY_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '../../data/taxonomy.json');
+/**
+ * The committed taxonomy, wherever this module is running from. The import.meta.url-relative
+ * path is correct under vitest and under `node scripts/*.ts`, but NOT under `astro build`:
+ * Astro bundles this module into dist/.prerender/chunks/, so the relative walk would land on
+ * dist/data/taxonomy.json. The cwd candidate covers that, and every entry point (vitest, astro
+ * build, the harvest CLI, the systemd unit's WorkingDirectory) runs from the repo root.
+ */
+function resolveTaxonomyPath(): string {
+  const candidates = [
+    resolve(dirname(fileURLToPath(import.meta.url)), '../../data/taxonomy.json'),
+    resolve(process.cwd(), 'data/taxonomy.json'),
+  ];
+  return candidates.find((path) => existsSync(path)) ?? candidates[candidates.length - 1];
+}
 
 let cached: Taxonomy | null = null;
 
 export function loadTaxonomy(): Taxonomy {
   if (cached === null) {
-    cached = JSON.parse(readFileSync(TAXONOMY_PATH, 'utf8')) as Taxonomy;
+    cached = JSON.parse(readFileSync(resolveTaxonomyPath(), 'utf8')) as Taxonomy;
   }
   return cached;
 }

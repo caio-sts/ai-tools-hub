@@ -1,5 +1,5 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
+import { existsSync, readFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import type { Assignments, Collection, Meta, Skill } from '../types.ts';
 
@@ -13,7 +13,21 @@ export const EMPTY_META: Meta = {
   sourceCount: 0,
 };
 
-export const DEFAULT_DATA_DIR = fileURLToPath(new URL('../../data/', import.meta.url));
+/**
+ * The committed data/ directory, wherever this module is running from. The import.meta.url
+ * walk is right under vitest and plain node, but Astro bundles this module into
+ * dist/.prerender/chunks/ during a build, where that walk lands on dist/data/. Every entry
+ * point runs from the repo root, so cwd is the fallback.
+ */
+function resolveDataDir(): string {
+  const candidates = [
+    fileURLToPath(new URL('../../data/', import.meta.url)),
+    resolve(process.cwd(), 'data'),
+  ];
+  return candidates.find((dir) => existsSync(join(dir, 'meta.json'))) ?? candidates[candidates.length - 1];
+}
+
+export const DEFAULT_DATA_DIR = resolveDataDir();
 
 function readJson(dataDir: string, file: string): unknown {
   try {
