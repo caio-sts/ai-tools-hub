@@ -229,3 +229,61 @@ export function parseFrontmatter(text: string): ParsedFrontmatter {
 
   return { frontmatter: fm, body };
 }
+
+export interface PathCommit {
+  sha: string;
+  updatedDays: number;
+}
+
+interface CommitItem {
+  sha?: string;
+  commit?: { committer?: { date?: string }; author?: { date?: string } };
+}
+
+/** Maintenance decays on the PATH's last commit, not the repo's; the sha also pins provenance. */
+export async function fetchPathCommit(
+  repo: string,
+  path: string,
+  token: string,
+  deps: EnumerateDeps = {},
+): Promise<PathCommit | null> {
+  const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
+  const now = deps.now ?? (() => Date.now());
+  const url = `${API}/repos/${repo}/commits?path=${encodeURIComponent(path)}&per_page=1`;
+  const res = await fetchImpl(url, { headers: ghHeaders(token) });
+  if (res.status === 404 || res.status === 409) return null;
+  if (!res.ok) throw new Error(`commits ${repo}:${path}: HTTP ${res.status}`);
+  const body = (await res.json()) as CommitItem[];
+  const first = Array.isArray(body) ? body[0] : undefined;
+  if (first === undefined || typeof first.sha !== 'string') return null;
+  const iso = first.commit?.committer?.date ?? first.commit?.author?.date;
+  if (iso === undefined) return null;
+  const ms = now() - Date.parse(iso);
+  return { sha: first.sha, updatedDays: Math.max(0, Math.floor(ms / 86_400_000)) };
+}
+
+/**
+ * The repo's default-branch HEAD COMMIT sha. This is the only correct fallback when a path has
+ * no commit history: raw.githubusercontent.com resolves commit shas, never blob shas, so
+ * falling back to a tree entry's `sha` would 404 every content and safety fetch downstream.
+ * Fetched lazily by enumerateSkills — most repos never need it.
+ *
+ * This is the ONE head-commit fetcher in the codebase. A6's collection LICENSE pass imports it
+ * from here (`import { fetchHeadCommit } from './enumerate.ts'`) instead of writing a second
+ * implementation, so there is exactly one place where "the repo's current commit" is defined.
+ */
+export async function fetchHeadCommit(
+  repo: string,
+  token: string,
+  deps: EnumerateDeps = {},
+): Promise<string | null> {
+  const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
+  const res = await fetchImpl(`${API}/repos/${repo}/commits?per_page=1`, {
+    headers: ghHeaders(token),
+  });
+  if (res.status === 404 || res.status === 409) return null;
+  if (!res.ok) throw new Error(`commits ${repo}: HTTP ${res.status}`);
+  const body = (await res.json()) as CommitItem[];
+  const first = Array.isArray(body) ? body[0] : undefined;
+  return typeof first?.sha === 'string' ? first.sha : null;
+}
