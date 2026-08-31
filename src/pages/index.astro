@@ -1,6 +1,6 @@
 ---
 import Layout from '../components/Layout.astro';
-import { DEFAULT_LANG, LANGS, localePath, t } from '../lib/i18n/index.ts';
+import { DEFAULT_LANG, LANGS, LANG_STORAGE_KEY, localePath, t } from '../lib/i18n/index.ts';
 import { withBase } from '../lib/link.ts';
 
 const fallback = withBase(localePath(DEFAULT_LANG, '/'));
@@ -13,6 +13,18 @@ const targets = Object.fromEntries(LANGS.map((lang) => [lang, withBase(localePat
 >
   <Fragment slot="head">
     <meta http-equiv="refresh" content={`0; url=${fallback}`} />
+    <script is:inline define:vars={{ targets, fallback, storageKey: LANG_STORAGE_KEY }}>
+      (function () {
+        var next = fallback;
+        try {
+          var stored = window.localStorage.getItem(storageKey);
+          if (stored && targets[stored]) next = targets[stored];
+        } catch (error) {
+          /* storage blocked (private window, site data off) — the meta refresh still fires */
+        }
+        window.location.replace(next);
+      })();
+    </script>
   </Fragment>
   <h1>{t('gateway.heading', DEFAULT_LANG)}</h1>
   <p>{t('gateway.body', DEFAULT_LANG)}</p>
