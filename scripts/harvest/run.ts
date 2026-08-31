@@ -1,3 +1,9 @@
+import type { Assignment, Collection, RawSkill, Safety, Skill } from '../../src/types.ts';
+import { scoreSkill } from '../../src/lib/score.ts';
+import { isPortable } from '../../src/lib/safety.ts';
+import { resolveLicense } from '../../src/lib/license.ts';
+import { detectRuntimes } from './enrich.ts';
+
 /** Primary key for a skill: skills have no version and no namespace primitive (spec §4.1). */
 export function skillId(repo: string, sha: string, path: string): string {
   return `${repo}@${sha}:${path}`;
@@ -26,4 +32,89 @@ export function compatibilityTopics(frontmatter: Record<string, unknown>): strin
   const declared = frontmatter['compatibility'];
   const list: unknown[] = Array.isArray(declared) ? declared : typeof declared === 'string' ? [declared] : [];
   return list.filter((entry): entry is string => typeof entry === 'string');
+}
+
+/**
+ * Where a skill sits until the classification PR lands. It is a real taxonomy node,
+ * so referential integrity holds and nothing disappears (spec §13).
+ */
+export const UNCLASSIFIED_PRIMARY = 'vertical-domain/general';
+
+const MAX_ALSO = 2;
+const MAX_TAGS = 10;
+
+export interface BuildSkillInput {
+  raw: RawSkill;
+  collection: Collection;
+  safety: Safety;
+  /** Every blob path in the repo tree — resolveLicense needs it to spot a sibling LICENSE. */
+  treePaths: string[];
+  siblingLicenseText: string | null;
+  assignment: Assignment | undefined;
+  indexedAt: string;
+}
+
+export function buildSkill(input: BuildSkillInput): Skill {
+  const { raw, collection, safety, treePaths, siblingLicenseText, assignment, indexedAt } = input;
+  const frontmatter = raw.frontmatter;
+
+  const segments = raw.path.split('/');
+  const declaredName = frontmatter['name'];
+  const name =
+    typeof declaredName === 'string' && declaredName.trim() !== ''
+      ? declaredName.trim()
+      : (segments.length >= 2 ? segments[segments.length - 2] : segments[0]) ?? raw.path;
+
+  const declaredDescription = frontmatter['description'];
+  const description = typeof declaredDescription === 'string' ? declaredDescription.trim() : '';
+
+  const { license, licenseSource } = resolveLicense({
+    frontmatter,
+    skillPath: raw.path,
+    treePaths,
+    repoLicense: collection.license,
+    siblingLicenseText,
+  });
+
+  const portable = isPortable(frontmatter);
+  const runtimes = detectRuntimes([...collection.topics, ...compatibilityTopics(frontmatter)]);
+
+  const breakdown = scoreSkill({
+    stars: collection.stars,
+    updatedDays: raw.updatedDays,
+    curated: collection.curated,
+    isOrg: collection.isOrg,
+    license,
+    portable,
+    description,
+  });
+
+  return {
+    id: skillId(raw.repo, raw.sha, raw.path),
+    type: 'skill',
+    name,
+    description,
+    // Harvest is deterministic and never translates. The translation PR fills these in.
+    descriptionPt: null,
+    longPt: null,
+    repo: raw.repo,
+    path: raw.path,
+    sha: raw.sha,
+    updatedDays: raw.updatedDays,
+    indexedAt,
+    license,
+    licenseSource,
+    portable,
+    runtimes,
+    safety,
+    primary: assignment?.primary ?? UNCLASSIFIED_PRIMARY,
+    also: (assignment?.also ?? []).slice(0, MAX_ALSO),
+    tags: (assignment?.tags ?? []).slice(0, MAX_TAGS),
+    securityRelevant: isSecurityRelevant(`${name} ${description}`),
+    // Provisional. applyListing (A6.9) is the authority on this field and runHarvest applies
+    // it over the whole catalog before writing, so the cap decides what is listed (spec §5.1).
+    listed: true,
+    score: breakdown.total,
+    breakdown,
+  };
 }
