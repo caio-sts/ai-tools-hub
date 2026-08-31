@@ -2,8 +2,23 @@
 import type { Lang } from '../../types.ts';
 import Layout from '../../components/Layout.astro';
 import FacetRail from '../../components/FacetRail.astro';
-import { PAGEFIND_BASE_URL, PAGEFIND_BUNDLE_PATH, PAGE_SIZE, buildFacetGroups, chipLabelMap, listedSkills } from '../../lib/facets.ts';
-import { loadSkills } from '../../lib/data.ts';
+import SkillCard from '../../components/SkillCard.astro';
+import {
+  DEFAULT_SORT,
+  PAGEFIND_BASE_URL,
+  PAGEFIND_BUNDLE_PATH,
+  PAGE_SIZE,
+  SORT_KEYS,
+  buildFacetGroups,
+  chipLabelMap,
+  collectionFor,
+  listedSkills,
+  serializeQuery,
+  sortCards,
+  sortLabel,
+  toSortableCard,
+} from '../../lib/facets.ts';
+import { loadCollections, loadSkills } from '../../lib/data.ts';
 import { loadTaxonomy } from '../../lib/taxonomy.ts';
 import { withBase } from '../../lib/link.ts';
 import { t } from '../../lib/i18n/index.ts';
@@ -17,9 +32,16 @@ const lang = Astro.params.lang as Lang;
 // page, but it is not listed — so it leaves the grid, the facet counts and the search index. Filter
 // once, here, and nothing downstream has to remember.
 const skills = listedSkills(loadSkills());
+const collections = loadCollections();
 const taxonomy = loadTaxonomy();
 const groups = buildFacetGroups(skills, taxonomy, lang);
+const byId = new Map(skills.map((s) => [s.id, s]));
+const ordered = sortCards(
+  skills.map((s) => toSortableCard(s, collectionFor(s.repo, collections))),
+  DEFAULT_SORT,
+);
 const catalogPath = withBase(`/${lang}/catalog/`);
+const blank = { filters: {}, q: '', sort: DEFAULT_SORT, page: 1 };
 const config = {
   baseUrl: PAGEFIND_BASE_URL,
   bundlePath: PAGEFIND_BUNDLE_PATH,
@@ -34,14 +56,91 @@ const config = {
     <script type="application/json" id="catalog-config" set:html={JSON.stringify(config)}></script>
     <h1>{t('catalog.title', lang)}</h1>
     <p>{t('catalog.intro', lang)}</p>
+    <nav class="catalog-sorts" aria-label={t('catalog.sortBy', lang)}>
+      {SORT_KEYS.map((key) => (
+        <a
+          class="catalog-sort"
+          href={`${catalogPath}${serializeQuery({ ...blank, sort: key })}`}
+          data-sort-tab={key}
+          aria-current={key === DEFAULT_SORT ? 'page' : undefined}
+        >{sortLabel(key, lang)}</a>
+      ))}
+    </nav>
     <div class="catalog-body">
       <FacetRail lang={lang} groups={groups} />
-      <div class="catalog-main"></div>
+      <div class="catalog-main">
+        <h2 class="catalog-results-heading" id="results-heading" tabindex="-1">{t('catalog.resultsHeading', lang)}</h2>
+        <p class="catalog-count" data-count aria-live="polite" aria-atomic="true">
+          {ordered.length} {t('catalog.results', lang)}
+        </p>
+        <ul class="catalog-grid" data-grid>
+          {ordered.map((card, i) => (
+            <li
+              class="catalog-item"
+              data-catalog-item
+              data-skill-id={card.id}
+              data-rank={i + 1}
+              style={`order:${i}`}
+              hidden={i >= PAGE_SIZE}
+            >
+              <SkillCard
+                skill={byId.get(card.id)!}
+                rank={i + 1}
+                lang={lang}
+                collection={collectionFor(byId.get(card.id)!.repo, collections)}
+              />
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   </div>
 </Layout>
+<noscript><style>[data-catalog-item][hidden]{display:flex!important}[data-pagination]{display:none}</style></noscript>
 <style is:global>
+  .catalog-sorts { display: flex; gap: 1px; margin: 1rem 0; }
+  .catalog-sort {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    min-width: 24px;
+    padding: 0 0.875rem;
+    border: 1px solid var(--border, #333);
+    text-decoration: none;
+    font-size: 0.875rem;
+    scroll-margin-top: var(--header-h, 3.5rem);
+  }
+  .catalog-sort[aria-current="page"] { background: var(--muted, rgba(127, 127, 127, 0.16)); font-weight: 600; }
   .catalog-body { display: grid; grid-template-columns: 17rem minmax(0, 1fr); align-items: start; }
   .catalog-main { padding: 1rem; min-width: 0; }
-  @media (max-width: 899px) { .catalog-body { grid-template-columns: minmax(0, 1fr); } }
+  .catalog-results-heading {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0;
+    scroll-margin-top: var(--header-h, 3.5rem);
+  }
+  .catalog-count {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.75rem;
+    color: var(--muted-foreground, #888);
+    margin: 0.25rem 0 1rem;
+  }
+  .catalog-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 1px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .catalog-item { display: flex; flex-direction: column; position: relative; min-width: 0; }
+  .catalog-item[hidden] { display: none !important; }
+  @media (max-width: 1499px) { .catalog-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+  @media (max-width: 1279px) { .catalog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+  @media (max-width: 899px) {
+    .catalog-body { grid-template-columns: minmax(0, 1fr); }
+    .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 599px) { .catalog-grid { grid-template-columns: minmax(0, 1fr); } }
 </style>
