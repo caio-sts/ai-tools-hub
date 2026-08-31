@@ -1,5 +1,8 @@
 ---
 import type { Lang } from '../types.ts';
+import StalenessBanner from './StalenessBanner.astro';
+import A11yBehavior from './A11yBehavior.astro';
+import SearchBehavior from './SearchBehavior.astro';
 import { LANGS, LANG_STORAGE_KEY, localePath, pathBelowLocale, t } from '../lib/i18n/index.ts';
 import { withBase } from '../lib/link.ts';
 import '../styles/theme.css';
@@ -85,10 +88,13 @@ const THEME_STORAGE_KEY = 'aith:theme';
           ))
         }
       </div>
+      <StalenessBanner lang={lang} />
     </header>
     <main id="results">
       <slot />
     </main>
+    <A11yBehavior />
+    <SearchBehavior />
     <footer class="site-footer" data-site-footer>
       <nav aria-label={t('footer.label', lang)}>
         <a data-footer-link href={withBase(localePath(lang, '/catalog/'))}>{t('nav.catalog', lang)}</a>
