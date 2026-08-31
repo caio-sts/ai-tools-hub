@@ -1,4 +1,6 @@
-import type { Assignment, Collection, RawSkill, Safety, Skill, TreeFile } from '../../src/types.ts';
+import { mkdir, writeFile } from 'node:fs/promises';
+import { join } from 'node:path';
+import type { Assignment, Collection, Meta, RawSkill, Safety, Skill, TreeFile } from '../../src/types.ts';
 import { scoreSkill } from '../../src/lib/score.ts';
 import { isPortable } from '../../src/lib/safety.ts';
 import { resolveLicense } from '../../src/lib/license.ts';
@@ -145,4 +147,25 @@ export async function fetchScriptContents(
   }
 
   return contents;
+}
+
+/** The two catalog arrays in memory. On disk they are two separate bare-array files. */
+export interface CatalogSnapshot {
+  skills: Skill[];
+  collections: Collection[];
+}
+
+async function writeJson(path: string, value: unknown): Promise<void> {
+  await writeFile(path, `${JSON.stringify(value, null, 2)}\n`, 'utf8');
+}
+
+export async function writeCatalog(dataDir: string, snapshot: CatalogSnapshot): Promise<void> {
+  await mkdir(dataDir, { recursive: true });
+  await writeJson(join(dataDir, 'skills.json'), snapshot.skills);
+  await writeJson(join(dataDir, 'collections.json'), snapshot.collections);
+}
+
+export async function writeMeta(dataDir: string, meta: Meta): Promise<void> {
+  await mkdir(dataDir, { recursive: true });
+  await writeJson(join(dataDir, 'meta.json'), meta);
 }
