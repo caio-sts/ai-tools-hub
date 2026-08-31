@@ -114,3 +114,75 @@ export function parseEnrichResponse(
 
   return { collections, missing, remaining: rate?.remaining ?? -1 };
 }
+
+export const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql';
+
+/** Stop the pass while this many GraphQL points remain, rather than emit a truncated corpus. */
+export const ENRICH_MIN_BUDGET = 100;
+
+/** Curated marketplaces — worth +12 provenance in the score model (spec §5). */
+export const CURATED_REPOS: readonly string[] = [
+  'anthropics/skills',
+  'openclaw/clawhub',
+  'VoltAgent/awesome-openclaw-skills',
+  'VoltAgent/awesome-agent-skills',
+  'trailofbits/skills',
+];
+
+export function curatedSet(extra: readonly string[] = []): Set<string> {
+  return new Set([...CURATED_REPOS, ...extra].map((repo) => repo.toLowerCase()));
+}
+
+export function dedupeRepos(repos: RepoRef[]): RepoRef[] {
+  const seen = new Set<string>();
+  const out: RepoRef[] = [];
+  for (const ref of repos) {
+    const key = ref.repo.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(ref);
+  }
+  return out;
+}
+
+async function postEnrichQuery(query: string, token: string): Promise<EnrichPayload> {
+  const res = await fetch(GITHUB_GRAPHQL_URL, {
+    method: 'POST',
+    headers: {
+      authorization: `bearer ${token}`,
+      'content-type': 'application/json',
+      'user-agent': 'ai-tools-hub-harvest',
+    },
+    body: JSON.stringify({ query }),
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`enrich: GraphQL HTTP ${res.status} — ${body.slice(0, 200)}`);
+  }
+  return (await res.json()) as EnrichPayload;
+}
+
+export async function enrichCollections(repos: RepoRef[], token: string): Promise<Collection[]> {
+  if (!token) {
+    throw new Error('enrich: a CATALOG_PAT token is required');
+  }
+  const unique = dedupeRepos(repos);
+  const curated = curatedSet();
+  const out: Collection[] = [];
+
+  for (let i = 0; i < unique.length; i += ENRICH_BATCH_SIZE) {
+    const batch = unique.slice(i, i + ENRICH_BATCH_SIZE);
+    const payload = await postEnrichQuery(buildEnrichQuery(batch), token);
+    const result = parseEnrichResponse(payload, batch, curated);
+    out.push(...result.collections);
+    for (const repo of result.missing) {
+      console.warn(`enrich: no repository node for ${repo} (renamed, deleted or now private)`);
+    }
+    if (result.remaining >= 0 && result.remaining < ENRICH_MIN_BUDGET) {
+      throw new Error(
+        `enrich: GraphQL budget down to ${result.remaining} points after ${out.length} repos — failing loudly instead of committing a partial index`,
+      );
+    }
+  }
+  return out;
+}
