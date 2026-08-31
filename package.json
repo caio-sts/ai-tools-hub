@@ -13,7 +13,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "validate": "node scripts/validate-taxonomy.ts"
   },
   "devDependencies": {
     "typescript": "^5.9.3",
