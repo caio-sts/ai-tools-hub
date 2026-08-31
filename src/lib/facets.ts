@@ -321,3 +321,144 @@ export function sortCards(cards: SortableCard[], sort: SortKey): SortableCard[] 
     return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
   });
 }
+
+import type { Lang, Taxonomy, TaxonomyNode } from '../types.ts';
+import { t } from './i18n/index.ts';
+
+export const FACET_LABEL_KEYS: Record<RailFilterKey, string> = {
+  risk: 'catalog.facet.risk',
+  subdomain: 'catalog.facet.subdomain',
+  runtime: 'catalog.facet.runtime',
+  license: 'catalog.facet.license',
+};
+
+export const RISK_LABEL_KEYS: Record<RiskValue, string> = {
+  'no-code-execution': 'catalog.risk.noCodeExecution',
+  'executes-code': 'catalog.risk.executesCode',
+  network: 'catalog.risk.network',
+  'reads-env': 'catalog.risk.readsEnv',
+  'declared-tools': 'catalog.risk.declaredTools',
+  portable: 'catalog.risk.portable',
+};
+
+export const RUNTIME_LABEL_KEYS: Record<Runtime, string> = {
+  claude: 'catalog.runtime.claude',
+  openclaw: 'catalog.runtime.openclaw',
+  codex: 'catalog.runtime.codex',
+  cursor: 'catalog.runtime.cursor',
+  generic: 'catalog.runtime.generic',
+};
+
+export const SORT_LABEL_KEYS: Record<SortKey, string> = {
+  score: 'catalog.sort.score',
+  stars: 'catalog.sort.stars',
+  forks: 'catalog.sort.forks',
+  newest: 'catalog.sort.newest',
+  updated: 'catalog.sort.updated',
+};
+
+export function sortLabel(key: SortKey, lang: Lang): string {
+  return t(SORT_LABEL_KEYS[key], lang);
+}
+
+export interface FacetOption {
+  value: string;
+  label: string;
+  count: number;
+  /** Domain heading the UI nests this option under. The index stays flat. */
+  group: string | null;
+}
+
+export interface FacetGroup {
+  key: RailFilterKey;
+  label: string;
+  hint: string;
+  options: FacetOption[];
+}
+
+function nameOf(node: TaxonomyNode, lang: Lang): string {
+  return node.name[lang];
+}
+
+function subdomainOptions(skills: Skill[], taxonomy: Taxonomy, lang: Lang): FacetOption[] {
+  const counts = countValues(skills, 'subdomain');
+  const options: FacetOption[] = [];
+  for (const domain of taxonomy.domains) {
+    for (const child of domain.children ?? []) {
+      const count = counts.get(child.slug) ?? 0;
+      if (count === 0) continue;
+      options.push({ value: child.slug, label: nameOf(child, lang), count, group: nameOf(domain, lang) });
+    }
+  }
+  return options;
+}
+
+function licenseOptions(skills: Skill[], lang: Lang): FacetOption[] {
+  const counts = countValues(skills, 'license');
+  const named = [...counts.entries()]
+    .filter(([value]) => value !== LICENSE_UNSPECIFIED)
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .map(([value, count]) => ({ value, label: value, count, group: null }));
+  const undeclared = counts.get(LICENSE_UNSPECIFIED) ?? 0;
+  if (undeclared > 0) {
+    named.push({
+      value: LICENSE_UNSPECIFIED,
+      label: t('catalog.license.unspecified', lang),
+      count: undeclared,
+      group: null,
+    });
+  }
+  return named;
+}
+
+export function buildFacetGroups(skills: Skill[], taxonomy: Taxonomy, lang: Lang): FacetGroup[] {
+  // A count is a promise about what checking the box returns, and an evicted entry is absent from
+  // the Pagefind index (§5.1) — so it contributes to nothing here, whatever the caller passed.
+  const listed = listedSkills(skills);
+  const riskCounts = countValues(listed, 'risk');
+  const runtimeCounts = countValues(listed, 'runtime');
+  const hint = t('catalog.anyOf', lang);
+  return [
+    {
+      key: 'risk',
+      label: t(FACET_LABEL_KEYS.risk, lang),
+      hint,
+      options: RISK_VALUES.map((value) => ({
+        value,
+        label: t(RISK_LABEL_KEYS[value], lang),
+        count: riskCounts.get(value) ?? 0,
+        group: null,
+      })),
+    },
+    { key: 'subdomain', label: t(FACET_LABEL_KEYS.subdomain, lang), hint, options: subdomainOptions(listed, taxonomy, lang) },
+    {
+      key: 'runtime',
+      label: t(FACET_LABEL_KEYS.runtime, lang),
+      hint,
+      options: RUNTIME_ORDER.map((value) => ({
+        value,
+        label: t(RUNTIME_LABEL_KEYS[value], lang),
+        count: runtimeCounts.get(value) ?? 0,
+        group: null,
+      })),
+    },
+    { key: 'license', label: t(FACET_LABEL_KEYS.license, lang), hint, options: licenseOptions(listed, lang) },
+  ];
+}
+
+/**
+ * Value -> label for every key the reader can filter on, serialized into the page so the client
+ * script can label a chip without importing an i18n table or the fs-backed taxonomy loader.
+ */
+export function chipLabelMap(
+  groups: FacetGroup[],
+  taxonomy: Taxonomy,
+  lang: Lang,
+): Record<string, Record<string, string>> {
+  const map: Record<string, Record<string, string>> = { domain: {} };
+  for (const domain of taxonomy.domains) map.domain[domain.slug] = nameOf(domain, lang);
+  for (const group of groups) {
+    map[group.key] = Object.fromEntries(group.options.map((o) => [o.value, o.label]));
+  }
+  return map;
+}
