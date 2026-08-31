@@ -9,9 +9,17 @@ const BY_REPO = new Map(loadCollections().map((collection) => [collection.repo, 
 const FILTER_KEYS = ['domain', 'subdomain', 'runtime', 'risk', 'license'];
 const SORT_KEYS = ['score', 'stars', 'forks', 'newest', 'updated'];
 
+/**
+ * Resolves the one indirection Pagefind's attribute form introduces: the tag reads
+ * `key[data-value]`, and the value itself lives in the `data-value` attribute beside it. Reading
+ * the bracket contents as the value would assert the literal string "data-value" forever.
+ */
 function pairs(html: string, attribute: string): Array<[string, string]> {
-  const pattern = new RegExp(`data-pagefind-${attribute}="([a-z-]+)\\[([^\\]]*)\\]"`, 'g');
-  return [...html.matchAll(pattern)].map((match) => [match[1], match[2]] as [string, string]);
+  const pattern = new RegExp(
+    `data-value="([^"]*)" data-pagefind-${attribute}="([a-z-]+)\\[data-value\\]"`,
+    'g',
+  );
+  return [...html.matchAll(pattern)].map((match) => [match[2], match[1]] as [string, string]);
 }
 
 describe('the Pagefind index block', () => {
@@ -83,7 +91,11 @@ describe('the Pagefind index block', () => {
 
   it('carries the skill id as metadata, so a result maps back onto its card', () => {
     for (const skill of LISTED) {
-      expect(pageFor('en', skill)).toContain(`data-pagefind-meta="id[${skill.id}]"`);
+      // Attribute form. Inlining the id as `id[<id>]` made Pagefind split it on the `:` inside
+      // `owner/repo@sha:path` and index a mangled key, leaving every card unmatched.
+      expect(pageFor('en', skill)).toContain(
+        `data-skill-id="${skill.id}" data-pagefind-meta="id[data-skill-id]"`,
+      );
     }
   });
 

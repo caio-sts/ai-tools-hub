@@ -114,9 +114,13 @@ const indexText = [
       aria-hidden="true"
       style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"
     >
-      <span data-pagefind-meta={`id[${skill.id}]`}></span>
-      {indexFilters.map(([key, value]) => <span data-pagefind-filter={`${key}[${value}]`}></span>)}
-      {indexSorts.map(([key, value]) => <span data-pagefind-sort={`${key}[${value}]`}></span>)}
+      {/* Attribute form (`key[attr]`), never `key[value]` or `key:value`. Pagefind splits a literal
+          on the first `:`, and a skill id is `owner/repo@sha:path` — inlining it produced the key
+          `id[owner/repo@sha` and left every card unmatched, so the grid rendered empty. Reading the
+          value out of a real attribute has no parsing to get wrong. */}
+      <span data-skill-id={skill.id} data-pagefind-meta="id[data-skill-id]"></span>
+      {indexFilters.map(([key, value]) => <span data-value={value} data-pagefind-filter={`${key}[data-value]`}></span>)}
+      {indexSorts.map(([key, value]) => <span data-value={value} data-pagefind-sort={`${key}[data-value]`}></span>)}
       {indexText.map((line) => <p>{line}</p>)}
     </div>
   )}

@@ -285,6 +285,7 @@ const config = {
     options: (o: Record<string, unknown>) => Promise<void>;
     init: () => Promise<void>;
     search: (term: string | null, opts: Record<string, unknown>) => Promise<PagefindSearch>;
+    filters: () => Promise<Record<string, Record<string, number>>>;
   }
 
   const PF_SORT: Record<string, Record<string, 'asc' | 'desc'>> = {
@@ -316,6 +317,9 @@ const config = {
         const mod = (await import(/* @vite-ignore */ config.bundlePath)) as unknown as PagefindApi;
         await mod.options({ baseUrl: config.baseUrl });
         await mod.init();
+        // Primes the filter index. Pagefind loads it lazily, so without this every search returns
+        // an empty `filters` map and the whole rail paints zeros next to values that do match.
+        await mod.filters();
         pagefind = mod;
       }
       return pagefind;

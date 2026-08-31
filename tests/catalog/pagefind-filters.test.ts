@@ -75,7 +75,9 @@ describe('B4 skill pages carry the payload this vocabulary describes', () => {
 
   it('emits every one of the five flat filter keys', () => {
     for (const key of INDEX_FILTER_KEYS) {
-      expect(html).toMatch(new RegExp(`data-pagefind-filter="${key}\\[[^\\]]+\\]"`));
+      expect(html).toMatch(
+        new RegExp(`data-value="[^"]+" data-pagefind-filter="${key}\\[data-value\\]"`),
+      );
     }
   });
 
@@ -89,11 +91,15 @@ describe('B4 skill pages carry the payload this vocabulary describes', () => {
 
   it('emits all five sort keys, zero-padded', () => {
     for (const key of ['score', 'stars', 'forks', 'newest', 'updated']) {
-      expect(html).toMatch(new RegExp(`data-pagefind-sort="${key}\\[0*\\d+\\]"`));
+      expect(html).toMatch(
+        new RegExp(`data-value="0*\\d+" data-pagefind-sort="${key}\\[data-value\\]"`),
+      );
     }
   });
 
   it('emits the skill id as metadata, so a result maps back onto its card', () => {
-    expect(html).toMatch(/data-pagefind-meta="id\[[^\]]+\]"/);
+    // The value rides in a real attribute: Pagefind parses a literal on its first `:`, and every
+    // skill id contains one.
+    expect(html).toMatch(/data-skill-id="[^"]+@[0-9a-f]{40}:[^"]+" data-pagefind-meta="id\[data-skill-id\]"/);
   });
 });
