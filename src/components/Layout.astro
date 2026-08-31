@@ -69,8 +69,10 @@ const THEME_STORAGE_KEY = 'aith:theme';
               hreflang={code === 'pt' ? 'pt-BR' : 'en'}
               data-lang={code}
               aria-current={code === lang ? 'page' : undefined}
+              aria-label={`${t(`lang.${code}.short`, lang)} — ${t(`lang.${code}`, lang)}`}
             >
-              {t(`lang.${code}`, lang)}
+              <span class="lang-full">{t(`lang.${code}`, lang)}</span>
+              <span class="lang-short" aria-hidden="true">{t(`lang.${code}.short`, lang)}</span>
             </a>
           ))
         }
@@ -177,6 +179,17 @@ const THEME_STORAGE_KEY = 'aith:theme';
     min-height: 52px;
     background: var(--color-n-2);
     border-bottom: 1px solid var(--border);
+  }
+  /* The header wraps to two rows below ~900px and was 147px tall — 17% of an 844px phone, pinned
+     there permanently, because it is sticky. Tightening the wrapped rows gives that back without
+     dropping the sticky behaviour A11yBehavior measures, or truncating any label. */
+  .lang-short { display: none; }
+  @media (max-width: 899px) {
+    .site-header { gap: 0 0.875rem; }
+    /* "Portuguese (Brazil)" is what forced the header onto a second row. The code carries the same
+       meaning in a third of the width, and the full name stays as the link's accessible name. */
+    .lang-full { display: none; }
+    .lang-short { display: inline; }
   }
   .site-footer {
     display: flex;

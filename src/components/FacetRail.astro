@@ -10,6 +10,11 @@ interface Props {
 
 const { lang, groups } = Astro.props;
 ---
+<details class="facet-disclosure" data-facet-disclosure open>
+  <summary class="facet-summary" data-facet-summary>
+    <span class="facet-summary-label">{t('catalog.railTitle', lang)}</span>
+    <span class="facet-summary-count" data-facet-active-count hidden></span>
+  </summary>
 <aside class="facet-rail" data-facet-rail aria-label={t('catalog.railTitle', lang)}>
   {groups.map((group) => (
     <section class="facet-group" data-facet-group={group.key}>
@@ -34,6 +39,7 @@ const { lang, groups } = Astro.props;
     </section>
   ))}
 </aside>
+</details>
 <style is:global>
   /* Sticks alongside the grid: with 60 results the rail scrolls out of reach immediately, and a
      filter you have to scroll back up to reach is a filter nobody uses. */
@@ -49,6 +55,47 @@ const { lang, groups } = Astro.props;
     padding: 0 0 2rem;
     border-right: 1px solid var(--border);
   }
+  /* The disclosure is a wrapper only: on a wide viewport the summary is gone and the rail is the
+     sidebar it has always been. It carries `open` in the markup, so the filters are reachable with
+     no JavaScript at all, at any width. */
+  .facet-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+  }
+  .facet-summary:focus-visible { outline: 2px solid var(--ring); outline-offset: -2px; }
+  .facet-summary-count {
+    font-variant-numeric: tabular-nums;
+    color: var(--color-a-11);
+  }
+  .facet-summary-count[hidden] { display: none; }
+
+  @media (min-width: 900px) {
+    .facet-summary { display: none; }
+  }
+
+  /* Below the sidebar breakpoint the rail is stacked ABOVE the results, so sticking it and capping
+     its height turned it into a nested scroller that filled the whole screen and pushed the first
+     card 1247px down. Stacked, it must simply flow. */
+  @media (max-width: 899px) {
+    .facet-rail {
+      position: static;
+      max-height: none;
+      overflow-y: visible;
+      border-right-width: 0;
+      border-bottom: 1px solid var(--border);
+    }
+  }
+
   .facet-group { padding: 1.125rem 1rem; border-top: 1px solid var(--border); }
   .facet-group:first-child { border-top-width: 0; }
   .facet-group-title {

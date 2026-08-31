@@ -123,4 +123,16 @@ const { lang, action } = Astro.props;
   }
   /* No suggestions yet is not an empty box: B5 fills this list, and until then it has no chrome. */
   .catalog-search__suggestions:empty { display: none; border: 0; }
+
+  /* At 390px the submit button took ~40% of the row and the placeholder truncated mid-word. The
+     field gets the full width and the button drops beneath it. */
+  @media (max-width: 599px) {
+    .catalog-search__row { flex-wrap: wrap; }
+    .catalog-search__input { flex: 1 1 0; min-width: 0; }
+    .catalog-search__submit {
+      flex: 1 1 100%;
+      border-left-width: 0;
+      border-top: 1px solid var(--input);
+    }
+  }
 </style>
