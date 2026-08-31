@@ -1,0 +1,30 @@
+---
+import Layout from '../components/Layout.astro';
+import { DEFAULT_LANG, LANGS, localePath, t } from '../lib/i18n/index.ts';
+import { withBase } from '../lib/link.ts';
+
+const fallback = withBase(localePath(DEFAULT_LANG, '/'));
+const targets = Object.fromEntries(LANGS.map((lang) => [lang, withBase(localePath(lang, '/'))]));
+---
+<Layout
+  lang={DEFAULT_LANG}
+  title={t('gateway.heading', DEFAULT_LANG)}
+  description={t('gateway.body', DEFAULT_LANG)}
+>
+  <Fragment slot="head">
+    <meta http-equiv="refresh" content={`0; url=${fallback}`} />
+  </Fragment>
+  <h1>{t('gateway.heading', DEFAULT_LANG)}</h1>
+  <p>{t('gateway.body', DEFAULT_LANG)}</p>
+  <ul>
+    {
+      LANGS.map((lang) => (
+        <li>
+          <a href={targets[lang]} hreflang={lang === 'pt' ? 'pt-BR' : 'en'}>
+            {t(`lang.${lang}`, lang)}
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>

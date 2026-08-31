@@ -1,0 +1,111 @@
+---
+import type { Lang } from '../types.ts';
+import { LANGS, localePath, pathBelowLocale, t } from '../lib/i18n/index.ts';
+import { withBase } from '../lib/link.ts';
+import '../styles/theme.css';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  /** Optional: a page with nothing to add beyond its title emits no meta description. */
+  description?: string;
+  /**
+   * Path below the locale segment, leading and trailing slash ("/" is the locale home).
+   * Defaults to the path of the page being rendered, which is what the switcher needs.
+   */
+  path?: string;
+}
+
+const { lang, title, description, path } = Astro.props;
+const here = path ?? pathBelowLocale(Astro.url.pathname, import.meta.env.BASE_URL);
+const htmlLang = lang === 'pt' ? 'pt-BR' : 'en';
+---
+<html lang={htmlLang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · {t('site.name', lang)}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={withBase(localePath(lang, here))} />
+    {
+      LANGS.map((code) => (
+        <link
+          rel="alternate"
+          hreflang={code === 'pt' ? 'pt-BR' : 'en'}
+          href={withBase(localePath(code, here))}
+        />
+      ))
+    }
+    <slot name="head" />
+  </head>
+  <body class="bg-background text-foreground">
+    <a class="skip-link" href="#results" data-skip-link>{t('nav.skipToResults', lang)}</a>
+    <header class="site-header" data-site-header>
+      <a class="site-header__name" href={withBase(localePath(lang, '/'))}>{t('site.name', lang)}</a>
+      <nav aria-label={t('nav.label', lang)}>
+        <a href={withBase(localePath(lang, '/'))}>{t('nav.home', lang)}</a>
+        <a href={withBase(localePath(lang, '/catalog/'))}>{t('nav.catalog', lang)}</a>
+      </nav>
+    </header>
+    <main id="results">
+      <slot />
+    </main>
+    <footer class="site-footer" data-site-footer>
+      <nav aria-label={t('footer.label', lang)}>
+        <a data-footer-link href={withBase(localePath(lang, '/catalog/'))}>{t('nav.catalog', lang)}</a>
+        <a data-footer-link href={withBase(localePath(lang, '/methodology/'))}>{t('nav.methodology', lang)}</a>
+      </nav>
+      <p class="site-footer__note">{t('footer.note', lang)}</p>
+    </footer>
+  </body>
+</html>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 100;
+    padding: 0.5rem 0.75rem;
+    background: var(--background);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+  }
+  .skip-link:focus {
+    left: 0;
+  }
+  .site-header,
+  .site-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+  }
+  .site-header {
+    border-bottom: 1px solid var(--border);
+  }
+  .site-footer {
+    border-top: 1px solid var(--border);
+  }
+  .site-header__name {
+    font-family: var(--font-mono);
+    font-weight: 600;
+  }
+  .site-header nav,
+  .site-footer nav {
+    display: flex;
+    gap: 1rem;
+  }
+  /* WCAG 2.2 2.5.8: every chrome target clears 24 px. */
+  .site-header a,
+  .site-footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    color: inherit;
+  }
+  .site-footer__note {
+    color: var(--muted-foreground);
+  }
+</style>
