@@ -198,3 +198,32 @@ describe('rescue index wire format', () => {
     expect(a).toBe(b);
   });
 });
+
+import { rescueDecision, type RescueSuggestion } from '../../src/lib/rescue.ts';
+
+describe('rescueDecision', () => {
+  const hits: RescueSuggestion[] = [
+    { id: 'node:security/containers-kubernetes', kind: 'node', name: 'Containers & Kubernetes', path: '/en/catalog/?subdomain=security/containers-kubernetes' },
+    { id: 'node:security/iac-config', kind: 'node', name: 'Infrastructure as Code', path: '/en/catalog/?subdomain=security/iac-config' },
+    { id: 'x/y@zzz1111:p/SKILL.md', kind: 'skill', name: 'Kube Bench Runner', path: '/en/skills/kube-bench-runner/' },
+    { id: 'q/r@sss2222:p/SKILL.md', kind: 'skill', name: 'Kyverno Policy Author', path: '/en/skills/kyverno-policy-author/' },
+    { id: 'm/n@ooo3333:p/SKILL.md', kind: 'skill', name: 'Helm Chart Linter', path: '/en/skills/helm-chart-linter/' },
+  ];
+
+  it('shows the rescue only when Pagefind returned nothing', () => {
+    expect(rescueDecision(0, hits).show).toBe(true);
+    expect(rescueDecision(1, hits).show).toBe(false);
+    expect(rescueDecision(42, hits).show).toBe(false);
+  });
+
+  it('stays hidden when there is nothing to suggest', () => {
+    expect(rescueDecision(0, [])).toEqual({ show: false, top: null, alternatives: [] });
+  });
+
+  it('promotes the best match and caps alternatives at three', () => {
+    const decision = rescueDecision(0, hits);
+    expect(decision.top?.name).toBe('Containers & Kubernetes');
+    expect(decision.alternatives).toHaveLength(3);
+    expect(decision.alternatives.map((s) => s.name)).not.toContain('Containers & Kubernetes');
+  });
+});

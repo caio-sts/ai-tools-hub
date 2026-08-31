@@ -129,3 +129,20 @@ export function serializeRescueIndex(index: MiniSearch<RescueDoc>): string {
 export function loadRescueIndex(json: string): MiniSearch<RescueDoc> {
   return MiniSearch.loadJSON<RescueDoc>(json, RESCUE_OPTIONS);
 }
+
+export interface RescueDecision {
+  show: boolean;
+  top: RescueSuggestion | null;
+  alternatives: RescueSuggestion[];
+}
+
+/** Pagefind found nothing and MiniSearch found something: that is the only rescue case. */
+export function rescueDecision(
+  resultCount: number,
+  suggestions: RescueSuggestion[],
+): RescueDecision {
+  if (resultCount > 0 || suggestions.length === 0) {
+    return { show: false, top: null, alternatives: [] };
+  }
+  return { show: true, top: suggestions[0], alternatives: suggestions.slice(1, 4) };
+}
