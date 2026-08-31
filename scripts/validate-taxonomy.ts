@@ -1,5 +1,7 @@
 // The seven taxonomy governance checks of spec §12. Reads the committed taxonomy; takes no argv.
-import { pathToFileURL } from 'node:url';
+import { existsSync, readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 import type { Taxonomy } from '../src/types.ts';
 import { flattenTaxonomy, loadTaxonomy } from '../src/lib/taxonomy.ts';
 
@@ -8,6 +10,22 @@ export interface CheckResult {
   ok: boolean;
   errors: string[];
 }
+
+/**
+ * One row of data/assignments.json (spec §3.1), keyed by the skill id "owner/repo@sha:path".
+ * The validator's read-only view of the canonical shape the classification PR writes.
+ */
+export interface AssignmentEntry {
+  primary: string;
+  also: string[];
+  tags: string[];
+}
+
+export type AssignmentMap = Record<string, AssignmentEntry>;
+
+const RESERVED_NODE_NAMES = ['all', 'any', 'none', 'not'];
+
+const ASSIGNMENTS_PATH = resolve(dirname(fileURLToPath(import.meta.url)), '../data/assignments.json');
 
 const SEGMENT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -156,13 +174,81 @@ export function checkSlugStability(
   return { name: '5 slug stability', ok: errors.length === 0, errors };
 }
 
-export function runAllChecks(tax: Taxonomy): CheckResult[] {
+function stringArray(id: string, field: 'also' | 'tags', value: unknown): string[] {
+  if (value === undefined) return [];
+  if (!Array.isArray(value) || value.some((v) => typeof v !== 'string')) {
+    throw new Error(`assignment "${id}" has a non-string-array "${field}"`);
+  }
+  return value as string[];
+}
+
+export function parseAssignments(raw: unknown): AssignmentMap {
+  if (typeof raw !== 'object' || raw === null || Array.isArray(raw)) {
+    throw new Error('data/assignments.json must be a JSON object keyed by the skill id "owner/repo@sha:path", not an array');
+  }
+  const out: AssignmentMap = {};
+  for (const [id, value] of Object.entries(raw as Record<string, unknown>)) {
+    if (typeof value !== 'object' || value === null || Array.isArray(value)) {
+      throw new Error(`assignment "${id}" is not an object`);
+    }
+    const record = value as Partial<AssignmentEntry>;
+    if (typeof record.primary !== 'string') throw new Error(`assignment "${id}" has no string "primary"`);
+    out[id] = {
+      primary: record.primary,
+      also: stringArray(id, 'also', record.also),
+      tags: stringArray(id, 'tags', record.tags),
+    };
+  }
+  return out;
+}
+
+export function readAssignmentsFile(path: string): AssignmentMap {
+  if (!existsSync(path)) return {};
+  return parseAssignments(JSON.parse(readFileSync(path, 'utf8')));
+}
+
+export function checkReferentialIntegrity(tax: Taxonomy, assignments: AssignmentMap): CheckResult {
+  const errors: string[] = [];
+  const nodes = flattenTaxonomy(tax);
+  for (const node of nodes) {
+    const segment = node.slug.split('/').pop() ?? '';
+    if (RESERVED_NODE_NAMES.includes(segment)) {
+      errors.push(`node "${node.slug}" uses reserved Pagefind filter key "${segment}"`);
+    }
+    for (const lang of ['en', 'pt'] as const) {
+      if (RESERVED_NODE_NAMES.includes(node.name[lang].trim().toLowerCase())) {
+        errors.push(`node "${node.slug}" has reserved display name "${node.name[lang]}" (${lang})`);
+      }
+    }
+  }
+  const allSlugs = new Set(nodes.map((n) => n.slug));
+  const leafSlugs = new Set(nodes.filter((n) => n.slug.includes('/')).map((n) => n.slug));
+  for (const [id, a] of Object.entries(assignments)) {
+    if (!leafSlugs.has(a.primary)) errors.push(`assignment "${id}": primary "${a.primary}" does not resolve to a leaf`);
+    if (a.also.length > 2) errors.push(`assignment "${id}": also has ${a.also.length} entries, max is 2`);
+    if (new Set(a.also).size !== a.also.length) errors.push(`assignment "${id}": also contains duplicates`);
+    for (const slug of a.also) {
+      if (!leafSlugs.has(slug)) errors.push(`assignment "${id}": also "${slug}" does not resolve to a leaf`);
+      if (slug === a.primary) errors.push(`assignment "${id}": also repeats primary "${slug}"`);
+    }
+    if (a.tags.length > 10) errors.push(`assignment "${id}": tags has ${a.tags.length} entries, max is 10`);
+    for (const tag of a.tags) {
+      if (allSlugs.has(tag)) {
+        errors.push(`assignment "${id}": tag "${tag}" is a taxonomy slug - tags never drive navigation`);
+      }
+    }
+  }
+  return { name: '6 referential integrity', ok: errors.length === 0, errors };
+}
+
+export function runAllChecks(tax: Taxonomy, assignments: AssignmentMap): CheckResult[] {
   return [
     checkMinimumMass(tax),
     checkNamedOverflow(tax),
     checkUniqueSlug(tax),
     checkAliasMap(tax),
     checkSlugStability(tax),
+    checkReferentialIntegrity(tax, assignments),
   ];
 }
 
@@ -174,12 +260,20 @@ export function formatResults(results: CheckResult[]): string {
 
 function main(): void {
   const tax = loadTaxonomy();
-  const results = runAllChecks(tax);
+  let assignments: AssignmentMap = {};
+  let readFailure: string | null = null;
+  try {
+    assignments = readAssignmentsFile(ASSIGNMENTS_PATH);
+  } catch (error) {
+    readFailure = error instanceof Error ? error.message : String(error);
+  }
+  const results = runAllChecks(tax, assignments);
   console.log(formatResults(results));
-  const failed = results.filter((r) => !r.ok).length;
+  if (readFailure !== null) console.log(`FAIL  data/assignments.json is unreadable\n        ${readFailure}`);
+  const failed = results.filter((r) => !r.ok).length + (readFailure === null ? 0 : 1);
   console.log(
     failed === 0
-      ? `\n${results.length} check(s) passed over ${flattenTaxonomy(tax).length} taxonomy nodes`
+      ? `\n${results.length} check(s) passed over ${flattenTaxonomy(tax).length} nodes and ${Object.keys(assignments).length} assignments`
       : `\n${failed} check(s) failed`,
   );
   process.exitCode = failed === 0 ? 0 : 1;
