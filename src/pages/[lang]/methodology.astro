@@ -1,0 +1,182 @@
+---
+import Layout from '../../components/Layout.astro';
+import { loadMeta } from '../../lib/data.ts';
+import { loadTaxonomy } from '../../lib/taxonomy.ts';
+import { evaluateStaleness, parseMeta } from '../../lib/staleness.ts';
+import { t } from '../../lib/i18n/index.ts';
+import type { Lang } from '../../types.ts';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'en' } }, { params: { lang: 'pt' } }];
+}
+
+const lang: Lang = Astro.params.lang === 'pt' ? 'pt' : 'en';
+
+/** Spec §5, printed verbatim so page and ranking cannot drift apart in prose. */
+const FORMULA = 'SCORE = Adoption 25 + Maintenance 30 + Provenance 25 + Completeness 20';
+
+const taxonomy = loadTaxonomy();
+const report = evaluateStaleness(parseMeta(loadMeta()), new Date());
+const aliasPairs = Object.entries(taxonomy.aliases);
+---
+
+<Layout lang={lang} title={t('methodology.title', lang)} description={t('methodology.intro', lang)}>
+  <article class="methodology">
+    <h1>{t('methodology.title', lang)}</h1>
+    <p class="methodology__intro">{t('methodology.intro', lang)}</p>
+
+    <section aria-labelledby="score">
+      <h2 id="score">{t('methodology.score.heading', lang)}</h2>
+      <p class="methodology__label">{t('methodology.score.formulaLabel', lang)}</p>
+      <pre class="methodology__formula"><code>{FORMULA}</code></pre>
+      <ul>
+        <li>{t('methodology.score.adoption', lang)}</li>
+        <li>{t('methodology.score.maintenance', lang)}</li>
+        <li>{t('methodology.score.provenance', lang)}</li>
+        <li>{t('methodology.score.completeness', lang)}</li>
+      </ul>
+      <p>{t('methodology.score.balance', lang)}</p>
+      <p class="methodology__emphasis">{t('methodology.score.noSafety', lang)}</p>
+      <p>{t('methodology.score.noOverride', lang)}</p>
+    </section>
+
+    <section aria-labelledby="inclusion">
+      <h2 id="inclusion">{t('methodology.inclusion.heading', lang)}</h2>
+      <p>{t('methodology.inclusion.body', lang)}</p>
+      <ol>
+        <li>{t('methodology.inclusion.r1', lang)}</li>
+        <li>{t('methodology.inclusion.r2', lang)}</li>
+        <li>{t('methodology.inclusion.r3', lang)}</li>
+        <li>{t('methodology.inclusion.r4', lang)}</li>
+        <li>{t('methodology.inclusion.r5', lang)}</li>
+        <li>{t('methodology.inclusion.r6', lang)}</li>
+      </ol>
+    </section>
+
+    <section aria-labelledby="safety">
+      <h2 id="safety">{t('methodology.safety.heading', lang)}</h2>
+      <p>{t('methodology.safety.body', lang)}</p>
+      <ul>
+        <li>{t('methodology.safety.executes', lang)}</li>
+        <li>{t('methodology.safety.network', lang)}</li>
+        <li>{t('methodology.safety.env', lang)}</li>
+      </ul>
+      <p class="methodology__emphasis">{t('methodology.safety.noGreen', lang)}</p>
+    </section>
+
+    <section aria-labelledby="counting">
+      <h2 id="counting">{t('methodology.counting.heading', lang)}</h2>
+      <ul>
+        <li>{t('methodology.counting.symlinks', lang)}</li>
+        <li>{t('methodology.counting.dedupe', lang)}</li>
+        <li>{t('methodology.counting.excluded', lang)}</li>
+        <li>{t('methodology.counting.dated', lang)}</li>
+      </ul>
+    </section>
+
+    <section aria-labelledby="taxonomy">
+      <h2 id="taxonomy">{t('methodology.taxonomy.heading', lang)}</h2>
+      <p>{t('methodology.taxonomy.namingRule', lang)}</p>
+
+      <h3>{t('methodology.taxonomy.protectedLabel', lang)}</h3>
+      <ul class="methodology__terms" data-protected-terms>
+        {taxonomy.protected.map((term) => <li><code>{term}</code></li>)}
+      </ul>
+      <p>{t('methodology.taxonomy.protectedNote', lang)}</p>
+
+      <h3>{t('methodology.taxonomy.aliasesLabel', lang)}</h3>
+      <ul class="methodology__terms" data-aliases>
+        {aliasPairs.map(([alias, target]) => (
+          <li><code>{alias}</code> → <code>{target}</code></li>
+        ))}
+      </ul>
+      <p>{t('methodology.taxonomy.aliasesNote', lang)}</p>
+
+      <h3>{t('methodology.taxonomy.minimumMassLabel', lang)}</h3>
+      <p data-minimum-mass={String(taxonomy.minimumMass)}>
+        {taxonomy.minimumMass} — {t('methodology.taxonomy.minimumMassNote', lang)}
+      </p>
+    </section>
+
+    <section aria-labelledby="provenance">
+      <h2 id="provenance">{t('methodology.provenance.heading', lang)}</h2>
+      <p><code>owner/repo@commit:path</code> — {t('methodology.provenance.id', lang)}</p>
+
+      <h3>{t('methodology.provenance.sourcesLabel', lang)}</h3>
+      <dl class="methodology__facts">
+        <dt>{t('methodology.provenance.skillsLabel', lang)}</dt>
+        <dd data-skill-count={String(report.skillCount)}>{report.skillCount}</dd>
+        <dt>{t('methodology.provenance.sourceCountLabel', lang)}</dt>
+        <dd data-source-count={String(report.sourceCount)}>{report.sourceCount}</dd>
+      </dl>
+
+      <h3>{t('methodology.provenance.freshnessLabel', lang)}</h3>
+      <dl class="methodology__facts">
+        <dt>{t('methodology.provenance.crawledLabel', lang)}</dt>
+        <dd data-crawled-at={report.crawl.iso ?? ''}>
+          {report.crawl.iso ?? t('methodology.provenance.never', lang)}
+        </dd>
+        <dt>{t('methodology.provenance.classifiedLabel', lang)}</dt>
+        <dd data-classified-at={report.classification.iso ?? ''}>
+          {report.classification.iso ?? t('methodology.provenance.never', lang)}
+        </dd>
+      </dl>
+      <p>{t('methodology.provenance.freshnessNote', lang)}</p>
+    </section>
+  </article>
+</Layout>
+
+<style>
+  .methodology { max-width: 68ch; padding: 1rem; line-height: 1.6; }
+  .methodology h2 {
+    margin-top: 2.5rem;
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-top: 1px solid var(--color-n-6);
+    padding-top: 0.75rem;
+  }
+  .methodology h3 {
+    margin-top: 1.5rem;
+    font-size: 0.8125rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-n-11);
+  }
+  .methodology__formula {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    border: 1px solid var(--color-n-6);
+    background: var(--color-n-2);
+    padding: 0.75rem;
+    overflow-x: auto;
+  }
+  .methodology__label {
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-n-11);
+    margin-bottom: 0.25rem;
+  }
+  .methodology__emphasis {
+    border-inline-start: 2px solid var(--color-a-9);
+    padding-inline-start: 0.75rem;
+  }
+  .methodology__terms {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    list-style: none;
+    padding: 0;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.8125rem;
+  }
+  .methodology__facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.25rem 1rem;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.8125rem;
+  }
+  .methodology__facts dt { color: var(--color-n-11); }
+  .methodology__facts dd { margin: 0; }
+</style>
