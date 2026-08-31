@@ -39,7 +39,9 @@ describe('catalog controller bundle', () => {
   });
 
   it('passes the text term when there is one and browses with null when there is not', () => {
-    expect(js ?? '').toMatch(/\.search\([^,]*\|\|\s*null\s*,/);
+    // The term is hoisted into a local now, because the extra per-key count searches reuse it.
+    expect(js ?? '').toMatch(/\.trim\(\)\s*\|\|\s*null/);
+    expect(js ?? '').toMatch(/\.search\(/);
   });
 
   it('asks Pagefind to sort rather than sorting in the DOM', () => {
@@ -91,5 +93,31 @@ describe('the card map is keyed to the grid item, not to a descendant of it', ()
 
   it('never collects them with a bare [data-skill-id] selector', () => {
     expect((js ?? '').replace(/[`'"]/g, '"')).not.toContain('querySelectorAll("[data-skill-id]")');
+  });
+});
+
+
+// Pagefind fills totalFilters only for a term search. The catalog browses with a null term
+// whenever the box is empty, and there the map comes back present and entirely zero — so every
+// count in an active facet group painted 0, the checked value included.
+describe('facet counts for a key that already has a selection', () => {
+  const source = readFileSync(resolve(root, 'src/pages/[lang]/catalog.astro'), 'utf8');
+  const js = bundleFor('catalog-config');
+
+  it('asks Pagefind again with that key dropped, rather than trusting totalFilters', () => {
+    expect(source).toContain('filtersWithout(query.filters, key)');
+  });
+
+  it('spends the extra search only on a key that is actually selected', () => {
+    expect(source).toMatch(/if \(\(query\.filters\[key\] \?\? \[\]\)\.length === 0\) continue;/);
+  });
+
+  it('paints the rail from those counts, not from the response map', () => {
+    expect(source).toContain('detail.unfiltered');
+    expect(source).not.toContain('detail.response.totalFilters,');
+  });
+
+  it('ships all of it to the browser', () => {
+    expect(js ?? '').toContain('catalog-config');
   });
 });

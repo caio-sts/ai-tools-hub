@@ -233,20 +233,40 @@ export function activeChips(filters: FilterState): ActiveChip[] {
 
 export type FacetCounts = Record<string, Record<string, number>>;
 
+/** Drop one key's selection, so a search answers "what if this key were unselected". */
+export function filtersWithout(active: FilterState, key: string): FilterState {
+  const rest: Record<string, string[] | undefined> = { ...(active as Record<string, string[] | undefined>) };
+  delete rest[key];
+  return rest as FilterState;
+}
+
+/** A count map is unusable when it knows the key but reports nothing for any of its values. */
+function hasRealCounts(counts: Record<string, number> | undefined): boolean {
+  return counts !== undefined && Object.values(counts).some((n) => n > 0);
+}
+
 /**
  * Pagefind ORs within a key and ANDs across keys. `filters` is narrowed by the active selection, so
- * a sibling of an already-checked value reads 0; `totalFilters` ignores the selection and is the
- * closest available answer to "what would adding this return".
+ * a sibling of an already-checked value reads its intersection with that selection, not what
+ * checking it would add. `unfiltered` is the same key counted with its own selection dropped,
+ * which is the question the rail asks.
+ *
+ * Pagefind supplies that as `totalFilters`, but only for a term search — on a null browse it comes
+ * back present and entirely zero, which painted 0 beside every value of the active key, the checked
+ * one included. So the controller computes it with one extra search per active key, and an
+ * all-zero map is treated as absent: a key cannot honestly be all-zero while one of its own values
+ * is selected, because that selection matched something. Falling back to the narrowed count shows
+ * a smaller true number instead of a false one.
  */
 export function facetCount(
   key: string,
   value: string,
   active: FilterState,
   filters: FacetCounts,
-  totalFilters: FacetCounts,
+  unfiltered: FacetCounts,
 ): number {
   const keyIsActive = ((active as Record<string, string[] | undefined>)[key] ?? []).length > 0;
-  const source = keyIsActive ? totalFilters : filters;
+  const source = keyIsActive && hasRealCounts(unfiltered?.[key]) ? unfiltered : filters;
   return source?.[key]?.[value] ?? 0;
 }
 
