@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
+import { loadSkills } from './src/lib/data.ts';
+import { makeSitemapFilter, unlistedSkillSlugs } from './src/lib/sitemap.ts';
 import pagefind from 'astro-pagefind';
 
 // The one base-path literal in this repository. Everything that needs the base
@@ -16,5 +18,5 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   vite: { plugins: [tailwindcss()] },
-  integrations: [sitemap(), pagefind()],
+  integrations: [sitemap({ filter: makeSitemapFilter(unlistedSkillSlugs(loadSkills())) }), pagefind()],
 });
