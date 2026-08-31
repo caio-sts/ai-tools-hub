@@ -1,0 +1,74 @@
+---
+import type { Collection, Lang, Skill } from '../../../types.ts';
+import Layout from '../../../components/Layout.astro';
+import SkillCard from '../../../components/SkillCard.astro';
+import strings from '../../../lib/i18n/skill.ts';
+import { loadCollections, loadSkills } from '../../../lib/data.ts';
+import { nodeName } from '../../../lib/taxonomy.ts';
+import { skillSlug } from '../../../lib/slug.ts';
+import { withBase } from '../../../lib/link.ts';
+
+type PageProps = { skill: Skill; rank: number; collection: Collection | null };
+
+export function getStaticPaths() {
+  const byRepo = new Map(loadCollections().map((collection) => [collection.repo, collection]));
+  const ranked = [...loadSkills()].sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+  const claimed = new Map<string, string>();
+  const routes: Array<{ params: { lang: Lang; slug: string }; props: PageProps }> = [];
+
+  ranked.forEach((skill, index) => {
+    const slug = skillSlug(skill);
+    const owner = claimed.get(slug);
+    if (owner !== undefined) {
+      throw new Error(`Duplicate skill slug "${slug}" claimed by ${owner} and ${skill.id}`);
+    }
+    claimed.set(slug, skill.id);
+    for (const lang of ['en', 'pt'] as const) {
+      routes.push({
+        params: { lang, slug },
+        props: { skill, rank: index + 1, collection: byRepo.get(skill.repo) ?? null },
+      });
+    }
+  });
+
+  return routes;
+}
+
+const { skill, rank, collection } = Astro.props as PageProps;
+const lang = Astro.params.lang as Lang;
+const s = strings[lang];
+const domainSlug = skill.primary.split('/')[0];
+const showNode = skill.primary !== domainSlug;
+---
+
+<Layout
+  lang={lang}
+  title={skill.name}
+  description={skill.description}
+  path={`/skills/${skillSlug(skill)}/`}
+>
+  {/* §5.1: an evicted row keeps this page, with its current score and dates, and leaves every
+      index. Head only — nothing visible changes, and there is no tombstone. */}
+  {!skill.listed && <meta slot="head" name="robots" content="noindex" />}
+  <nav class="crumbs" data-field="crumbs" aria-label={s['skill.breadcrumb']}>
+    <a class="crumbs__home" href={withBase(`/${lang}/`)}>{s['skill.home']}</a>
+    <span class="crumbs__domain" data-field="crumb-domain">{nodeName(domainSlug, lang)}</span>
+    {showNode && <span class="crumbs__node" data-field="crumb-node">{nodeName(skill.primary, lang)}</span>}
+  </nav>
+  <div class="detail">
+    <SkillCard skill={skill} lang={lang} rank={rank} collection={collection} expanded={true} />
+  </div>
+</Layout>
+
+<style>
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-n-11);
+  }
+  .crumbs__home { color: var(--color-a-9); }
+  .detail { max-width: 44rem; }
+</style>
