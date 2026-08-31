@@ -13,6 +13,11 @@ const en = {
   'home.otherHeading': 'Other domains',
   'home.otherLead':
     'Present, and honestly thin. A domain link opens the catalog filtered to everything beneath it.',
+  'home.filterLabel': 'Find a group',
+  'home.filterPlaceholder': 'domain, subdomain or abbreviation',
+  'home.filterClear': 'Clear the group filter',
+  'home.filterCount': 'Groups shown',
+  'home.filterEmpty': 'No group matches that. Clear the filter to see all of them.',
   'home.nodeThin': 'below minimum mass',
   'home.nodeEmpty': 'no entries yet',
   // No day count and no cadence in the prose: STALE_DAYS (src/lib/format.ts, B1) is the only
@@ -34,6 +39,11 @@ const pt: Record<keyof typeof en, string> = {
   'home.otherHeading': 'Outros domínios',
   'home.otherLead':
     'Presentes, e honestamente rasos. O link de um domínio abre o catálogo filtrado por tudo que está abaixo dele.',
+  'home.filterLabel': 'Encontrar um grupo',
+  'home.filterPlaceholder': 'domínio, subdomínio ou sigla',
+  'home.filterClear': 'Limpar o filtro de grupos',
+  'home.filterCount': 'Grupos exibidos',
+  'home.filterEmpty': 'Nenhum grupo corresponde a isso. Limpe o filtro para ver todos.',
   'home.nodeThin': 'abaixo da massa mínima',
   'home.nodeEmpty': 'sem entradas ainda',
   'home.staleNote': 'este número está defasado — a atualização pode ter parado',

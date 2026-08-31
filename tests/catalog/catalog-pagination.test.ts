@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { expectTargetSize } from '../helpers/target-size.ts';
 import { allBuiltCss, builtCatalog, ruleFor } from './facet-rail.test.ts';
 
 describe('numbered pagination', () => {
@@ -18,8 +19,7 @@ describe('numbered pagination', () => {
   });
 
   it('gives page links a 24px hit area', () => {
-    expect(ruleFor(allBuiltCss(), '.page-link')).toContain('min-height:24px');
-    expect(ruleFor(allBuiltCss(), '.page-link')).toContain('min-width:24px');
+    expectTargetSize(ruleFor(allBuiltCss(), '.page-link'), '.page-link');
   });
 });
 

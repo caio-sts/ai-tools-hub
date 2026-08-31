@@ -4,6 +4,11 @@ import { t } from '../../src/lib/i18n/index.ts';
 
 const KEYS = [
   'home.description',
+  'home.filterClear',
+  'home.filterCount',
+  'home.filterEmpty',
+  'home.filterLabel',
+  'home.filterPlaceholder',
   'home.nodeEmpty',
   'home.nodeThin',
   'home.otherHeading',

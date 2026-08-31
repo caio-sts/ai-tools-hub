@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { expectTargetSize } from '../helpers/target-size.ts';
 import { allBuiltCss, builtCatalog, ruleFor } from './facet-rail.test.ts';
 
 describe('active filter chips', () => {
@@ -27,9 +28,7 @@ describe('active filter chips', () => {
 
   it('gives chips and their remove buttons 24x24 hit areas', () => {
     const css = allBuiltCss();
-    expect(ruleFor(css, '.filter-chip')).toContain('min-height:24px');
-    expect(ruleFor(css, '.filter-chip')).toContain('min-width:24px');
-    expect(ruleFor(css, '.chip-remove')).toContain('min-height:24px');
-    expect(ruleFor(css, '.chip-remove')).toContain('min-width:24px');
+    expectTargetSize(ruleFor(css, '.filter-chip'), '.filter-chip');
+    expectTargetSize(ruleFor(css, '.chip-remove'), '.chip-remove');
   });
 });

@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { expectTargetSize } from '../helpers/target-size.ts';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -75,22 +76,12 @@ describe('FacetRail', () => {
 describe('WCAG 2.5.8 target size and 2.4.11 focus clearance', () => {
   const css = allBuiltCss();
 
-  // Asserts the requirement rather than a magic number: 2.5.8 sets a floor, so a row that grows
-  // more comfortable must not read as a regression.
-  function minPx(rule: string, property: 'min-height' | 'min-width'): number {
-    const match = new RegExp(`${property}:(\\d+)px`).exec(rule);
-    expect(match, `${property} missing from ${rule}`).toBeTruthy();
-    return Number(match![1]);
-  }
-
   it('gives .facet-row at least a 24x24 CSS px hit area', () => {
-    expect(minPx(ruleFor(css, '.facet-row'), 'min-height')).toBeGreaterThanOrEqual(24);
-    expect(minPx(ruleFor(css, '.facet-row'), 'min-width')).toBeGreaterThanOrEqual(24);
+    expectTargetSize(ruleFor(css, '.facet-row'), '.facet-row');
   });
 
   it('gives the checkbox itself a 24x24 box', () => {
-    expect(ruleFor(css, '.facet-check')).toContain('min-height:24px');
-    expect(ruleFor(css, '.facet-check')).toContain('min-width:24px');
+    expectTargetSize(ruleFor(css, '.facet-check'), '.facet-check');
   });
 
   it('keeps a focused row clear of the sticky header', () => {

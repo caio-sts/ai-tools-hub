@@ -45,6 +45,17 @@ const stats = [
   },
 ];
 
+/* taxonomy.aliases maps abbreviation -> slug, and the nodes need the inverse. Its values are the
+   bare leaf (`code-application`) while a node carries the qualified slug
+   (`security/code-application`), so the index is keyed by leaf and read the same way. This is the
+   field's first consumer — nothing in src/lib touches it. */
+const aliasesByLeaf = new Map<string, string[]>();
+for (const [alias, target] of Object.entries(taxonomy.aliases)) {
+  const leaf = target.split('/').pop() ?? target;
+  aliasesByLeaf.set(leaf, [...(aliasesByLeaf.get(leaf) ?? []), alias]);
+}
+const aliasesFor = (slug: string): string[] => aliasesByLeaf.get(slug.split('/').pop() ?? slug) ?? [];
+
 const catalogHref = withBase(`/${lang}/catalog/`);
 const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
 ---
@@ -81,6 +92,35 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
     </div>
   </dl>
 
+  <form class="group-filter" data-group-filter role="search" method="get" action={catalogHref}>
+    <label class="group-filter__label" for="group-q">{t('home.filterLabel', lang)}</label>
+    <div class="group-filter__row">
+      <input
+        class="group-filter__input"
+        id="group-q"
+        data-group-input
+        type="search"
+        name="q"
+        autocomplete="off"
+        placeholder={t('home.filterPlaceholder', lang)}
+      />
+      <button
+        class="group-filter__clear"
+        type="button"
+        data-group-clear
+        aria-label={t('home.filterClear', lang)}
+      >&#215;</button>
+    </div>
+    <p
+      class="group-filter__status"
+      data-group-status
+      data-count-word={t('home.filterCount', lang)}
+      data-empty-text={t('home.filterEmpty', lang)}
+      aria-live="polite"
+      aria-atomic="true"
+    ></p>
+  </form>
+
   <section id="taxonomy" class="domain" aria-labelledby="security-heading">
     <h2 class="domain__title" id="security-heading">{nodeName('security', lang)}</h2>
     <p class="domain__lead">{t('home.securityLead', lang)}</p>
@@ -92,6 +132,7 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
             count={counts.get(child.slug) ?? 0}
             minimumMass={taxonomy.minimumMass}
             lang={lang}
+            aliases={aliasesFor(child.slug)}
           />
         ))
       }
@@ -110,6 +151,7 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
             minimumMass={taxonomy.minimumMass}
             lang={lang}
             filterKey="domain"
+            aliases={aliasesFor(domain.slug)}
           />
         ))
       }
@@ -117,9 +159,70 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
   </section>
 </Layout>
 
+<script>
+  /* The taxonomy is a closed set of a few dozen nodes already in the DOM, so this filters what is
+     rendered rather than reaching for Pagefind. No debounce: matching 40 strings is free, and a
+     delay on a list this small only makes the page feel broken. */
+  const form = document.querySelector<HTMLFormElement>('[data-group-filter]');
+  const input = document.querySelector<HTMLInputElement>('[data-group-input]');
+  const status = document.querySelector<HTMLElement>('[data-group-status]');
+
+  if (form && input && status) {
+    const nodes = [...document.querySelectorAll<HTMLElement>('.node[data-search]')];
+    const sections = [...document.querySelectorAll<HTMLElement>('.domain')];
+    const shownWord = status.dataset.countWord ?? '';
+    const emptyText = status.dataset.emptyText ?? '';
+
+    function fold(value: string): string {
+      return value.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase().trim();
+    }
+
+    function apply(): void {
+      const query = fold(input!.value);
+      let shown = 0;
+      for (const node of nodes) {
+        const hit = query === '' || (node.dataset.search ?? '').includes(query);
+        node.hidden = !hit;
+        if (hit) shown += 1;
+      }
+      /* A heading over an empty grid is worse than no section at all. */
+      for (const section of sections) {
+        const any = [...section.querySelectorAll<HTMLElement>('.node')].some((n) => !n.hidden);
+        section.hidden = !any;
+      }
+      status.textContent = query === ''
+        ? ''
+        : shown === 0
+          ? emptyText
+          : `${shownWord}: ${shown}`;
+    }
+
+    input.addEventListener('input', apply);
+    /* Enter must not navigate to the catalog: with JavaScript on, this form filters in place. */
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      apply();
+    });
+    document.querySelector('[data-group-clear]')?.addEventListener('click', () => {
+      input.value = '';
+      apply();
+      input.focus();
+    });
+  }
+</script>
+
 <style>
+  /* Every surface below the header needs the same gutter; the home had none, so its content sat
+     flush against the viewport edge. */
+  .intro,
+  .stats,
+  .domain,
+  .group-filter {
+    margin-inline: 1rem;
+  }
   .intro {
     max-width: 62ch;
+    padding-top: 2rem;
   }
   .intro__thesis {
     margin: 0 0 0.5rem;
@@ -205,4 +308,72 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
     margin: 0;
     padding: 0;
   }
+
+  .group-filter {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    margin-block: 0 2.5rem;
+  }
+  .group-filter__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  .group-filter__row {
+    display: flex;
+    max-width: 32rem;
+    border: 1px solid var(--input);
+    background: var(--color-n-1);
+    transition: border-color var(--motion-state) var(--motion-ease);
+  }
+  .group-filter__row:hover { border-color: var(--color-n-8); }
+  .group-filter__row:focus-within {
+    border-color: var(--ring);
+    outline: 2px solid var(--ring);
+    outline-offset: -1px;
+  }
+  .group-filter__input {
+    flex: 1 1 auto;
+    min-height: 40px;
+    min-width: 24px;
+    padding: 0 0.875rem;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
+  }
+  .group-filter__input:focus-visible { outline: 0; }
+  .group-filter__input::placeholder { color: var(--color-n-9); }
+  .group-filter__input::-webkit-search-cancel-button { display: none; }
+  .group-filter__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    min-width: 40px;
+    border: 0;
+    background: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    font: inherit;
+    font-size: var(--text-lg);
+    line-height: 1;
+  }
+  .group-filter__clear:hover { color: var(--foreground); background: var(--color-n-3); }
+  .group-filter__status {
+    margin: 0;
+    min-height: 1.25rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--muted-foreground);
+  }
+  /* With JavaScript off the filter cannot work, and a dead input is worse than none. */
+  .node[hidden] { display: none; }
 </style>
+
+<noscript><style>[data-group-filter]{display:none}</style></noscript>

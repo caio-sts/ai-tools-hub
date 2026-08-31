@@ -11,9 +11,11 @@ interface Props {
   lang: Lang;
   /** `subdomain` filters the catalog to one leaf, `domain` to everything beneath a domain. */
   filterKey?: 'subdomain' | 'domain';
+  /** Abbreviations that resolve to this slug, so the home filter finds `k8s` and `appsec`. */
+  aliases?: string[];
 }
 
-const { slug, count, minimumMass, lang, filterKey = 'subdomain' } = Astro.props;
+const { slug, count, minimumMass, lang, filterKey = 'subdomain', aliases = [] } = Astro.props;
 
 const state = nodeState(count, minimumMass);
 // nodeName throws on an unknown slug, so a taxonomy typo fails the build instead of
@@ -21,9 +23,16 @@ const state = nodeState(count, minimumMass);
 const label = nodeName(slug, lang);
 const href = withBase(`/${lang}/catalog/?${filterKey}=${encodeURIComponent(slug)}`);
 const ratio = `${count} / ${minimumMass}`;
+/* Folded to plain lowercase ASCII so the filter matches `seguranca` against `Segurança` and
+   `Codigo` against `Código` without asking the reader to produce the diacritic. */
+const haystack = [label, slug, ...aliases]
+  .join(' ')
+  .normalize('NFD')
+  .replace(/\p{Diacritic}/gu, '')
+  .toLowerCase();
 ---
 
-<li class="node" data-slug={slug} data-state={state} data-count={count}>
+<li class="node" data-slug={slug} data-state={state} data-count={count} data-search={haystack}>
   {
     state === 'active' && (
       <a class="node__link" href={href}>
