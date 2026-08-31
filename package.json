@@ -15,7 +15,8 @@
     "preview": "astro preview",
     "typecheck": "tsc --noEmit",
     "harvest": "node scripts/harvest/run.ts",
-    "validate": "node scripts/validate-taxonomy.ts"
+    "validate": "node scripts/validate-taxonomy.ts",
+    "apply": "node scripts/apply-assignments.ts"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

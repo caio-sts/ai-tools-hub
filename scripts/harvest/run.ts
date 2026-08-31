@@ -3,6 +3,7 @@ import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import type {
   Assignment,
+  Assignments,
   Collection,
   Meta,
   RawSkill,
@@ -25,6 +26,38 @@ import { detectRuntimes, enrichCollections } from './enrich.ts';
 /** Primary key for a skill: skills have no version and no namespace primitive (spec §4.1). */
 export function skillId(repo: string, sha: string, path: string): string {
   return `${repo}@${sha}:${path}`;
+}
+
+/** The inverse of skillId. Returns null for anything that is not one. */
+export function parseSkillId(id: string): { repo: string; sha: string; path: string } | null {
+  const at = id.indexOf('@');
+  if (at <= 0) return null;
+  const colon = id.indexOf(':', at + 1);
+  if (colon === -1) return null;
+
+  const repo = id.slice(0, at);
+  const sha = id.slice(at + 1, colon);
+  const path = id.slice(colon + 1);
+  return sha === '' || path === '' ? null : { repo, sha, path };
+}
+
+/**
+ * A skill's identity across crawls. skillId embeds the commit the content was read at, so a
+ * re-crawl of an active repository renames every entry; repo + path is what survives, and is
+ * what the classification runbook says a decision carries forward on.
+ */
+export function identityKey(repo: string, path: string): string {
+  return `${repo}\u0000${path}`;
+}
+
+/** data/assignments.json rekeyed off the sha, so a decision outlives the crawl that indexed it. */
+export function assignmentsByIdentity(assignments: Assignments): Map<string, Assignment> {
+  const index = new Map<string, Assignment>();
+  for (const [id, assignment] of Object.entries(assignments)) {
+    const parsed = parseSkillId(id);
+    if (parsed !== null) index.set(identityKey(parsed.repo, parsed.path), assignment);
+  }
+  return index;
 }
 
 const SECURITY_PATTERNS: RegExp[] = [
@@ -61,6 +94,32 @@ export const UNCLASSIFIED_PRIMARY = 'vertical-domain/general';
 const MAX_ALSO = 2;
 const MAX_TAGS = 10;
 
+/** The three assignment-owned fields, capped. The only writer of them, on both harvest paths. */
+function classificationOf(assignment: Assignment | undefined): Pick<Skill, 'primary' | 'also' | 'tags'> {
+  return {
+    primary: assignment?.primary ?? UNCLASSIFIED_PRIMARY,
+    also: (assignment?.also ?? []).slice(0, MAX_ALSO),
+    tags: (assignment?.tags ?? []).slice(0, MAX_TAGS),
+  };
+}
+
+/** What a previous crawl had translated, and the English it was a translation OF. */
+export type TranslationCarry = Pick<Skill, 'description' | 'descriptionPt' | 'longPt'>;
+
+/**
+ * Harvest never translates, but it must not destroy what the translation PR wrote. Carry the
+ * pt-BR text over only while the English it renders is byte-identical: a translation relabelled
+ * onto rewritten source text would be silently wrong, which is the one failure mode this
+ * catalog refuses (spec §13).
+ */
+function translationOf(
+  previous: TranslationCarry | undefined,
+  description: string,
+): Pick<Skill, 'descriptionPt' | 'longPt'> {
+  if (previous === undefined || previous.description !== description) return { descriptionPt: null, longPt: null };
+  return { descriptionPt: previous.descriptionPt, longPt: previous.longPt };
+}
+
 export interface BuildSkillInput {
   raw: RawSkill;
   collection: Collection;
@@ -69,11 +128,14 @@ export interface BuildSkillInput {
   treePaths: string[];
   siblingLicenseText: string | null;
   assignment: Assignment | undefined;
+  /** The matching row from the previous crawl, so its pt-BR text is not dropped on re-crawl. */
+  previousTranslation?: TranslationCarry | undefined;
   indexedAt: string;
 }
 
 export function buildSkill(input: BuildSkillInput): Skill {
-  const { raw, collection, safety, treePaths, siblingLicenseText, assignment, indexedAt } = input;
+  const { raw, collection, safety, treePaths, siblingLicenseText, assignment, previousTranslation, indexedAt } =
+    input;
   const frontmatter = raw.frontmatter;
 
   const segments = raw.path.split('/');
@@ -113,8 +175,7 @@ export function buildSkill(input: BuildSkillInput): Skill {
     name,
     description,
     // Harvest is deterministic and never translates. The translation PR fills these in.
-    descriptionPt: null,
-    longPt: null,
+    ...translationOf(previousTranslation, description),
     repo: raw.repo,
     path: raw.path,
     sha: raw.sha,
@@ -125,9 +186,7 @@ export function buildSkill(input: BuildSkillInput): Skill {
     portable,
     runtimes,
     safety,
-    primary: assignment?.primary ?? UNCLASSIFIED_PRIMARY,
-    also: (assignment?.also ?? []).slice(0, MAX_ALSO),
-    tags: (assignment?.tags ?? []).slice(0, MAX_TAGS),
+    ...classificationOf(assignment),
     securityRelevant: isSecurityRelevant(`${name} ${description}`),
     // Provisional. applyListing (A6.9) is the authority on this field and runHarvest applies
     // it over the whole catalog before writing, so the cap decides what is listed (spec §5.1).
@@ -193,6 +252,19 @@ export function pushedAtIndex(previous: CatalogSnapshot): Map<string, string> {
   return index;
 }
 
+/** The previous crawl's pt-BR text, keyed so a changed sha cannot lose it. */
+export function translationIndex(skills: Skill[]): Map<string, TranslationCarry> {
+  const index = new Map<string, TranslationCarry>();
+  for (const skill of skills) {
+    index.set(identityKey(skill.repo, skill.path), {
+      description: skill.description,
+      descriptionPt: skill.descriptionPt,
+      longPt: skill.longPt,
+    });
+  }
+  return index;
+}
+
 /** A repo whose pushedAt has not moved cannot have new or changed skills (spec §6.1). */
 export function partitionRepos(
   fresh: Collection[],
@@ -213,9 +285,32 @@ export function partitionRepos(
   return { crawl, skipped };
 }
 
-export function carryForward(previous: CatalogSnapshot, skipped: Collection[]): Skill[] {
+/**
+ * Re-stamp the classification onto rows that were not rebuilt. Every field but the three the
+ * assignment owns is left exactly as it was, so this is safe to run over a whole catalog.
+ */
+export function applyClassification(skills: Skill[], assignments: Map<string, Assignment>): Skill[] {
+  return skills.map((skill) => ({
+    ...skill,
+    ...classificationOf(assignments.get(identityKey(skill.repo, skill.path))),
+  }));
+}
+
+/**
+ * The previous rows of the repos this run skipped. A skipped repo is not re-read, so buildSkill
+ * never sees these entries — which is why the current classification is re-applied here too.
+ * Otherwise a classification PR would land in data/assignments.json and never reach the site.
+ */
+export function carryForward(
+  previous: CatalogSnapshot,
+  skipped: Collection[],
+  assignments: Map<string, Assignment>,
+): Skill[] {
   const repos = new Set(skipped.map((collection) => collection.repo));
-  return previous.skills.filter((skill) => repos.has(skill.repo));
+  return applyClassification(
+    previous.skills.filter((skill) => repos.has(skill.repo)),
+    assignments,
+  );
 }
 
 export interface HarvestDeps {
@@ -265,10 +360,11 @@ export async function runHarvest(
 
   const previous: CatalogSnapshot = { skills: loadSkills(dataDir), collections: loadCollections(dataDir) };
   const previousMeta = loadMeta(dataDir);
-  const assignments = loadAssignments(dataDir);
+  const assignments = assignmentsByIdentity(loadAssignments(dataDir));
+  const translations = translationIndex(previous.skills);
 
   const { crawl, skipped } = partitionRepos(collections, pushedAtIndex(previous));
-  const skills: Skill[] = carryForward(previous, skipped);
+  const skills: Skill[] = carryForward(previous, skipped, assignments);
   const indexedAt = deps.now().toISOString();
 
   for (const collection of crawl) {
@@ -305,7 +401,8 @@ export async function runHarvest(
           safety,
           treePaths,
           siblingLicenseText,
-          assignment: assignments[skillId(raw.repo, raw.sha, raw.path)],
+          assignment: assignments.get(identityKey(raw.repo, raw.path)),
+          previousTranslation: translations.get(identityKey(raw.repo, raw.path)),
           indexedAt,
         }),
       );

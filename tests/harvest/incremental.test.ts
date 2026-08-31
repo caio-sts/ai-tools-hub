@@ -75,11 +75,11 @@ describe('partitionRepos (spec §6.1: skip repos whose pushedAt is unchanged)', 
 
 describe('carryForward', () => {
   it('keeps exactly the previous skills of the skipped repos', () => {
-    const kept = carryForward(previous, [collection('cached/repo', '2026-08-01T00:00:00Z')]);
+    const kept = carryForward(previous, [collection('cached/repo', '2026-08-01T00:00:00Z')], new Map());
     expect(kept.map((s) => s.id)).toEqual(['cached/repo@abc:SKILL.md']);
   });
 
   it('keeps nothing when nothing was skipped', () => {
-    expect(carryForward(previous, [])).toEqual([]);
+    expect(carryForward(previous, [], new Map())).toEqual([]);
   });
 });
