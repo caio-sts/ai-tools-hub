@@ -38,9 +38,24 @@ export function allCss(): string {
   return sheets().map((sheet) => sheet.css).join('\n');
 }
 
-/** Every hoisted client bundle the site ships. */
+/**
+ * Every piece of client JavaScript the site ships: emitted .js bundles and the module scripts
+ * Astro inlines into the HTML when they are small enough. Mirrors sheets() for CSS — a helper
+ * that only read .js files would report "no handler" for a handler that is demonstrably on the
+ * page, purely because Astro chose to inline it.
+ */
 export function bundles(): Array<{ from: string; js: string }> {
-  return distFiles('.js').map((file) => ({ from: relative(ROOT, file), js: readFileSync(file, 'utf8') }));
+  const out: Array<{ from: string; js: string }> = [];
+  for (const file of distFiles('.js')) {
+    out.push({ from: relative(ROOT, file), js: readFileSync(file, 'utf8') });
+  }
+  for (const file of distFiles('.html')) {
+    const html = readFileSync(file, 'utf8');
+    for (const match of html.matchAll(/<script(?![^>]*\bsrc=)[^>]*>([\s\S]*?)<\/script>/g)) {
+      if (match[1].trim() !== '') out.push({ from: relative(ROOT, file), js: match[1] });
+    }
+  }
+  return out;
 }
 
 export function pageFor(lang: Lang, skill: Skill): string {
