@@ -9,13 +9,13 @@ const en = {
   'methodology.score.heading': 'Score',
   'methodology.score.formulaLabel': 'The formula',
   'methodology.score.adoption':
-    'Adoption, 25 points. log10 of the repository star count, normalised. This is a repo-level signal and is labelled as such wherever it appears.',
+    'log10 of the repository star count, normalised. This is a repo-level signal and is labelled as such wherever it appears.',
   'methodology.score.maintenance':
-    'Maintenance, 30 points. Exponential decay on days since the last commit that touched this skill path, with a 90-day half-life. Per skill, not per repo.',
+    'Exponential decay on days since the last commit that touched this skill path, with a 90-day half-life. Per skill, not per repo.',
   'methodology.score.provenance':
-    'Provenance, 25 points. Listed in a curated marketplace adds 12, an organisation account adds 8, a declared license adds 5.',
+    'Listed in a curated marketplace adds 12, an organisation account adds 8, a declared license adds 5.',
   'methodology.score.completeness':
-    'Completeness, 20 points. Spec-conformant frontmatter adds 9, a resolvable license adds 6, a real description adds 5.',
+    'Spec-conformant frontmatter adds 9, a resolvable license adds 6, a real description adds 5.',
   'methodology.score.balance':
     'Per-skill signals outweigh repo-level ones, 55 to 45. Ranking by stars alone would put every entry from one large repository in the top twenty with identical scores — a ranking of repositories wearing a skill name.',
   'methodology.score.noSafety':
@@ -92,13 +92,13 @@ const pt: Record<keyof typeof en, string> = {
   'methodology.score.heading': 'Pontuação',
   'methodology.score.formulaLabel': 'A fórmula',
   'methodology.score.adoption':
-    'Adoção, 25 pontos. log10 do número de estrelas do repositório, normalizado. É um sinal de repositório, e aparece rotulado como tal em todo lugar.',
+    'log10 do número de estrelas do repositório, normalizado. É um sinal de repositório, e aparece rotulado como tal em todo lugar.',
   'methodology.score.maintenance':
-    'Manutenção, 30 pontos. Decaimento exponencial sobre os dias desde o último commit que tocou o caminho desta skill, com meia-vida de 90 dias. Por skill, não por repositório.',
+    'Decaimento exponencial sobre os dias desde o último commit que tocou o caminho desta skill, com meia-vida de 90 dias. Por skill, não por repositório.',
   'methodology.score.provenance':
-    'Procedência, 25 pontos. Estar em um marketplace curado soma 12, conta de organização soma 8, licença declarada soma 5.',
+    'Estar em um marketplace curado soma 12, conta de organização soma 8, licença declarada soma 5.',
   'methodology.score.completeness':
-    'Completude, 20 pontos. Frontmatter conforme a especificação soma 9, licença resolvível soma 6, descrição real soma 5.',
+    'Frontmatter conforme a especificação soma 9, licença resolvível soma 6, descrição real soma 5.',
   'methodology.score.balance':
     'Sinais por skill pesam mais que sinais de repositório, 55 contra 45. Ordenar só por estrelas colocaria todas as entradas de um repositório grande nas vinte primeiras posições com pontuação idêntica — uma lista de repositórios usando o nome de uma skill.',
   'methodology.score.noSafety':

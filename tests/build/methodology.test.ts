@@ -1,5 +1,14 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = fileURLToPath(new URL('../..', import.meta.url));
+
+/** Tag-stripped page text, so a formula split across elements still reads as one line. */
+function text(html: string): string {
+  return html.replace(/<[^>]*>/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
+}
 
 function page(lang: 'en' | 'pt'): string {
   const file = `dist/${lang}/methodology/index.html`;
@@ -29,6 +38,27 @@ describe('the methodology page discharges spec §10.6', () => {
     expect(html).toContain('Maintenance 30');
     expect(html).toContain('Provenance 25');
     expect(html).toContain('Completeness 20');
+  });
+
+  // The page states the formula so a reader can reproduce the ranking. Nothing compared it to the
+  // spec that defines it, so the two could have drifted silently — which is the whole failure the
+  // page exists to prevent.
+  it('states the formula exactly as the spec defines it', () => {
+    const spec = readFileSync(resolve(ROOT, 'docs/specs/2026-08-29-ai-tools-hub-design.md'), 'utf8');
+    const line = spec.match(/^SCORE = .+$/m)?.[0] ?? '';
+    expect(line, 'no SCORE line found in the spec').not.toBe('');
+    const formula = line.replace(/\s*\(max 100\)\s*$/, '').trim();
+    for (const lang of ['en', 'pt'] as const) {
+      expect(text(page(lang))).toContain(formula);
+    }
+  });
+
+  it('renders each score term as its own row, with its weight', () => {
+    const html = page('en');
+    for (const [term, weight] of [['Adoption', 25], ['Maintenance', 30], ['Provenance', 25], ['Completeness', 20]]) {
+      expect(html).toMatch(new RegExp(`data-term="${String(term).toLowerCase()}"`));
+      expect(html).toContain(`>${weight}</span>`);
+    }
   });
 
   it('says why safety is not an input', () => {
