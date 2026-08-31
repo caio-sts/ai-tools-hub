@@ -1,12 +1,10 @@
-// Astro `base` and Pagefind's own path config are separate settings that never consult each other.
-// Both live here so CI can assert they agree; a silent disagreement 404s the search bundle.
+// The catalog's shared derivations. Imported by the catalog's client script, so it must stay free
+// of Node built-ins: no `node:fs`, and no import of src/lib/taxonomy.ts or src/lib/data.ts.
 //
-// This module is imported by the catalog's client script, so it must stay free of Node built-ins:
-// no `node:fs`, and no import of src/lib/taxonomy.ts or src/lib/data.ts.
-
-export const SITE_BASE = '/ai-tools-hub/';
-export const PAGEFIND_BASE_URL = SITE_BASE;
-export const PAGEFIND_BUNDLE_PATH = `${SITE_BASE}pagefind/pagefind.js`;
+// The path constants live in ./base.ts and are re-exported here. That module has no imports at
+// all, which is what lets vitest.config.ts read SITE_BASE without pulling in the i18n barrel and
+// its import.meta.glob.
+export { PAGEFIND_BASE_URL, PAGEFIND_BUNDLE_PATH, SITE_BASE } from './base.ts';
 
 import type { Collection, Runtime, Safety, Skill } from '../types.ts';
 
