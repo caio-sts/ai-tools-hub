@@ -373,7 +373,11 @@ const config = {
     const config = JSON.parse(configEl.textContent || '{}') as CatalogConfig;
     const searchInput = document.querySelector<HTMLInputElement>('[data-search-input]');
     const cards = new Map<string, HTMLElement>();
-    for (const el of grid.querySelectorAll<HTMLElement>('[data-skill-id]')) {
+    // [data-catalog-item], never a bare [data-skill-id]: the <details> inside each card carries
+    // that id too, and being later in document order it would win the map. render() would then
+    // toggle the panel instead of the card, and style.order would be inert — order applies to a
+    // grid item, not to its descendants — freezing the catalog on the first server-rendered page.
+    for (const el of grid.querySelectorAll<HTMLElement>('[data-catalog-item]')) {
       cards.set(el.dataset.skillId ?? '', el);
     }
 
