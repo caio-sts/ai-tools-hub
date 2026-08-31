@@ -40,6 +40,14 @@ const stale = skill.updatedDays > STALE_DAYS;
 const stars = collection ? compactNumber(collection.stars, lang) : '—';
 const forks = collection ? compactNumber(collection.forks, lang) : '—';
 const showCategory = filteredCategory !== skill.primary;
+
+/** §5: each term against its own maximum, never against 100. */
+const bars = [
+  { part: 'adoption', label: L('skill.adoption'), value: skill.breakdown.adoption, max: 25 },
+  { part: 'maintenance', label: L('skill.maintenance'), value: skill.breakdown.maintenance, max: 30 },
+  { part: 'provenance', label: L('skill.provenanceScore'), value: skill.breakdown.provenance, max: 25 },
+  { part: 'completeness', label: L('skill.completeness'), value: skill.breakdown.completeness, max: 20 },
+];
 ---
 
 <details class="skill-card" data-skill-id={skill.id} open={expanded}>
@@ -71,6 +79,16 @@ const showCategory = filteredCategory !== skill.primary;
     )}
   </summary>
   <div class="skill-card__panel">
+    <ul class="score-bars" data-field="score-bars" aria-label={L('skill.scoreBreakdown')}>
+      {bars.map((bar) => (
+        <li class="score-bar" data-part={bar.part}>
+          <span class="score-bar__label">{bar.label}</span>
+          <span class="score-bar__track" aria-hidden="true"><span class="score-bar__fill" style={`width:${Math.round((bar.value / bar.max) * 100)}%`}></span></span>
+          <span class="score-bar__value">{bar.value}/{bar.max}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="score-total"><span class="score-total__label">{L('skill.total')}</span><span class="score-total__value" data-field="total">{skill.breakdown.total}</span></p>
   </div>
 </details>
 
@@ -122,6 +140,42 @@ const showCategory = filteredCategory !== skill.primary;
   }
   .meta__repo { color: var(--color-n-12); }
   .meta__updated--stale { color: var(--color-hazard); }
+  .score-bars {
+    margin: 0 0 0.5rem;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+  .score-bar {
+    display: grid;
+    grid-template-columns: 7rem 1fr 3.5rem;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--color-n-11);
+  }
+  .score-bar__track {
+    display: block;
+    height: 6px;
+    background: var(--color-n-3);
+  }
+  .score-bar__fill {
+    display: block;
+    height: 100%;
+    background: var(--color-a-9);
+  }
+  .score-bar__value {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+  .score-total {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 0 0.75rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-n-12);
+  }
   .skill-card__category {
     margin: 0.5rem 0 0;
     padding: 0.15rem 0.4rem;
