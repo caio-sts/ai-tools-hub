@@ -123,3 +123,109 @@ export async function fetchRawFile(
   if (!res.ok) throw new Error(`raw ${repo}:${path}: HTTP ${res.status}`);
   return await res.text();
 }
+
+export interface ParsedFrontmatter {
+  frontmatter: Record<string, unknown>;
+  body: string;
+}
+
+const KEY_RE = /^([A-Za-z0-9_.-]+):(.*)$/;
+const BLOCK_SCALAR_RE = /^[|>][-+]?$/;
+
+function indentOf(line: string): number {
+  return line.length - line.trimStart().length;
+}
+
+function unquote(raw: string): string {
+  const t = raw.trim();
+  if (t.length >= 2 && t.startsWith('"') && t.endsWith('"')) {
+    return t.slice(1, -1).replace(/\\"/g, '"');
+  }
+  if (t.length >= 2 && t.startsWith("'") && t.endsWith("'")) {
+    return t.slice(1, -1).replace(/''/g, "'");
+  }
+  return t;
+}
+
+function coerce(raw: string): unknown {
+  const t = raw.trim();
+  if (t === '') return '';
+  if (t === 'true') return true;
+  if (t === 'false') return false;
+  if (t === 'null' || t === '~') return null;
+  if (/^-?\d+(\.\d+)?$/.test(t)) return Number(t);
+  if (t.startsWith('[') && t.endsWith(']')) {
+    const inner = t.slice(1, -1).trim();
+    return inner === '' ? [] : inner.split(',').map((part) => unquote(part));
+  }
+  return unquote(t);
+}
+
+/** YAML subset covering every field in the reference ALLOWED_FIELDS; no YAML dependency. */
+export function parseFrontmatter(text: string): ParsedFrontmatter {
+  const src = text.replace(/^﻿/, '').replace(/\r\n/g, '\n');
+  if (!src.startsWith('---\n')) return { frontmatter: {}, body: src.trim() };
+  const close = /\n---[ \t]*(\n|$)/.exec(src.slice(3));
+  if (close === null) return { frontmatter: {}, body: src.trim() };
+  const head = src.slice(4, 3 + close.index);
+  const body = src.slice(3 + close.index + close[0].length).trim();
+  const lines = head === '' ? [] : head.split('\n');
+  const fm: Record<string, unknown> = {};
+  let i = 0;
+
+  while (i < lines.length) {
+    const line = lines[i];
+    if (line.trim() === '' || line.trimStart().startsWith('#') || indentOf(line) > 0) {
+      i += 1;
+      continue;
+    }
+    const key = KEY_RE.exec(line);
+    if (key === null) {
+      i += 1;
+      continue;
+    }
+    const name = key[1];
+    const inline = key[2].trim();
+
+    if (BLOCK_SCALAR_RE.test(inline)) {
+      i += 1;
+      const block: string[] = [];
+      while (i < lines.length && (lines[i].trim() === '' || indentOf(lines[i]) > 0)) {
+        block.push(lines[i].trim());
+        i += 1;
+      }
+      while (block.length > 0 && block[block.length - 1] === '') block.pop();
+      fm[name] = inline.startsWith('|') ? block.join('\n') : block.join(' ').trim();
+      continue;
+    }
+
+    if (inline !== '') {
+      fm[name] = coerce(inline);
+      i += 1;
+      continue;
+    }
+
+    i += 1;
+    const child: string[] = [];
+    while (i < lines.length && (lines[i].trim() === '' || indentOf(lines[i]) > 0)) {
+      if (lines[i].trim() !== '') child.push(lines[i].trim());
+      i += 1;
+    }
+    if (child.length === 0) {
+      fm[name] = '';
+      continue;
+    }
+    if (child[0].startsWith('- ')) {
+      fm[name] = child.filter((c) => c.startsWith('- ')).map((c) => unquote(c.slice(2)));
+      continue;
+    }
+    const map: Record<string, unknown> = {};
+    for (const c of child) {
+      const entry = KEY_RE.exec(c);
+      if (entry !== null) map[entry[1]] = coerce(entry[2]);
+    }
+    fm[name] = map;
+  }
+
+  return { frontmatter: fm, body };
+}
