@@ -8,12 +8,13 @@ import type {
   RawSkill,
   RepoRef,
   Safety,
+  ScoreBreakdown,
   Skill,
   TreeFile,
 } from '../../src/types.ts';
 import { loadAssignments, loadCollections, loadMeta, loadSkills } from '../../src/lib/data.ts';
 import { resolveLicense, siblingLicensePath } from '../../src/lib/license.ts';
-import { applyListing } from '../../src/lib/rank.ts';
+import { EVICT_RANK, applyListing } from '../../src/lib/rank.ts';
 import { deriveSafety, isPortable, scriptFilesFor } from '../../src/lib/safety.ts';
 import { scoreSkill } from '../../src/lib/score.ts';
 import { loadTaxonomy } from '../../src/lib/taxonomy.ts';
@@ -379,4 +380,97 @@ if (invokedPath !== undefined && import.meta.url === pathToFileURL(invokedPath).
       console.error(error);
       process.exitCode = 1;
     });
+}
+
+export interface CatalogProblem {
+  id: string;
+  problem: string;
+}
+
+const COMPONENT_CAPS: ReadonlyArray<readonly [keyof ScoreBreakdown, number]> = [
+  ['adoption', 25],
+  ['maintenance', 30],
+  ['provenance', 25],
+  ['completeness', 20],
+];
+
+/**
+ * Every invariant the published catalog claims, checked against itself. Deliberately says nothing
+ * about which repos exist or how many: upstream changing is normal, the pipeline lying is not.
+ */
+export function validateCatalog(skills: Skill[], collections: Collection[], meta: Meta): CatalogProblem[] {
+  const problems: CatalogProblem[] = [];
+  const add = (id: string, problem: string): void => {
+    problems.push({ id, problem });
+  };
+
+  const seenIds = new Set<string>();
+  const repos = new Set(collections.map((collection) => collection.repo));
+  const listedPerPrimary = new Map<string, number>();
+
+  for (const skill of skills) {
+    if (seenIds.has(skill.id)) add(skill.id, 'duplicate id');
+    seenIds.add(skill.id);
+
+    if (skill.id !== skillId(skill.repo, skill.sha, skill.path)) add(skill.id, 'id is not repo@sha:path');
+    if (!repos.has(skill.repo)) add(skill.id, 'repo has no collection row');
+
+    const b = skill.breakdown;
+    for (const [component, cap] of COMPONENT_CAPS) {
+      const value = b[component];
+      if (!Number.isFinite(value) || value < 0 || value > cap) add(skill.id, `${component} outside 0..${cap}`);
+    }
+    if (b.adoption + b.maintenance + b.provenance + b.completeness !== b.total) {
+      add(skill.id, 'breakdown does not sum to total');
+    }
+    if (skill.score !== b.total) add(skill.id, 'score does not equal breakdown.total');
+
+    if (skill.license !== null && skill.licenseSource === null) add(skill.id, 'license set but licenseSource is null');
+    if (skill.license === null && skill.licenseSource !== null) add(skill.id, 'licenseSource set but license is null');
+
+    if (skill.runtimes.length === 0) add(skill.id, 'no runtimes');
+    if (skill.also.length > 2) add(skill.id, 'more than 2 also entries');
+    if (skill.tags.length > 10) add(skill.id, 'more than 10 tags');
+
+    if (typeof skill.listed !== 'boolean') add(skill.id, 'listed is not a boolean');
+    else if (skill.listed) listedPerPrimary.set(skill.primary, (listedPerPrimary.get(skill.primary) ?? 0) + 1);
+
+    const safety = skill.safety;
+    if (
+      typeof safety.executesCode !== 'boolean' ||
+      typeof safety.scriptCount !== 'number' ||
+      !Array.isArray(safety.languages) ||
+      typeof safety.network !== 'boolean' ||
+      typeof safety.readsEnv !== 'boolean' ||
+      (safety.declaredTools !== null && !Array.isArray(safety.declaredTools))
+    ) {
+      add(skill.id, 'incomplete safety surface');
+    }
+  }
+
+  // Hysteresis lets a listing run to rank 72, never past it, and the minimum-mass floor (5)
+  // is far below that — so no subdomain can legitimately list more than EVICT_RANK entries.
+  // Monotonicity is deliberately NOT asserted: rank 65 listed while rank 61 is not is correct.
+  for (const [primary, count] of listedPerPrimary) {
+    if (count > EVICT_RANK) add(primary, 'more listed entries than the subdomain cap allows');
+  }
+
+  for (let i = 1; i < skills.length; i += 1) {
+    const previous = skills[i - 1]!;
+    const current = skills[i]!;
+    if (previous.score < current.score) add(current.id, 'not sorted by score descending');
+    else if (previous.score === current.score && previous.id.localeCompare(current.id) > 0) {
+      add(current.id, 'ties not sorted by id');
+    }
+  }
+
+  if (meta.skillCount !== skills.length) add('meta', 'meta.skillCount does not match the catalog');
+  if (meta.sourceCount !== collections.length) add('meta', 'meta.sourceCount does not match the catalog');
+
+  const crawled = new Date(meta.crawledAt);
+  if (Number.isNaN(crawled.getTime()) || crawled.toISOString() !== meta.crawledAt) {
+    add('meta', 'meta.crawledAt is not an ISO timestamp');
+  }
+
+  return problems;
 }
