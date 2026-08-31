@@ -148,12 +148,26 @@ describe('sortValues', () => {
 
   it('zero-pads so Pagefind string sorting matches numeric order', () => {
     expect(sortValues(skill(), collection)).toEqual({
-      score: '091',
+      // Score, then freshness inverted into the same string: Pagefind sorts one key as text and
+      // has no second one, so a tie would otherwise fall to index order. 99999 - 12 = 99987.
+      score: '09199987',
       stars: '000006908',
       forks: '000000123',
       newest: '20260829',
       updated: '000012',
     });
+  });
+
+  it('orders a fresher entry above a staler one at the same score', () => {
+    const fresher = sortValues({ ...skill(), updatedDays: 2 }, collection).score;
+    const staler = sortValues({ ...skill(), updatedDays: 40 }, collection).score;
+    expect(fresher > staler).toBe(true);
+  });
+
+  it('keeps score dominant over freshness', () => {
+    const better = sortValues({ ...skill(), score: 92, updatedDays: 900 }, collection).score;
+    const worse = sortValues({ ...skill(), score: 91, updatedDays: 0 }, collection).score;
+    expect(better > worse).toBe(true);
   });
 
   it('falls back to zeroes when the repo has no collection record', () => {

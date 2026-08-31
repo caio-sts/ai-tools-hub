@@ -83,6 +83,9 @@ export interface SortValues {
   updated: string;
 }
 
+/** Caps the inverted freshness key so one ancient entry cannot widen the field for everyone. */
+const MAX_UPDATED_DAYS = 99999;
+
 function pad(n: number, width: number): string {
   const safe = Number.isFinite(n) ? Math.max(0, Math.round(n)) : 0;
   return String(safe).padStart(width, '0');
@@ -93,7 +96,9 @@ export function sortValues(skill: Skill, collection: Collection | null): SortVal
   const iso = typeof skill.indexedAt === 'string' ? skill.indexedAt.slice(0, 10) : '';
   const newest = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.replace(/-/g, '') : '00000000';
   return {
-    score: pad(skill.score, 3),
+    // Pagefind sorts this as a string and has no second key, so the tie-break lives inside it.
+    // updatedDays is inverted, because the whole value is sorted descending and fresher must win.
+    score: `${pad(skill.score, 3)}${pad(MAX_UPDATED_DAYS - Math.min(skill.updatedDays, MAX_UPDATED_DAYS), 5)}`,
     stars: pad(collection?.stars ?? 0, 9),
     forks: pad(collection?.forks ?? 0, 9),
     newest,

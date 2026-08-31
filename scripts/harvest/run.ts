@@ -15,7 +15,7 @@ import type {
 } from '../../src/types.ts';
 import { loadAssignments, loadCollections, loadMeta, loadSkills } from '../../src/lib/data.ts';
 import { resolveLicense, siblingLicensePath } from '../../src/lib/license.ts';
-import { EVICT_RANK, applyListing } from '../../src/lib/rank.ts';
+import { EVICT_RANK, applyListing, compareForRank } from '../../src/lib/rank.ts';
 import { deriveSafety, isPortable, scriptFilesFor } from '../../src/lib/safety.ts';
 import { scoreSkill } from '../../src/lib/score.ts';
 import { loadTaxonomy } from '../../src/lib/taxonomy.ts';
@@ -409,7 +409,7 @@ export async function runHarvest(
     }
   }
 
-  skills.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+  skills.sort(compareForRank);
 
   // Survival (spec §5.1). The cap decides what is LISTED, never what is stored: every row stays
   // in skills.json and keeps being re-scored. `previous` is what the last committed run listed,

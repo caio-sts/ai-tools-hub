@@ -63,6 +63,9 @@ describe('data/taxonomy.json', () => {
       cspm: 'cloud-permissions', ciem: 'cloud-permissions', posture: 'cloud-permissions',
       ir: 'detection-forensics', siem: 'detection-forensics', sca: 'supply-chain',
     });
-    expect(tax.minimumMass).toBe(5);
+    // Calibrated against the real corpus (spec §15.1). 5 was set on reasoning alone and cut
+    // through the densest part of the distribution — nine leaves sit at 4 or 5, so one entry
+    // decided navigability for six of them. 4 sits at the gap in the data.
+    expect(tax.minimumMass).toBe(4);
   });
 });

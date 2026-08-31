@@ -6,9 +6,19 @@ export const SUBDOMAIN_CAP = 60;
 /** … and is only dropped once it falls past rank 72. Applied in Step 6. */
 export const EVICT_RANK = 72;
 
-/** The catalog's own order: score descending, ties by id, so ranking is reproducible. */
-function byScoreThenId(a: Skill, b: Skill): number {
-  return b.score - a.score || a.id.localeCompare(b.id);
+/**
+ * The catalog's own order: score descending, then freshness, then name.
+ *
+ * Ties are not rare — twelve entries share 92 on the real corpus, because three of the four score
+ * terms barely vary across it. Breaking them on the id ordered rank 5 through 16 by the hexadecimal
+ * prefix of a commit sha, and an id embeds the commit its content was read at, so that order
+ * reshuffled on every re-crawl for no reason a reader could see.
+ *
+ * updatedDays is the signal the maintenance term has already rounded into buckets, so it separates
+ * entries the score cannot; name is the last resort because it survives a re-crawl and an id does not.
+ */
+export function compareForRank(a: Skill, b: Skill): number {
+  return b.score - a.score || a.updatedDays - b.updatedDays || a.name.localeCompare(b.name);
 }
 
 function countIn(listed: Set<string>, ranked: Skill[]): number {
@@ -28,7 +38,7 @@ export function applyListing(skills: Skill[], previous: Set<string>, minimumMass
   const listed = new Set<string>();
 
   for (const group of groups.values()) {
-    const ranked = [...group].sort(byScoreThenId);
+    const ranked = [...group].sort(compareForRank);
     for (let i = 0; i < ranked.length; i += 1) {
       const candidate = ranked[i]!;
       const rank = i + 1;
