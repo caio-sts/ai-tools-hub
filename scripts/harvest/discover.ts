@@ -157,3 +157,47 @@ export async function searchPage(
   }
   throw new Error(`search "${query}" page ${page}: retries exhausted`);
 }
+
+/**
+ * Spec 6.1: "one code-search pass for `path:.claude-plugin filename:marketplace.json` — the
+ * highest-signal structured seed". This is the ONLY user of the code_search 10/min bucket, and
+ * it needs the fine-grained PAT: GITHUB_TOKEN cannot do global code search (spec 6.2).
+ */
+export const MARKETPLACE_CODE_QUERY = 'path:.claude-plugin filename:marketplace.json';
+
+interface CodeItem {
+  repository?: RepoItem;
+}
+
+export async function codeSearchPage(
+  page: number,
+  token: string,
+  deps: RequestDeps = {},
+): Promise<SearchPage> {
+  const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
+  const wait = deps.sleepImpl ?? sleep;
+  const url =
+    `${API}/search/code?q=${encodeURIComponent(MARKETPLACE_CODE_QUERY)}` +
+    `&per_page=100&page=${page}`;
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    const res = await fetchImpl(url, { headers: ghHeaders(token) });
+    if (res.ok) {
+      const body = (await res.json()) as { total_count?: number; items?: CodeItem[] };
+      const seen = new Map<string, RepoSeed>();
+      for (const item of body.items ?? []) {
+        const seed = item.repository === undefined ? null : toSeed(item.repository);
+        if (seed !== null && !seen.has(seed.repo)) seen.set(seed.repo, seed);
+      }
+      const items = [...seen.values()];
+      return { items, totalCount: body.total_count ?? items.length };
+    }
+    // 422 is code search's own 1,000-result cap past page 10 — the end of the seed, not a fault.
+    if (res.status === 422) return { items: [], totalCount: 0 };
+    if ((res.status === 403 || res.status === 429) && attempt < 4) {
+      await wait(backoffMs(res, attempt));
+      continue;
+    }
+    throw new Error(`code search page ${page}: HTTP ${res.status}`);
+  }
+  throw new Error(`code search page ${page}: retries exhausted`);
+}
