@@ -6,6 +6,7 @@ import strings from '../../../lib/i18n/skill.ts';
 import { loadCollections, loadSkills } from '../../../lib/data.ts';
 import { nodeName } from '../../../lib/taxonomy.ts';
 import { skillSlug } from '../../../lib/slug.ts';
+import { pagefindIndexAttrs } from '../../../lib/facets.ts';
 import { withBase } from '../../../lib/link.ts';
 
 type PageProps = { skill: Skill; rank: number; collection: Collection | null };
@@ -41,47 +42,14 @@ const domainSlug = skill.primary.split('/')[0];
 const showNode = skill.primary !== domainSlug;
 
 /**
- * Pagefind indexes pages, so the index payload is built here. Flat parallel keys only; B3's rail
- * derives the same five keys from the same rules and asserts both sides agree.
+ * Pagefind indexes pages, so the index payload is emitted here — but it is DEFINED in
+ * src/lib/facets.ts, beside the rules the rail derives its five keys from. This block used to
+ * restate the whole contract inline, and the two drifted the moment one of them changed: a
+ * tie-break folded into the score sort value passed every test on sortValues() and reached no
+ * built page at all. tests/build/pagefind-index.test.ts now compares what is emitted here against
+ * what that function returns, for every listed entry.
  */
-function pad(value: number, width: number): string {
-  const safe = Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
-  return String(safe).padStart(width, '0');
-}
-
-const nodes = [skill.primary, ...skill.also].filter(Boolean);
-const risk: string[] = [skill.safety.executesCode ? 'executes-code' : 'no-code-execution'];
-if (skill.safety.network) risk.push('network');
-if (skill.safety.readsEnv) risk.push('reads-env');
-if (skill.safety.declaredTools && skill.safety.declaredTools.length > 0) risk.push('declared-tools');
-if (skill.portable) risk.push('portable');
-
-const pair = (key: string) => (value: string): [string, string] => [key, value];
-const indexFilters: Array<[string, string]> = [
-  ...[...new Set(nodes.map((node) => node.split('/')[0]))].map(pair('domain')),
-  ...[...new Set(nodes)].map(pair('subdomain')),
-  ...[...new Set(skill.runtimes)].map(pair('runtime')),
-  ...risk.map(pair('risk')),
-  ['license', skill.license ?? 'unspecified'],
-];
-
-const indexedDay = skill.indexedAt.slice(0, 10);
-const indexSorts: Array<[string, string]> = [
-  ['score', pad(skill.score, 3)],
-  ['stars', pad(collection?.stars ?? 0, 9)],
-  ['forks', pad(collection?.forks ?? 0, 9)],
-  ['newest', /^\d{4}-\d{2}-\d{2}$/.test(indexedDay) ? indexedDay.replace(/-/g, '') : '00000000'],
-  ['updated', pad(skill.updatedDays, 6)],
-];
-
-const indexText = [
-  skill.name,
-  skill.description,
-  skill.descriptionPt ?? '',
-  skill.longPt ?? '',
-  skill.tags.join(' '),
-  `${skill.repo} ${skill.path}`,
-].filter((line) => line.trim().length > 0);
+const index = pagefindIndexAttrs(skill, collection);
 ---
 
 <Layout
@@ -119,9 +87,9 @@ const indexText = [
           `id[owner/repo@sha` and left every card unmatched, so the grid rendered empty. Reading the
           value out of a real attribute has no parsing to get wrong. */}
       <span data-skill-id={skill.id} data-pagefind-meta="id[data-skill-id]"></span>
-      {indexFilters.map(([key, value]) => <span data-value={value} data-pagefind-filter={`${key}[data-value]`}></span>)}
-      {indexSorts.map(([key, value]) => <span data-value={value} data-pagefind-sort={`${key}[data-value]`}></span>)}
-      {indexText.map((line) => <p>{line}</p>)}
+      {index.filters.map(({ key, value }) => <span data-value={value} data-pagefind-filter={`${key}[data-value]`}></span>)}
+      {index.sorts.map(({ key, value }) => <span data-value={value} data-pagefind-sort={`${key}[data-value]`}></span>)}
+      {index.text.map((line) => <p>{line}</p>)}
     </div>
   )}
 </Layout>

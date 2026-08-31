@@ -188,6 +188,34 @@ describe('applyAssignmentsToCatalog recomputes listing, because listing depends 
   });
 });
 
+// Pagefind sorts one key as a string and has no second one, so entries sharing a score AND a
+// freshness fall back to index order — which is the order of skills.json. The harvest sorts it by
+// compareForRank; this path has to as well, or the two disagree and the catalog shows a residue of
+// whatever order the previous crawl happened to leave behind.
+describe('applyAssignmentsToCatalog writes the catalog in ranking order', () => {
+  it('sorts by score, then freshness, then name', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'ao-order-'));
+    const rows = [
+      skill({ id: `a/b@${SHA}:z/SKILL.md`, path: 'z/SKILL.md', name: 'zebra', score: 90, updatedDays: 5 }),
+      skill({ id: `a/b@${SHA}:a/SKILL.md`, path: 'a/SKILL.md', name: 'alpha', score: 90, updatedDays: 5 }),
+      skill({ id: `a/b@${SHA}:f/SKILL.md`, path: 'f/SKILL.md', name: 'fresh', score: 90, updatedDays: 1 }),
+      skill({ id: `a/b@${SHA}:t/SKILL.md`, path: 't/SKILL.md', name: 'top', score: 99, updatedDays: 9 }),
+    ];
+    await writeFile(join(dir, 'skills.json'), `${JSON.stringify(rows, null, 2)}\n`, 'utf8');
+    await writeFile(join(dir, 'collections.json'), '[]\n', 'utf8');
+    await writeFile(join(dir, 'assignments.json'), '{}\n', 'utf8');
+    await writeFile(
+      join(dir, 'meta.json'),
+      `${JSON.stringify({ crawledAt: '2026-08-01T00:00:00.000Z', classifiedAt: null, skillCount: 4, sourceCount: 1 }, null, 2)}\n`,
+      'utf8',
+    );
+    await applyAssignmentsToCatalog(dir, '2026-08-31T12:00:00.000Z');
+
+    const written = JSON.parse(await readFile(join(dir, 'skills.json'), 'utf8')) as Skill[];
+    expect(written.map((s) => s.name)).toEqual(['top', 'fresh', 'alpha', 'zebra']);
+  });
+});
+
 describe('assignmentsByIdentity feeds applyClassification', () => {
   it('round-trips a committed-shape assignments record', () => {
     const index = assignmentsByIdentity({ [`tob/skills@${SHA}:${PATH}`]: ASSIGNMENT });

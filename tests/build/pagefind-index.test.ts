@@ -2,8 +2,10 @@ import { describe, it, expect } from 'vitest';
 import { gunzipSync } from 'node:zlib';
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { loadSkills } from '../../src/lib/data.ts';
-import { INDEX_FILTER_KEYS } from '../../src/lib/facets.ts';
+import type { Skill } from '../../src/types.ts';
+import { loadCollections, loadSkills } from '../../src/lib/data.ts';
+import { INDEX_FILTER_KEYS, collectionFor, pagefindIndexAttrs } from '../../src/lib/facets.ts';
+import { pageFor } from '../helpers/skill-card.ts';
 
 // Every other Pagefind test reads the HTML we emit. That proves what we wrote, not what Pagefind
 // made of it — and the two diverged silently: `data-pagefind-meta="id[<id>]"` looks correct in the
@@ -79,5 +81,53 @@ describe('the built Pagefind index, not the markup that produced it', () => {
     const pt = fragments('pt-br');
     expect(pt.length).toBe(listed.length);
     expect(new Set(pt.map((f) => f.meta.id))).toEqual(new Set(en.map((f) => f.meta.id)));
+  });
+});
+
+// pagefindIndexAttrs carries a comment saying it is "the definition its built output is asserted
+// against". It was neither: the skill page duplicated the whole contract inline — filters, sorts
+// and text — and nothing compared the two. A tie-break folded into the score sort value passed
+// every unit test on sortValues and never reached a single built page.
+describe('the emitted index block comes from pagefindIndexAttrs, not a copy of it', () => {
+  const collections = loadCollections();
+  const listed = loadSkills().filter((skill) => skill.listed);
+
+  function emitted(html: string, kind: 'sort' | 'filter'): Map<string, string[]> {
+    const found = new Map<string, string[]>();
+    for (const m of html.matchAll(
+      new RegExp(`<span data-value="([^"]*)" data-pagefind-${kind}="([^"[]+)\\[data-value\\]"`, 'g'),
+    )) {
+      const list = found.get(m[2]!) ?? [];
+      list.push(m[1]!);
+      found.set(m[2]!, list);
+    }
+    return found;
+  }
+
+  it('emits exactly the sort values sortValues() computes', () => {
+    for (const skill of listed) {
+      const expectedSorts = pagefindIndexAttrs(skill, collectionFor(skill.repo, collections)).sorts;
+      const actual = emitted(pageFor('en', skill), 'sort');
+      for (const { key, value } of expectedSorts) {
+        expect(actual.get(key), `${skill.name}: no ${key} sort emitted`).toEqual([value]);
+      }
+    }
+  });
+
+  it('folds the tie-break into the score sort value, since Pagefind has no second key', () => {
+    const withScore = listed.map((skill) => emitted(pageFor('en', skill), 'sort').get('score')?.[0] ?? '');
+    for (const value of withScore) expect(value.length).toBeGreaterThan(3);
+    expect(new Set(withScore).size, 'every entry shares one score sort value').toBeGreaterThan(1);
+  });
+
+  it('emits exactly the filter values pagefindIndexAttrs computes', () => {
+    for (const skill of listed.slice(0, 12)) {
+      const expectedFilters = pagefindIndexAttrs(skill, collectionFor(skill.repo, collections)).filters;
+      const actual = emitted(pageFor('en', skill), 'filter');
+      for (const key of new Set(expectedFilters.map((f) => f.key))) {
+        const want = expectedFilters.filter((f) => f.key === key).map((f) => f.value).sort();
+        expect((actual.get(key) ?? []).sort(), `${skill.name}: ${key} filters differ`).toEqual(want);
+      }
+    }
   });
 });

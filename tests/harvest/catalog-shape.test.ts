@@ -119,7 +119,21 @@ describe('validateCatalog catches every way the pipeline can lie', () => {
 
   it('catches an out-of-order catalog', () => {
     const low = skill({ id: 'a/b@abc1234:low/SKILL.md', path: 'low/SKILL.md', score: 5, breakdown: { adoption: 5, maintenance: 0, provenance: 0, completeness: 0, total: 5 } });
-    expect(problems([low, skill()], [collection], meta({ skillCount: 2 }))).toContain('not sorted by score descending');
+    expect(problems([low, skill()], [collection], meta({ skillCount: 2 }))).toContain('not in ranking order');
+  });
+
+  // The stored order is the display order wherever Pagefind cannot separate two entries, so the
+  // whole ranking rule is checked here, not just its first term.
+  it('catches a tie ordered against freshness', () => {
+    const stale = skill({ id: 'a/b@abc1234:stale/SKILL.md', path: 'stale/SKILL.md', name: 'aaa', updatedDays: 40 });
+    const fresh = skill({ id: 'a/b@abc1234:fresh/SKILL.md', path: 'fresh/SKILL.md', name: 'zzz', updatedDays: 2 });
+    expect(problems([stale, fresh], [collection], meta({ skillCount: 2 }))).toContain('not in ranking order');
+  });
+
+  it('accepts a tie ordered by name once freshness matches', () => {
+    const a = skill({ id: 'a/b@abc1234:a/SKILL.md', path: 'a/SKILL.md', name: 'aaa' });
+    const z = skill({ id: 'a/b@abc1234:z/SKILL.md', path: 'z/SKILL.md', name: 'zzz' });
+    expect(problems([a, z], [collection], meta({ skillCount: 2 }))).toEqual([]);
   });
 
   it('catches a non-boolean listed flag surviving from a hand-edited file', () => {
