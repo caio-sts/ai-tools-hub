@@ -1,0 +1,198 @@
+---
+// Behaviour only. The input and the listbox belong to B3's src/components/SearchBox.astro;
+// this file never renders either one, and never a second search field (seam S5).
+---
+
+<style is:global>
+  [data-search-status],
+  [data-search-rescue] {
+    margin: 0.25rem 0 0;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.75rem;
+    color: var(--color-n-11);
+  }
+  [data-search-rescue][hidden] { display: none; }
+</style>
+
+<script>
+  import {
+    loadRescueIndex, rescueDecision, suggestRescue, type RescueSuggestion,
+  } from '../lib/rescue.ts';
+  import {
+    activeDescendantId, comboboxReducer, INITIAL_COMBOBOX_STATE, type ComboboxState,
+  } from '../lib/combobox.ts';
+  import { createDebouncedAnnouncer } from '../lib/announce.ts';
+  import { PAGEFIND_BUNDLE_PATH } from '../lib/facets.ts';
+  import { withBase } from '../lib/link.ts';
+  import { t } from '../lib/i18n/index.ts';
+  import type { Lang } from '../types.ts';
+
+  interface PagefindModule {
+    debouncedSearch(term: string, wait: number): Promise<{ results: unknown[] } | null>;
+  }
+
+  const input = document.querySelector<HTMLInputElement>('[data-search-input]');
+  const listboxId = input?.getAttribute('aria-controls') ?? '';
+  const listbox = listboxId ? document.getElementById(listboxId) : null;
+
+  if (input && listbox) {
+    const lang: Lang = document.documentElement.lang.startsWith('pt') ? 'pt' : 'en';
+
+    // Two regions nothing else renders. Created here so B3's markup stays a plain combobox.
+    const status = document.createElement('p');
+    status.id = `${listboxId}-status`;
+    status.setAttribute('aria-live', 'polite');
+    status.setAttribute('aria-atomic', 'true');
+    status.setAttribute('data-search-status', '');
+
+    const rescueBox = document.createElement('p');
+    rescueBox.id = `${listboxId}-rescue`;
+    rescueBox.hidden = true;
+    rescueBox.setAttribute('data-search-rescue', '');
+
+    listbox.insertAdjacentElement('afterend', rescueBox);
+    listbox.insertAdjacentElement('afterend', status);
+    input.setAttribute('aria-describedby', status.id);
+    listbox.hidden = true;
+
+    let state: ComboboxState = INITIAL_COMBOBOX_STATE;
+    let suggestions: RescueSuggestion[] = [];
+
+    const announcer = createDebouncedAnnouncer((message) => {
+      status.textContent = message;
+    }, 300);
+
+    let rescuePromise: Promise<ReturnType<typeof loadRescueIndex> | null> | null = null;
+    function ensureRescue() {
+      if (!rescuePromise) {
+        rescuePromise = fetch(withBase(`/rescue-index/${lang}.json`))
+          .then((response) => (response.ok ? response.text() : null))
+          .then((text) => (text ? loadRescueIndex(text) : null))
+          .catch(() => null);
+      }
+      return rescuePromise;
+    }
+
+    let pagefindPromise: Promise<PagefindModule | null> | null = null;
+    function ensurePagefind(): Promise<PagefindModule | null> {
+      if (!pagefindPromise) {
+        pagefindPromise = import(/* @vite-ignore */ PAGEFIND_BUNDLE_PATH)
+          .then((mod) => mod as PagefindModule)
+          .catch(() => null);
+      }
+      return pagefindPromise;
+    }
+
+    function countMessage(count: number): string {
+      if (count === 0) return t('search.noResults', lang);
+      const noun = count === 1 ? t('search.resultOne', lang) : t('search.resultMany', lang);
+      return `${count} ${noun}`;
+    }
+
+    function syncAria(): void {
+      listbox.hidden = !state.open;
+      input.setAttribute('aria-expanded', String(state.open));
+      const active = activeDescendantId(listboxId, state);
+      if (active) input.setAttribute('aria-activedescendant', active);
+      else input.removeAttribute('aria-activedescendant');
+      Array.from(listbox.children).forEach((child, i) => {
+        child.setAttribute('aria-selected', String(i === state.activeIndex));
+        if (i === state.activeIndex) child.scrollIntoView({ block: 'nearest' });
+      });
+    }
+
+    function activate(index: number): void {
+      const target = suggestions[index];
+      if (target) window.location.href = withBase(target.path);
+    }
+
+    function renderOptions(): void {
+      listbox.replaceChildren();
+      suggestions.forEach((suggestion, i) => {
+        const option = document.createElement('li');
+        option.id = `${listboxId}-opt-${i}`;
+        option.setAttribute('role', 'option');
+        option.setAttribute('aria-selected', 'false');
+        option.textContent = suggestion.name;
+        option.addEventListener('mousedown', (event) => {
+          event.preventDefault();
+          const transition = comboboxReducer(state, { type: 'select', index: i });
+          state = transition.state;
+          syncAria();
+          activate(transition.index);
+        });
+        listbox.append(option);
+      });
+      syncAria();
+    }
+
+    function renderRescue(count: number): void {
+      const decision = rescueDecision(count, suggestions);
+      rescueBox.replaceChildren();
+      rescueBox.hidden = !decision.show;
+      if (!decision.show || !decision.top) return;
+      rescueBox.append(document.createTextNode(`${t('search.didYouMean', lang)} `));
+      const link = document.createElement('a');
+      link.href = withBase(decision.top.path);
+      link.textContent = decision.top.name;
+      rescueBox.append(link);
+    }
+
+    async function runSearch(query: string): Promise<void> {
+      if (query.trim().length < 2) {
+        announcer.cancel();
+        status.textContent = '';
+        rescueBox.hidden = true;
+        return;
+      }
+      const pagefind = await ensurePagefind();
+      if (!pagefind) {
+        renderRescue(0);
+        return;
+      }
+      const outcome = await pagefind.debouncedSearch(query, 300);
+      if (outcome === null) return;
+      const count = outcome.results.length;
+      announcer.announce(countMessage(count));
+      renderRescue(count);
+    }
+
+    input.addEventListener('input', async () => {
+      const query = input.value;
+      const index = await ensureRescue();
+      suggestions = index ? suggestRescue(index, query, 7) : [];
+      state = comboboxReducer(state, { type: 'results', optionCount: suggestions.length }).state;
+      renderOptions();
+      await runSearch(query);
+    });
+
+    input.addEventListener('keydown', (event) => {
+      const key = event.key;
+      if (key !== 'ArrowDown' && key !== 'ArrowUp' && key !== 'Enter' && key !== 'Escape') return;
+      if (key === 'ArrowDown' || key === 'ArrowUp') event.preventDefault();
+
+      const transition = comboboxReducer(state, { type: 'key', key });
+      state = transition.state;
+      syncAria();
+
+      // 'submit' is deliberately not handled here: B3's catalog script owns the raw query.
+      if (transition.action === 'activate') {
+        event.preventDefault();
+        activate(transition.index);
+      }
+      if (transition.action === 'dismiss') {
+        input.value = '';
+        suggestions = [];
+        renderOptions();
+        announcer.cancel();
+        status.textContent = '';
+        rescueBox.hidden = true;
+      }
+    });
+
+    input.addEventListener('blur', () => {
+      state = comboboxReducer(state, { type: 'blur' }).state;
+      syncAria();
+    });
+  }
+</script>
