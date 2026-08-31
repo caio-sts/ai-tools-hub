@@ -1,4 +1,5 @@
-import { MIN_STARS } from '../../src/lib/inclusion.ts';
+import type { RepoRef } from '../../src/types.ts';
+import { MIN_STARS, passesRepoGate } from '../../src/lib/inclusion.ts';
 export type FetchLike = typeof globalThis.fetch;
 
 /** Measured GitHub `search` bucket limit: 30 requests per minute (spec 6.2). */
@@ -232,4 +233,47 @@ export async function discoverMarketplaceRepos(
   }
 
   return [...found.values()];
+}
+
+/**
+ * Union of the star-partitioned topic sweeps and the marketplace code-search seed, deduped by
+ * repo and filtered through the published repo gate (spec 6.4). Returns the shared `RepoRef`
+ * shape; `isOrg` was only ever a gate input and does not leave this module.
+ */
+export async function discoverRepos(token: string, deps: DiscoverDeps = {}): Promise<RepoRef[]> {
+  const log = deps.log ?? (() => {});
+  const pacer = createPacer(SEARCH_PER_MINUTE, { now: deps.now, sleep: deps.sleepImpl });
+  const found = new Map<string, RepoSeed>();
+
+  const remember = (seed: RepoSeed): void => {
+    const previous = found.get(seed.repo);
+    if (previous === undefined) {
+      found.set(seed.repo, seed);
+      return;
+    }
+    found.set(seed.repo, {
+      repo: seed.repo,
+      stars: Math.max(previous.stars, seed.stars),
+      isOrg: previous.isOrg || seed.isOrg,
+    });
+  };
+
+  for (const query of buildSearchQueries()) {
+    for (let page = 1; page <= 10; page += 1) {
+      await pacer.take();
+      const { items, totalCount } = await searchPage(query, page, token, deps);
+      for (const seed of items) remember(seed);
+      log(`${query} page ${page}: ${items.length} of ${totalCount}`);
+      if (items.length < 100 || page * 100 >= totalCount) break;
+    }
+  }
+
+  for (const seed of await discoverMarketplaceRepos(token, deps)) remember(seed);
+
+  const admitted = [...found.values()].filter((seed) => passesRepoGate(seed));
+  log(`discovery: ${admitted.length} repos admitted of ${found.size} found (floor ${MIN_STARS})`);
+
+  return admitted
+    .map(({ repo, stars }) => ({ repo, stars }))
+    .sort((a, b) => b.stars - a.stars || a.repo.localeCompare(b.repo));
 }
