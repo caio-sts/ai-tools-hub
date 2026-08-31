@@ -60,3 +60,11 @@ export async function fetchTree(
 export function isSkillPath(path: string): boolean {
   return path.endsWith('/SKILL.md');
 }
+
+/**
+ * Crawler trap (a): git symlinks carry mode 120000 and point at another path.
+ * One sampled repo had 458 of 846 SKILL.md paths as symlinks; counting them doubles totals.
+ */
+export function isSymlink(file: TreeFile): boolean {
+  return file.mode === '120000';
+}
