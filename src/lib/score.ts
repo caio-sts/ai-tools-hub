@@ -18,9 +18,16 @@ const STAR_CEILING = 200_000;
 const HALF_LIFE_DAYS = 90;
 const MIN_REAL_DESCRIPTION = 40;
 
+function finiteAtLeastZero(value: number): number {
+  return Number.isFinite(value) ? Math.max(0, value) : 0;
+}
+
 export function scoreSkill(s: SkillInput): ScoreBreakdown {
-  const adoption = Math.round(Math.min(1, Math.log10(s.stars + 1) / Math.log10(STAR_CEILING)) * 25);
-  const maintenance = Math.round(30 * Math.pow(0.5, s.updatedDays / HALF_LIFE_DAYS));
+  const stars = finiteAtLeastZero(s.stars);
+  const updatedDays = finiteAtLeastZero(s.updatedDays);
+
+  const adoption = Math.round(Math.min(1, Math.log10(stars + 1) / Math.log10(STAR_CEILING)) * 25);
+  const maintenance = Math.round(30 * Math.pow(0.5, updatedDays / HALF_LIFE_DAYS));
   const provenance = (s.curated ? 12 : 0) + (s.isOrg ? 8 : 0) + (s.license ? 5 : 0);
   const completeness =
     (s.portable ? 9 : 0) +
