@@ -1,0 +1,76 @@
+name: crawl
+
+on:
+  schedule:
+    # Mondays 06:37 UTC — WEEKLY, and deliberately not nightly. The primary schedule is the
+    # local systemd timer installed by ops/install-schedule.sh (spec §6.1); this workflow is
+    # the fallback that bounds staleness when the machine is off for days, which §13 names as
+    # the largest risk. Off the hour on purpose: schedule events at :00 are dropped under
+    # load, and the commit below is itself the repository activity that keeps this schedule
+    # from being auto-disabled after 60 days (spec §6.5).
+    - cron: '37 6 * * 1'
+  workflow_dispatch:
+    inputs:
+      allowlist:
+        description: 'Comma-separated owner/repo list. Leave empty for a full discovery crawl.'
+        required: false
+        default: ''
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: crawl
+  cancel-in-progress: false
+
+jobs:
+  harvest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v5
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run the harvest
+        env:
+          # GITHUB_TOKEN is repo-scoped and cannot perform global search (spec §6.2).
+          CATALOG_PAT: ${{ secrets.CATALOG_PAT }}
+          ALLOWLIST: ${{ inputs.allowlist }}
+        run: |
+          if [ -z "$CATALOG_PAT" ]; then
+            echo "::error::CATALOG_PAT is unset or expired. A fine-grained PAT with public-repo read is mandatory; GITHUB_TOKEN cannot perform global search."
+            exit 1
+          fi
+          if [ -n "$ALLOWLIST" ]; then
+            node scripts/harvest/run.ts --allowlist="$ALLOWLIST"
+          else
+            node scripts/harvest/run.ts
+          fi
+
+      - name: Commit the refreshed catalog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/skills.json data/collections.json data/meta.json
+          git commit --allow-empty -m "chore(crawl): refresh catalog data $(date -u +%Y-%m-%dT%H:%MZ)"
+          git pull --rebase --autostash origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
+
+      - name: Open a P1 issue when the crawl fails
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh issue create \
+            --title "P1: weekly fallback crawl failed on $(date -u +%Y-%m-%d)" \
+            --body "The weekly fallback harvest failed, so the catalog now depends entirely on the local timer. A silent crawler is a P1 bug, not a maintenance chore (spec §13). Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
