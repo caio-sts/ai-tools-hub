@@ -7,7 +7,9 @@ import {
   NAMESPACES,
   UI,
   isLang,
+  localePath,
   mergeNamespaces,
+  pathBelowLocale,
   t,
 } from '../../src/lib/i18n/index.ts';
 
@@ -77,5 +79,44 @@ describe('t()', () => {
 
   it('returns the key itself when it is unknown, so a leak is visible', () => {
     expect(t('nav.nothing', 'pt')).toBe('nav.nothing');
+  });
+});
+
+describe('localePath()', () => {
+  it('prefixes the locale and normalises the slashes', () => {
+    expect(localePath('en', '/')).toBe('/en/');
+    expect(localePath('pt', '/catalog/')).toBe('/pt/catalog/');
+    expect(localePath('pt', 'catalog')).toBe('/pt/catalog/');
+    expect(localePath('en')).toBe('/en/');
+  });
+
+  it('keeps a deep path intact', () => {
+    expect(localePath('en', '/skills/anthropics/skills/document-skills/pdf/')).toBe(
+      '/en/skills/anthropics/skills/document-skills/pdf/',
+    );
+  });
+});
+
+describe('pathBelowLocale()', () => {
+  it('strips the base path and the locale segment', () => {
+    expect(pathBelowLocale('/ai-tools-hub/en/catalog/', '/ai-tools-hub/')).toBe('/catalog/');
+    expect(pathBelowLocale('/ai-tools-hub/pt/', '/ai-tools-hub/')).toBe('/');
+    expect(pathBelowLocale('/ai-tools-hub/', '/ai-tools-hub/')).toBe('/');
+  });
+
+  it('works just as well when the pathname carries no base', () => {
+    expect(pathBelowLocale('/en/catalog/', '/')).toBe('/catalog/');
+    expect(pathBelowLocale('/pt/skills/owner/repo/name', '/')).toBe('/skills/owner/repo/name/');
+    expect(pathBelowLocale('/')).toBe('/');
+  });
+
+  it('does not mistake a path segment that merely starts like a locale', () => {
+    expect(pathBelowLocale('/entrypoints/', '/')).toBe('/entrypoints/');
+    expect(pathBelowLocale('/ptolemy/', '/')).toBe('/ptolemy/');
+  });
+
+  it('round-trips against localePath, which is what the switcher relies on', () => {
+    const here = pathBelowLocale('/ai-tools-hub/en/catalog/', '/ai-tools-hub/');
+    expect(localePath('pt', here)).toBe('/pt/catalog/');
   });
 });

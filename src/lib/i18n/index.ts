@@ -12,6 +12,35 @@ export function isLang(value: unknown): value is Lang {
   return value === 'en' || value === 'pt';
 }
 
+/** Leading and trailing slash, so path segments concatenate without a double slash. */
+function normalize(path: string): string {
+  const withLead = path.startsWith('/') ? path : `/${path}`;
+  return withLead.endsWith('/') ? withLead : `${withLead}/`;
+}
+
+/** The locale-prefixed path of a page, before the base path is applied by withBase(). */
+export function localePath(lang: Lang, path: string = '/'): string {
+  return `/${lang}${normalize(path)}`;
+}
+
+/**
+ * The path below the locale segment — what the language switcher and the canonical link need.
+ * Tolerates a pathname that carries the base path and one that does not, so it is correct
+ * whether Astro hands us "/ai-tools-hub/en/catalog/" or "/en/catalog/".
+ */
+export function pathBelowLocale(pathname: string, base: string = '/'): string {
+  let rest = normalize(pathname);
+  const prefix = normalize(base);
+  if (prefix !== '/' && rest.startsWith(prefix)) {
+    rest = rest.slice(prefix.length - 1);
+  }
+  const segment = rest.split('/')[1] ?? '';
+  if (isLang(segment)) {
+    rest = rest.slice(segment.length + 1) || '/';
+  }
+  return normalize(rest);
+}
+
 /** One namespace file: the same key set under every locale. */
 export type Namespace = Record<Lang, Record<string, string>>;
 
