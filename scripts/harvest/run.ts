@@ -1,11 +1,24 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import type { Assignment, Collection, Meta, RawSkill, Safety, Skill, TreeFile } from '../../src/types.ts';
+import type {
+  Assignment,
+  Collection,
+  Meta,
+  RawSkill,
+  RepoRef,
+  Safety,
+  Skill,
+  TreeFile,
+} from '../../src/types.ts';
+import { loadAssignments, loadCollections, loadMeta, loadSkills } from '../../src/lib/data.ts';
+import { resolveLicense, siblingLicensePath } from '../../src/lib/license.ts';
+import { applyListing } from '../../src/lib/rank.ts';
+import { deriveSafety, isPortable, scriptFilesFor } from '../../src/lib/safety.ts';
 import { scoreSkill } from '../../src/lib/score.ts';
-import { isPortable } from '../../src/lib/safety.ts';
-import { resolveLicense } from '../../src/lib/license.ts';
-import { detectRuntimes } from './enrich.ts';
-import { fetchRawFile, type EnumerateDeps } from './enumerate.ts';
+import { loadTaxonomy } from '../../src/lib/taxonomy.ts';
+import { discoverRepos } from './discover.ts';
+import { enumerateSkills, fetchHeadCommit, fetchRawFile, fetchTree, type EnumerateDeps } from './enumerate.ts';
+import { detectRuntimes, enrichCollections } from './enrich.ts';
 
 /** Primary key for a skill: skills have no version and no namespace primitive (spec §4.1). */
 export function skillId(repo: string, sha: string, path: string): string {
@@ -201,4 +214,121 @@ export function partitionRepos(
 export function carryForward(previous: CatalogSnapshot, skipped: Collection[]): Skill[] {
   const repos = new Set(skipped.map((collection) => collection.repo));
   return previous.skills.filter((skill) => repos.has(skill.repo));
+}
+
+export interface HarvestDeps {
+  discoverRepos(token: string): Promise<RepoRef[]>;
+  enrichCollections(repos: RepoRef[], token: string): Promise<Collection[]>;
+  enumerateSkills(repo: RepoRef, token: string): Promise<RawSkill[]>;
+  fetchTree(repo: string, token: string): Promise<TreeFile[]>;
+  fetchHeadCommit(repo: string, token: string): Promise<string | null>;
+  fetchRawFile(repo: string, ref: string, path: string): Promise<string | null>;
+  fetchScriptContents(repo: string, ref: string, files: TreeFile[]): Promise<Map<string, string>>;
+  deriveSafety(files: TreeFile[], contents: Map<string, string>, frontmatter: Record<string, unknown>): Safety;
+  now(): Date;
+}
+
+export interface HarvestOptions {
+  token: string;
+  dataDir: string;
+  allowlist?: string[] | null;
+  deps?: Partial<HarvestDeps>;
+}
+
+const DEFAULT_DEPS: HarvestDeps = {
+  discoverRepos: (token) => discoverRepos(token),
+  enrichCollections,
+  enumerateSkills: (repo, token) => enumerateSkills(repo, token),
+  fetchTree: (repo, token) => fetchTree(repo, token),
+  fetchHeadCommit: (repo, token) => fetchHeadCommit(repo, token),
+  fetchRawFile: (repo, ref, path) => fetchRawFile(repo, ref, path),
+  fetchScriptContents: (repo, ref, files) => fetchScriptContents(repo, ref, files),
+  deriveSafety,
+  now: () => new Date(),
+};
+
+export async function runHarvest(
+  options: HarvestOptions,
+): Promise<{ skills: Skill[]; collections: Collection[]; meta: Meta }> {
+  const deps: HarvestDeps = { ...DEFAULT_DEPS, ...(options.deps ?? {}) };
+  const { token, dataDir } = options;
+  const allowlist = options.allowlist ?? null;
+
+  const repos: RepoRef[] =
+    allowlist !== null && allowlist.length > 0
+      ? allowlist.map((repo) => ({ repo, stars: 0 }))
+      : await deps.discoverRepos(token);
+
+  const collections = await deps.enrichCollections(repos, token);
+
+  const previous: CatalogSnapshot = { skills: loadSkills(dataDir), collections: loadCollections(dataDir) };
+  const previousMeta = loadMeta(dataDir);
+  const assignments = loadAssignments(dataDir);
+
+  const { crawl, skipped } = partitionRepos(collections, pushedAtIndex(previous));
+  const skills: Skill[] = carryForward(previous, skipped);
+  const indexedAt = deps.now().toISOString();
+
+  for (const collection of crawl) {
+    const raws = await deps.enumerateSkills({ repo: collection.repo, stars: collection.stars }, token);
+    if (raws.length === 0) continue;
+
+    const tree = await deps.fetchTree(collection.repo, token);
+    const treePaths = tree.filter((file) => file.type === 'blob').map((file) => file.path);
+
+    // treePaths came from git/trees/HEAD (A4.12), so the neighbours listed there exist at HEAD,
+    // not necessarily at the SKILL.md's own per-path commit. Resolve the head COMMIT sha once
+    // per repo with A4.19's fetchHeadCommit and pin every sibling fetch to it.
+    const commitSha = await deps.fetchHeadCommit(collection.repo, token);
+
+    for (const raw of raws) {
+      const scriptFiles = scriptFilesFor(tree, raw.path);
+      const contents =
+        commitSha === null
+          ? new Map<string, string>()
+          : await deps.fetchScriptContents(collection.repo, commitSha, scriptFiles);
+
+      const safety = deps.deriveSafety(scriptFiles, contents, raw.frontmatter);
+
+      const licensePath = siblingLicensePath(raw.path, treePaths);
+      const siblingLicenseText =
+        licensePath === null || commitSha === null
+          ? null
+          : await deps.fetchRawFile(collection.repo, commitSha, licensePath);
+
+      skills.push(
+        buildSkill({
+          raw,
+          collection,
+          safety,
+          treePaths,
+          siblingLicenseText,
+          assignment: assignments[skillId(raw.repo, raw.sha, raw.path)],
+          indexedAt,
+        }),
+      );
+    }
+  }
+
+  skills.sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+
+  // Survival (spec §5.1). The cap decides what is LISTED, never what is stored: every row stays
+  // in skills.json and keeps being re-scored. `previous` is what the last committed run listed,
+  // which is what makes eviction hysteretic instead of a rank-60 knife edge. applyListing
+  // preserves the order it was given, so the sort above survives.
+  const previouslyListed = new Set(previous.skills.filter((entry) => entry.listed).map((entry) => entry.id));
+  const listed = applyListing(skills, previouslyListed, loadTaxonomy().minimumMass);
+
+  const meta: Meta = {
+    crawledAt: indexedAt,
+    // Harvest never classifies; the classification PR owns this field (spec §6.1).
+    classifiedAt: previousMeta.classifiedAt,
+    skillCount: listed.length,
+    sourceCount: collections.length,
+  };
+
+  await writeCatalog(dataDir, { skills: listed, collections });
+  await writeMeta(dataDir, meta);
+
+  return { skills: listed, collections, meta };
 }
