@@ -201,3 +201,35 @@ export async function codeSearchPage(
   }
   throw new Error(`code search page ${page}: retries exhausted`);
 }
+
+export interface DiscoverDeps extends RequestDeps {
+  now?: () => number;
+  log?: (msg: string) => void;
+}
+
+/**
+ * The marketplace seed finds repos that carry no `topic:` at all, which the sweeps can never
+ * reach. Its results still face the same repo gate; the seed buys recall, not an exemption.
+ * Star counts on code-search results are best-effort — A5's enrichment is the authority.
+ */
+export async function discoverMarketplaceRepos(
+  token: string,
+  deps: DiscoverDeps = {},
+): Promise<RepoSeed[]> {
+  const log = deps.log ?? (() => {});
+  const pacer = createPacer(CODE_SEARCH_PER_MINUTE, { now: deps.now, sleep: deps.sleepImpl });
+  const found = new Map<string, RepoSeed>();
+
+  for (let page = 1; page <= 10; page += 1) {
+    await pacer.take();
+    const { items, totalCount } = await codeSearchPage(page, token, deps);
+    for (const seed of items) {
+      const previous = found.get(seed.repo);
+      if (previous === undefined || seed.stars > previous.stars) found.set(seed.repo, seed);
+    }
+    log(`marketplace seed page ${page}: ${items.length} repos of ${totalCount} file hits`);
+    if (items.length === 0 || page * 100 >= totalCount) break;
+  }
+
+  return [...found.values()];
+}
