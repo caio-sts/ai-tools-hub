@@ -1,4 +1,4 @@
-import type { RepoRef } from '../../src/types.ts';
+import type { Collection, RepoRef } from '../../src/types.ts';
 
 /**
  * GraphQL costs 1 point per 4 aliased repositories against a 5,000 point/hour budget (spec §6.2),
@@ -51,4 +51,66 @@ export function buildEnrichQuery(repos: RepoRef[]): string {
     '}',
     '',
   ].join('\n');
+}
+
+export interface EnrichRepoNode {
+  nameWithOwner: string;
+  stargazerCount: number;
+  forkCount: number;
+  pushedAt: string | null;
+  licenseInfo: { spdxId: string | null } | null;
+  repositoryTopics: { nodes: Array<{ topic: { name: string } } | null> } | null;
+  owner: { __typename: string } | null;
+}
+
+export interface EnrichPayload {
+  data?: Record<string, unknown> | null;
+  errors?: Array<{ message: string }> | null;
+}
+
+export interface EnrichBatchResult {
+  collections: Collection[];
+  /** Aliases that resolved to null: renamed, deleted or gone private since discovery. */
+  missing: string[];
+  /** GraphQL points left in the hour, or -1 when the response omitted rateLimit. */
+  remaining: number;
+}
+
+export function parseEnrichResponse(
+  payload: EnrichPayload,
+  batch: RepoRef[],
+  curated: ReadonlySet<string>,
+): EnrichBatchResult {
+  const data = payload.data;
+  if (!data) {
+    const detail = (payload.errors ?? []).map((e) => e.message).join('; ') || 'no data field';
+    throw new Error(`enrich: GraphQL response carried no data (${detail})`);
+  }
+  const rate = data.rateLimit as { cost: number; remaining: number } | null | undefined;
+  const collections: Collection[] = [];
+  const missing: string[] = [];
+
+  batch.forEach((ref, index) => {
+    const node = data[repoAlias(index)] as EnrichRepoNode | null | undefined;
+    if (!node) {
+      missing.push(ref.repo);
+      return;
+    }
+    const topics = (node.repositoryTopics?.nodes ?? [])
+      .filter((n): n is { topic: { name: string } } => Boolean(n && n.topic && n.topic.name))
+      .map((n) => n.topic.name.toLowerCase());
+    collections.push({
+      // Key on the requested name, not nameWithOwner: skill ids were minted with it upstream.
+      repo: ref.repo,
+      stars: node.stargazerCount ?? 0,
+      forks: node.forkCount ?? 0,
+      pushedAt: node.pushedAt ?? '',
+      license: node.licenseInfo?.spdxId ?? null,
+      topics,
+      isOrg: node.owner?.__typename === 'Organization',
+      curated: curated.has(ref.repo.toLowerCase()),
+    });
+  });
+
+  return { collections, missing, remaining: rate?.remaining ?? -1 };
 }
