@@ -1,1 +1,1045 @@
-{}
+{
+  "anthropics/skills@3b3fad96af16a10759d930941b4520ba0c40edae:skills/claude-api/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "claude",
+      "anthropic",
+      "api",
+      "sdk",
+      "llm",
+      "reference"
+    ]
+  },
+  "anthropics/skills@0a64e398ec6bb34a494f0c347e8ccae53a862f8e:skills/academy-guide/SKILL.md": {
+    "primary": "research-knowledge/general",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "claude",
+      "learning",
+      "onboarding",
+      "courses"
+    ]
+  },
+  "anthropics/skills@f379e5ad66e2febc1616cf8d6284666fecbe514e:skills/discernment-nudge/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "productivity/general"
+    ],
+    "tags": [
+      "critical-thinking",
+      "follow-up",
+      "agent-behaviour"
+    ]
+  },
+  "trailofbits/skills@d1f1575cff97816e5cc08af66cd2506099c681d3:plugins/audit-context-building/skills/audit-context-building/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/threat-modeling"
+    ],
+    "tags": [
+      "audit",
+      "code-review",
+      "invariants"
+    ]
+  },
+  "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/tests/fixtures/pr-review-toolkit/skills/review-pr/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "code-review",
+      "pull-request",
+      "tests",
+      "documentation"
+    ]
+  },
+  "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/tests/fixtures/review-panel/skills/panel-review/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "code-review",
+      "multi-agent",
+      "audit"
+    ]
+  },
+  "trailofbits/skills@311a784a100db18b6f78c9960d594a95dcc3eef5:plugins/c-review/skills/c-review/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "c",
+      "cpp",
+      "memory-safety",
+      "integer-overflow"
+    ]
+  },
+  "trailofbits/skills@32ad9e6b47a880005ebeede2d0b5923359e5e6fd:plugins/building-secure-contracts/skills/audit-prep-assistant/SKILL.md": {
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "audit",
+      "readiness",
+      "checklist"
+    ]
+  },
+  "trailofbits/skills@32ad9e6b47a880005ebeede2d0b5923359e5e6fd:plugins/building-secure-contracts/skills/code-maturity-assessor/SKILL.md": {
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "smart-contracts",
+      "maturity",
+      "scorecard",
+      "audit"
+    ]
+  },
+  "trailofbits/skills@32ad9e6b47a880005ebeede2d0b5923359e5e6fd:plugins/building-secure-contracts/skills/guidelines-advisor/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "smart-contracts",
+      "solidity",
+      "best-practices"
+    ]
+  },
+  "trailofbits/skills@32ad9e6b47a880005ebeede2d0b5923359e5e6fd:plugins/building-secure-contracts/skills/secure-workflow-guide/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "smart-contracts",
+      "slither",
+      "workflow"
+    ]
+  },
+  "trailofbits/skills@32ad9e6b47a880005ebeede2d0b5923359e5e6fd:plugins/building-secure-contracts/skills/token-integration-analyzer/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "smart-contracts",
+      "tokens",
+      "erc20",
+      "integration"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/testing-handbook-generator/SKILL.md": {
+    "primary": "agent-authoring/general",
+    "also": [
+      "security/general"
+    ],
+    "tags": [
+      "skills",
+      "generation",
+      "testing-handbook"
+    ]
+  },
+  "trailofbits/skills@43d16a56d832bdd467041a2540e46d3cf6433b3c:plugins/zeroize-audit/skills/zeroize-audit/SKILL.md": {
+    "primary": "security/data-protection",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "cryptography",
+      "memory",
+      "zeroization",
+      "secrets"
+    ]
+  },
+  "trailofbits/skills@43d7af806478ea534164ac7b55a3c4ff7b359986:plugins/gh-cli/skills/gh-cli/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "github",
+      "gh-cli",
+      "authentication",
+      "api"
+    ]
+  },
+  "trailofbits/skills@4b1b74b181e81cbcaa8d3b68a0e4ed867165b972:plugins/differential-review/skills/differential-review/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "diff",
+      "code-review",
+      "changes"
+    ]
+  },
+  "anthropics/skills@fa0fa64bdc967915dc8399e803be67759e1e62b8:skills/docx/SKILL.md": {
+    "primary": "docs-formats/general",
+    "also": [],
+    "tags": [
+      "word",
+      "docx",
+      "ooxml",
+      "documents"
+    ]
+  },
+  "anthropics/skills@fa0fa64bdc967915dc8399e803be67759e1e62b8:skills/pptx/SKILL.md": {
+    "primary": "docs-formats/general",
+    "also": [
+      "design-creative/general"
+    ],
+    "tags": [
+      "powerpoint",
+      "pptx",
+      "ooxml",
+      "slides"
+    ]
+  },
+  "anthropics/skills@fa0fa64bdc967915dc8399e803be67759e1e62b8:skills/xlsx/SKILL.md": {
+    "primary": "docs-formats/general",
+    "also": [
+      "data-analytics/general"
+    ],
+    "tags": [
+      "excel",
+      "xlsx",
+      "spreadsheets",
+      "formulas"
+    ]
+  },
+  "trailofbits/skills@07bce8a2c8ccc56c5b44b7067a04b8bf46128f05:plugins/goal-prompt/skills/goal-prompt/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "productivity/general"
+    ],
+    "tags": [
+      "prompting",
+      "goal-mode",
+      "claude-code",
+      "codex"
+    ]
+  },
+  "trailofbits/skills@1e0cc133f425b8ca049943e91000f3a38dcf6980:plugins/trailmark/skills/graph-evolution/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "trailmark",
+      "code-graph",
+      "diff"
+    ]
+  },
+  "trailofbits/skills@1e0cc133f425b8ca049943e91000f3a38dcf6980:plugins/trailmark/skills/trailmark/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "trailmark",
+      "code-graph",
+      "binary-analysis"
+    ]
+  },
+  "trailofbits/skills@293fb74c3151cceda32a85a545fe8acd67f8f5c6:plugins/modern-cpp/skills/modern-cpp/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "cpp",
+      "c++20",
+      "modernisation",
+      "idioms"
+    ]
+  },
+  "trailofbits/skills@7be90d6e55e6b5e1607b519e97d0019b32b2656a:plugins/building-secure-contracts/skills/algorand-vulnerability-scanner/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "smart-contracts",
+      "algorand",
+      "scanner"
+    ]
+  },
+  "trailofbits/skills@7be90d6e55e6b5e1607b519e97d0019b32b2656a:plugins/building-secure-contracts/skills/cairo-vulnerability-scanner/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "smart-contracts",
+      "cairo",
+      "starknet",
+      "scanner"
+    ]
+  },
+  "trailofbits/skills@7be90d6e55e6b5e1607b519e97d0019b32b2656a:plugins/building-secure-contracts/skills/solana-vulnerability-scanner/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "smart-contracts",
+      "solana",
+      "scanner"
+    ]
+  },
+  "trailofbits/skills@7be90d6e55e6b5e1607b519e97d0019b32b2656a:plugins/building-secure-contracts/skills/ton-vulnerability-scanner/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "smart-contracts",
+      "ton",
+      "scanner"
+    ]
+  },
+  "trailofbits/skills@9b2813356e9b9ef670dc1f4493a69e82c8e7f27e:plugins/static-analysis/skills/sarif-parsing/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "data-analytics/general"
+    ],
+    "tags": [
+      "sarif",
+      "codeql",
+      "semgrep",
+      "static-analysis"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/culture-index/skills/interpreting-culture-index/SKILL.md": {
+    "primary": "business-product/general",
+    "also": [],
+    "tags": [
+      "hiring",
+      "teams",
+      "assessment",
+      "coaching"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/rust-review/skills/rust-review/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "rust",
+      "unsafe",
+      "memory-safety"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/static-analysis/skills/semgrep/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "semgrep",
+      "SAST",
+      "scanning"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/trailmark/skills/audit-augmentation/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "trailmark",
+      "sarif",
+      "audit-findings"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/trailmark/skills/diagramming-code/SKILL.md": {
+    "primary": "writing-docs/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "mermaid",
+      "diagrams",
+      "trailmark",
+      "call-graph"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/trailmark/skills/genotoxic/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "mutation-testing",
+      "trailmark",
+      "test-gaps"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/trailmark/skills/trailmark-structural/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "trailmark",
+      "code-graph",
+      "structural-analysis"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/trailmark/skills/trailmark-summary/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "trailmark",
+      "code-graph",
+      "entry-points"
+    ]
+  },
+  "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/trailmark/skills/vector-forge/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "cryptography",
+      "test-vectors",
+      "mutation-testing"
+    ]
+  },
+  "trailofbits/skills@e6066e7db1fd57cb35f9a534781ceec595327feb:plugins/supply-chain-risk-auditor/skills/supply-chain-risk-auditor/SKILL.md": {
+    "primary": "security/supply-chain",
+    "also": [],
+    "tags": [
+      "dependencies",
+      "Supply Chain",
+      "advisories",
+      "typosquatting"
+    ]
+  },
+  "trailofbits/skills@02b8a5eb8d107c3fefd05a0f11a871e8d4a1af1e:plugins/semgrep-rule-variant-creator/skills/semgrep-rule-variant-creator/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "semgrep",
+      "SAST",
+      "rules",
+      "porting"
+    ]
+  },
+  "trailofbits/skills@1a4ba9f1d6ce9d4ce692ec662d194d9563d60bc8:plugins/yara-authoring/skills/yara-rule-authoring/SKILL.md": {
+    "primary": "security/detection-forensics",
+    "also": [],
+    "tags": [
+      "yara",
+      "malware",
+      "detection",
+      "rules"
+    ]
+  },
+  "trailofbits/skills@4822dc38767c426fea909405d92b21e0c92c4fea:plugins/variant-analysis/skills/variant-analysis/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "variant-analysis",
+      "root-cause",
+      "bug-hunting"
+    ]
+  },
+  "trailofbits/skills@798b591aa498100f7744a948c0e3cbfc40e7eded:plugins/spec-to-code-compliance/skills/spec-to-code-compliance/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/compliance-grc"
+    ],
+    "tags": [
+      "specifications",
+      "traceability",
+      "documentation"
+    ]
+  },
+  "trailofbits/skills@7b9bd5f950f89a9ba71b249b9801c1a95be3928e:plugins/writing-lean-proofs/skills/writing-lean-proofs/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "lean4",
+      "formal-verification",
+      "mathlib",
+      "proofs"
+    ]
+  },
+  "trailofbits/skills@3742e65294dfccc78f0e8c730a4290850cc54691:plugins/let-fate-decide/skills/let-fate-decide/SKILL.md": {
+    "primary": "productivity/general",
+    "also": [],
+    "tags": [
+      "planning",
+      "entropy",
+      "decision-making"
+    ]
+  },
+  "anthropics/skills@2235be7c60b551f5de82ade908fd3816455afcda:skills/frontend-design/SKILL.md": {
+    "primary": "design-creative/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "ui",
+      "frontend",
+      "visual-design",
+      "css"
+    ]
+  },
+  "trailofbits/skills@101a1020692a0ea42044cb7436a6ce2745b9e8d1:plugins/vulnerability-triage-brocards/skills/vulnerability-triage-brocards/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/compliance-grc"
+    ],
+    "tags": [
+      "triage",
+      "cve",
+      "bug-bounty",
+      "prioritisation"
+    ]
+  },
+  "trailofbits/skills@841bffed0dedb3db252851936c8252be4efdac89:plugins/trailmark/skills/slicing-code-context/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "trailmark",
+      "slicing",
+      "context"
+    ]
+  },
+  "trailofbits/skills@841bffed0dedb3db252851936c8252be4efdac89:plugins/trailmark/skills/trailmark-finding-triage/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "trailmark",
+      "triage",
+      "sarif"
+    ]
+  },
+  "trailofbits/skills@841bffed0dedb3db252851936c8252be4efdac89:plugins/trailmark/skills/trailmark-review-gate/SKILL.md": {
+    "primary": "security/cicd-pipeline",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "trailmark",
+      "review-gate",
+      "pull-request"
+    ]
+  },
+  "trailofbits/skills@841bffed0dedb3db252851936c8252be4efdac89:plugins/trailmark/skills/trailmark-variant-neighborhood/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "trailmark",
+      "variant-analysis",
+      "code-graph"
+    ]
+  },
+  "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/skills/code-improver/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "refactoring",
+      "review-loop",
+      "automation"
+    ]
+  },
+  "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/skills/pr-improver/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "pull-request",
+      "review-loop",
+      "automation"
+    ]
+  },
+  "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/skills/skill-improver/SKILL.md": {
+    "primary": "agent-authoring/general",
+    "also": [],
+    "tags": [
+      "skills",
+      "review-loop",
+      "claude-code"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/address-sanitizer/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "asan",
+      "memory-safety",
+      "c",
+      "cpp"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/aflpp/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "afl",
+      "c",
+      "cpp"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/atheris/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "python",
+      "libfuzzer"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/cargo-fuzz/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "rust",
+      "cargo"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/constant-time-testing/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "cryptography",
+      "side-channel",
+      "dudect",
+      "timing"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/coverage-analysis/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "fuzzing",
+      "coverage",
+      "llvm-cov"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/fuzzing-dictionary/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "dictionary",
+      "corpus"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/fuzzing-obstacles/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "checksums",
+      "instrumentation"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/harness-writing/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "harness",
+      "c",
+      "rust"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/libafl/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "libafl",
+      "rust"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/libfuzzer/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "libfuzzer",
+      "llvm"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/ossfuzz/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "fuzzing",
+      "oss-fuzz",
+      "continuous-fuzzing"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/ruzzy/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "fuzzing",
+      "ruby"
+    ]
+  },
+  "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/wycheproof/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "cryptography",
+      "test-vectors",
+      "wycheproof"
+    ]
+  },
+  "trailofbits/skills@922ec62527fb04783e6615e1b032f7055e92eea4:plugins/firebase-apk-scanner/skills/firebase-apk-scanner/SKILL.md": {
+    "primary": "security/cloud-permissions",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "firebase",
+      "android",
+      "apk",
+      "misconfiguration"
+    ]
+  },
+  "trailofbits/skills@04b241176fd9c10738a61df53d2c677c53e42990:plugins/property-based-testing/skills/property-based-testing/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "testing",
+      "hypothesis",
+      "proptest",
+      "fast-check"
+    ]
+  },
+  "trailofbits/skills@ff4162dcb9cec5b7abe5ab039c868544b325275d:plugins/fp-check/skills/fp-check/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "false-positives",
+      "verification",
+      "triage"
+    ]
+  },
+  "trailofbits/skills@557711933147cabb9c833fd74d93e45a559b0dcd:plugins/semgrep-rule-creator/skills/semgrep-rule-creator/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "semgrep",
+      "SAST",
+      "rules"
+    ]
+  },
+  "trailofbits/skills@64a8c3f00ba4a2962ff23c4823c48e3da6604be8:plugins/second-opinion/skills/second-opinion/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "code-review",
+      "llm",
+      "codex",
+      "gemini"
+    ]
+  },
+  "anthropics/skills@b0cbd3df1533b396d281a6886d5132f623393a9c:skills/skill-creator/SKILL.md": {
+    "primary": "agent-authoring/general",
+    "also": [],
+    "tags": [
+      "skills",
+      "authoring",
+      "evaluation",
+      "claude-code"
+    ]
+  },
+  "trailofbits/skills@9ea55c598763f7cb87ab56933d773d7dc34344a0:plugins/constant-time-analysis/skills/constant-time-analysis/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "cryptography",
+      "side-channel",
+      "constant-time"
+    ]
+  },
+  "trailofbits/skills@ec2450d05ea10aba7f597e4cd7b3de4af614b983:plugins/dwarf-expert/skills/dwarf-expert/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "dwarf",
+      "binaries",
+      "debug-info",
+      "elf"
+    ]
+  },
+  "trailofbits/skills@f09e5c729a297834680d0fbff675743ca23bf4a6:plugins/claude-in-chrome-troubleshooting/skills/chrome-mcp-troubleshooting/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "devops-infra/general"
+    ],
+    "tags": [
+      "MCP",
+      "chrome",
+      "troubleshooting"
+    ]
+  },
+  "trailofbits/skills@65ecafa7ec674c33c0650327e3c7d15822c0724f:plugins/github-triage/skills/github-triage/SKILL.md": {
+    "primary": "productivity/general",
+    "also": [
+      "devops-infra/general"
+    ],
+    "tags": [
+      "github",
+      "issues",
+      "pull-request",
+      "triage"
+    ]
+  },
+  "anthropics/skills@4e6907a33c3c0c9ce7c1836980546aaba78a34b5:skills/pdf/SKILL.md": {
+    "primary": "docs-formats/general",
+    "also": [],
+    "tags": [
+      "pdf",
+      "forms",
+      "extraction",
+      "documents"
+    ]
+  },
+  "trailofbits/skills@5f0a76587764ee881acafa2606b0531b34cc0d50:plugins/sharp-edges/skills/sharp-edges/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/threat-modeling"
+    ],
+    "tags": [
+      "api-design",
+      "secure-defaults",
+      "footguns"
+    ]
+  },
+  "trailofbits/skills@cad5abdc48b09e099a69277aebd66a0fc05c86d7:plugins/devcontainer-setup/skills/devcontainer-setup/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "devcontainer",
+      "docker",
+      "tooling",
+      "claude-code"
+    ]
+  },
+  "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/agentic-actions-auditor/skills/agentic-actions-auditor/SKILL.md": {
+    "primary": "security/cicd-pipeline",
+    "also": [
+      "security/ai-agent-security"
+    ],
+    "tags": [
+      "github-actions",
+      "CI/CD",
+      "prompt-injection",
+      "workflows"
+    ]
+  },
+  "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/burpsuite-project-parser/skills/burpsuite-project-parser/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "burpsuite",
+      "DAST",
+      "web",
+      "proxy"
+    ]
+  },
+  "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/dimensional-analysis/skills/dimensional-analysis/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "units",
+      "dimensions",
+      "annotations"
+    ]
+  },
+  "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/entry-point-analyzer/skills/entry-point-analyzer/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/threat-modeling"
+    ],
+    "tags": [
+      "smart-contracts",
+      "entry-points",
+      "attack-surface"
+    ]
+  },
+  "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/mutation-testing/skills/mutation-testing/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "mutation-testing",
+      "mewt",
+      "muton",
+      "test-quality"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/algorithmic-art/SKILL.md": {
+    "primary": "design-creative/general",
+    "also": [],
+    "tags": [
+      "p5js",
+      "generative-art",
+      "creative-coding"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/brand-guidelines/SKILL.md": {
+    "primary": "design-creative/general",
+    "also": [
+      "business-product/general"
+    ],
+    "tags": [
+      "branding",
+      "typography",
+      "color"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/canvas-design/SKILL.md": {
+    "primary": "design-creative/general",
+    "also": [
+      "docs-formats/general"
+    ],
+    "tags": [
+      "layout",
+      "poster",
+      "print",
+      "pdf"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/internal-comms/SKILL.md": {
+    "primary": "writing-docs/general",
+    "also": [
+      "business-product/general"
+    ],
+    "tags": [
+      "communication",
+      "memo",
+      "announcements"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/mcp-builder/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "MCP",
+      "servers",
+      "tools",
+      "integration"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/slack-gif-creator/SKILL.md": {
+    "primary": "design-creative/general",
+    "also": [
+      "productivity/general"
+    ],
+    "tags": [
+      "slack",
+      "gif",
+      "animation"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/theme-factory/SKILL.md": {
+    "primary": "design-creative/general",
+    "also": [],
+    "tags": [
+      "theming",
+      "styling",
+      "artifacts"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/web-artifacts-builder/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "design-creative/general"
+    ],
+    "tags": [
+      "html",
+      "react",
+      "artifacts",
+      "frontend"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/webapp-testing/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "playwright",
+      "testing",
+      "browser",
+      "e2e"
+    ]
+  },
+  "trailofbits/skills@6b79b5e879e20620952654b4f30bda0a9a23a833:plugins/trailmark/skills/crypto-protocol-diagram/SKILL.md": {
+    "primary": "security/threat-modeling",
+    "also": [
+      "writing-docs/general"
+    ],
+    "tags": [
+      "cryptography",
+      "protocols",
+      "mermaid",
+      "modelling"
+    ]
+  },
+  "trailofbits/skills@6b79b5e879e20620952654b4f30bda0a9a23a833:plugins/trailmark/skills/mermaid-to-proverif/SKILL.md": {
+    "primary": "security/threat-modeling",
+    "also": [],
+    "tags": [
+      "cryptography",
+      "proverif",
+      "formal-verification",
+      "protocols"
+    ]
+  },
+  "trailofbits/skills@d7f76b532d1e4c6e7757e04d25c99ab60dd5e32c:plugins/building-secure-contracts/skills/cosmos-vulnerability-scanner/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "smart-contracts",
+      "cosmos",
+      "cosmwasm",
+      "scanner"
+    ]
+  },
+  "trailofbits/skills@650f6e370031ced31f924d4c1c453a64a4063709:plugins/building-secure-contracts/skills/substrate-vulnerability-scanner/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "smart-contracts",
+      "substrate",
+      "polkadot",
+      "scanner"
+    ]
+  },
+  "trailofbits/skills@bb5c353abc393865238f5518a38b687c1f206e40:plugins/modern-python/skills/modern-python/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "python",
+      "uv",
+      "ruff",
+      "tooling"
+    ]
+  },
+  "anthropics/skills@00756142ab04c82a447693cf373c4e0c554d1005:skills/doc-coauthoring/SKILL.md": {
+    "primary": "writing-docs/general",
+    "also": [],
+    "tags": [
+      "documentation",
+      "co-authoring",
+      "workflow"
+    ]
+  },
+  "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:template/SKILL.md": {
+    "primary": "agent-authoring/general",
+    "also": [],
+    "tags": [
+      "template",
+      "scaffold",
+      "skills"
+    ]
+  }
+}
