@@ -1,8 +1,9 @@
-// The seven taxonomy governance checks of spec §12. Reads the committed taxonomy; takes no argv.
+// The eight governance checks of spec §12. Reads the committed taxonomy; takes no argv.
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import type { Taxonomy } from '../src/types.ts';
+import type { Skill, Taxonomy } from '../src/types.ts';
+import { loadSkills } from '../src/lib/data.ts';
 import { flattenTaxonomy, loadTaxonomy } from '../src/lib/taxonomy.ts';
 
 export interface CheckResult {
@@ -243,7 +244,11 @@ export function checkReferentialIntegrity(tax: Taxonomy, assignments: Assignment
 
 export function protectedTermPattern(term: string): RegExp {
   const escaped = term.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
-  return new RegExp(`(?<![A-Za-z0-9])${escaped}(?![A-Za-z0-9])`, 'i');
+  // A multi-word term is written both ways in the wild — "Supply Chain" and "supply-chain" — and
+  // treating them as different terms made the check blind where it matters most: with a hyphenated
+  // original, neither side matched, so "cadeia de suprimentos" passed with parity intact.
+  const separatorTolerant = escaped.replace(/ /g, '[\\s-]+');
+  return new RegExp(`(?<![A-Za-z0-9])${separatorTolerant}(?![A-Za-z0-9])`, 'i');
 }
 
 export function checkProtectedParity(tax: Taxonomy): CheckResult {
@@ -262,6 +267,33 @@ export function checkProtectedParity(tax: Taxonomy): CheckResult {
   return { name: '7 protected-term parity', ok: errors.length === 0, errors };
 }
 
+/**
+ * Check 7 covers the taxonomy, which is hand-written in both locales. Skill descriptions are
+ * machine-translated (spec §8), and that is exactly where a protected term is lost: "Supply Chain"
+ * has a perfectly good logistics translation that is not security language. The rule is symmetric,
+ * so a term invented in pt-BR that the English never had is caught too. An untranslated entry is
+ * skipped: null is a legitimate state that the banner already reports.
+ */
+export function checkTranslationParity(tax: Taxonomy, skills: Skill[]): CheckResult {
+  const errors: string[] = [];
+  const patterns = tax.protected.map((term) => ({ term, re: protectedTermPattern(term) }));
+
+  for (const skill of skills) {
+    for (const field of ['descriptionPt', 'longPt'] as const) {
+      const translated = skill[field];
+      if (translated === null || translated === '') continue;
+      for (const { term, re } of patterns) {
+        const inEn = re.test(skill.description);
+        const inPt = re.test(translated);
+        if (inEn === inPt) continue;
+        const [present, missing] = inEn ? ['description', field] : [field, 'description'];
+        errors.push(`skill "${skill.id}": protected term "${term}" is in ${present} but not in ${missing}`);
+      }
+    }
+  }
+  return { name: '8 translation parity', ok: errors.length === 0, errors };
+}
+
 export function runAllChecks(tax: Taxonomy, assignments: AssignmentMap): CheckResult[] {
   return [
     checkMinimumMass(tax),
@@ -271,6 +303,7 @@ export function runAllChecks(tax: Taxonomy, assignments: AssignmentMap): CheckRe
     checkSlugStability(tax),
     checkReferentialIntegrity(tax, assignments),
     checkProtectedParity(tax),
+    checkTranslationParity(tax, loadSkills()),
   ];
 }
 
