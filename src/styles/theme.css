@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
@@ -73,4 +74,38 @@
    --------------------------------------------------------------------------- */
 :root {
   --color-hazard: oklch(0.588 0.196 42);
+}
+
+/* ---------------------------------------------------------------------------
+   Typography and spacing (§9.2). JetBrains Mono carries every identifier, path,
+   count, command and metric; Archivo carries prose. The scale is wiped first so
+   it is exactly nine steps — an unused tenth step is drift waiting to happen.
+   --------------------------------------------------------------------------- */
+@theme static {
+  --text-*: initial;
+
+  --spacing: 0.25rem;
+
+  --font-serif: initial;
+  --font-sans: 'Archivo', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1rem;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.25rem;
+  --text-base: 0.9375rem;
+  --text-base--line-height: 1.5rem;
+  --text-lg: 1.0625rem;
+  --text-lg--line-height: 1.625rem;
+  --text-xl: 1.25rem;
+  --text-xl--line-height: 1.75rem;
+  --text-2xl: 1.5rem;
+  --text-2xl--line-height: 2rem;
+  --text-3xl: 1.875rem;
+  --text-3xl--line-height: 2.25rem;
+  --text-4xl: 2.25rem;
+  --text-4xl--line-height: 2.5rem;
+  --text-5xl: 3rem;
+  --text-5xl--line-height: 1.1;
 }
