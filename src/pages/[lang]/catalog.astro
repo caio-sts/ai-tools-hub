@@ -246,3 +246,217 @@ const config = {
   }
   .chip-remove:hover { background: var(--muted, rgba(127, 127, 127, 0.16)); }
 </style>
+
+<script>
+  import {
+    DEFAULT_SORT,
+    INDEX_FILTER_KEYS,
+    pageNumbers,
+    pageView,
+    parseQuery,
+    removeFilter,
+    serializeQuery,
+    toggleFilter,
+  } from '../../lib/facets.ts';
+  import type { CatalogQuery, IndexFilterKey } from '../../lib/facets.ts';
+
+  interface CatalogConfig {
+    baseUrl: string;
+    bundlePath: string;
+    catalogPath: string;
+    lang: string;
+    pageSize: number;
+    labels: Record<string, Record<string, string>>;
+  }
+
+  interface PagefindResult {
+    data: () => Promise<{ meta?: Record<string, string> }>;
+  }
+
+  interface PagefindSearch {
+    results: PagefindResult[];
+    filters: Record<string, Record<string, number>>;
+    totalFilters: Record<string, Record<string, number>>;
+  }
+
+  interface PagefindApi {
+    options: (o: Record<string, unknown>) => Promise<void>;
+    init: () => Promise<void>;
+    search: (term: string | null, opts: Record<string, unknown>) => Promise<PagefindSearch>;
+  }
+
+  const PF_SORT: Record<string, Record<string, 'asc' | 'desc'>> = {
+    score: { score: 'desc' },
+    stars: { stars: 'desc' },
+    forks: { forks: 'desc' },
+    newest: { newest: 'desc' },
+    updated: { updated: 'asc' },
+  };
+
+  const configEl = document.getElementById('catalog-config');
+  const grid = document.querySelector<HTMLElement>('[data-grid]');
+  const emptyEl = document.querySelector<HTMLElement>('[data-empty]');
+  const pageList = document.querySelector<HTMLElement>('[data-page-list]');
+
+  if (configEl && grid && emptyEl && pageList) {
+    const config = JSON.parse(configEl.textContent || '{}') as CatalogConfig;
+    const searchInput = document.querySelector<HTMLInputElement>('[data-search-input]');
+    const cards = new Map<string, HTMLElement>();
+    for (const el of grid.querySelectorAll<HTMLElement>('[data-skill-id]')) {
+      cards.set(el.dataset.skillId ?? '', el);
+    }
+
+    let pagefind: PagefindApi | null = null;
+    let typingTimer = 0;
+
+    async function getPagefind(): Promise<PagefindApi> {
+      if (!pagefind) {
+        const mod = (await import(/* @vite-ignore */ config.bundlePath)) as unknown as PagefindApi;
+        await mod.options({ baseUrl: config.baseUrl });
+        await mod.init();
+        pagefind = mod;
+      }
+      return pagefind;
+    }
+
+    function go(query: CatalogQuery): void {
+      history.pushState({}, '', `${config.catalogPath}${serializeQuery(query)}`);
+      void render();
+    }
+
+    function renderPagination(query: CatalogQuery, view: ReturnType<typeof pageView>): void {
+      pageList!.textContent = '';
+      for (const entry of pageNumbers(view.page, view.totalPages)) {
+        const li = document.createElement('li');
+        if (entry === 'gap') {
+          const span = document.createElement('span');
+          span.className = 'page-gap';
+          span.setAttribute('aria-hidden', 'true');
+          span.textContent = '…';
+          li.append(span);
+        } else {
+          const a = document.createElement('a');
+          a.className = 'page-link';
+          a.dataset.page = String(entry);
+          a.href = `${config.catalogPath}${serializeQuery({ ...query, page: entry })}`;
+          a.textContent = String(entry);
+          if (entry === view.page) a.setAttribute('aria-current', 'page');
+          li.append(a);
+        }
+        pageList!.append(li);
+      }
+    }
+
+    function renderSortTabs(query: CatalogQuery): void {
+      for (const tab of document.querySelectorAll<HTMLAnchorElement>('[data-sort-tab]')) {
+        const key = tab.dataset.sortTab ?? DEFAULT_SORT;
+        tab.href = `${config.catalogPath}${serializeQuery({ ...query, sort: key as CatalogQuery['sort'], page: 1 })}`;
+        if (key === query.sort) tab.setAttribute('aria-current', 'page');
+        else tab.removeAttribute('aria-current');
+      }
+    }
+
+    function syncControls(query: CatalogQuery): void {
+      for (const box of document.querySelectorAll<HTMLInputElement>('[data-facet-check]')) {
+        const key = box.name as IndexFilterKey;
+        box.checked = (query.filters[key] ?? []).includes(box.value);
+      }
+      if (searchInput && searchInput.value !== query.q) searchInput.value = query.q;
+    }
+
+    async function render(): Promise<void> {
+      const query = parseQuery(location.search);
+      const pf = await getPagefind();
+      const response = await pf.search(query.q.trim() || null, {
+        filters: query.filters,
+        sort: PF_SORT[query.sort] ?? PF_SORT[DEFAULT_SORT],
+      });
+      const view = pageView(response.results.length, query.page, config.pageSize);
+      const payloads = await Promise.all(response.results.slice(view.from, view.to).map((r) => r.data()));
+
+      for (const el of cards.values()) el.hidden = true;
+      payloads.forEach((payload, i) => {
+        const el = cards.get(String(payload.meta?.id ?? ''));
+        if (!el) return;
+        const rank = view.from + i + 1;
+        el.hidden = false;
+        el.style.order = String(view.from + i);
+        el.dataset.rank = String(rank);
+        for (const slot of el.querySelectorAll<HTMLElement>('[data-rank]')) {
+          slot.dataset.rank = String(rank);
+          slot.textContent = `#${rank}`;
+        }
+      });
+
+      grid!.hidden = view.total === 0;
+      emptyEl!.hidden = view.total !== 0;
+      renderPagination(query, view);
+      renderSortTabs(query);
+      syncControls(query);
+      document.dispatchEvent(new CustomEvent('catalog:rendered', { detail: { query, response, view } }));
+    }
+
+    document.addEventListener('change', (event) => {
+      const box = (event.target as HTMLElement | null)?.closest<HTMLInputElement>('[data-facet-check]');
+      if (!box) return;
+      const query = parseQuery(location.search);
+      const key = box.name as IndexFilterKey;
+      if (!(INDEX_FILTER_KEYS as readonly string[]).includes(key)) return;
+      go({ ...query, filters: toggleFilter(query.filters, key, box.value), page: 1 });
+    });
+
+    document.addEventListener('submit', (event) => {
+      if (!(event.target as HTMLElement | null)?.closest('[data-catalog-search]')) return;
+      event.preventDefault();
+      go({ ...parseQuery(location.search), q: searchInput?.value ?? '', page: 1 });
+    });
+
+    document.addEventListener('input', (event) => {
+      if (!(event.target as HTMLElement | null)?.closest('[data-search-input]')) return;
+      window.clearTimeout(typingTimer);
+      typingTimer = window.setTimeout(() => {
+        go({ ...parseQuery(location.search), q: searchInput?.value ?? '', page: 1 });
+      }, 300);
+    });
+
+    document.addEventListener('click', (event) => {
+      const target = event.target as HTMLElement | null;
+      if (!target) return;
+
+      if (target.closest('[data-search-clear]')) {
+        event.preventDefault();
+        go({ ...parseQuery(location.search), q: '', page: 1 });
+        return;
+      }
+
+      const chipRemove = target.closest<HTMLElement>('[data-chip-remove]');
+      if (chipRemove) {
+        event.preventDefault();
+        const chip = chipRemove.closest<HTMLElement>('[data-chip-key]');
+        if (!chip) return;
+        const query = parseQuery(location.search);
+        const key = (chip.dataset.chipKey ?? '') as IndexFilterKey;
+        go({ ...query, filters: removeFilter(query.filters, key, chip.dataset.chipValue ?? ''), page: 1 });
+        return;
+      }
+
+      if (target.closest('[data-clear-all]')) {
+        event.preventDefault();
+        go({ filters: {}, q: '', sort: parseQuery(location.search).sort, page: 1 });
+        const heading = document.getElementById('results-heading');
+        if (heading instanceof HTMLElement) heading.focus();
+        return;
+      }
+
+      const link = target.closest<HTMLAnchorElement>('.page-link, .catalog-sort');
+      if (link && link.href) {
+        event.preventDefault();
+        history.pushState({}, '', link.href);
+        void render();
+      }
+    });
+
+    window.addEventListener('popstate', () => void render());
+    void render();
+  }
+</script>
