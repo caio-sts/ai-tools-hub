@@ -1,5 +1,12 @@
-import type { TreeFile } from '../../src/types.ts';
-import { isRepoInternal } from '../../src/lib/inclusion.ts';
+import type { RawSkill, RepoRef, TreeFile } from '../../src/types.ts';
+import {
+  capPerPublisherPerConcept,
+  hasReadme,
+  includeSkill,
+  isRepoInternal,
+  normalizeConcept,
+  publisherOf,
+} from '../../src/lib/inclusion.ts';
 import type { FetchLike } from './discover.ts';
 
 const API = 'https://api.github.com';
@@ -287,3 +294,101 @@ export async function fetchHeadCommit(
   const first = Array.isArray(body) ? body[0] : undefined;
   return typeof first?.sha === 'string' ? first.sha : null;
 }
+
+/** No commit history for the path: score it as maximally stale rather than inventing freshness. */
+export const UNKNOWN_UPDATED_DAYS = 3650;
+
+const RAW_PAUSE_MS = 50;
+
+/** The concept a skill occupies for the publisher cap: its declared name, else its directory. */
+function conceptOf(path: string, frontmatter: Record<string, unknown>): string {
+  const declared = frontmatter.name;
+  if (typeof declared === 'string' && declared.trim() !== '') return normalizeConcept(declared);
+  const segments = path.split('/');
+  return normalizeConcept(segments[segments.length - 2] ?? path);
+}
+
+/**
+ * Stage 1 for one repo. Every `RawSkill.sha` returned here is a COMMIT sha — the per-path commit
+ * when one exists, otherwise the repo HEAD commit from `fetchHeadCommit`; a path with neither is
+ * skipped outright. A blob sha therefore never reaches `RawSkill.sha`, and downstream stages can
+ * pin content, LICENSE and safety fetches to it directly. The tree entry's blob sha travels
+ * separately as `blobSha`, for change detection only.
+ */
+export async function enumerateSkills(
+  repo: RepoRef,
+  token: string,
+  deps: EnumerateDeps = {},
+): Promise<RawSkill[]> {
+  const log = deps.log ?? (() => {});
+  const wait =
+    deps.sleepImpl ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
+
+  const tree = await fetchTree(repo.repo, token, deps);
+  if (tree.length === 0) return [];
+
+  // Spec 6.4 "has a README" is a repo-level fact — check it once, before spending any requests.
+  if (!hasReadme(tree)) {
+    log(`${repo.repo}: excluded, no repository README (inclusion filter 6.4)`);
+    return [];
+  }
+
+  const files: TreeFile[] = filterSkillFiles(tree);
+  log(`${repo.repo}: ${files.length} candidate skills from ${tree.length} tree entries`);
+
+  let headSha: string | null | undefined;
+  const raws: RawSkill[] = [];
+
+  for (const file of files) {
+    const commit = await fetchPathCommit(repo.repo, file.path, token, deps);
+    if (commit === null && headSha === undefined) {
+      headSha = await fetchHeadCommit(repo.repo, token, deps);
+    }
+    // raw.githubusercontent.com resolves COMMIT shas only; a blob sha would 404 here and in
+    // every downstream safety and license fetch, so a skill with no commit sha is dropped.
+    const ref = commit?.sha ?? headSha ?? null;
+    if (ref === null) {
+      log(`${repo.repo}:${file.path} has no commit sha; skipped rather than pinned to a blob`);
+      continue;
+    }
+
+    const text = await fetchRawFile(repo.repo, ref, file.path, deps);
+    if (text === null) {
+      log(`${repo.repo}:${file.path} vanished between tree and raw fetch`);
+      continue;
+    }
+
+    const parsed = parseFrontmatter(text);
+    const verdict = includeSkill({
+      repo: repo.repo,
+      path: file.path,
+      hasReadme: true,
+      description: parsed.frontmatter.description,
+    });
+    if (verdict !== 'included') {
+      log(`${repo.repo}:${file.path} excluded: ${verdict}`);
+      continue;
+    }
+
+    raws.push({
+      repo: repo.repo,
+      path: file.path,
+      sha: ref,
+      blobSha: file.sha,
+      frontmatter: parsed.frontmatter,
+      body: parsed.body,
+      updatedDays: commit?.updatedDays ?? UNKNOWN_UPDATED_DAYS,
+    });
+    await wait(RAW_PAUSE_MS);
+  }
+
+  // Spec 6.3 trap 4: one 846-path monorepo must not ship the same concept a dozen times.
+  return capPerPublisherPerConcept(raws, (raw) => ({
+    publisher: publisherOf(raw.repo),
+    concept: conceptOf(raw.path, raw.frontmatter),
+  }));
+}
+
+// isRepoInternal is re-exported by the inclusion module; referenced here so the import is used
+// by filterSkillFiles above and by nothing else.
+void isRepoInternal;
