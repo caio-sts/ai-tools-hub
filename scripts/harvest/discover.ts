@@ -1,3 +1,4 @@
+import { MIN_STARS } from '../../src/lib/inclusion.ts';
 export type FetchLike = typeof globalThis.fetch;
 
 /** Measured GitHub `search` bucket limit: 30 requests per minute (spec 6.2). */
@@ -37,4 +38,33 @@ export function createPacer(perMinute: number, deps: PacerDeps = {}): Pacer {
       }
     },
   };
+}
+
+/** Topic sweeps. Content categories are NEVER seeded from topics (spec 3.4). */
+export const DISCOVERY_TOPICS = [
+  'claude-skills',
+  'agent-skills',
+  'openclaw-skills',
+  'claude-code',
+  'mcp-server',
+] as const;
+
+/**
+ * Star partitions beat the hard 1,000-result cap on /search/repositories.
+ * The lowest band is derived from MIN_STARS so the swept band and the admitted band
+ * cannot drift apart.
+ */
+export const STAR_PARTITIONS: readonly string[] = ['>=1000', '100..999', `${MIN_STARS}..99`];
+
+export function buildSearchQueries(
+  topics: readonly string[] = DISCOVERY_TOPICS,
+  partitions: readonly string[] = STAR_PARTITIONS,
+): string[] {
+  const out: string[] = [];
+  for (const topic of topics) {
+    for (const partition of partitions) {
+      out.push(`topic:${topic} stars:${partition}`);
+    }
+  }
+  return out;
 }
