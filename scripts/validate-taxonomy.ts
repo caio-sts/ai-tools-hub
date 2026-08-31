@@ -11,6 +11,57 @@ export interface CheckResult {
 
 const SEGMENT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
+/** Every slug this taxonomy has ever published. Adding one is deliberate; removing one needs a redirect. */
+export const KNOWN_SLUGS: string[] = [
+  'security',
+  'security/code-application',
+  'security/secrets-credentials',
+  'security/supply-chain',
+  'security/iac-config',
+  'security/cloud-permissions',
+  'security/containers-kubernetes',
+  'security/cicd-pipeline',
+  'security/identity-access',
+  'security/data-protection',
+  'security/offensive-testing',
+  'security/detection-forensics',
+  'security/compliance-grc',
+  'security/ai-agent-security',
+  'security/threat-modeling',
+  'security/general',
+  'coding-software',
+  'coding-software/general',
+  'devops-infra',
+  'devops-infra/general',
+  'data-analytics',
+  'data-analytics/general',
+  'ai-agent-eng',
+  'ai-agent-eng/general',
+  'docs-formats',
+  'docs-formats/general',
+  'writing-docs',
+  'writing-docs/general',
+  'research-knowledge',
+  'research-knowledge/general',
+  'design-creative',
+  'design-creative/general',
+  'business-product',
+  'business-product/general',
+  'productivity',
+  'productivity/general',
+  'agent-authoring',
+  'agent-authoring/general',
+  'vertical-domain',
+  'vertical-domain/general',
+];
+
+/**
+ * Retired slug -> the live slug that replaced it. Empty at launch: nothing has been renamed yet.
+ * Check 5 makes the first rename a paired edit — drop a slug from the taxonomy and you must add
+ * its redirect here in the same commit.
+ */
+export const SLUG_REDIRECTS: Record<string, string> = {};
+
 export function checkMinimumMass(tax: Taxonomy): CheckResult {
   const errors: string[] = [];
   if (typeof tax.minimumMass !== 'number' || !Number.isInteger(tax.minimumMass)) {
@@ -67,12 +118,51 @@ export function checkAliasMap(tax: Taxonomy): CheckResult {
   return { name: '4 alias map', ok: errors.length === 0, errors };
 }
 
+export function checkSlugStability(
+  tax: Taxonomy,
+  redirects: Record<string, string> = SLUG_REDIRECTS,
+): CheckResult {
+  const errors: string[] = [];
+  for (const domain of tax.domains) {
+    if (!SEGMENT.test(domain.slug)) errors.push(`domain slug "${domain.slug}" is not lowercase kebab-case`);
+    for (const child of domain.children ?? []) {
+      const parts = child.slug.split('/');
+      if (parts.length !== 2 || parts[0] !== domain.slug || !SEGMENT.test(parts[1])) {
+        errors.push(`child slug "${child.slug}" must be "${domain.slug}/<kebab-case>"`);
+      }
+    }
+  }
+  const live = new Set(flattenTaxonomy(tax).map((n) => n.slug));
+  for (const slug of live) {
+    if (!KNOWN_SLUGS.includes(slug)) {
+      errors.push(`slug "${slug}" is not in KNOWN_SLUGS - add it deliberately, and add a SLUG_REDIRECTS entry if it renames an old slug`);
+    }
+  }
+  for (const slug of KNOWN_SLUGS) {
+    if (!live.has(slug) && redirects[slug] === undefined) {
+      errors.push(`KNOWN_SLUGS lists "${slug}" but the taxonomy no longer has it - add SLUG_REDIRECTS["${slug}"] pointing at its replacement`);
+    }
+  }
+  for (const [from, to] of Object.entries(redirects)) {
+    if (!KNOWN_SLUGS.includes(from)) {
+      errors.push(`redirect "${from}" is not in KNOWN_SLUGS - only a retired slug can redirect`);
+    } else if (live.has(from)) {
+      errors.push(`redirect "${from}" is still a live slug - remove the redirect or remove the node`);
+    }
+    if (!live.has(to)) {
+      errors.push(`redirect "${from}" points at "${to}", which is not a live slug`);
+    }
+  }
+  return { name: '5 slug stability', ok: errors.length === 0, errors };
+}
+
 export function runAllChecks(tax: Taxonomy): CheckResult[] {
   return [
     checkMinimumMass(tax),
     checkNamedOverflow(tax),
     checkUniqueSlug(tax),
     checkAliasMap(tax),
+    checkSlugStability(tax),
   ];
 }
 
