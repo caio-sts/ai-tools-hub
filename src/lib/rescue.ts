@@ -121,3 +121,11 @@ export function suggestRescue(
       path: hit.path as string,
     }));
 }
+
+export function serializeRescueIndex(index: MiniSearch<RescueDoc>): string {
+  return JSON.stringify(index);
+}
+
+export function loadRescueIndex(json: string): MiniSearch<RescueDoc> {
+  return MiniSearch.loadJSON<RescueDoc>(json, RESCUE_OPTIONS);
+}

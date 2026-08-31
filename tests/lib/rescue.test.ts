@@ -174,3 +174,27 @@ describe('suggestRescue — Pagefind has zero typo tolerance, this is the rescue
     for (const hit of hits) expect(hit.path.startsWith('/en/')).toBe(true);
   });
 });
+
+import { serializeRescueIndex, loadRescueIndex } from '../../src/lib/rescue.ts';
+
+describe('rescue index wire format', () => {
+  const docs = buildRescueDocs([makeSkill()], taxonomy, 'en');
+
+  it('round-trips through JSON and still tolerates a typo', () => {
+    const reloaded = loadRescueIndex(serializeRescueIndex(createRescueIndex(docs)));
+    expect(reloaded.documentCount).toBe(docs.length);
+    expect(suggestRescue(reloaded, 'terrafrom')[0]?.name).toBe('Terraform Drift Detector');
+  });
+
+  it('produces parseable JSON that carries no description text', () => {
+    const json = serializeRescueIndex(createRescueIndex(docs));
+    expect(() => JSON.parse(json)).not.toThrow();
+    expect(json).not.toContain('Detects drift between Terraform state');
+  });
+
+  it('is deterministic, so a committed artifact can be diffed', () => {
+    const a = serializeRescueIndex(createRescueIndex(buildRescueDocs([makeSkill()], taxonomy, 'en')));
+    const b = serializeRescueIndex(createRescueIndex(buildRescueDocs([makeSkill()], taxonomy, 'en')));
+    expect(a).toBe(b);
+  });
+});
