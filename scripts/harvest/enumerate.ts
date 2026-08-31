@@ -68,3 +68,18 @@ export function isSkillPath(path: string): boolean {
 export function isSymlink(file: TreeFile): boolean {
   return file.mode === '120000';
 }
+
+/**
+ * Crawler trap (b): identical content committed at several paths inflates headline counts.
+ * Tree entries arrive path-sorted, so keeping the first occurrence is deterministic.
+ */
+export function dedupeByBlobSha(files: TreeFile[]): TreeFile[] {
+  const seen = new Set<string>();
+  const out: TreeFile[] = [];
+  for (const file of files) {
+    if (seen.has(file.sha)) continue;
+    seen.add(file.sha);
+    out.push(file);
+  }
+  return out;
+}
