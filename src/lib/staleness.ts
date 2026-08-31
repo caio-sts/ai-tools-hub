@@ -112,3 +112,22 @@ export function evaluateStaleness(meta: SiteMeta | null, now: Date): StalenessRe
     sourceCount: meta.sourceCount,
   };
 }
+
+/**
+ * Skill ids the classification PR has assigned. data/assignments.json is a flat
+ * Record<skillId, Assignment>, so the keys are the ids and nothing else.
+ */
+export function assignedIdsFrom(assignments: unknown): string[] {
+  if (!assignments || typeof assignments !== 'object' || Array.isArray(assignments)) return [];
+  return Object.keys(assignments as Record<string, unknown>);
+}
+
+/** Harvested skills the scheduled session has not reached; they render in `<domain>/general`. */
+export function countUnclassified(skillIds: string[], assignedIds: Iterable<string>): number {
+  const assigned = new Set(assignedIds);
+  let unclassified = 0;
+  for (const id of skillIds) {
+    if (!assigned.has(id)) unclassified += 1;
+  }
+  return unclassified;
+}

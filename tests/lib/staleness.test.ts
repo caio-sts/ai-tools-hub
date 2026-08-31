@@ -98,3 +98,49 @@ describe('evaluateStaleness', () => {
     expect(evaluateStaleness(meta({ crawledAt: future }), NOW).crawl.days).toBe(0);
   });
 });
+
+import { assignedIdsFrom, countUnclassified } from '../../src/lib/staleness.ts';
+
+describe('assignedIdsFrom', () => {
+  it('reads the flat record the classification PR writes', () => {
+    const ids = assignedIdsFrom({
+      'a/b@sha1234:p/SKILL.md': { primary: 'security/general', also: [], tags: [] },
+    });
+    expect(ids).toEqual(['a/b@sha1234:p/SKILL.md']);
+  });
+
+  it('preserves every key', () => {
+    const ids = assignedIdsFrom({
+      'a/b@sha1234:p/SKILL.md': { primary: 'security/general', also: [], tags: [] },
+      'c/d@sha5678:q/SKILL.md': { primary: 'devops-infra/general', also: [], tags: [] },
+    });
+    expect(ids.sort()).toEqual(['a/b@sha1234:p/SKILL.md', 'c/d@sha5678:q/SKILL.md']);
+  });
+
+  it('returns nothing for unusable input', () => {
+    expect(assignedIdsFrom(null)).toEqual([]);
+    expect(assignedIdsFrom('assignments')).toEqual([]);
+    expect(assignedIdsFrom([1, 2, 3])).toEqual([]);
+    expect(assignedIdsFrom({})).toEqual([]);
+  });
+});
+
+describe('countUnclassified', () => {
+  const skillIds = ['one', 'two', 'three', 'four'];
+
+  it('counts harvested skills the classification session has not reached', () => {
+    expect(countUnclassified(skillIds, ['one', 'three'])).toBe(2);
+  });
+
+  it('is zero when everything is classified', () => {
+    expect(countUnclassified(skillIds, skillIds)).toBe(0);
+  });
+
+  it('counts everything when classification has never run', () => {
+    expect(countUnclassified(skillIds, [])).toBe(4);
+  });
+
+  it('ignores assignments for skills that no longer exist', () => {
+    expect(countUnclassified(['one'], ['one', 'gone', 'also-gone'])).toBe(0);
+  });
+});
