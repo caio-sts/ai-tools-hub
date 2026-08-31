@@ -98,6 +98,11 @@ const bars = [
       <code class="install__command" data-field="install">{installCommand}</code>
       <button class="install__copy" type="button" data-field="copy" data-copy={installCommand} data-copied-label={L('skill.copied')}>{L('skill.copy')}</button>
     </div>
+    <p class="license">
+      <span class="license__label">{L('skill.license')}</span>
+      <span class:list={['license__value', !skill.license && 'license__value--undeclared']} data-field="license">{skill.license ?? L('skill.licenseNotDeclared')}</span>
+      {skill.licenseSource && <span class="license__source" data-field="license-source">{skill.licenseSource}</span>}
+    </p>
   </div>
 </details>
 
@@ -223,6 +228,20 @@ const bars = [
     min-height: 24px;
     min-width: 24px;
     cursor: pointer;
+  }
+  .license {
+    display: flex;
+    gap: 0.5rem;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-n-11);
+  }
+  .license__value { color: var(--color-n-12); }
+  .license__value--undeclared { color: var(--color-hazard); }
+  .license__source {
+    margin-left: auto;
+    color: var(--color-n-11);
   }
   .skill-card__category {
     margin: 0.5rem 0 0;
