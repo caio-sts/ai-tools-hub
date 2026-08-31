@@ -1,0 +1,75 @@
+---
+import { loadAssignments, loadMeta, loadSkills } from '../lib/data.ts';
+import { assignedIdsFrom, countUnclassified, evaluateStaleness, parseMeta } from '../lib/staleness.ts';
+import { relativeDays } from '../lib/format.ts';
+import { t } from '../lib/i18n/index.ts';
+import type { Lang } from '../types.ts';
+
+interface Props {
+  lang: Lang;
+  now?: Date;
+}
+
+const { lang, now = new Date() } = Astro.props;
+
+const report = evaluateStaleness(parseMeta(loadMeta()), now);
+const unclassified = countUnclassified(
+  loadSkills().map((skill) => skill.id),
+  assignedIdsFrom(loadAssignments()),
+);
+
+const crawlText =
+  report.crawl.days === null ? t('status.unknown', lang) : relativeDays(report.crawl.days, lang);
+const classificationText =
+  report.classification.days === null
+    ? t('status.neverRun', lang)
+    : relativeDays(report.classification.days, lang);
+const lagText =
+  report.lagDays === null ? t('status.unknown', lang) : relativeDays(report.lagDays, lang);
+---
+
+<div class="status" data-staleness-banner aria-label={t('status.heading', lang)}>
+  <p class="status__row" data-crawl-state={report.crawl.state}>
+    <span class="status__label">{t('status.crawled', lang)}</span>
+    <time datetime={report.crawl.iso ?? ''}>{crawlText}</time>
+  </p>
+
+  <p class="status__row" data-classification-state={report.classification.state}>
+    <span class="status__label">{t('status.classified', lang)}</span>
+    <time datetime={report.classification.iso ?? ''}>{classificationText}</time>
+    <span data-classification-lag>{t('status.lag', lang)}: {lagText}</span>
+  </p>
+
+  {unclassified > 0 && (
+    <p class="status__row" data-unclassified={String(unclassified)}>
+      {unclassified} {t('status.queued', lang)}
+    </p>
+  )}
+</div>
+
+<style>
+  .status {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1.25rem;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.8125rem;
+  }
+  .status__row { margin: 0; display: flex; gap: 0.5rem; color: var(--color-n-11); }
+  .status__label { color: var(--color-n-11); }
+  /* Neutral emphasis, never hazard orange: the hazard token means "this touches your
+     machine" and nothing else (spec §9.2, Rule 5). */
+  [data-crawl-state='warn'] time,
+  [data-classification-state='warn'] time,
+  [data-crawl-state='unknown'] time,
+  [data-classification-state='unknown'] time {
+    color: var(--color-n-12);
+  }
+  [data-crawl-state='stale'] time,
+  [data-classification-state='stale'] time {
+    color: var(--color-n-12);
+    font-weight: 600;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+</style>
