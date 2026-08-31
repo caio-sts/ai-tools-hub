@@ -6,7 +6,7 @@ import { loadMeta, loadSkills } from '../../lib/data.ts';
 import { STALE_DAYS, compactNumber, relativeDays } from '../../lib/format.ts';
 import { DEFAULT_LANG, LANGS, isLang, t } from '../../lib/i18n/index.ts';
 import { withBase } from '../../lib/link.ts';
-import { countBySlug, loadTaxonomy, nodeName } from '../../lib/taxonomy.ts';
+import { countBySlug, countDomain, loadTaxonomy, nodeName } from '../../lib/taxonomy.ts';
 
 export function getStaticPaths() {
   return LANGS.map((value) => ({ params: { lang: value } }));
@@ -22,6 +22,7 @@ if (security === undefined) {
   throw new Error('data/taxonomy.json has no "security" domain: the home page cannot expand it');
 }
 const securityChildren = security.children ?? [];
+const otherDomains = taxonomy.domains.filter((domain) => domain.slug !== 'security');
 
 // A6 always writes an ISO crawledAt; an unparsable one reads as 0 days rather than NaN.
 const crawledAtMs = Date.parse(meta.crawledAt);
@@ -91,6 +92,24 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
             count={counts.get(child.slug) ?? 0}
             minimumMass={taxonomy.minimumMass}
             lang={lang}
+          />
+        ))
+      }
+    </ul>
+  </section>
+
+  <section id="other-domains" class="domain" aria-labelledby="other-heading">
+    <h2 class="domain__title" id="other-heading">{t('home.otherHeading', lang)}</h2>
+    <p class="domain__lead">{t('home.otherLead', lang)}</p>
+    <ul class="grid" data-grid="domains">
+      {
+        otherDomains.map((domain) => (
+          <TaxonomyNode
+            slug={domain.slug}
+            count={countDomain(skills, domain.slug)}
+            minimumMass={taxonomy.minimumMass}
+            lang={lang}
+            filterKey="domain"
           />
         ))
       }
