@@ -109,3 +109,60 @@
   --text-5xl: 3rem;
   --text-5xl--line-height: 1.1;
 }
+
+/* ---------------------------------------------------------------------------
+   shadcn's exact semantic names mapped onto the ramps (§9.1) — so any shadcn
+   block pasted in later is already themed, without adopting shadcn's greys.
+
+   Every alias is a var() into a ramp on purpose: the dark theme re-points the
+   ramps and all of these follow. --destructive is the single literal, and so
+   the single alias that needs a dark counterpart. None of them may ever point
+   at --color-hazard: that token belongs to the safety module alone.
+   --------------------------------------------------------------------------- */
+:root {
+  --background: var(--color-n-1);
+  --foreground: var(--color-n-12);
+  --card: var(--color-n-2);
+  --card-foreground: var(--color-n-12);
+  --popover: var(--color-n-2);
+  --popover-foreground: var(--color-n-12);
+  --primary: var(--color-a-9);
+  --primary-foreground: var(--color-n-1);
+  --secondary: var(--color-n-3);
+  --secondary-foreground: var(--color-n-12);
+  --muted: var(--color-n-3);
+  --muted-foreground: var(--color-n-11);
+  --accent: var(--color-a-4);
+  --accent-foreground: var(--color-a-12);
+  --destructive: oklch(0.554 0.204 27);
+  --destructive-foreground: var(--color-n-1);
+  --border: var(--color-n-6);
+  --input: var(--color-n-7);
+  --ring: var(--color-a-8);
+  --radius: 0px;
+}
+
+/* `inline` copies the value into each utility instead of adding another
+   indirection, so bg-background resolves to var(--background) and re-reads it
+   on every theme switch. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
