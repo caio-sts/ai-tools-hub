@@ -30,10 +30,16 @@ describe('the full body', () => {
   });
 
   it('renders a translated body server-side, labelled, with the original one click away', () => {
-    for (const skill of SKILLS.filter((s) => s.longPt)) {
+    const translated = SKILLS.filter((s) => s.longPt);
+    expect(translated.length, 'no entry carries a translation, so this asserts nothing').toBeGreaterThan(0);
+
+    for (const skill of translated) {
       const panel = panelOf(cardOf(pageFor('pt', skill)));
       const body = elementWith(panel, 'data-field="body"');
-      expect(text(body)).toContain(text(skill.longPt!));
+      // Whitespace-normalise rather than text() on the expected side, for the reason above: a
+      // translation keeps the original's <placeholder> markers, and text() would strip them here
+      // while the rendered side decodes them back.
+      expect(text(body)).toContain(skill.longPt!.replace(/\s+/g, ' ').trim());
       expect(text(body)).toContain(strings.pt['skill.machineTranslated']);
       expect(body).toContain(`href="${officialFileUrl(skill)}"`);
     }
@@ -46,11 +52,22 @@ describe('the full body', () => {
     }
   });
 
-  it('carries a localised failure message rather than failing silently', () => {
+  // A translated card never fetches, so it has no failure message to carry — asserting one on
+  // every pt card only held while nothing was translated. Both branches are asserted instead, so
+  // this stays honest whichever state an entry is in.
+  it('either translates the body or carries a localised failure message', () => {
     for (const lang of ['en', 'pt'] as const) {
-      const panel = panelOf(cardOf(pageFor(lang, SKILLS[0])));
-      expect(tagWith(panel, 'data-field="body"'))
-        .toContain(`data-body-error="${strings[lang]['skill.bodyUnavailable']}"`);
+      for (const skill of SKILLS) {
+        const panel = panelOf(cardOf(pageFor(lang, skill)));
+        const tag = tagWith(panel, 'data-field="body"');
+
+        if (lang === 'pt' && skill.longPt !== null) {
+          expect(tag).not.toContain('data-body-url');
+          expect(text(panel)).toContain(strings.pt['skill.machineTranslated']);
+        } else {
+          expect(tag).toContain(`data-body-error="${strings[lang]['skill.bodyUnavailable']}"`);
+        }
+      }
     }
   });
 
