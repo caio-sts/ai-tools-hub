@@ -3,6 +3,7 @@ import type { Lang, Skill } from '../types.ts';
 import strings, { type SkillKey } from '../lib/i18n/skill.ts';
 import SafetyStrip from './SafetyStrip.astro';
 import { STALE_DAYS, compactNumber, relativeDays } from '../lib/format.ts';
+import { nodeName } from '../lib/taxonomy.ts';
 import { withBase } from '../lib/link.ts';
 
 interface Props {
@@ -14,7 +15,14 @@ interface Props {
   filteredCategory?: string | null;
 }
 
-const { skill, lang, rank = null, collection = null, expanded = false } = Astro.props;
+const {
+  skill,
+  lang,
+  rank = null,
+  collection = null,
+  expanded = false,
+  filteredCategory = null,
+} = Astro.props;
 const L = (key: SkillKey): string => strings[lang][key];
 
 /** RULE 5. A5's harvest copy and B3's rail copy carry the same five values in the same order. */
@@ -31,6 +39,7 @@ const shortDescription = clip(lang === 'pt' && skill.descriptionPt ? skill.descr
 const stale = skill.updatedDays > STALE_DAYS;
 const stars = collection ? compactNumber(collection.stars, lang) : '—';
 const forks = collection ? compactNumber(collection.forks, lang) : '—';
+const showCategory = filteredCategory !== skill.primary;
 ---
 
 <details class="skill-card" data-skill-id={skill.id} open={expanded}>
@@ -57,6 +66,9 @@ const forks = collection ? compactNumber(collection.forks, lang) : '—';
       <div class="meta__row"><span class="meta__key">{L('skill.picked')}</span><span class="meta__value" data-field="picked">{skill.indexedAt}</span></div>
       <div class="meta__row"><span class="meta__key">{L('skill.updated')}</span><span class:list={['meta__value', 'meta__updated', stale && 'meta__updated--stale']} data-field="updated">{relativeDays(skill.updatedDays, lang)}</span></div>
     </div>
+    {showCategory && (
+      <p class="skill-card__category" data-field="category" data-category={skill.primary}>{nodeName(skill.primary, lang)}</p>
+    )}
   </summary>
   <div class="skill-card__panel">
   </div>
@@ -110,6 +122,15 @@ const forks = collection ? compactNumber(collection.forks, lang) : '—';
   }
   .meta__repo { color: var(--color-n-12); }
   .meta__updated--stale { color: var(--color-hazard); }
+  .skill-card__category {
+    margin: 0.5rem 0 0;
+    padding: 0.15rem 0.4rem;
+    border: 1px solid var(--color-n-6);
+    color: var(--color-n-11);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    justify-self: start;
+  }
   .skill-card__score {
     margin-left: auto;
     color: var(--color-a-9);

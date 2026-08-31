@@ -56,7 +56,14 @@ const showNode = skill.primary !== domainSlug;
     {showNode && <span class="crumbs__node" data-field="crumb-node">{nodeName(skill.primary, lang)}</span>}
   </nav>
   <div class="detail">
-    <SkillCard skill={skill} lang={lang} rank={rank} collection={collection} expanded={true} />
+    <SkillCard
+      skill={skill}
+      lang={lang}
+      rank={rank}
+      collection={collection}
+      expanded={true}
+      filteredCategory={skill.primary}
+    />
   </div>
 </Layout>
 
