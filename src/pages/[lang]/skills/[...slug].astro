@@ -39,6 +39,49 @@ const lang = Astro.params.lang as Lang;
 const s = strings[lang];
 const domainSlug = skill.primary.split('/')[0];
 const showNode = skill.primary !== domainSlug;
+
+/**
+ * Pagefind indexes pages, so the index payload is built here. Flat parallel keys only; B3's rail
+ * derives the same five keys from the same rules and asserts both sides agree.
+ */
+function pad(value: number, width: number): string {
+  const safe = Number.isFinite(value) ? Math.max(0, Math.round(value)) : 0;
+  return String(safe).padStart(width, '0');
+}
+
+const nodes = [skill.primary, ...skill.also].filter(Boolean);
+const risk: string[] = [skill.safety.executesCode ? 'executes-code' : 'no-code-execution'];
+if (skill.safety.network) risk.push('network');
+if (skill.safety.readsEnv) risk.push('reads-env');
+if (skill.safety.declaredTools && skill.safety.declaredTools.length > 0) risk.push('declared-tools');
+if (skill.portable) risk.push('portable');
+
+const pair = (key: string) => (value: string): [string, string] => [key, value];
+const indexFilters: Array<[string, string]> = [
+  ...[...new Set(nodes.map((node) => node.split('/')[0]))].map(pair('domain')),
+  ...[...new Set(nodes)].map(pair('subdomain')),
+  ...[...new Set(skill.runtimes)].map(pair('runtime')),
+  ...risk.map(pair('risk')),
+  ['license', skill.license ?? 'unspecified'],
+];
+
+const indexedDay = skill.indexedAt.slice(0, 10);
+const indexSorts: Array<[string, string]> = [
+  ['score', pad(skill.score, 3)],
+  ['stars', pad(collection?.stars ?? 0, 9)],
+  ['forks', pad(collection?.forks ?? 0, 9)],
+  ['newest', /^\d{4}-\d{2}-\d{2}$/.test(indexedDay) ? indexedDay.replace(/-/g, '') : '00000000'],
+  ['updated', pad(skill.updatedDays, 6)],
+];
+
+const indexText = [
+  skill.name,
+  skill.description,
+  skill.descriptionPt ?? '',
+  skill.longPt ?? '',
+  skill.tags.join(' '),
+  `${skill.repo} ${skill.path}`,
+].filter((line) => line.trim().length > 0);
 ---
 
 <Layout
@@ -65,6 +108,18 @@ const showNode = skill.primary !== domainSlug;
       filteredCategory={skill.primary}
     />
   </div>
+  {skill.listed && (
+    <div
+      data-pagefind-body
+      aria-hidden="true"
+      style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"
+    >
+      <span data-pagefind-meta={`id[${skill.id}]`}></span>
+      {indexFilters.map(([key, value]) => <span data-pagefind-filter={`${key}[${value}]`}></span>)}
+      {indexSorts.map(([key, value]) => <span data-pagefind-sort={`${key}[${value}]`}></span>)}
+      {indexText.map((line) => <p>{line}</p>)}
+    </div>
+  )}
 </Layout>
 
 <style>
