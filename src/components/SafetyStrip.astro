@@ -54,20 +54,31 @@ const rows = [
 </div>
 
 <style>
+  /* This strip is the product's whole argument, so it gets the card's only rule lines and sits
+     directly under the description rather than among the repo statistics. */
   .safety-strip {
-    margin: 0.6rem 0 0;
-    padding: 0.4rem 0;
+    margin: 0.75rem 0 0;
+    padding: 0.5rem 0;
     border-top: 1px solid var(--color-n-6);
     border-bottom: 1px solid var(--color-n-6);
     font-family: var(--font-mono);
-    font-size: 0.7rem;
+    font-size: var(--text-xs);
+    line-height: 1.45;
   }
+  /* Label left, value right, and the value may wrap under a long label instead of forcing the
+     row to two full lines — at six columns a card is ~300px and every row was wrapping. */
   .safety-row {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: 0 0.5rem;
     color: var(--color-n-11);
   }
+  .safety-row__label { color: var(--color-n-9); }
+  .safety-row__value { text-align: right; margin-left: auto; }
+  /* A hazard row is stated twice — colour and a leading marker — so it survives greyscale,
+     colour-blindness and a low-contrast display. */
   .safety-row--hazard { color: var(--color-hazard); }
-  .safety-row__value { text-align: right; }
+  .safety-row--hazard .safety-row__label { color: inherit; font-weight: 600; }
+  .safety-row--hazard .safety-row__label::before { content: '! '; }
 </style>

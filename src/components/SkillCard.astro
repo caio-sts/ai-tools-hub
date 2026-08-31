@@ -75,7 +75,7 @@ const bars = [
       <div class="meta__row"><span class="meta__key">{L('skill.source')}</span><span class="meta__value meta__repo" data-field="repo">{skill.repo}</span></div>
       <div class="meta__row"><span class="meta__key">{L('skill.stars')}</span><span class="meta__value" data-field="stars">{stars}</span></div>
       <div class="meta__row"><span class="meta__key">{L('skill.forks')}</span><span class="meta__value" data-field="forks">{forks}</span></div>
-      <div class="meta__row"><span class="meta__key">{L('skill.picked')}</span><span class="meta__value" data-field="picked">{skill.indexedAt}</span></div>
+      <div class="meta__row"><span class="meta__key">{L('skill.picked')}</span><span class="meta__value" data-field="picked">{skill.indexedAt.slice(0, 10)}</span></div>
       <div class="meta__row"><span class="meta__key">{L('skill.updated')}</span><span class:list={['meta__value', 'meta__updated', stale && 'meta__updated--stale']} data-field="updated">{relativeDays(skill.updatedDays, lang)}</span></div>
     </div>
     {showCategory && (
@@ -127,10 +127,15 @@ const bars = [
     border: 1px solid var(--color-n-6);
     background: var(--color-n-2);
     padding: 0;
+    height: 100%;
+    transition: background-color var(--motion-state) var(--motion-ease),
+      border-color var(--motion-state) var(--motion-ease);
   }
+  .skill-card:hover { background: var(--color-n-3); border-color: var(--color-n-8); }
+  .skill-card[open] { border-color: var(--color-a-8); background: var(--color-n-3); }
   .skill-card__summary {
     display: block;
-    padding: 0.75rem;
+    padding: 0.875rem;
     cursor: pointer;
     list-style: none;
   }
@@ -140,9 +145,9 @@ const bars = [
     align-items: center;
     gap: 0.5rem;
     font-family: var(--font-mono);
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
   }
-  .skill-card__rank { color: var(--color-n-11); }
+  .skill-card__rank { color: var(--color-n-9); font-variant-numeric: tabular-nums; }
   .leds {
     display: flex;
     gap: 0.25rem;
@@ -157,18 +162,23 @@ const bars = [
     background: var(--color-n-6);
   }
   .led--on .led__dot { background: var(--color-a-9); }
+  /* Repository statistics are context, not the claim: they sit below the safety strip and a step
+     down the ramp from it. */
   .meta {
-    margin: 0.6rem 0 0;
+    margin: 0.625rem 0 0;
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--color-n-11);
+    font-size: var(--text-xs);
+    line-height: 1.5;
+    color: var(--color-n-9);
   }
   .meta__row {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: 0 0.5rem;
   }
-  .meta__repo { color: var(--color-n-12); }
+  .meta__value { margin-left: auto; text-align: right; color: var(--color-n-11); }
+  .meta__repo { color: var(--color-n-12); overflow-wrap: anywhere; }
   .meta__updated--stale { color: var(--color-hazard); }
   .skill-body {
     margin: 0 0 0.75rem;
@@ -277,28 +287,45 @@ const bars = [
     color: var(--color-n-11);
   }
   .skill-card__category {
-    margin: 0.5rem 0 0;
-    padding: 0.15rem 0.4rem;
+    display: inline-block;
+    margin: 0.75rem 0 0;
+    padding: 0.15rem 0.45rem;
     border: 1px solid var(--color-n-6);
+    background: var(--color-n-1);
     color: var(--color-n-11);
     font-family: var(--font-mono);
-    font-size: 0.65rem;
+    font-size: var(--text-xs);
     justify-self: start;
   }
+  /* The score is the one number a reader compares across cards, so it is the only element in the
+     collapsed card that carries the accent. */
   .skill-card__score {
     margin-left: auto;
-    color: var(--color-a-9);
+    padding: 0.05rem 0.35rem;
+    border: 1px solid var(--color-a-8);
+    color: var(--color-a-11);
+    font-size: var(--text-sm);
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
+    transition: background-color var(--motion-state) var(--motion-ease),
+      color var(--motion-state) var(--motion-ease);
   }
+  .skill-card__score:hover { background: var(--color-a-9); color: var(--color-n-1); }
   .skill-card__name {
-    margin: 0.5rem 0 0.25rem;
-    font-size: 0.95rem;
+    margin: 0.625rem 0 0.3rem;
+    font-family: var(--font-mono);
+    font-size: var(--text-base);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
     color: var(--color-n-12);
+    overflow-wrap: anywhere;
   }
   .skill-card__description {
     margin: 0;
     color: var(--color-n-11);
-    font-size: 0.8rem;
+    font-size: var(--text-sm);
+    line-height: 1.45;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;

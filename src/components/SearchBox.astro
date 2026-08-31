@@ -36,45 +36,90 @@ const { lang, action } = Astro.props;
   <ul class="catalog-search__suggestions" id="catalog-suggestions" role="listbox" aria-label={t('catalog.search.suggestions', lang)}></ul>
 </form>
 <style is:global>
-  .catalog-search { display: flex; flex-direction: column; gap: 0.25rem; margin: 1rem 0 0; }
-  .catalog-search__label { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
-  .catalog-search__row { display: flex; gap: 1px; max-width: 34rem; }
+  .catalog-search { display: flex; flex-direction: column; gap: 0.375rem; margin: 0 0 1.5rem; position: relative; }
+  .catalog-search__label {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+  /* One control, not three boxes in a row: the frame lives on the row and the children are
+     borderless, so input, clear and submit read as a single instrument. */
+  .catalog-search__row {
+    display: flex;
+    max-width: 40rem;
+    border: 1px solid var(--input);
+    background: var(--color-n-1);
+    transition: border-color var(--motion-state) var(--motion-ease);
+  }
+  .catalog-search__row:hover { border-color: var(--color-n-8); }
+  .catalog-search__row:focus-within {
+    border-color: var(--ring);
+    outline: 2px solid var(--ring);
+    outline-offset: -1px;
+  }
   .catalog-search__input {
     flex: 1 1 auto;
     min-height: 40px;
     min-width: 24px;
-    padding: 0 0.75rem;
-    border: 1px solid var(--border, #333);
+    padding: 0 0.875rem;
+    border: 0;
     background: transparent;
     color: inherit;
     font: inherit;
+    font-family: var(--font-mono);
+    font-size: var(--text-sm);
   }
+  .catalog-search__input:focus-visible { outline: 0; }
+  .catalog-search__input::placeholder { color: var(--color-n-9); }
+  /* Chrome paints its own clear affordance on type=search; ours is the accessible one. */
+  .catalog-search__input::-webkit-search-cancel-button { display: none; }
   .catalog-search__clear {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     min-height: 24px;
-    min-width: 24px;
-    padding: 0 0.75rem;
-    border: 1px solid var(--border, #333);
+    min-width: 40px;
+    border: 0;
     background: transparent;
-    color: inherit;
+    color: var(--muted-foreground);
     cursor: pointer;
     font: inherit;
+    font-size: var(--text-lg);
+    line-height: 1;
   }
+  .catalog-search__clear:hover { color: var(--foreground); background: var(--color-n-3); }
   .catalog-search__submit {
     min-height: 40px;
     min-width: 24px;
-    padding: 0 1rem;
-    border: 1px solid var(--border, #333);
-    background: transparent;
-    color: inherit;
+    padding: 0 1.125rem;
+    border: 0;
+    border-left: 1px solid var(--border);
+    background: var(--color-n-12);
+    color: var(--color-n-1);
     cursor: pointer;
     font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background-color var(--motion-state) var(--motion-ease);
   }
+  .catalog-search__submit:hover { background: var(--color-n-11); }
+  /* Overlays the grid rather than pushing it down — a list that reflows the page on every
+     keystroke is unusable at 300ms debounce. */
   .catalog-search__suggestions {
+    position: absolute;
+    z-index: 20;
+    top: 100%;
+    left: 0;
     list-style: none;
-    margin: 0.25rem 0 0;
+    margin: -1px 0 0;
     padding: 0;
-    max-width: 34rem;
-    border: 1px solid var(--border, #333);
+    width: 100%;
+    max-width: 40rem;
+    border: 1px solid var(--border);
+    background: var(--popover);
   }
   /* No suggestions yet is not an empty box: B5 fills this list, and until then it has no chrome. */
   .catalog-search__suggestions:empty { display: none; border: 0; }

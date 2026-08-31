@@ -48,14 +48,24 @@ const lagText =
 </div>
 
 <style>
+  /* Status is metadata, not navigation. Layout cannot style this from outside — Astro scopes
+     styles per component — so the banner claims its own full-width strip under the nav row here,
+     rather than reading as a fourth group of links beside them. */
   .status {
+    flex: 1 0 100%;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.25rem 1.25rem;
+    align-items: center;
+    gap: 0.25rem 1.5rem;
+    margin: 0 -1rem;
+    padding: 0.4rem 1rem;
+    border-top: 1px solid var(--border);
+    background: var(--color-n-1);
     font-family: var(--font-mono, ui-monospace, monospace);
-    font-size: 0.8125rem;
+    font-size: var(--text-xs);
   }
   .status__row { margin: 0; display: flex; gap: 0.5rem; color: var(--color-n-11); }
+  .status__label { text-transform: uppercase; letter-spacing: 0.07em; }
   .status__label { color: var(--color-n-11); }
   /* Neutral emphasis, never hazard orange: the hazard token means "this touches your
      machine" and nothing else (spec §9.2, Rule 5). */

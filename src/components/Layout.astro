@@ -166,38 +166,90 @@ const THEME_STORAGE_KEY = 'aith:theme';
   .skip-link:focus {
     left: 0;
   }
-  .site-header,
+  /* The header is sticky (A11yBehavior). An opaque ground is load-bearing, not decoration:
+     without it the grid scrolls visibly through the chrome. */
+  .site-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0 1.25rem;
+    padding: 0 1rem;
+    min-height: 52px;
+    background: var(--color-n-2);
+    border-bottom: 1px solid var(--border);
+  }
   .site-footer {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     gap: 1rem;
-    padding: 0.75rem 1rem;
-  }
-  .site-header {
-    border-bottom: 1px solid var(--border);
-  }
-  .site-footer {
+    padding: 1.25rem 1rem;
     border-top: 1px solid var(--border);
   }
   .site-header__name {
+    margin-right: 0.25rem;
     font-family: var(--font-mono);
-    font-weight: 600;
+    font-size: var(--text-sm);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
   }
   .site-header nav,
   .site-footer nav {
     display: flex;
-    gap: 1rem;
+    gap: 1.25rem;
+  }
+  /* Everything after the main nav is settings, not navigation: push it to the far edge so the
+     two groups never read as one undifferentiated row of words. */
+  .site-header .lang-switcher {
+    margin-left: auto;
+    gap: 0.75rem;
   }
   /* WCAG 2.2 2.5.8: every chrome target clears 24 px. */
   .site-header a,
   .site-footer a {
     display: inline-flex;
     align-items: center;
-    min-height: 24px;
-    color: inherit;
+    min-height: 40px;
+    color: var(--muted-foreground);
+    font-size: var(--text-sm);
+    transition: color var(--motion-state) var(--motion-ease);
   }
+  .site-header a:hover,
+  .site-footer a:hover { color: var(--foreground); }
+  .site-header__name,
+  .site-header a[aria-current="page"] { color: var(--foreground); }
+  .site-header a[aria-current="page"] { font-weight: 600; }
+
+  .theme-control {
+    display: inline-flex;
+    border: 1px solid var(--border);
+  }
+  .theme-control button {
+    min-height: 26px;
+    min-width: 24px;
+    padding: 0 0.5rem;
+    border: 0;
+    border-left: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted-foreground);
+    font: inherit;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    cursor: pointer;
+    transition: background-color var(--motion-state) var(--motion-ease),
+      color var(--motion-state) var(--motion-ease);
+  }
+  .theme-control button:first-child { border-left-width: 0; }
+  .theme-control button:hover { background: var(--color-n-3); color: var(--foreground); }
+  .theme-control button[aria-pressed="true"] {
+    background: var(--color-n-12);
+    color: var(--color-n-1);
+    font-weight: 600;
+  }
+
   .site-footer__note {
     color: var(--muted-foreground);
+    font-size: var(--text-sm);
   }
 </style>

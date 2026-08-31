@@ -305,6 +305,42 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Preflight flattens every heading to inherit, and nothing here put a scale back: an <h1>
+     rendered at body size, indistinguishable from the paragraph beneath it, on every page.
+     Headings are the one place this system spends contrast, so they carry the ramp's top step
+     while body copy sits a step below. */
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--color-n-12);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-size: var(--text-4xl);
+    line-height: var(--text-4xl--line-height);
+    font-weight: 700;
+    letter-spacing: -0.024em;
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+    line-height: var(--text-2xl--line-height);
+  }
+
+  h3 {
+    font-size: var(--text-lg);
+    line-height: var(--text-lg--line-height);
+  }
+
+  h4 {
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+  }
+
   /* Borders are opt-in by width but never by colour or style: a panel only ever
      has to say `border-width: 1px`. */
   *,

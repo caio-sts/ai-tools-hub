@@ -29,7 +29,9 @@ describe('card metadata', () => {
 
   it('prints the crawl date verbatim, so it can be checked against meta.json', () => {
     for (const skill of SKILLS) {
-      expect(field(cardOf(pageFor('en', skill)), 'picked')).toBe(skill.indexedAt);
+      // The day, not the instant: the harvest records a full ISO timestamp, and rendering it
+      // wrapped onto its own line and outweighed the name above it.
+      expect(field(cardOf(pageFor('en', skill)), 'picked')).toBe(skill.indexedAt.slice(0, 10));
     }
   });
 

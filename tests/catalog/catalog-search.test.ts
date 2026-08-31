@@ -49,6 +49,9 @@ describe('the catalog carries its own text filter', () => {
     const css = allBuiltCss();
     expect(ruleFor(css, '.catalog-search__input')).toContain('min-height:40px');
     expect(ruleFor(css, '.catalog-search__clear')).toContain('min-height:24px');
-    expect(ruleFor(css, '.catalog-search__clear')).toContain('min-width:24px');
+    // A wider clear button is still a conforming one: 2.5.8 sets a floor, not a size.
+    expect(
+      Number(/min-width:(\d+)px/.exec(ruleFor(css, '.catalog-search__clear'))?.[1]),
+    ).toBeGreaterThanOrEqual(24);
   });
 });
