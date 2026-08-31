@@ -1,0 +1,73 @@
+---
+import type { Lang, Safety } from '../types.ts';
+import strings, { type SkillKey } from '../lib/i18n/skill.ts';
+
+interface Props {
+  safety: Safety;
+  lang: Lang;
+}
+
+const { safety, lang } = Astro.props;
+const L = (key: SkillKey): string => strings[lang][key];
+
+const scriptWord = safety.scriptCount === 1 ? L('skill.script') : L('skill.scripts');
+const languages = safety.languages.length > 0 ? ` (${safety.languages.join(', ')})` : '';
+
+const rows = [
+  {
+    key: 'executes',
+    hazard: safety.executesCode,
+    label: L('skill.executes'),
+    value: safety.executesCode ? `${safety.scriptCount} ${scriptWord}${languages}` : L('skill.noScripts'),
+  },
+  {
+    key: 'network',
+    hazard: safety.network,
+    label: L('skill.network'),
+    value: safety.network ? L('skill.networkYes') : L('skill.networkNo'),
+  },
+  {
+    key: 'env',
+    hazard: safety.readsEnv,
+    label: L('skill.env'),
+    value: safety.readsEnv ? L('skill.envYes') : L('skill.envNo'),
+  },
+  {
+    // Never a hazard: a missing declaration is not evidence, and the rows above carry the evidence.
+    key: 'tools',
+    hazard: false,
+    label: L('skill.tools'),
+    value: safety.declaredTools && safety.declaredTools.length > 0
+      ? safety.declaredTools.join(', ')
+      : L('skill.toolsNotDeclared'),
+  },
+];
+---
+
+<div class="safety-strip" role="list" aria-label={L('skill.safetyTitle')}>
+  {rows.map((row) => (
+    <div class:list={['safety-row', row.hazard && 'safety-row--hazard']} role="listitem" data-signal={row.key}>
+      <span class="safety-row__label">{row.label}</span>
+      <span class="safety-row__value">{row.value}</span>
+    </div>
+  ))}
+</div>
+
+<style>
+  .safety-strip {
+    margin: 0.6rem 0 0;
+    padding: 0.4rem 0;
+    border-top: 1px solid var(--color-n-6);
+    border-bottom: 1px solid var(--color-n-6);
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+  }
+  .safety-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    color: var(--color-n-11);
+  }
+  .safety-row--hazard { color: var(--color-hazard); }
+  .safety-row__value { text-align: right; }
+</style>

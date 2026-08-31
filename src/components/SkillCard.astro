@@ -1,6 +1,7 @@
 ---
 import type { Lang, Skill } from '../types.ts';
 import strings, { type SkillKey } from '../lib/i18n/skill.ts';
+import SafetyStrip from './SafetyStrip.astro';
 import { withBase } from '../lib/link.ts';
 
 interface Props {
@@ -43,6 +44,7 @@ const shortDescription = clip(lang === 'pt' && skill.descriptionPt ? skill.descr
     </div>
     <h2 class="skill-card__name" data-field="name">{skill.name}</h2>
     <p class="skill-card__description" data-field="description">{shortDescription}</p>
+    <SafetyStrip safety={skill.safety} lang={lang} />
   </summary>
   <div class="skill-card__panel">
   </div>
