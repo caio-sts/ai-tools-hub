@@ -1,0 +1,16 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Design system — single source of truth (spec §9.1, §9.2).
+   Tailwind v4 CSS-first @theme: this file emits the custom properties AND
+   generates the utilities. There is no JS config and no second source.
+
+   `static` is required on every ramp block: Tailwind only emits the theme
+   variables it sees used in class names, and this system is consumed through
+   var() in component CSS as well as through utilities.
+   --------------------------------------------------------------------------- */
+
+/* Wipe Tailwind's default palette so nobody can reach for bg-indigo-500. */
+@theme static {
+  --color-*: initial;
+}

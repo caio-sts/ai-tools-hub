@@ -1,5 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
 
 // The one base-path literal in this repository. Everything that needs the base
@@ -13,5 +14,6 @@ export default defineConfig({
   base: BASE,
   output: 'static',
   trailingSlash: 'always',
+  vite: { plugins: [tailwindcss()] },
   integrations: [sitemap()],
 });
