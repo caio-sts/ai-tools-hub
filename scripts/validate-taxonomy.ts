@@ -21,9 +21,26 @@ export function checkMinimumMass(tax: Taxonomy): CheckResult {
   return { name: '1 minimum mass', ok: errors.length === 0, errors };
 }
 
+export function checkNamedOverflow(tax: Taxonomy): CheckResult {
+  const errors: string[] = [];
+  for (const domain of tax.domains) {
+    const wanted = `${domain.slug}/general`;
+    const leaf = (domain.children ?? []).find((c) => c.slug === wanted);
+    if (leaf === undefined) {
+      errors.push(`domain "${domain.slug}" has no named overflow leaf "${wanted}"`);
+      continue;
+    }
+    if (leaf.name.en.trim() === '' || leaf.name.pt.trim() === '') {
+      errors.push(`overflow leaf "${wanted}" needs a non-empty name in both locales`);
+    }
+  }
+  return { name: '2 named overflow', ok: errors.length === 0, errors };
+}
+
 export function runAllChecks(tax: Taxonomy): CheckResult[] {
   return [
     checkMinimumMass(tax),
+    checkNamedOverflow(tax),
   ];
 }
 
