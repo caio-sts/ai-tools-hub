@@ -150,3 +150,85 @@ export function pagefindIndexAttrs(skill: Skill, collection: Collection | null):
     text,
   };
 }
+
+export const SORT_KEYS = ['score', 'stars', 'forks', 'newest', 'updated'] as const;
+export type SortKey = (typeof SORT_KEYS)[number];
+export const DEFAULT_SORT: SortKey = 'score';
+
+/** 24 = four rows of the default 6-column grid (§10.2). */
+export const PAGE_SIZE = 24;
+
+export type FilterState = Partial<Record<IndexFilterKey, string[]>>;
+
+export interface CatalogQuery {
+  filters: FilterState;
+  /** The catalog's own text term. Empty string means "browse", not "search for nothing". */
+  q: string;
+  sort: SortKey;
+  page: number;
+}
+
+export interface ActiveChip {
+  key: IndexFilterKey;
+  value: string;
+}
+
+export function isSortKey(value: string): value is SortKey {
+  return (SORT_KEYS as readonly string[]).includes(value);
+}
+
+/** Values are joined with "," — safe because every filter value is a slug or an SPDX id. */
+export function parseQuery(search: string): CatalogQuery {
+  const params = new URLSearchParams(search.startsWith('?') ? search.slice(1) : search);
+  const filters: FilterState = {};
+  for (const key of INDEX_FILTER_KEYS) {
+    const rawValue = params.get(key);
+    if (!rawValue) continue;
+    const values = rawValue.split(',').map((v) => v.trim()).filter(Boolean);
+    if (values.length > 0) filters[key] = [...new Set(values)].sort();
+  }
+  const sortParam = params.get('sort') ?? '';
+  const pageParam = Number.parseInt(params.get('page') ?? '1', 10);
+  return {
+    filters,
+    q: (params.get('q') ?? '').trim(),
+    sort: isSortKey(sortParam) ? sortParam : DEFAULT_SORT,
+    page: Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1,
+  };
+}
+
+export function serializeQuery(query: CatalogQuery): string {
+  const parts: string[] = [];
+  if (query.q.trim().length > 0) parts.push(`q=${encodeURIComponent(query.q.trim())}`);
+  for (const key of INDEX_FILTER_KEYS) {
+    const values = query.filters[key];
+    if (!values || values.length === 0) continue;
+    parts.push(`${key}=${[...values].sort().map(encodeURIComponent).join(',')}`);
+  }
+  if (query.sort !== DEFAULT_SORT) parts.push(`sort=${query.sort}`);
+  if (query.page > 1) parts.push(`page=${query.page}`);
+  return parts.length > 0 ? `?${parts.join('&')}` : '';
+}
+
+export function toggleFilter(filters: FilterState, key: IndexFilterKey, value: string): FilterState {
+  const current = filters[key] ?? [];
+  return current.includes(value)
+    ? removeFilter(filters, key, value)
+    : { ...filters, [key]: [...current, value].sort() };
+}
+
+export function removeFilter(filters: FilterState, key: IndexFilterKey, value: string): FilterState {
+  const next: FilterState = { ...filters };
+  const remaining = (next[key] ?? []).filter((v) => v !== value);
+  if (remaining.length > 0) next[key] = remaining;
+  else delete next[key];
+  return next;
+}
+
+export function activeChips(filters: FilterState): ActiveChip[] {
+  const chips: ActiveChip[] = [];
+  for (const key of INDEX_FILTER_KEYS) {
+    for (const value of filters[key] ?? []) chips.push({ key, value });
+  }
+  return chips;
+}
