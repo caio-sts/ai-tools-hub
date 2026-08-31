@@ -9,6 +9,8 @@ export interface CheckResult {
   errors: string[];
 }
 
+const SEGMENT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+
 export function checkMinimumMass(tax: Taxonomy): CheckResult {
   const errors: string[] = [];
   if (typeof tax.minimumMass !== 'number' || !Number.isInteger(tax.minimumMass)) {
@@ -47,11 +49,30 @@ export function checkUniqueSlug(tax: Taxonomy): CheckResult {
   return { name: '3 unique slug', ok: errors.length === 0, errors };
 }
 
+export function checkAliasMap(tax: Taxonomy): CheckResult {
+  const errors: string[] = [];
+  const nodes = flattenTaxonomy(tax);
+  const slugs = new Set(nodes.map((n) => n.slug));
+  for (const [alias, target] of Object.entries(tax.aliases)) {
+    if (!SEGMENT.test(alias)) errors.push(`alias key "${alias}" is not lowercase kebab-case`);
+    if (slugs.has(alias) || nodes.some((n) => n.slug.endsWith(`/${alias}`))) {
+      errors.push(`alias key "${alias}" shadows a real node slug`);
+    }
+    const matches = nodes.filter((n) => n.slug === target || n.slug.endsWith(`/${target}`));
+    if (matches.length === 0) errors.push(`alias "${alias}" points at "${target}", which is not a node`);
+    if (matches.length > 1) {
+      errors.push(`alias "${alias}" points at "${target}", which is ambiguous: ${matches.map((m) => m.slug).join(', ')}`);
+    }
+  }
+  return { name: '4 alias map', ok: errors.length === 0, errors };
+}
+
 export function runAllChecks(tax: Taxonomy): CheckResult[] {
   return [
     checkMinimumMass(tax),
     checkNamedOverflow(tax),
     checkUniqueSlug(tax),
+    checkAliasMap(tax),
   ];
 }
 
