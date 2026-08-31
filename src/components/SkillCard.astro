@@ -4,7 +4,7 @@ import strings, { type SkillKey } from '../lib/i18n/skill.ts';
 import SafetyStrip from './SafetyStrip.astro';
 import { STALE_DAYS, compactNumber, relativeDays } from '../lib/format.ts';
 import { nodeName } from '../lib/taxonomy.ts';
-import { officialFileUrl } from '../lib/slug.ts';
+import { officialFileUrl, skillHref } from '../lib/slug.ts';
 import { withBase } from '../lib/link.ts';
 
 interface Props {
@@ -52,7 +52,7 @@ const bars = [
 ];
 ---
 
-<details class="skill-card" data-skill-id={skill.id} open={expanded}>
+<details class="skill-card" name="skill-expand" data-skill-id={skill.id} data-href={skillHref(skill, lang)} open={expanded}>
   <summary class="skill-card__summary">
     <div class="skill-card__head">
       {rank !== null && <span class="skill-card__rank" data-field="rank" data-rank={rank}>#{rank}</span>}
@@ -287,6 +287,30 @@ const bars = [
 </style>
 
 <script>
+  const listUrl = window.location.pathname + window.location.search;
+
+  document.addEventListener(
+    'toggle',
+    (event) => {
+      const card = event.target;
+      if (!(card instanceof HTMLElement) || !card.classList.contains('skill-card')) return;
+
+      if (card.hasAttribute('open')) {
+        for (const other of document.querySelectorAll('.skill-card[open]')) {
+          if (other !== card) other.removeAttribute('open');
+        }
+        const href = card.getAttribute('data-href');
+        if (href) window.history.replaceState(null, '', href);
+        return;
+      }
+
+      if (!document.querySelector('.skill-card[open]')) {
+        window.history.replaceState(null, '', listUrl);
+      }
+    },
+    true,
+  );
+
   document.addEventListener('click', (event) => {
     const origin = event.target;
     if (!(origin instanceof Element)) return;
