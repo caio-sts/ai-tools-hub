@@ -1,3 +1,4 @@
+import MiniSearch, { type Options, type SearchOptions } from 'minisearch';
 import type { Lang, Skill, Taxonomy, TaxonomyNode } from '../types.ts';
 import { skillSlug } from './slug.ts';
 
@@ -69,4 +70,54 @@ export function buildRescueDocs(skills: Skill[], taxonomy: Taxonomy, lang: Lang)
   }
 
   return docs;
+}
+
+/** Index shape. `aliases` is searchable but not stored, keeping the payload small. */
+export const RESCUE_OPTIONS: Options<RescueDoc> = {
+  idField: 'id',
+  fields: ['name', 'aliases'],
+  storeFields: ['kind', 'name', 'path'],
+};
+
+/**
+ * fuzzy 0.2 gives maxDistance = round(term.length * 0.2):
+ * "kubernets" -> 2 (needs 1), "terrafrom" -> 2 (needs 2), "clude" -> 1 (needs 1).
+ */
+export const RESCUE_SEARCH_OPTIONS: SearchOptions = {
+  prefix: true,
+  fuzzy: 0.2,
+  combineWith: 'OR',
+  boost: { name: 2 },
+};
+
+export interface RescueSuggestion {
+  id: string;
+  kind: 'skill' | 'node';
+  name: string;
+  /** Base-relative. Apply withBase() before navigating. */
+  path: string;
+}
+
+export function createRescueIndex(docs: RescueDoc[]): MiniSearch<RescueDoc> {
+  const index = new MiniSearch<RescueDoc>(RESCUE_OPTIONS);
+  index.addAll(docs);
+  return index;
+}
+
+export function suggestRescue(
+  index: MiniSearch<RescueDoc>,
+  query: string,
+  limit = 7,
+): RescueSuggestion[] {
+  const trimmed = query.trim();
+  if (trimmed.length < 2) return [];
+  return index
+    .search(trimmed, RESCUE_SEARCH_OPTIONS)
+    .slice(0, limit)
+    .map((hit) => ({
+      id: String(hit.id),
+      kind: hit.kind as 'skill' | 'node',
+      name: hit.name as string,
+      path: hit.path as string,
+    }));
 }

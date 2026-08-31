@@ -121,3 +121,56 @@ describe('buildRescueDocs', () => {
       .toBe('acme/tools@abc1234:kit/SKILL.md');
   });
 });
+
+import { createRescueIndex, suggestRescue } from '../../src/lib/rescue.ts';
+
+describe('suggestRescue — Pagefind has zero typo tolerance, this is the rescue', () => {
+  const corpus = [
+    makeSkill({ id: 'a/one@aaa1111:x/SKILL.md', repo: 'a/one', name: 'Terraform Drift Detector' }),
+    makeSkill({ id: 'b/two@bbb2222:y/SKILL.md', repo: 'b/two', name: 'Claude Code Reviewer' }),
+    makeSkill({ id: 'c/three@ccc3333:z/SKILL.md', repo: 'c/three', name: 'Secret Rotation Playbook' }),
+  ];
+  const richTaxonomy: Taxonomy = {
+    ...taxonomy,
+    domains: [
+      {
+        slug: 'security',
+        name: { en: 'Security', pt: 'Segurança' },
+        children: [
+          { slug: 'security/containers-kubernetes', name: { en: 'Containers & Kubernetes', pt: 'Contêineres e Kubernetes' } },
+          { slug: 'security/code-application', name: { en: 'Code & Application', pt: 'Código e Aplicação' } },
+          { slug: 'security/supply-chain', name: { en: 'Supply Chain & Dependencies', pt: 'Supply Chain e Dependências' } },
+        ],
+      },
+    ],
+  };
+  const index = createRescueIndex(buildRescueDocs(corpus, richTaxonomy, 'en'));
+
+  it('rescues "kubernets"', () => {
+    expect(suggestRescue(index, 'kubernets').map((s) => s.name)[0]).toBe('Containers & Kubernetes');
+  });
+
+  it('rescues "terrafrom"', () => {
+    expect(suggestRescue(index, 'terrafrom').map((s) => s.name)[0]).toBe('Terraform Drift Detector');
+  });
+
+  it('rescues "clude code"', () => {
+    expect(suggestRescue(index, 'clude code').map((s) => s.name).slice(0, 3))
+      .toContain('Claude Code Reviewer');
+  });
+
+  it('finds a node through an alias nobody puts in a label', () => {
+    expect(suggestRescue(index, 'k8s').map((s) => s.name)).toContain('Containers & Kubernetes');
+  });
+
+  it('returns nothing for a query shorter than two characters', () => {
+    expect(suggestRescue(index, 'k')).toEqual([]);
+    expect(suggestRescue(index, '  ')).toEqual([]);
+  });
+
+  it('honours the limit and returns base-relative paths for navigation', () => {
+    const hits = suggestRescue(index, 'se', 2);
+    expect(hits.length).toBeLessThanOrEqual(2);
+    for (const hit of hits) expect(hit.path.startsWith('/en/')).toBe(true);
+  });
+});
