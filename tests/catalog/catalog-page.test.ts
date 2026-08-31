@@ -102,6 +102,9 @@ describe('catalog card grid', () => {
   });
 
   it('shows every card when JavaScript is off, since pagination would be a lie', () => {
-    expect(html).toMatch(/<noscript><style>\[data-catalog-item\]\[hidden\]\{display:flex!important\}/);
+    // Not positional: B3.10 prepends a rule of its own to this same block, and the rule that
+    // matters is that hidden cards are forced visible, not that it comes first.
+    const noscript = html.match(/<noscript><style>([\s\S]*?)<\/style><\/noscript>/)?.[1] ?? '';
+    expect(noscript).toContain('[data-catalog-item][hidden]{display:flex!important}');
   });
 });

@@ -250,6 +250,8 @@ const config = {
 <script>
   import {
     DEFAULT_SORT,
+    activeChips,
+    facetCount,
     INDEX_FILTER_KEYS,
     pageNumbers,
     pageView,
@@ -454,6 +456,70 @@ const config = {
         history.pushState({}, '', link.href);
         void render();
       }
+    });
+
+    const countEl = document.querySelector<HTMLElement>('[data-count]');
+    const chipsEl = document.querySelector<HTMLElement>('[data-chips]');
+    const chipList = document.querySelector<HTMLElement>('[data-chip-list]');
+    const chipTemplate = document.getElementById('chip-template') as HTMLTemplateElement | null;
+    const resultsWord = countEl?.textContent?.trim().split(/\s+/).slice(1).join(' ') ?? '';
+    let announceTimer = 0;
+
+    function chipLabel(key: string, value: string): string {
+      return config.labels?.[key]?.[value] ?? value;
+    }
+
+    function paintCounts(detail: {
+      query: { filters: Record<string, string[] | undefined> };
+      response: {
+        filters: Record<string, Record<string, number>>;
+        totalFilters: Record<string, Record<string, number>>;
+      };
+    }): void {
+      for (const row of document.querySelectorAll<HTMLElement>('[data-facet-value]')) {
+        const slot = row.querySelector('[data-facet-count]');
+        if (!slot) continue;
+        slot.textContent = String(
+          facetCount(
+            row.dataset.facetKey ?? '',
+            row.dataset.facetValue ?? '',
+            detail.query.filters,
+            detail.response.filters,
+            detail.response.totalFilters,
+          ),
+        );
+      }
+    }
+
+    function paintChips(filters: Record<string, string[] | undefined>): void {
+      if (!chipsEl || !chipList || !chipTemplate) return;
+      const chips = activeChips(filters);
+      chipList.textContent = '';
+      for (const chip of chips) {
+        const node = chipTemplate.content.firstElementChild?.cloneNode(true);
+        if (!(node instanceof HTMLElement)) continue;
+        node.dataset.chipKey = chip.key;
+        node.dataset.chipValue = chip.value;
+        const label = node.querySelector('[data-chip-label]');
+        if (label) label.textContent = chipLabel(chip.key, chip.value);
+        chipList.append(node);
+      }
+      chipsEl.hidden = chips.length === 0;
+    }
+
+    function announce(total: number): void {
+      if (!countEl) return;
+      window.clearTimeout(announceTimer);
+      announceTimer = window.setTimeout(() => {
+        countEl.textContent = `${total} ${resultsWord}`;
+      }, 300);
+    }
+
+    document.addEventListener('catalog:rendered', (event) => {
+      const detail = (event as CustomEvent).detail;
+      paintCounts(detail);
+      paintChips(detail.query.filters);
+      announce(detail.view.total);
     });
 
     window.addEventListener('popstate', () => void render());
