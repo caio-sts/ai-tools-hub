@@ -127,6 +127,67 @@ describe('applyAssignmentsToCatalog (the offline half of the classification sess
   });
 });
 
+// Listing is DERIVED from primary: applyListing groups by it and caps each subdomain. The first
+// classification pass split one over-cap group of 101 into twenty leaves, none of them near the
+// cap — but the listed flags still described the old single group, so 41 entries stayed evicted
+// from the catalog, the facets and the search index for a grouping that no longer existed.
+describe('applyAssignmentsToCatalog recomputes listing, because listing depends on primary', () => {
+  async function seedCapped(): Promise<{ dir: string; ids: string[] }> {
+    const dir = await mkdtemp(join(tmpdir(), 'ao-listing-'));
+    const rows: Skill[] = [];
+    const assignments: Record<string, Assignment> = {};
+    // 70 rows in one leaf: past the 60 cap, so the tail is evicted exactly as the harvest left it.
+    for (let i = 0; i < 70; i += 1) {
+      const path = `skills/s${String(i).padStart(2, '0')}/SKILL.md`;
+      const id = `tob/skills@${SHA}:${path}`;
+      rows.push(skill({ id, path, name: `s${i}`, listed: i < 60, score: 100 - i }));
+      // Split them across two leaves, so neither is anywhere near the cap.
+      assignments[id] = { primary: i % 2 === 0 ? 'security/general' : 'coding-software/general', also: [], tags: [] };
+    }
+    await writeFile(join(dir, 'skills.json'), `${JSON.stringify(rows, null, 2)}\n`, 'utf8');
+    await writeFile(join(dir, 'collections.json'), '[]\n', 'utf8');
+    await writeFile(join(dir, 'assignments.json'), `${JSON.stringify(assignments, null, 2)}\n`, 'utf8');
+    await writeFile(
+      join(dir, 'meta.json'),
+      `${JSON.stringify({ crawledAt: '2026-08-01T00:00:00.000Z', classifiedAt: null, skillCount: 70, sourceCount: 1 }, null, 2)}\n`,
+      'utf8',
+    );
+    return { dir, ids: rows.map((r) => r.id) };
+  }
+
+  it('relists entries the old grouping had evicted', async () => {
+    const { dir } = await seedCapped();
+    await applyAssignmentsToCatalog(dir, '2026-08-31T12:00:00.000Z');
+
+    const skills = JSON.parse(await readFile(join(dir, 'skills.json'), 'utf8')) as Skill[];
+    expect(skills.filter((s) => s.listed)).toHaveLength(70);
+  });
+
+  it('still evicts past the cap when one leaf really is over it', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'ao-listing-cap-'));
+    const rows: Skill[] = [];
+    const assignments: Record<string, Assignment> = {};
+    for (let i = 0; i < 70; i += 1) {
+      const path = `skills/s${String(i).padStart(2, '0')}/SKILL.md`;
+      const id = `tob/skills@${SHA}:${path}`;
+      rows.push(skill({ id, path, name: `s${i}`, listed: false, score: 100 - i }));
+      assignments[id] = { primary: 'security/general', also: [], tags: [] };
+    }
+    await writeFile(join(dir, 'skills.json'), `${JSON.stringify(rows, null, 2)}\n`, 'utf8');
+    await writeFile(join(dir, 'collections.json'), '[]\n', 'utf8');
+    await writeFile(join(dir, 'assignments.json'), `${JSON.stringify(assignments, null, 2)}\n`, 'utf8');
+    await writeFile(
+      join(dir, 'meta.json'),
+      `${JSON.stringify({ crawledAt: '2026-08-01T00:00:00.000Z', classifiedAt: null, skillCount: 70, sourceCount: 1 }, null, 2)}\n`,
+      'utf8',
+    );
+    await applyAssignmentsToCatalog(dir, '2026-08-31T12:00:00.000Z');
+
+    const skills = JSON.parse(await readFile(join(dir, 'skills.json'), 'utf8')) as Skill[];
+    expect(skills.filter((s) => s.listed)).toHaveLength(60);
+  });
+});
+
 describe('assignmentsByIdentity feeds applyClassification', () => {
   it('round-trips a committed-shape assignments record', () => {
     const index = assignmentsByIdentity({ [`tob/skills@${SHA}:${PATH}`]: ASSIGNMENT });
