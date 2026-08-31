@@ -2,6 +2,7 @@
 import type { Lang, Skill } from '../types.ts';
 import strings, { type SkillKey } from '../lib/i18n/skill.ts';
 import SafetyStrip from './SafetyStrip.astro';
+import { STALE_DAYS, compactNumber, relativeDays } from '../lib/format.ts';
 import { withBase } from '../lib/link.ts';
 
 interface Props {
@@ -13,7 +14,7 @@ interface Props {
   filteredCategory?: string | null;
 }
 
-const { skill, lang, rank = null, expanded = false } = Astro.props;
+const { skill, lang, rank = null, collection = null, expanded = false } = Astro.props;
 const L = (key: SkillKey): string => strings[lang][key];
 
 /** RULE 5. A5's harvest copy and B3's rail copy carry the same five values in the same order. */
@@ -26,6 +27,10 @@ function clip(input: string): string {
   return value.length <= MAX_DESCRIPTION ? value : `${value.slice(0, MAX_DESCRIPTION - 1).trimEnd()}…`;
 }
 const shortDescription = clip(lang === 'pt' && skill.descriptionPt ? skill.descriptionPt : skill.description);
+
+const stale = skill.updatedDays > STALE_DAYS;
+const stars = collection ? compactNumber(collection.stars, lang) : '—';
+const forks = collection ? compactNumber(collection.forks, lang) : '—';
 ---
 
 <details class="skill-card" data-skill-id={skill.id} open={expanded}>
@@ -45,6 +50,13 @@ const shortDescription = clip(lang === 'pt' && skill.descriptionPt ? skill.descr
     <h2 class="skill-card__name" data-field="name">{skill.name}</h2>
     <p class="skill-card__description" data-field="description">{shortDescription}</p>
     <SafetyStrip safety={skill.safety} lang={lang} />
+    <div class="meta" data-field="meta">
+      <div class="meta__row"><span class="meta__key">{L('skill.source')}</span><span class="meta__value meta__repo" data-field="repo">{skill.repo}</span></div>
+      <div class="meta__row"><span class="meta__key">{L('skill.stars')}</span><span class="meta__value" data-field="stars">{stars}</span></div>
+      <div class="meta__row"><span class="meta__key">{L('skill.forks')}</span><span class="meta__value" data-field="forks">{forks}</span></div>
+      <div class="meta__row"><span class="meta__key">{L('skill.picked')}</span><span class="meta__value" data-field="picked">{skill.indexedAt}</span></div>
+      <div class="meta__row"><span class="meta__key">{L('skill.updated')}</span><span class:list={['meta__value', 'meta__updated', stale && 'meta__updated--stale']} data-field="updated">{relativeDays(skill.updatedDays, lang)}</span></div>
+    </div>
   </summary>
   <div class="skill-card__panel">
   </div>
@@ -85,6 +97,19 @@ const shortDescription = clip(lang === 'pt' && skill.descriptionPt ? skill.descr
     background: var(--color-n-6);
   }
   .led--on .led__dot { background: var(--color-a-9); }
+  .meta {
+    margin: 0.6rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--color-n-11);
+  }
+  .meta__row {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+  .meta__repo { color: var(--color-n-12); }
+  .meta__updated--stale { color: var(--color-hazard); }
   .skill-card__score {
     margin-left: auto;
     color: var(--color-a-9);
