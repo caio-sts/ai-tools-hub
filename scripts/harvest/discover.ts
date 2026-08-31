@@ -68,3 +68,92 @@ export function buildSearchQueries(
   }
   return out;
 }
+
+const API = 'https://api.github.com';
+
+/**
+ * Discovery-local repo shape. It carries `isOrg`, which the shared `RepoRef` deliberately does
+ * not: the org flag only exists to feed `passesRepoGate` here, and A5's enrichment is the
+ * authority on collection metadata afterwards.
+ */
+export interface RepoSeed {
+  repo: string;
+  stars: number;
+  isOrg: boolean;
+}
+
+export interface SearchPage {
+  items: RepoSeed[];
+  totalCount: number;
+}
+
+export interface RequestDeps {
+  fetchImpl?: FetchLike;
+  sleepImpl?: (ms: number) => Promise<void>;
+}
+
+function ghHeaders(token: string): Record<string, string> {
+  return {
+    accept: 'application/vnd.github+json',
+    authorization: `Bearer ${token}`,
+    'user-agent': 'ai-tools-hub-harvest',
+    'x-github-api-version': '2022-11-28',
+  };
+}
+
+function backoffMs(res: Response, attempt: number): number {
+  const retryAfter = res.headers.get('retry-after');
+  if (retryAfter !== null && retryAfter.trim() !== '') return Number(retryAfter) * 1000;
+  const reset = res.headers.get('x-ratelimit-reset');
+  if (reset !== null && reset.trim() !== '') {
+    const ms = Number(reset) * 1000 - Date.now();
+    if (ms > 0) return ms;
+  }
+  return 2000 * attempt;
+}
+
+interface RepoItem {
+  full_name?: string;
+  stargazers_count?: number;
+  owner?: { type?: string };
+}
+
+function toSeed(item: RepoItem): RepoSeed | null {
+  if (typeof item.full_name !== 'string') return null;
+  return {
+    repo: item.full_name,
+    stars: item.stargazers_count ?? 0,
+    isOrg: item.owner?.type === 'Organization',
+  };
+}
+
+export async function searchPage(
+  query: string,
+  page: number,
+  token: string,
+  deps: RequestDeps = {},
+): Promise<SearchPage> {
+  const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
+  const wait = deps.sleepImpl ?? sleep;
+  const url =
+    `${API}/search/repositories?q=${encodeURIComponent(query)}` +
+    `&sort=stars&order=desc&per_page=100&page=${page}`;
+  for (let attempt = 1; attempt <= 4; attempt += 1) {
+    const res = await fetchImpl(url, { headers: ghHeaders(token) });
+    if (res.ok) {
+      const body = (await res.json()) as { total_count?: number; items?: RepoItem[] };
+      const items: RepoSeed[] = [];
+      for (const item of body.items ?? []) {
+        const seed = toSeed(item);
+        if (seed !== null) items.push(seed);
+      }
+      return { items, totalCount: body.total_count ?? items.length };
+    }
+    if ((res.status === 403 || res.status === 429) && attempt < 4) {
+      await wait(backoffMs(res, attempt));
+      continue;
+    }
+    throw new Error(`search "${query}" page ${page}: HTTP ${res.status}`);
+  }
+  throw new Error(`search "${query}" page ${page}: retries exhausted`);
+}
