@@ -27,6 +27,10 @@ const en = {
   'skill.picked': 'Picked',
   'skill.updated': 'Updated',
   'skill.scoreBreakdown': 'Score breakdown',
+  // The chip states a taxonomy relation, so it says which one. Without a label a bare leaf name
+  // reads as "this card's category", which is wrong the moment the list was filtered by another.
+  'skill.filedUnder': 'Filed under',
+  'skill.alsoIn': 'Also in',
   'skill.adoption': 'Adoption',
   'skill.maintenance': 'Maintenance',
   'skill.provenanceScore': 'Provenance',
@@ -72,6 +76,8 @@ const pt: Record<keyof typeof en, string> = {
   'skill.picked': 'Coletado',
   'skill.updated': 'Atualizado',
   'skill.scoreBreakdown': 'Composição da pontuação',
+  'skill.filedUnder': 'Arquivado em',
+  'skill.alsoIn': 'Também em',
   'skill.adoption': 'Adoção',
   'skill.maintenance': 'Manutenção',
   'skill.provenanceScore': 'Procedência',

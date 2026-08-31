@@ -79,7 +79,17 @@ const bars = [
       <div class="meta__row"><span class="meta__key">{L('skill.updated')}</span><span class:list={['meta__value', 'meta__updated', stale && 'meta__updated--stale']} data-field="updated">{relativeDays(skill.updatedDays, lang)}</span></div>
     </div>
     {showCategory && (
-      <p class="skill-card__category" data-field="category" data-category={skill.primary}>{nodeName(skill.primary, lang)}</p>
+      <p
+        class="skill-card__category"
+        data-field="category"
+        data-category={skill.primary}
+        data-also={skill.also.join(' ')}
+        data-label-filed={L('skill.filedUnder')}
+        data-label-also={L('skill.alsoIn')}
+      >
+        <span class="skill-card__category-key" data-category-key>{L('skill.filedUnder')}</span>
+        <span class="skill-card__category-value">{nodeName(skill.primary, lang)}</span>
+      </p>
     )}
   </summary>
   <div class="skill-card__panel">
@@ -312,16 +322,28 @@ const bars = [
     margin-left: auto;
     color: var(--color-n-11);
   }
+  /* Stacked, not wrapped: the cards are narrow by design — 198px at five columns — so key and
+     value never shared a line anyway, and letting them wrap produced a ragged block of varying
+     height. Deliberate rows read as a caption over its value and stay the same shape on every card. */
   .skill-card__category {
-    display: inline-block;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
     margin: 0.75rem 0 0;
-    padding: 0.15rem 0.45rem;
-    border: 1px solid var(--color-n-6);
-    background: var(--color-n-1);
     color: var(--color-n-11);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
     justify-self: start;
+  }
+  .skill-card__category-key { letter-spacing: 0.06em; text-transform: uppercase; }
+  /* The leaf keeps the bordered treatment the whole chip used to carry; the key sits outside it,
+     so the relation is read before the value it qualifies. */
+  .skill-card__category-value {
+    padding: 0.15rem 0.45rem;
+    border: 1px solid var(--color-n-6);
+    background: var(--color-n-1);
+    color: var(--color-n-12);
   }
   /* The score is the one number a reader compares across cards, so it is the only element in the
      collapsed card that carries the accent. */

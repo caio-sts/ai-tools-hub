@@ -593,6 +593,29 @@ const config = {
       }
     }
 
+    /**
+     * The chip states a taxonomy relation, and which relation it is depends on the filter — which
+     * the server cannot know, because the catalog filters after the page is built. An entry whose
+     * primary is not in the active selection is here through `also`, and saying "Filed under" there
+     * reads as an error: filter by security/offensive-testing and genotoxic shows General / Other.
+     * Both labels ride on the element, so this needs no i18n table.
+     */
+    function paintCategoryRelations(filters: Record<string, string[] | undefined>): void {
+      const subdomains = filters['subdomain'] ?? [];
+      const domains = filters['domain'] ?? [];
+      const narrowed = subdomains.length > 0 || domains.length > 0;
+
+      for (const chip of document.querySelectorAll<HTMLElement>('[data-field="category"]')) {
+        const key = chip.querySelector<HTMLElement>('[data-category-key]');
+        if (!key) continue;
+        const primary = chip.dataset.category ?? '';
+        const primaryMatches = subdomains.includes(primary) || domains.includes(primary.split('/')[0] ?? '');
+        const viaAlso = narrowed && !primaryMatches;
+        key.textContent = (viaAlso ? chip.dataset.labelAlso : chip.dataset.labelFiled) ?? '';
+        chip.dataset.relation = viaAlso ? 'also' : 'primary';
+      }
+    }
+
     function paintChips(filters: Record<string, string[] | undefined>): void {
       if (!chipsEl || !chipList || !chipTemplate) return;
       const chips = activeChips(filters);
@@ -629,6 +652,7 @@ const config = {
       const detail = (event as CustomEvent).detail;
       paintCounts(detail);
       paintChips(detail.query.filters);
+      paintCategoryRelations(detail.query.filters);
       announce(detail.view.total);
     });
 
