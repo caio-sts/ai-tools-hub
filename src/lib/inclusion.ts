@@ -33,3 +33,58 @@ export function hasReadme(tree: readonly TreeFile[]): boolean {
 export function isRepoInternal(path: string): boolean {
   return path.startsWith('.claude/skills/') || path.includes('/.claude/skills/');
 }
+
+/** Spec 6.4 "non-trivial": published thresholds, so the rule is inspectable, not taste. */
+export const MIN_DESCRIPTION_CHARS = 20;
+export const MIN_DESCRIPTION_WORDS = 4;
+
+/** Spec 6.4 "non-repo-specific": prose that only makes sense inside the host repository. */
+export const REPO_SPECIFIC_PHRASES = [
+  'this repo',
+  'this repository',
+  'our repo',
+  'our team',
+  'internal use',
+  'this project only',
+  'do not use outside',
+] as const;
+
+/** Names too generic to prove a description is about its own repo rather than the skill. */
+const GENERIC_REPO_WORDS = new Set([
+  'skill',
+  'skills',
+  'agent',
+  'agents',
+  'tool',
+  'tools',
+  'plugin',
+  'plugins',
+  'claude',
+  'claude-code',
+  'codex',
+  'cursor',
+  'openclaw',
+  'mcp',
+  'prompt',
+  'prompts',
+  'awesome',
+  'docs',
+  'examples',
+]);
+
+function distinctiveSegments(repo: string): string[] {
+  return repo
+    .toLowerCase()
+    .split('/')
+    .filter((segment) => segment.length >= 5 && !GENERIC_REPO_WORDS.has(segment));
+}
+
+export function isMeaningfulDescription(description: unknown, repo: string): boolean {
+  if (typeof description !== 'string') return false;
+  const text = description.trim();
+  if (text.length < MIN_DESCRIPTION_CHARS) return false;
+  if (text.split(/\s+/).length < MIN_DESCRIPTION_WORDS) return false;
+  const lower = text.toLowerCase();
+  if (REPO_SPECIFIC_PHRASES.some((phrase) => lower.includes(phrase))) return false;
+  return !distinctiveSegments(repo).some((segment) => lower.includes(segment));
+}
