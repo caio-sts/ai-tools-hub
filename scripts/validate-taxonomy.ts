@@ -37,10 +37,21 @@ export function checkNamedOverflow(tax: Taxonomy): CheckResult {
   return { name: '2 named overflow', ok: errors.length === 0, errors };
 }
 
+export function checkUniqueSlug(tax: Taxonomy): CheckResult {
+  const errors: string[] = [];
+  const seen = new Set<string>();
+  for (const node of flattenTaxonomy(tax)) {
+    if (seen.has(node.slug)) errors.push(`duplicate slug "${node.slug}"`);
+    seen.add(node.slug);
+  }
+  return { name: '3 unique slug', ok: errors.length === 0, errors };
+}
+
 export function runAllChecks(tax: Taxonomy): CheckResult[] {
   return [
     checkMinimumMass(tax),
     checkNamedOverflow(tax),
+    checkUniqueSlug(tax),
   ];
 }
 
