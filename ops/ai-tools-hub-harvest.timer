@@ -1,0 +1,15 @@
+[Unit]
+Description=Harvest the ai-tools-hub catalog every 4 hours
+
+[Timer]
+Unit=ai-tools-hub-harvest.service
+OnBootSec=2min
+OnUnitActiveSec=4h
+# Load-bearing, do not "simplify" away. WSL2 shuts itself down when idle, so 4-hour windows
+# pass with the machine off. Persistent=true records the last trigger on disk and
+# OnBootSec=2min fires shortly after the machine comes back, so a missed window is caught up
+# instead of silently skipped — the failure §13 names as the largest risk. cron cannot do this.
+Persistent=true
+
+[Install]
+WantedBy=timers.target

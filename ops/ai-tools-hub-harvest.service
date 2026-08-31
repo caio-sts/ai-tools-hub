@@ -1,0 +1,15 @@
+[Unit]
+Description=ai-tools-hub catalog harvest
+
+[Service]
+Type=oneshot
+# Rewritten by ops/install-schedule.sh, so the unit is not tied to one hard-coded checkout.
+WorkingDirectory=@REPO_DIR@
+# Created chmod 600 by the installer and never committed: it carries the fine-grained PAT.
+EnvironmentFile=%h/.config/ai-tools-hub/harvest.env
+ExecStart=/usr/bin/env npm run harvest
+ExecStart=/usr/bin/env git add data/skills.json data/collections.json data/meta.json
+ExecStart=/usr/bin/env git commit --allow-empty -m "chore(crawl): local refresh"
+# crawl.yml commits the same three files weekly, so rebase before pushing.
+ExecStart=/usr/bin/env git pull --rebase --autostash
+ExecStart=/usr/bin/env git push
