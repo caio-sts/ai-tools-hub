@@ -1,0 +1,44 @@
+---
+// Behaviour and global scroll offset only: no visible markup. Included once by Layout.astro.
+---
+
+<style is:global>
+  /* --- WCAG 2.2 2.4.11 Focus Not Obscured ----------------------------------
+     The script below overwrites --header-h with the header's measured height.
+     The literal here is the pre-JS fallback, never the source of truth.      */
+  :root { --header-h: 56px; }
+
+  body > header { position: sticky; top: 0; z-index: 50; }
+
+  :where([id]) { scroll-margin-top: calc(var(--header-h) + 0.5rem); }
+</style>
+
+<script>
+  import { moveFocusToResults } from '../lib/focus.ts';
+  import { syncHeaderOffset } from '../lib/stickyOffset.ts';
+
+  const header = document.querySelector<HTMLElement>('body > header');
+
+  function applyHeaderOffset(): void {
+    if (!header) return;
+    syncHeaderOffset(header.getBoundingClientRect().height, (name, value) => {
+      document.documentElement.style.setProperty(name, value);
+    });
+  }
+
+  applyHeaderOffset();
+
+  if (header && typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(applyHeaderOffset).observe(header);
+  }
+  window.addEventListener('resize', applyHeaderOffset);
+
+  document.addEventListener('click', (event) => {
+    const origin = event.target;
+    if (!(origin instanceof Element) || !origin.closest('[data-clear-all]')) return;
+    const heading = document.querySelector<HTMLElement>('#results-heading');
+    if (!moveFocusToResults(heading)) {
+      console.warn('[a11y] no #results-heading element: focus was not moved after clear-all');
+    }
+  });
+</script>
