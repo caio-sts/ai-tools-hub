@@ -1,0 +1,83 @@
+---
+import type { Lang } from '../types.ts';
+import type { FacetGroup } from '../lib/facets.ts';
+import { t } from '../lib/i18n/index.ts';
+
+interface Props {
+  lang: Lang;
+  groups: FacetGroup[];
+}
+
+const { lang, groups } = Astro.props;
+---
+<aside class="facet-rail" data-facet-rail aria-label={t('catalog.railTitle', lang)}>
+  {groups.map((group) => (
+    <section class="facet-group" data-facet-group={group.key}>
+      <h2 class="facet-group-title">{group.label}</h2>
+      <p class="facet-group-hint">{group.hint}</p>
+      <ul class="facet-list">
+        {group.options.map((option, i) => (
+          <>
+            {option.group && option.group !== group.options[i - 1]?.group && (
+              <li class="facet-subhead" aria-hidden="true">{option.group}</li>
+            )}
+            <li>
+              <label class="facet-row" data-facet-key={group.key} data-facet-value={option.value}>
+                <input class="facet-check" data-facet-check type="checkbox" name={group.key} value={option.value} />
+                <span class="facet-text">{option.label}</span>
+                <span class="facet-count" data-facet-count>{option.count}</span>
+              </label>
+            </li>
+          </>
+        ))}
+      </ul>
+    </section>
+  ))}
+</aside>
+<style is:global>
+  .facet-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    border-right: 1px solid var(--border, #333);
+  }
+  .facet-group-title { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; margin: 0 0 0.25rem; }
+  .facet-group-hint { font-size: 0.75rem; color: var(--muted-foreground, #888); margin: 0 0 0.5rem; }
+  .facet-list { list-style: none; margin: 0; padding: 0; }
+  .facet-subhead {
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground, #888);
+    margin: 0.75rem 0 0.25rem;
+  }
+  .facet-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 24px;
+    min-width: 24px;
+    padding: 0.375rem 0.5rem;
+    cursor: pointer;
+    scroll-margin-top: var(--header-h, 3.5rem);
+  }
+  .facet-row:hover { background: var(--muted, rgba(127, 127, 127, 0.12)); }
+  .facet-row:focus-within { outline: 2px solid var(--ring, currentColor); outline-offset: -2px; }
+  .facet-check {
+    min-height: 24px;
+    min-width: 24px;
+    height: 24px;
+    width: 24px;
+    margin: 0;
+    flex: none;
+    accent-color: var(--ring, currentColor);
+  }
+  .facet-text { flex: 1 1 auto; font-size: 0.875rem; }
+  .facet-count {
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.75rem;
+    color: var(--muted-foreground, #888);
+    font-variant-numeric: tabular-nums;
+  }
+</style>

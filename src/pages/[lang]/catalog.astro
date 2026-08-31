@@ -1,0 +1,47 @@
+---
+import type { Lang } from '../../types.ts';
+import Layout from '../../components/Layout.astro';
+import FacetRail from '../../components/FacetRail.astro';
+import { PAGEFIND_BASE_URL, PAGEFIND_BUNDLE_PATH, PAGE_SIZE, buildFacetGroups, chipLabelMap, listedSkills } from '../../lib/facets.ts';
+import { loadSkills } from '../../lib/data.ts';
+import { loadTaxonomy } from '../../lib/taxonomy.ts';
+import { withBase } from '../../lib/link.ts';
+import { t } from '../../lib/i18n/index.ts';
+
+export function getStaticPaths() {
+  return [{ params: { lang: 'en' } }, { params: { lang: 'pt' } }];
+}
+
+const lang = Astro.params.lang as Lang;
+// §5.1: an entry evicted by the per-subdomain cap keeps its row in data/skills.json and keeps its
+// page, but it is not listed — so it leaves the grid, the facet counts and the search index. Filter
+// once, here, and nothing downstream has to remember.
+const skills = listedSkills(loadSkills());
+const taxonomy = loadTaxonomy();
+const groups = buildFacetGroups(skills, taxonomy, lang);
+const catalogPath = withBase(`/${lang}/catalog/`);
+const config = {
+  baseUrl: PAGEFIND_BASE_URL,
+  bundlePath: PAGEFIND_BUNDLE_PATH,
+  catalogPath,
+  lang,
+  pageSize: PAGE_SIZE,
+  labels: chipLabelMap(groups, taxonomy, lang),
+};
+---
+<Layout lang={lang} title={t('catalog.title', lang)} path="/catalog/">
+  <div data-pagefind-ignore>
+    <script type="application/json" id="catalog-config" set:html={JSON.stringify(config)}></script>
+    <h1>{t('catalog.title', lang)}</h1>
+    <p>{t('catalog.intro', lang)}</p>
+    <div class="catalog-body">
+      <FacetRail lang={lang} groups={groups} />
+      <div class="catalog-main"></div>
+    </div>
+  </div>
+</Layout>
+<style is:global>
+  .catalog-body { display: grid; grid-template-columns: 17rem minmax(0, 1fr); align-items: start; }
+  .catalog-main { padding: 1rem; min-width: 0; }
+  @media (max-width: 899px) { .catalog-body { grid-template-columns: minmax(0, 1fr); } }
+</style>
