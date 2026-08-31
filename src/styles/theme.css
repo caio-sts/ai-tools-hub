@@ -166,3 +166,78 @@
   --color-input: var(--input);
   --color-ring: var(--ring);
 }
+
+/* ---------------------------------------------------------------------------
+   Theming — three states (§9.1). Deliberately NOT CSS light-dark(): that
+   function is Baseline only since May 2024, narrower than Tailwind v4's own
+   Safari 16.4 floor, so combining the two silently drops colour on browsers
+   that support everything else here.
+
+     1. bare :root                                  -> the full light palette
+     2. @media dark + :root:not([data-theme=light]) -> system preference
+     3. :root[data-theme="dark"]                    -> explicit user choice
+
+   Only ramps, the one reserved hazard token and the one literal alias are
+   re-pointed. Every other alias is a var() into a ramp and follows
+   automatically. The two blocks below MUST stay declaration-for-declaration
+   identical.
+   --------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-n-1: oklch(0.178 0.006 250);
+    --color-n-2: oklch(0.213 0.008 250);
+    --color-n-3: oklch(0.254 0.010 250);
+    --color-n-4: oklch(0.283 0.012 250);
+    --color-n-5: oklch(0.314 0.013 250);
+    --color-n-6: oklch(0.355 0.014 250);
+    --color-n-7: oklch(0.413 0.016 250);
+    --color-n-8: oklch(0.498 0.018 250);
+    --color-n-9: oklch(0.539 0.018 250);
+    --color-n-10: oklch(0.584 0.017 250);
+    --color-n-11: oklch(0.770 0.014 250);
+    --color-n-12: oklch(0.949 0.006 250);
+    --color-a-1: oklch(0.190 0.020 195);
+    --color-a-2: oklch(0.222 0.028 195);
+    --color-a-3: oklch(0.271 0.045 195);
+    --color-a-4: oklch(0.309 0.058 195);
+    --color-a-5: oklch(0.351 0.066 195);
+    --color-a-6: oklch(0.404 0.072 195);
+    --color-a-7: oklch(0.477 0.080 195);
+    --color-a-8: oklch(0.567 0.092 195);
+    --color-a-9: oklch(0.735 0.116 195);
+    --color-a-10: oklch(0.790 0.110 195);
+    --color-a-11: oklch(0.845 0.095 195);
+    --color-a-12: oklch(0.945 0.035 195);
+    --color-hazard: oklch(0.762 0.168 58);
+    --destructive: oklch(0.681 0.188 25);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-n-1: oklch(0.178 0.006 250);
+  --color-n-2: oklch(0.213 0.008 250);
+  --color-n-3: oklch(0.254 0.010 250);
+  --color-n-4: oklch(0.283 0.012 250);
+  --color-n-5: oklch(0.314 0.013 250);
+  --color-n-6: oklch(0.355 0.014 250);
+  --color-n-7: oklch(0.413 0.016 250);
+  --color-n-8: oklch(0.498 0.018 250);
+  --color-n-9: oklch(0.539 0.018 250);
+  --color-n-10: oklch(0.584 0.017 250);
+  --color-n-11: oklch(0.770 0.014 250);
+  --color-n-12: oklch(0.949 0.006 250);
+  --color-a-1: oklch(0.190 0.020 195);
+  --color-a-2: oklch(0.222 0.028 195);
+  --color-a-3: oklch(0.271 0.045 195);
+  --color-a-4: oklch(0.309 0.058 195);
+  --color-a-5: oklch(0.351 0.066 195);
+  --color-a-6: oklch(0.404 0.072 195);
+  --color-a-7: oklch(0.477 0.080 195);
+  --color-a-8: oklch(0.567 0.092 195);
+  --color-a-9: oklch(0.735 0.116 195);
+  --color-a-10: oklch(0.790 0.110 195);
+  --color-a-11: oklch(0.845 0.095 195);
+  --color-a-12: oklch(0.945 0.035 195);
+  --color-hazard: oklch(0.762 0.168 58);
+  --destructive: oklch(0.681 0.188 25);
+}
