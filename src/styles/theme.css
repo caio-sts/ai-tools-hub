@@ -270,3 +270,70 @@
     scroll-behavior: auto !important;
   }
 }
+
+/* ---------------------------------------------------------------------------
+   Industrial Console (§9.2): dark-first control surface, panelled cards,
+   1px borders, no radius, no shadows. Removing the namespaces outright is
+   stronger than a convention — rounded-lg and shadow-lg simply do not compile.
+   --------------------------------------------------------------------------- */
+@theme static {
+  --radius-*: initial;
+  --shadow-*: initial;
+  --inset-shadow-*: initial;
+  --drop-shadow-*: initial;
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+
+  html[data-theme="light"] {
+    color-scheme: light;
+  }
+
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Borders are opt-in by width but never by colour or style: a panel only ever
+     has to say `border-width: 1px`. */
+  *,
+  *::before,
+  *::after {
+    border-color: var(--border);
+    border-style: solid;
+    border-width: 0;
+  }
+
+  code,
+  kbd,
+  samp,
+  pre {
+    font-family: var(--font-mono);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 0;
+  }
+
+  ::selection {
+    background-color: var(--color-a-5);
+    color: var(--foreground);
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
