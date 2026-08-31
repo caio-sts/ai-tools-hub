@@ -88,3 +88,44 @@ export function isMeaningfulDescription(description: unknown, repo: string): boo
   if (REPO_SPECIFIC_PHRASES.some((phrase) => lower.includes(phrase))) return false;
   return !distinctiveSegments(repo).some((segment) => lower.includes(segment));
 }
+
+export interface ConceptKey {
+  publisher: string;
+  concept: string;
+}
+
+export function publisherOf(repo: string): string {
+  const slash = repo.indexOf('/');
+  return (slash === -1 ? repo : repo.slice(0, slash)).toLowerCase();
+}
+
+export function normalizeConcept(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+/**
+ * Spec 6.3 trap 4: "cap one entry per publisher per concept, so a single 846-path monorepo
+ * cannot swamp a category page". Deliberately generic over the concept key: harvest calls it
+ * with the normalised skill name, a category page calls it with `skill.primary`.
+ * First-seen order is preserved, so the caller's own ordering decides which entry survives.
+ */
+export function capPerPublisherPerConcept<T>(
+  items: readonly T[],
+  keyOf: (item: T) => ConceptKey,
+  limit = 1,
+): T[] {
+  const counts = new Map<string, number>();
+  const out: T[] = [];
+  for (const item of items) {
+    const { publisher, concept } = keyOf(item);
+    const key = `${publisher} ${concept}`;
+    const seen = counts.get(key) ?? 0;
+    if (seen >= limit) continue;
+    counts.set(key, seen + 1);
+    out.push(item);
+  }
+  return out;
+}
