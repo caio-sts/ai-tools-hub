@@ -19,6 +19,10 @@ const en = {
   'lang.label': 'Language',
   'lang.en': 'English',
   'lang.pt': 'Portuguese (Brazil)',
+  // Shown instead of the full name where the sticky header has no room for it. The full name
+  // stays on the link's accessible name, so nothing is lost to a screen reader.
+  'lang.en.short': 'EN',
+  'lang.pt.short': 'PT-BR',
   'theme.label': 'Theme',
   'theme.system': 'System',
   'theme.light': 'Light',
@@ -43,6 +47,8 @@ const pt: Record<keyof typeof en, string> = {
   'lang.label': 'Idioma',
   'lang.en': 'Inglês',
   'lang.pt': 'Português (Brasil)',
+  'lang.en.short': 'EN',
+  'lang.pt.short': 'PT-BR',
   'theme.label': 'Tema',
   'theme.system': 'Sistema',
   'theme.light': 'Claro',

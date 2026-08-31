@@ -607,6 +607,14 @@ const config = {
         chipList.append(node);
       }
       chipsEl.hidden = chips.length === 0;
+
+      // The rail collapses on a narrow viewport, so the summary has to say what is filtering
+      // without being opened. Same source as the chips: one state, two renderings.
+      const countEl = document.querySelector<HTMLElement>('[data-facet-active-count]');
+      if (countEl) {
+        countEl.textContent = String(chips.length);
+        countEl.hidden = chips.length === 0;
+      }
     }
 
     function announce(total: number): void {
@@ -623,6 +631,18 @@ const config = {
       paintChips(detail.query.filters);
       announce(detail.view.total);
     });
+
+    // The disclosure ships `open`, which is right for the sidebar and right with no JavaScript.
+    // Narrow viewports are the only place it should start closed, so that is the only thing synced
+    // here — and only when the breakpoint is crossed, so a filter panel the reader opened on a
+    // phone stays open while they use it.
+    const narrow = window.matchMedia('(max-width: 899px)');
+    const disclosure = document.querySelector<HTMLDetailsElement>('[data-facet-disclosure]');
+    function syncDisclosure(matches: boolean): void {
+      if (disclosure) disclosure.open = !matches;
+    }
+    syncDisclosure(narrow.matches);
+    narrow.addEventListener('change', (event) => syncDisclosure(event.matches));
 
     window.addEventListener('popstate', () => void render());
     void render();
