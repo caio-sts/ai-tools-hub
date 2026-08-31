@@ -129,3 +129,36 @@ export function capPerPublisherPerConcept<T>(
   }
   return out;
 }
+
+export type InclusionReason = 'included' | 'repo-internal' | 'no-readme' | 'weak-description';
+
+/**
+ * Spec 6.4: "these rules are published at /methodology". This array is the machine-readable
+ * source of truth for that page's ordering; B5 supplies the hand-written prose for each id in
+ * both locales. Add a rule here and the page's list is wrong until B5 writes its copy — which
+ * is the intended pressure.
+ */
+export const INCLUSION_RULE_ORDER: readonly InclusionReason[] = [
+  'repo-internal',
+  'no-readme',
+  'weak-description',
+];
+
+export interface SkillCandidate {
+  repo: string;
+  path: string;
+  hasReadme: boolean;
+  description: unknown;
+}
+
+/**
+ * Per-skill half of spec 6.4. The repo half (`passesRepoGate`) runs earlier, at discovery,
+ * because it decides whether the repo is fetched at all. Returns the first failing rule so the
+ * harvest log says *why* something was dropped.
+ */
+export function includeSkill(candidate: SkillCandidate): InclusionReason {
+  if (isRepoInternal(candidate.path)) return 'repo-internal';
+  if (!candidate.hasReadme) return 'no-readme';
+  if (!isMeaningfulDescription(candidate.description, candidate.repo)) return 'weak-description';
+  return 'included';
+}
