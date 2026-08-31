@@ -1,4 +1,5 @@
-import type { Collection, RepoRef } from '../../src/types.ts';
+import { RUNTIME_ORDER } from '../../src/lib/safety.ts';
+import type { Collection, RepoRef, Runtime } from '../../src/types.ts';
 
 /**
  * GraphQL costs 1 point per 4 aliased repositories against a 5,000 point/hour budget (spec §6.2),
@@ -185,4 +186,36 @@ export async function enrichCollections(repos: RepoRef[], token: string): Promis
     }
   }
   return out;
+}
+
+/**
+ * Repo topics only (spec §3.4). Topics are accurate for runtime and useless for content —
+ * of 300 `topic:agent-skills` repos only 8 carry a security topic. Never derive runtime from
+ * SKILL.md text.
+ */
+export const TOPIC_RUNTIMES: Record<string, Runtime> = {
+  'claude': 'claude',
+  'claude-ai': 'claude',
+  'claude-code': 'claude',
+  'claude-skills': 'claude',
+  'anthropic': 'claude',
+  'openclaw': 'openclaw',
+  'openclaw-skills': 'openclaw',
+  'clawhub': 'openclaw',
+  'codex': 'codex',
+  'codex-cli': 'codex',
+  'openai-codex': 'codex',
+  'cursor': 'cursor',
+  'cursor-ai': 'cursor',
+  'cursor-rules': 'cursor',
+};
+
+export function detectRuntimes(topics: string[]): Runtime[] {
+  const found = new Set<Runtime>();
+  for (const raw of topics) {
+    const runtime = TOPIC_RUNTIMES[raw.trim().toLowerCase()];
+    if (runtime) found.add(runtime);
+  }
+  if (found.size === 0) return ['generic'];
+  return RUNTIME_ORDER.filter((runtime) => found.has(runtime));
 }
