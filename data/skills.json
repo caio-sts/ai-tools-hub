@@ -2834,7 +2834,7 @@
       "instrumentation"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 83,
     "breakdown": {
       "adoption": 18,
@@ -2879,7 +2879,7 @@
       "rust"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 83,
     "breakdown": {
       "adoption": 18,
@@ -2923,7 +2923,7 @@
       "rust"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 83,
     "breakdown": {
       "adoption": 18,
@@ -2967,7 +2967,7 @@
       "llvm"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 83,
     "breakdown": {
       "adoption": 18,
@@ -3013,7 +3013,7 @@
       "continuous-fuzzing"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 83,
     "breakdown": {
       "adoption": 18,
@@ -3056,7 +3056,7 @@
       "ruby"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 83,
     "breakdown": {
       "adoption": 18,
@@ -3100,7 +3100,7 @@
       "wycheproof"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 83,
     "breakdown": {
       "adoption": 18,
@@ -3149,7 +3149,7 @@
       "misconfiguration"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 83,
     "breakdown": {
       "adoption": 18,
@@ -3194,7 +3194,7 @@
       "fast-check"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 81,
     "breakdown": {
       "adoption": 18,
@@ -3240,7 +3240,7 @@
       "triage"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -3286,7 +3286,7 @@
       "rules"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 18,
@@ -3335,7 +3335,7 @@
       "gemini"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 18,
@@ -3382,7 +3382,7 @@
       "claude-code"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 25,
@@ -3430,7 +3430,7 @@
       "constant-time"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 18,
@@ -3479,7 +3479,7 @@
       "elf"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 18,
@@ -3525,7 +3525,7 @@
       "troubleshooting"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 18,
@@ -3574,7 +3574,7 @@
       "triage"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 18,
@@ -3621,7 +3621,7 @@
       "documents"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 25,
@@ -3669,7 +3669,7 @@
       "footguns"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 18,
@@ -3716,7 +3716,7 @@
       "claude-code"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 18,
@@ -3765,7 +3765,7 @@
       "workflows"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 18,
@@ -3814,7 +3814,7 @@
       "proxy"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 18,
@@ -3860,7 +3860,7 @@
       "annotations"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 18,
@@ -3908,7 +3908,7 @@
       "attack-surface"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 18,
@@ -3955,7 +3955,7 @@
       "test-quality"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 18,
@@ -3999,7 +3999,7 @@
       "creative-coding"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4045,7 +4045,7 @@
       "color"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4092,7 +4092,7 @@
       "pdf"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4138,7 +4138,7 @@
       "announcements"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4187,7 +4187,7 @@
       "integration"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4233,7 +4233,7 @@
       "animation"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4277,7 +4277,7 @@
       "artifacts"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4326,7 +4326,7 @@
       "frontend"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4373,7 +4373,7 @@
       "e2e"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 25,
@@ -4420,7 +4420,7 @@
       "modelling"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 18,
@@ -4465,7 +4465,7 @@
       "protocols"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 18,
@@ -4510,7 +4510,7 @@
       "scanner"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 18,
@@ -4555,7 +4555,7 @@
       "scanner"
     ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 69,
     "breakdown": {
       "adoption": 18,
@@ -4600,7 +4600,7 @@
       "tooling"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 69,
     "breakdown": {
       "adoption": 18,
@@ -4644,7 +4644,7 @@
       "workflow"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 63,
     "breakdown": {
       "adoption": 25,
@@ -4688,7 +4688,7 @@
       "skills"
     ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 63,
     "breakdown": {
       "adoption": 25,
