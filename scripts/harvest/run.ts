@@ -169,3 +169,36 @@ export async function writeMeta(dataDir: string, meta: Meta): Promise<void> {
   await mkdir(dataDir, { recursive: true });
   await writeJson(join(dataDir, 'meta.json'), meta);
 }
+
+export function pushedAtIndex(previous: CatalogSnapshot): Map<string, string> {
+  const index = new Map<string, string>();
+  for (const collection of previous.collections) {
+    index.set(collection.repo, collection.pushedAt);
+  }
+  return index;
+}
+
+/** A repo whose pushedAt has not moved cannot have new or changed skills (spec §6.1). */
+export function partitionRepos(
+  fresh: Collection[],
+  index: Map<string, string>,
+): { crawl: Collection[]; skipped: Collection[] } {
+  const crawl: Collection[] = [];
+  const skipped: Collection[] = [];
+
+  for (const collection of fresh) {
+    const seen = index.get(collection.repo);
+    if (seen !== undefined && seen === collection.pushedAt) {
+      skipped.push(collection);
+    } else {
+      crawl.push(collection);
+    }
+  }
+
+  return { crawl, skipped };
+}
+
+export function carryForward(previous: CatalogSnapshot, skipped: Collection[]): Skill[] {
+  const repos = new Set(skipped.map((collection) => collection.repo));
+  return previous.skills.filter((skill) => repos.has(skill.repo));
+}
