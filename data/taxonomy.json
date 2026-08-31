@@ -1,0 +1,181 @@
+{
+  "domains": [
+    {
+      "slug": "security",
+      "name": { "en": "Security", "pt": "Segurança" },
+      "children": [
+        {
+          "slug": "security/code-application",
+          "name": { "en": "Code & Application", "pt": "Código e Aplicação" },
+          "frameworkRefs": ["OWASP A01:2025", "OWASP A05:2025", "OWASP A06:2025"]
+        },
+        {
+          "slug": "security/secrets-credentials",
+          "name": { "en": "Secrets & Credentials", "pt": "Segredos e Credenciais" },
+          "frameworkRefs": ["CIS Control 5"]
+        },
+        {
+          "slug": "security/supply-chain",
+          "name": { "en": "Supply Chain & Dependencies", "pt": "Supply Chain e Dependências" },
+          "frameworkRefs": ["OWASP A03:2025", "SLSA"]
+        },
+        {
+          "slug": "security/iac-config",
+          "name": { "en": "Infrastructure as Code", "pt": "Infraestrutura como Código" },
+          "frameworkRefs": ["OWASP A02:2025", "CIS Benchmarks"]
+        },
+        {
+          "slug": "security/cloud-permissions",
+          "name": { "en": "Cloud Permissions", "pt": "Permissões em Nuvem" },
+          "frameworkRefs": ["NIST CSF PR.AA"]
+        },
+        {
+          "slug": "security/containers-kubernetes",
+          "name": { "en": "Containers & Kubernetes", "pt": "Contêineres e Kubernetes" },
+          "frameworkRefs": ["Gartner CNAPP"]
+        },
+        {
+          "slug": "security/cicd-pipeline",
+          "name": { "en": "CI/CD & Pipeline", "pt": "CI/CD e Pipeline" },
+          "frameworkRefs": ["OWASP A08:2025", "SLSA"]
+        },
+        {
+          "slug": "security/identity-access",
+          "name": { "en": "Identity & Access", "pt": "Identidade e Acesso" },
+          "frameworkRefs": ["OWASP A07:2025", "CIS Control 6"]
+        },
+        {
+          "slug": "security/data-protection",
+          "name": { "en": "Data Protection & Privacy", "pt": "Proteção de Dados e Privacidade" },
+          "frameworkRefs": ["NIST CSF PR.DS", "CIS Control 3"]
+        },
+        {
+          "slug": "security/offensive-testing",
+          "name": { "en": "Offensive Security & Testing", "pt": "Segurança Ofensiva e Testes" },
+          "frameworkRefs": ["MITRE ATT&CK", "CIS Control 18"]
+        },
+        {
+          "slug": "security/detection-forensics",
+          "name": { "en": "Detection & Forensics", "pt": "Detecção e Forense" },
+          "frameworkRefs": ["NIST CSF DE.CM", "NIST CSF RS.MA"]
+        },
+        {
+          "slug": "security/compliance-grc",
+          "name": { "en": "Compliance, Risk & Audit", "pt": "Conformidade, Risco e Auditoria" },
+          "frameworkRefs": ["NIST CSF GOVERN"]
+        },
+        {
+          "slug": "security/ai-agent-security",
+          "name": { "en": "AI & Agent Security", "pt": "Segurança de IA e Agentes" },
+          "frameworkRefs": ["OWASP Top 10 for LLM Applications 2025"]
+        },
+        {
+          "slug": "security/threat-modeling",
+          "name": { "en": "Threat Modeling", "pt": "Modelagem de Ameaças" },
+          "frameworkRefs": ["OWASP SAMM"]
+        },
+        {
+          "slug": "security/general",
+          "name": { "en": "General / Other", "pt": "Geral / Outros" }
+        }
+      ]
+    },
+    {
+      "slug": "coding-software",
+      "name": { "en": "Coding & Software", "pt": "Programação e Software" },
+      "children": [
+        { "slug": "coding-software/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "devops-infra",
+      "name": { "en": "DevOps & Infrastructure", "pt": "DevOps e Infraestrutura" },
+      "children": [
+        { "slug": "devops-infra/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "data-analytics",
+      "name": { "en": "Data & Analytics", "pt": "Dados e Analytics" },
+      "children": [
+        { "slug": "data-analytics/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "ai-agent-eng",
+      "name": { "en": "AI & Agent Engineering", "pt": "Engenharia de IA e Agentes" },
+      "children": [
+        { "slug": "ai-agent-eng/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "docs-formats",
+      "name": { "en": "Documents & Formats", "pt": "Documentos e Formatos" },
+      "children": [
+        { "slug": "docs-formats/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "writing-docs",
+      "name": { "en": "Writing & Documentation", "pt": "Escrita e Documentação" },
+      "children": [
+        { "slug": "writing-docs/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "research-knowledge",
+      "name": { "en": "Research & Knowledge", "pt": "Pesquisa e Conhecimento" },
+      "children": [
+        { "slug": "research-knowledge/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "design-creative",
+      "name": { "en": "Design & Creative", "pt": "Design e Criação" },
+      "children": [
+        { "slug": "design-creative/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "business-product",
+      "name": { "en": "Business & Product", "pt": "Negócios e Produto" },
+      "children": [
+        { "slug": "business-product/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "productivity",
+      "name": { "en": "Productivity", "pt": "Produtividade" },
+      "children": [
+        { "slug": "productivity/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "agent-authoring",
+      "name": { "en": "Agent Authoring", "pt": "Criação de Agentes" },
+      "children": [
+        { "slug": "agent-authoring/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    },
+    {
+      "slug": "vertical-domain",
+      "name": { "en": "Vertical Domains", "pt": "Domínios Verticais" },
+      "children": [
+        { "slug": "vertical-domain/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
+      ]
+    }
+  ],
+  "protected": ["CI/CD", "Kubernetes", "Supply Chain", "IaC", "SBOM", "SLSA", "OWASP", "MCP", "DAST", "SAST", "IAM"],
+  "aliases": {
+    "grc": "compliance-grc",
+    "k8s": "containers-kubernetes",
+    "appsec": "code-application",
+    "cspm": "cloud-permissions",
+    "ciem": "cloud-permissions",
+    "posture": "cloud-permissions",
+    "ir": "detection-forensics",
+    "siem": "detection-forensics",
+    "sca": "supply-chain"
+  },
+  "minimumMass": 5
+}
