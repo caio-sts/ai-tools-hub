@@ -241,3 +241,32 @@
   --color-hazard: oklch(0.762 0.168 58);
   --destructive: oklch(0.681 0.188 25);
 }
+
+/* ---------------------------------------------------------------------------
+   Motion (§9.1). Three durations, one curve. State changes are 90ms so they
+   read as instant; entering elements get 150ms; overlays get 220ms because
+   they move further. Anything that wants a fourth duration is a design bug.
+   --------------------------------------------------------------------------- */
+:root {
+  --motion-state: 90ms;
+  --motion-enter: 150ms;
+  --motion-overlay: 220ms;
+  --motion-ease: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-state: 0ms;
+    --motion-enter: 0ms;
+    --motion-overlay: 0ms;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}
