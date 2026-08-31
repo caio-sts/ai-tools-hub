@@ -96,8 +96,10 @@ export function sortValues(skill: Skill, collection: Collection | null): SortVal
   const iso = typeof skill.indexedAt === 'string' ? skill.indexedAt.slice(0, 10) : '';
   const newest = /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.replace(/-/g, '') : '00000000';
   return {
-    // Pagefind sorts this as a string and has no second key, so the tie-break lives inside it.
-    // updatedDays is inverted, because the whole value is sorted descending and fresher must win.
+    // Pagefind sorts this as a string and has no second key, so score and freshness are folded
+    // into one value; updatedDays is inverted because the whole value sorts descending and fresher
+    // must win. Entries level on BOTH fall to Pagefind's own order, which this cannot reach — the
+    // third term of compareForRank orders the stored catalog, not the rendered one.
     score: `${pad(skill.score, 3)}${pad(MAX_UPDATED_DAYS - Math.min(skill.updatedDays, MAX_UPDATED_DAYS), 5)}`,
     stars: pad(collection?.stars ?? 0, 9),
     forks: pad(collection?.forks ?? 0, 9),

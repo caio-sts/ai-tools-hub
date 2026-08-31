@@ -15,7 +15,9 @@ export const EVICT_RANK = 72;
  * reshuffled on every re-crawl for no reason a reader could see.
  *
  * updatedDays is the signal the maintenance term has already rounded into buckets, so it separates
- * entries the score cannot; name is the last resort because it survives a re-crawl and an id does not.
+ * entries the score cannot; name is the last resort because it survives a re-crawl and an id does
+ * not. Name orders the STORED catalog — the browser's residual order for entries level on both
+ * score and freshness belongs to Pagefind, which takes one string key and no second one.
  */
 export function compareForRank(a: Skill, b: Skill): number {
   return b.score - a.score || a.updatedDays - b.updatedDays || a.name.localeCompare(b.name);

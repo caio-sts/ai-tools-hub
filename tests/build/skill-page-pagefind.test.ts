@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { sortValues } from '../../src/lib/facets.ts';
 import { loadCollections, loadSkills } from '../../src/lib/data.ts';
 import { pageFor } from '../helpers/skill-card.ts';
 
@@ -76,16 +77,17 @@ describe('the Pagefind index block', () => {
     }
   });
 
-  it('zero-pads every sort value so Pagefind string order matches numeric order', () => {
+  // Restating the padding rules here made this the THIRD copy of them — the page had its own, the
+  // library had its own, and they drifted silently. Compare against the one definition instead, so
+  // this fails the moment the emitted block stops matching it.
+  it('emits exactly the sort values sortValues() defines', () => {
     for (const skill of LISTED) {
       const sorts = new Map(pairs(pageFor('en', skill), 'sort'));
       expect([...sorts.keys()]).toEqual(SORT_KEYS);
-      const collection = BY_REPO.get(skill.repo);
-      expect(sorts.get('score')).toBe(String(skill.score).padStart(3, '0'));
-      expect(sorts.get('stars')).toBe(String(collection?.stars ?? 0).padStart(9, '0'));
-      expect(sorts.get('forks')).toBe(String(collection?.forks ?? 0).padStart(9, '0'));
-      expect(sorts.get('newest')).toBe(skill.indexedAt.slice(0, 10).replace(/-/g, ''));
-      expect(sorts.get('updated')).toBe(String(skill.updatedDays).padStart(6, '0'));
+      const expected = sortValues(skill, BY_REPO.get(skill.repo) ?? null);
+      for (const key of SORT_KEYS) {
+        expect(sorts.get(key), `${skill.name}: ${key}`).toBe(expected[key as keyof typeof expected]);
+      }
     }
   });
 

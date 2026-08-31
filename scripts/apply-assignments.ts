@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url';
 import { loadAssignments, loadCollections, loadMeta, loadSkills } from '../src/lib/data.ts';
 import { applyClassification, assignmentsByIdentity, writeCatalog, writeMeta } from './harvest/run.ts';
 import { UNCLASSIFIED_PRIMARY } from './harvest/run.ts';
-import { applyListing } from '../src/lib/rank.ts';
+import { applyListing, compareForRank } from '../src/lib/rank.ts';
 import { loadTaxonomy } from '../src/lib/taxonomy.ts';
 
 export interface ApplyResult {
@@ -25,7 +25,11 @@ export async function applyAssignmentsToCatalog(dataDir: string, classifiedAt: s
   // that no longer exists. The first pass split one over-cap group into twenty leaves, none near
   // the cap, and 41 entries would have stayed evicted from the catalog, facets and search index.
   const previouslyListed = new Set(stored.filter((skill) => skill.listed).map((skill) => skill.id));
-  const skills = applyListing(classified, previouslyListed, loadTaxonomy().minimumMass);
+  // Same order the harvest writes, so the committed file is deterministic and its diffs are
+  // reviewable. It does NOT decide what the browser shows for entries sharing a score AND a
+  // freshness: measured in a browser, Pagefind's residual tie order is its own, not index order.
+  const ranked = [...classified].sort(compareForRank);
+  const skills = applyListing(ranked, previouslyListed, loadTaxonomy().minimumMass);
   const unclassified = skills.filter((skill) => skill.primary === UNCLASSIFIED_PRIMARY).length;
 
   await writeCatalog(dataDir, { skills, collections: loadCollections(dataDir) });

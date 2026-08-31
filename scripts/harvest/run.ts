@@ -552,13 +552,12 @@ export function validateCatalog(skills: Skill[], collections: Collection[], meta
     if (count > EVICT_RANK) add(primary, 'more listed entries than the subdomain cap allows');
   }
 
+  // The stored order IS the display order for entries Pagefind cannot separate: it sorts one key
+  // as a string, has no second one, and falls back to index order, which is the order of this file.
   for (let i = 1; i < skills.length; i += 1) {
     const previous = skills[i - 1]!;
     const current = skills[i]!;
-    if (previous.score < current.score) add(current.id, 'not sorted by score descending');
-    else if (previous.score === current.score && previous.id.localeCompare(current.id) > 0) {
-      add(current.id, 'ties not sorted by id');
-    }
+    if (compareForRank(previous, current) > 0) add(current.id, 'not in ranking order');
   }
 
   if (meta.skillCount !== skills.length) add('meta', 'meta.skillCount does not match the catalog');
