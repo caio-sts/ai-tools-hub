@@ -1,4 +1,5 @@
 import type { TreeFile } from '../../src/types.ts';
+import { isRepoInternal } from '../../src/lib/inclusion.ts';
 import type { FetchLike } from './discover.ts';
 
 const API = 'https://api.github.com';
@@ -82,4 +83,20 @@ export function dedupeByBlobSha(files: TreeFile[]): TreeFile[] {
     out.push(file);
   }
   return out;
+}
+
+/**
+ * Tree entries to real, distributable skills. `isRepoInternal` is the inclusion filter's own
+ * rule (spec 6.4), imported rather than restated. Dedupe runs LAST so an internal copy sharing
+ * a blob with a real skill can never win the slot.
+ */
+export function filterSkillFiles(files: TreeFile[]): TreeFile[] {
+  const kept = files.filter(
+    (file) =>
+      file.type === 'blob' &&
+      !isSymlink(file) &&
+      isSkillPath(file.path) &&
+      !isRepoInternal(file.path),
+  );
+  return dedupeByBlobSha(kept);
 }
