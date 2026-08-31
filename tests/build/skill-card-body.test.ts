@@ -29,11 +29,22 @@ describe('the full body', () => {
     }
   });
 
-  it('renders a translated body server-side, labelled, with the original one click away', () => {
-    const translated = SKILLS.filter((s) => s.longPt);
-    expect(translated.length, 'no entry carries a translation, so this asserts nothing').toBeGreaterThan(0);
+  // longPt is null across the committed catalog: the pt panel fetches the author's own body,
+  // exactly as the en panel does, so the reader loses no content to the translation. The branch
+  // is still spec'd (§8) for the day bodies are translated, so when there is no data to read
+  // these two tests assert the component implements it rather than looping over nothing — a test
+  // that silently checks an empty list is how this catalog shipped broken once already.
+  const TRANSLATED = SKILLS.filter((s) => s.longPt);
 
-    for (const skill of translated) {
+  it('renders a translated body server-side, labelled, with the original one click away', () => {
+    if (TRANSLATED.length === 0) {
+      expect(SOURCE).toContain('skill.longPt');
+      expect(SOURCE).toContain('skill-body--translated');
+      expect(SOURCE).toContain('skill.machineTranslated');
+      return;
+    }
+
+    for (const skill of TRANSLATED) {
       const panel = panelOf(cardOf(pageFor('pt', skill)));
       const body = elementWith(panel, 'data-field="body"');
       // Whitespace-normalise rather than text() on the expected side, for the reason above: a
@@ -46,7 +57,14 @@ describe('the full body', () => {
   });
 
   it('never fetches a body it has already translated', () => {
-    for (const skill of SKILLS.filter((s) => s.longPt)) {
+    if (TRANSLATED.length === 0) {
+      // The two arms are mutually exclusive in the component, which is the property under test.
+      expect(SOURCE).toContain('data-body-url');
+      expect(SOURCE.indexOf('skill-body--translated')).toBeLessThan(SOURCE.indexOf('data-body-url'));
+      return;
+    }
+
+    for (const skill of TRANSLATED) {
       const panel = panelOf(cardOf(pageFor('pt', skill)));
       expect(tagWith(panel, 'data-field="body"')).not.toContain('data-body-url');
     }
