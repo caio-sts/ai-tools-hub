@@ -177,5 +177,5 @@
     "siem": "detection-forensics",
     "sca": "supply-chain"
   },
-  "minimumMass": 5
+  "minimumMass": 4
 }

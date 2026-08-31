@@ -5,7 +5,7 @@ describe('loadTaxonomy', () => {
   it('reads the committed taxonomy regardless of cwd', () => {
     const tax = loadTaxonomy();
     expect(tax.domains).toHaveLength(13);
-    expect(tax.minimumMass).toBe(5);
+    expect(tax.minimumMass).toBe(4);
   });
 
   it('caches, returning the same object on a second call', () => {
