@@ -1,4 +1,5 @@
 import { mkdir, writeFile } from 'node:fs/promises';
+import { pathToFileURL } from 'node:url';
 import { join } from 'node:path';
 import type {
   Assignment,
@@ -331,4 +332,51 @@ export async function runHarvest(
   await writeMeta(dataDir, meta);
 
   return { skills: listed, collections, meta };
+}
+
+export function parseArgs(argv: string[]): { allowlist: string[] | null; dataDir: string } {
+  let allowlist: string[] | null = null;
+  let dataDir = 'data';
+
+  for (const arg of argv) {
+    if (arg.startsWith('--allowlist=')) {
+      allowlist = arg
+        .slice('--allowlist='.length)
+        .split(',')
+        .map((entry) => entry.trim())
+        .filter((entry) => entry !== '');
+    } else if (arg.startsWith('--data-dir=')) {
+      dataDir = arg.slice('--data-dir='.length);
+    }
+  }
+
+  return { allowlist, dataDir };
+}
+
+export async function main(argv: string[], env: Record<string, string | undefined>): Promise<number> {
+  const token = env['CATALOG_PAT'] ?? '';
+  if (token === '') {
+    console.error(
+      'CATALOG_PAT is unset or empty. A fine-grained PAT with public-repo read is mandatory: ' +
+        'GITHUB_TOKEN is repo-scoped and cannot perform global search (spec §6.2).',
+    );
+    return 1;
+  }
+
+  const { allowlist, dataDir } = parseArgs(argv);
+  const { meta } = await runHarvest({ token, dataDir, allowlist });
+  console.log(`harvest: ${meta.skillCount} skills from ${meta.sourceCount} sources at ${meta.crawledAt}`);
+  return 0;
+}
+
+const invokedPath = process.argv[1];
+if (invokedPath !== undefined && import.meta.url === pathToFileURL(invokedPath).href) {
+  main(process.argv.slice(2), process.env)
+    .then((code) => {
+      process.exitCode = code;
+    })
+    .catch((error: unknown) => {
+      console.error(error);
+      process.exitCode = 1;
+    });
 }

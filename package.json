@@ -14,6 +14,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "typecheck": "tsc --noEmit",
+    "harvest": "node scripts/harvest/run.ts",
     "validate": "node scripts/validate-taxonomy.ts"
   },
   "devDependencies": {
