@@ -2,6 +2,7 @@
 import type { Lang } from '../../types.ts';
 import Layout from '../../components/Layout.astro';
 import FacetRail from '../../components/FacetRail.astro';
+import SearchBox from '../../components/SearchBox.astro';
 import SkillCard from '../../components/SkillCard.astro';
 import {
   DEFAULT_SORT,
@@ -56,6 +57,7 @@ const config = {
     <script type="application/json" id="catalog-config" set:html={JSON.stringify(config)}></script>
     <h1>{t('catalog.title', lang)}</h1>
     <p>{t('catalog.intro', lang)}</p>
+    <SearchBox lang={lang} action={catalogPath} />
     <nav class="catalog-sorts" aria-label={t('catalog.sortBy', lang)}>
       {SORT_KEYS.map((key) => (
         <a
@@ -96,7 +98,7 @@ const config = {
     </div>
   </div>
 </Layout>
-<noscript><style>[data-catalog-item][hidden]{display:flex!important}[data-pagination]{display:none}</style></noscript>
+<noscript><style>[data-catalog-search]{display:none}[data-catalog-item][hidden]{display:flex!important}[data-pagination]{display:none}</style></noscript>
 <style is:global>
   .catalog-sorts { display: flex; gap: 1px; margin: 1rem 0; }
   .catalog-sort {

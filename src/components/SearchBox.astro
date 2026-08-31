@@ -1,0 +1,81 @@
+---
+// The site's only text input. It ships the combobox contract already wired: B5 attaches keyboard
+// behaviour, the rescue index and the announcements to this markup and creates no second input,
+// because the catalog controller's listeners are document-scoped and a duplicate would steal them.
+import type { Lang } from '../types.ts';
+import { t } from '../lib/i18n/index.ts';
+
+interface Props {
+  lang: Lang;
+  /** Where the form posts with JavaScript off — the catalog route for this locale. */
+  action: string;
+}
+
+const { lang, action } = Astro.props;
+---
+<form class="catalog-search" data-catalog-search method="get" action={action} role="search">
+  <label class="catalog-search__label" for="catalog-q">{t('catalog.search.label', lang)}</label>
+  <div class="catalog-search__row">
+    <input
+      class="catalog-search__input"
+      data-search-input
+      id="catalog-q"
+      type="search"
+      name="q"
+      value=""
+      autocomplete="off"
+      placeholder={t('catalog.search.placeholder', lang)}
+      role="combobox"
+      aria-expanded="false"
+      aria-controls="catalog-suggestions"
+      aria-autocomplete="list"
+    />
+    <button class="catalog-search__clear" data-search-clear type="button" aria-label={t('catalog.search.clear', lang)}>&#215;</button>
+    <button class="catalog-search__submit" type="submit">{t('catalog.search.submit', lang)}</button>
+  </div>
+  <ul class="catalog-search__suggestions" id="catalog-suggestions" role="listbox" aria-label={t('catalog.search.suggestions', lang)}></ul>
+</form>
+<style is:global>
+  .catalog-search { display: flex; flex-direction: column; gap: 0.25rem; margin: 1rem 0 0; }
+  .catalog-search__label { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .catalog-search__row { display: flex; gap: 1px; max-width: 34rem; }
+  .catalog-search__input {
+    flex: 1 1 auto;
+    min-height: 40px;
+    min-width: 24px;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border, #333);
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+  .catalog-search__clear {
+    min-height: 24px;
+    min-width: 24px;
+    padding: 0 0.75rem;
+    border: 1px solid var(--border, #333);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+  }
+  .catalog-search__submit {
+    min-height: 40px;
+    min-width: 24px;
+    padding: 0 1rem;
+    border: 1px solid var(--border, #333);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+  }
+  .catalog-search__suggestions {
+    list-style: none;
+    margin: 0.25rem 0 0;
+    padding: 0;
+    max-width: 34rem;
+    border: 1px solid var(--border, #333);
+  }
+  /* No suggestions yet is not an empty box: B5 fills this list, and until then it has no chrome. */
+  .catalog-search__suggestions:empty { display: none; border: 0; }
+</style>
