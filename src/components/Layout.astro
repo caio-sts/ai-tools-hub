@@ -19,6 +19,8 @@ interface Props {
 const { lang, title, description, path } = Astro.props;
 const here = path ?? pathBelowLocale(Astro.url.pathname, import.meta.env.BASE_URL);
 const htmlLang = lang === 'pt' ? 'pt-BR' : 'en';
+/** localStorage key holding an explicit light/dark choice; absent means follow the system. */
+const THEME_STORAGE_KEY = 'aith:theme';
 ---
 <html lang={htmlLang}>
   <head>
@@ -36,6 +38,16 @@ const htmlLang = lang === 'pt' ? 'pt-BR' : 'en';
         />
       ))
     }
+    <script is:inline define:vars={{ storageKey: THEME_STORAGE_KEY }}>
+      try {
+        var stored = window.localStorage.getItem(storageKey);
+        if (stored === 'light' || stored === 'dark') {
+          document.documentElement.setAttribute('data-theme', stored);
+        }
+      } catch (error) {
+        /* storage blocked — prefers-color-scheme still decides */
+      }
+    </script>
     <slot name="head" />
   </head>
   <body class="bg-background text-foreground">
@@ -60,6 +72,19 @@ const htmlLang = lang === 'pt' ? 'pt-BR' : 'en';
           ))
         }
       </nav>
+      <div class="theme-control" role="group" aria-label={t('theme.label', lang)} data-theme-control>
+        {
+          (['system', 'light', 'dark'] as const).map((mode) => (
+            <button
+              type="button"
+              data-theme-option={mode}
+              aria-pressed={mode === 'system' ? 'true' : 'false'}
+            >
+              {t(`theme.${mode}`, lang)}
+            </button>
+          ))
+        }
+      </div>
     </header>
     <main id="results">
       <slot />
@@ -81,6 +106,42 @@ const htmlLang = lang === 'pt' ? 'pt-BR' : 'en';
           }
         });
       });
+    </script>
+    <script is:inline define:vars={{ storageKey: THEME_STORAGE_KEY }}>
+      (function () {
+        var root = document.documentElement;
+        var group = document.querySelector('[data-theme-control]');
+        if (!group) return;
+
+        function paint(mode) {
+          if (mode === 'light' || mode === 'dark') root.setAttribute('data-theme', mode);
+          else root.removeAttribute('data-theme');
+          group.querySelectorAll('[data-theme-option]').forEach(function (button) {
+            button.setAttribute('aria-pressed', String(button.dataset.themeOption === mode));
+          });
+        }
+
+        group.addEventListener('click', function (event) {
+          var button = event.target.closest('[data-theme-option]');
+          if (!button) return;
+          var mode = button.dataset.themeOption;
+          try {
+            if (mode === 'system') window.localStorage.removeItem(storageKey);
+            else window.localStorage.setItem(storageKey, mode);
+          } catch (error) {
+            /* storage blocked — the choice still applies for this page view */
+          }
+          paint(mode);
+        });
+
+        var current = 'system';
+        try {
+          current = window.localStorage.getItem(storageKey) || 'system';
+        } catch (error) {
+          /* storage blocked — fall back to following the system */
+        }
+        paint(current);
+      })();
     </script>
   </body>
 </html>
