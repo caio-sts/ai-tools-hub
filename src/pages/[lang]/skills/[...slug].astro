@@ -130,11 +130,27 @@ const indexText = [
   .crumbs {
     display: flex;
     flex-wrap: wrap;
+    align-items: center;
     gap: 0.5rem;
+    margin: 0 1rem;
+    padding: 1.25rem 0 0.875rem;
     font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--color-n-11);
+    font-size: var(--text-xs);
+    color: var(--color-n-9);
   }
-  .crumbs__home { color: var(--color-a-9); }
-  .detail { max-width: 44rem; }
+  /* A separator drawn by CSS, not typed into the markup: the trail has to read as a trail for
+     someone scanning it, and as three plain items for a screen reader. */
+  .crumbs > * + *::before {
+    content: '/';
+    margin-right: 0.5rem;
+    color: var(--color-n-8);
+  }
+  .crumbs__home {
+    color: var(--color-a-11);
+    min-height: 24px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .crumbs__home:hover { color: var(--color-a-9); }
+  .detail { max-width: 52rem; margin: 0 1rem 4rem; }
 </style>
