@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import tailwindcss from '@tailwindcss/vite';
 import sitemap from '@astrojs/sitemap';
+import pagefind from 'astro-pagefind';
 
 // The one base-path literal in this repository. Everything that needs the base
 // path imports BASE from here — including vitest.config.ts and, later, Pagefind.
@@ -15,5 +16,5 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   vite: { plugins: [tailwindcss()] },
-  integrations: [sitemap()],
+  integrations: [sitemap(), pagefind()],
 });

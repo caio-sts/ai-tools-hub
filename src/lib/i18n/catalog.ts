@@ -1,3 +1,5 @@
+import type { Lang } from '../../types.ts';
+
 // Catalog chrome, hand-written in both locales (spec §8). Owned by B3; B1 merges this namespace
 // into src/lib/i18n/index.ts and exports t(). Keys are prefixed "catalog." so the merge is flat
 // and collision-free.
@@ -90,4 +92,8 @@ const pt: Record<keyof typeof en, string> = {
   'catalog.search.suggestions': 'Sugestões de busca',
 };
 
-export default { en, pt };
+// Annotated like core.ts and home.ts: the `pt` annotation above still makes a missing or extra
+// Portuguese key a compile error, while consumers may index by a plain string key.
+const catalog: Record<Lang, Record<string, string>> = { en, pt };
+
+export default catalog;
