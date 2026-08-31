@@ -14,3 +14,27 @@
 @theme static {
   --color-*: initial;
 }
+
+/* ---------------------------------------------------------------------------
+   Neutral ramp — Radix step roles (§9.1):
+     1-2  app background        6  subtle border        9-10  solid / hover
+     3    component bg          7  interactive border   11    low-contrast text
+     4    hover                 8  focus ring           12    high-contrast text
+     5    pressed / selected
+   Light values live on bare :root; the dark counterparts are in the theming
+   block further down this file.
+   --------------------------------------------------------------------------- */
+@theme static {
+  --color-n-1: oklch(0.991 0.002 250);
+  --color-n-2: oklch(0.979 0.003 250);
+  --color-n-3: oklch(0.951 0.005 250);
+  --color-n-4: oklch(0.925 0.006 250);
+  --color-n-5: oklch(0.901 0.007 250);
+  --color-n-6: oklch(0.871 0.008 250);
+  --color-n-7: oklch(0.830 0.010 250);
+  --color-n-8: oklch(0.762 0.013 250);
+  --color-n-9: oklch(0.606 0.016 250);
+  --color-n-10: oklch(0.571 0.016 250);
+  --color-n-11: oklch(0.494 0.015 250);
+  --color-n-12: oklch(0.234 0.012 250);
+}
