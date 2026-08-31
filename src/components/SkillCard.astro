@@ -4,7 +4,7 @@ import strings, { type SkillKey } from '../lib/i18n/skill.ts';
 import SafetyStrip from './SafetyStrip.astro';
 import { STALE_DAYS, compactNumber, relativeDays } from '../lib/format.ts';
 import { nodeName } from '../lib/taxonomy.ts';
-import { officialFileUrl, skillHref } from '../lib/slug.ts';
+import { officialFileUrl, rawFileUrl, skillHref } from '../lib/slug.ts';
 import { withBase } from '../lib/link.ts';
 
 interface Props {
@@ -42,6 +42,8 @@ const stars = collection ? compactNumber(collection.stars, lang) : '—';
 const forks = collection ? compactNumber(collection.forks, lang) : '—';
 const showCategory = filteredCategory !== skill.primary;
 const installCommand = `npx skills add ${skill.repo}`;
+/** §8: our translation is served from the build; the author's own body is fetched (§6.1). */
+const translatedBody = lang === 'pt' ? skill.longPt : null;
 
 /** §5: each term against its own maximum, never against 100. */
 const bars = [
@@ -81,6 +83,20 @@ const bars = [
     )}
   </summary>
   <div class="skill-card__panel">
+    {translatedBody ? (
+      <div class="skill-body skill-body--translated" data-field="body">
+        <p class="skill-body__text">{translatedBody}</p>
+        <p class="skill-body__mt">
+          {L('skill.machineTranslated')}{' '}
+          <a class="skill-body__original" href={officialFileUrl(skill)} rel="noopener noreferrer" target="_blank">{L('skill.seeOriginal')} &#8599;</a>
+        </p>
+      </div>
+    ) : (
+      <div class="skill-body" data-field="body" data-body-url={rawFileUrl(skill)} data-body-error={L('skill.bodyUnavailable')}>
+        <p class="skill-body__text">{skill.description}</p>
+        <p class="skill-body__note">{L('skill.bodySource')}</p>
+      </div>
+    )}
     <ul class="score-bars" data-field="score-bars" aria-label={L('skill.scoreBreakdown')}>
       {bars.map((bar) => (
         <li class="score-bar" data-part={bar.part}>
@@ -154,6 +170,23 @@ const bars = [
   }
   .meta__repo { color: var(--color-n-12); }
   .meta__updated--stale { color: var(--color-hazard); }
+  .skill-body {
+    margin: 0 0 0.75rem;
+    color: var(--color-n-12);
+    font-size: 0.85rem;
+  }
+  .skill-body__text {
+    margin: 0 0 0.4rem;
+    white-space: pre-wrap;
+  }
+  .skill-body__mt,
+  .skill-body__note {
+    margin: 0;
+    color: var(--color-n-11);
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+  }
+  .skill-body__original { color: var(--color-a-9); }
   .score-bars {
     margin: 0 0 0.5rem;
     padding: 0;
@@ -289,6 +322,27 @@ const bars = [
 <script>
   const listUrl = window.location.pathname + window.location.search;
 
+  /** Untrusted third-party text: it reaches the DOM through textContent, never as HTML. */
+  async function loadBody(card) {
+    const holder = card.querySelector('.skill-body[data-body-url]');
+    if (!(holder instanceof HTMLElement) || holder.dataset.bodyState) return;
+    holder.dataset.bodyState = 'loading';
+    const target = holder.querySelector('.skill-body__text');
+    const note = holder.querySelector('.skill-body__note');
+    try {
+      const response = await fetch(holder.dataset.bodyUrl ?? '', { credentials: 'omit' });
+      if (!response.ok) throw new Error(String(response.status));
+      const raw = await response.text();
+      const body = raw.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '').trim();
+      if (target && body) target.textContent = body;
+      holder.dataset.bodyState = 'loaded';
+      if (note) note.remove();
+    } catch {
+      holder.dataset.bodyState = 'error';
+      if (note) note.textContent = holder.dataset.bodyError ?? '';
+    }
+  }
+
   document.addEventListener(
     'toggle',
     (event) => {
@@ -296,6 +350,7 @@ const bars = [
       if (!(card instanceof HTMLElement) || !card.classList.contains('skill-card')) return;
 
       if (card.hasAttribute('open')) {
+        void loadBody(card);
         for (const other of document.querySelectorAll('.skill-card[open]')) {
           if (other !== card) other.removeAttribute('open');
         }
@@ -326,4 +381,7 @@ const bars = [
       }, 1200);
     });
   });
+
+  // A per-skill page arrives with its card already open, so no toggle ever fires.
+  for (const open of document.querySelectorAll('.skill-card[open]')) void loadBody(open);
 </script>
