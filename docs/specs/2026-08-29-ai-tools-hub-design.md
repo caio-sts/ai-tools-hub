@@ -690,16 +690,35 @@ a skills directory — were dissolved rather than answered: per §1.0 the projec
 maintainer, so neither question gates anything. They would return the day the project wants an
 audience.
 
-Remaining judgment calls, all safe to settle during implementation:
-
-1. **Minimum-mass threshold.** Set at 5 (§10.1) on reasoning, not measurement. Revisit once the
-   real distribution of entries per subdomain is known.
-2. **Score weights.** 25/30/25/20 is defensible but unvalidated against a real corpus; the first
-   full harvest is the moment to sanity-check that the ranking matches the maintainer's own
-   judgment of the top 20.
 **Resolved 2026-08-29:** translation runs on the maintainer's Claude Code subscription rather than
 a metered API key, so there is no budget to cap (§6.1, §8); and there is **no** editorial override —
 order is the formula alone (§5).
+
+**Resolved 2026-08-31, against the first full corpus of 101 entries.** Both remaining judgment
+calls are settled, and this section is closed.
+
+1. **Minimum-mass threshold: 5 → 4.** Five was set on reasoning and the measured distribution shows
+   it cutting through the densest part of the data: of 22 occupied leaves, nine sit at 4 or 5, so a
+   single entry decided navigability for six of them. The gap in the distribution is between 3 and
+   4 — fourteen leaves hold four or more, then it drops to one at 3, one at 2 and six at 1. At four:
+   fourteen active, eight thin, five empty.
+
+2. **Score weights: unchanged at 25/30/25/20**, and the measurement is the argument rather than a
+   shrug. Three of the four terms barely vary across this corpus — adoption takes 2 distinct values,
+   provenance 2, completeness 3, while maintenance takes 17 — so seventy of the hundred points do
+   almost no discriminating, and twelve entries tie at 92 on the identical component vector.
+   **Reweighting cannot separate identical vectors**, so the ties are not a weighting error: they
+   are a curated three-source catalog being homogeneous, which is what curation is for. The
+   maintainer reviewed the resulting top 20 on 2026-08-31 and accepted the order.
+
+   What the measurement did expose was a real defect, since fixed: ties broke on the id, and an id
+   embeds the commit its content was read at, so rank 5 through 16 was ordered by the hexadecimal
+   prefix of a sha and reshuffled on every re-crawl. The order is now score, then `updatedDays`,
+   then name — the third term ordering the stored catalog, since Pagefind takes one string key and
+   no second one, and decides the rest itself.
+
+   Revisit if a fourth source lands: the homogeneity argument holds only while the corpus is this
+   uniform, and a genuinely different publisher would be the moment to re-measure the spread.
 
 ---
 
