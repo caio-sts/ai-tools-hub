@@ -241,6 +241,27 @@ export function checkReferentialIntegrity(tax: Taxonomy, assignments: Assignment
   return { name: '6 referential integrity', ok: errors.length === 0, errors };
 }
 
+export function protectedTermPattern(term: string): RegExp {
+  const escaped = term.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+  return new RegExp(`(?<![A-Za-z0-9])${escaped}(?![A-Za-z0-9])`, 'i');
+}
+
+export function checkProtectedParity(tax: Taxonomy): CheckResult {
+  const errors: string[] = [];
+  const patterns = tax.protected.map((term) => ({ term, re: protectedTermPattern(term) }));
+  for (const node of flattenTaxonomy(tax)) {
+    for (const { term, re } of patterns) {
+      const inEn = re.test(node.name.en);
+      const inPt = re.test(node.name.pt);
+      if (inEn === inPt) continue;
+      const present = inEn ? 'en' : 'pt';
+      const missing = inEn ? 'pt' : 'en';
+      errors.push(`node "${node.slug}": protected term "${term}" is in ${present} ("${node.name[present]}") but not in ${missing} ("${node.name[missing]}")`);
+    }
+  }
+  return { name: '7 protected-term parity', ok: errors.length === 0, errors };
+}
+
 export function runAllChecks(tax: Taxonomy, assignments: AssignmentMap): CheckResult[] {
   return [
     checkMinimumMass(tax),
@@ -249,6 +270,7 @@ export function runAllChecks(tax: Taxonomy, assignments: AssignmentMap): CheckRe
     checkAliasMap(tax),
     checkSlugStability(tax),
     checkReferentialIntegrity(tax, assignments),
+    checkProtectedParity(tax),
   ];
 }
 
