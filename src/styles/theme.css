@@ -24,20 +24,37 @@
      5    pressed / selected
    Light values live on bare :root; the dark counterparts are in the theming
    block further down this file.
+
+   LIGHT IS NOT THE DARK RAMP INVERTED. It is a datasheet: warm paper at step 1,
+   the card face in pure white at step 2, structure carried by rules. Step 2
+   therefore sits ABOVE step 1 in lightness, departing from the Radix light
+   convention where step 2 is a subtly darker background. That convention made
+   light the only theme where a card SANK into the page — dark has always had
+   the card rise — which is why panels had no presence in light at all. Both
+   themes now hold one rule: the card rises from the page.
+
+   Chroma is warm (hue 85) through the paper steps and tapers to near zero at
+   the ink end, which is how print actually reads: warm stock, neutral black.
+
+   The jump from step 6 to step 7 is deliberate and is the one place this ramp
+   is not smooth. Step 6 is a decorative rule; step 7 is --input, the boundary
+   that identifies a control, so it has to clear WCAG 1.4.11's 3:1 against the
+   card. Radix's own step 7 does not. tests/styles/contrast-ratios.test.ts holds
+   every one of these ratios, in both themes.
    --------------------------------------------------------------------------- */
 @theme static {
-  --color-n-1: oklch(0.991 0.002 250);
-  --color-n-2: oklch(0.979 0.003 250);
-  --color-n-3: oklch(0.951 0.005 250);
-  --color-n-4: oklch(0.925 0.006 250);
-  --color-n-5: oklch(0.901 0.007 250);
-  --color-n-6: oklch(0.871 0.008 250);
-  --color-n-7: oklch(0.830 0.010 250);
-  --color-n-8: oklch(0.762 0.013 250);
-  --color-n-9: oklch(0.606 0.016 250);
-  --color-n-10: oklch(0.571 0.016 250);
-  --color-n-11: oklch(0.494 0.015 250);
-  --color-n-12: oklch(0.234 0.012 250);
+  --color-n-1: oklch(0.972 0.004 85);
+  --color-n-2: oklch(1 0 0);
+  --color-n-3: oklch(0.945 0.005 85);
+  --color-n-4: oklch(0.918 0.006 85);
+  --color-n-5: oklch(0.888 0.007 85);
+  --color-n-6: oklch(0.845 0.008 85);
+  --color-n-7: oklch(0.620 0.012 85);
+  --color-n-8: oklch(0.560 0.011 85);
+  --color-n-9: oklch(0.500 0.010 85);
+  --color-n-10: oklch(0.455 0.008 85);
+  --color-n-11: oklch(0.415 0.006 85);
+  --color-n-12: oklch(0.205 0.004 85);
 }
 
 /* ---------------------------------------------------------------------------
@@ -52,10 +69,10 @@
   --color-a-5: oklch(0.880 0.055 195);
   --color-a-6: oklch(0.833 0.066 195);
   --color-a-7: oklch(0.771 0.078 195);
-  --color-a-8: oklch(0.688 0.094 195);
-  --color-a-9: oklch(0.610 0.106 195);
-  --color-a-10: oklch(0.572 0.101 195);
-  --color-a-11: oklch(0.505 0.091 195);
+  --color-a-8: oklch(0.650 0.098 195);
+  --color-a-9: oklch(0.540 0.104 195);
+  --color-a-10: oklch(0.505 0.098 195);
+  --color-a-11: oklch(0.455 0.088 195);
   --color-a-12: oklch(0.290 0.050 195);
 }
 
@@ -73,7 +90,7 @@
    Its dark counterpart is in the theming block further down this file.
    --------------------------------------------------------------------------- */
 :root {
-  --color-hazard: oklch(0.588 0.196 42);
+  --color-hazard: oklch(0.505 0.185 42);
 }
 
 /* ---------------------------------------------------------------------------
@@ -190,7 +207,7 @@
     --color-n-4: oklch(0.283 0.012 250);
     --color-n-5: oklch(0.314 0.013 250);
     --color-n-6: oklch(0.355 0.014 250);
-    --color-n-7: oklch(0.413 0.016 250);
+    --color-n-7: oklch(0.545 0.018 250);
     --color-n-8: oklch(0.498 0.018 250);
     --color-n-9: oklch(0.539 0.018 250);
     --color-n-10: oklch(0.584 0.017 250);
@@ -220,7 +237,7 @@
   --color-n-4: oklch(0.283 0.012 250);
   --color-n-5: oklch(0.314 0.013 250);
   --color-n-6: oklch(0.355 0.014 250);
-  --color-n-7: oklch(0.413 0.016 250);
+  --color-n-7: oklch(0.545 0.018 250);
   --color-n-8: oklch(0.498 0.018 250);
   --color-n-9: oklch(0.539 0.018 250);
   --color-n-10: oklch(0.584 0.017 250);
