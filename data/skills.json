@@ -25,9 +25,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "claude",
+      "anthropic",
+      "api",
+      "sdk",
+      "llm",
+      "reference"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 98,
@@ -65,9 +72,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "research-knowledge/general",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "claude",
+      "learning",
+      "onboarding",
+      "courses"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 97,
@@ -105,9 +119,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "productivity/general"
+    ],
+    "tags": [
+      "critical-thinking",
+      "follow-up",
+      "agent-behaviour"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 97,
@@ -147,9 +167,15 @@
         "Workflow Task Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/threat-modeling"
+    ],
+    "tags": [
+      "audit",
+      "code-review",
+      "invariants"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 93,
@@ -189,9 +215,16 @@
         "Read Grep Glob Bash"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "code-review",
+      "pull-request",
+      "tests",
+      "documentation"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 92,
@@ -231,9 +264,15 @@
         "Read Grep Glob Task"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "code-review",
+      "multi-agent",
+      "audit"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 92,
@@ -273,9 +312,14 @@
         "Workflow AskUserQuestion Bash Read"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "c",
+      "cpp",
+      "memory-safety",
+      "integer-overflow"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 92,
@@ -313,9 +357,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "audit",
+      "readiness",
+      "checklist"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 92,
@@ -353,9 +403,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "smart-contracts",
+      "maturity",
+      "scorecard",
+      "audit"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 92,
@@ -393,9 +450,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contracts",
+      "solidity",
+      "best-practices"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 92,
@@ -433,9 +494,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "smart-contracts",
+      "slither",
+      "workflow"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 92,
@@ -473,9 +540,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contracts",
+      "tokens",
+      "erc20",
+      "integration"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 92,
@@ -513,9 +585,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "agent-authoring/general",
+    "also": [
+      "security/general"
+    ],
+    "tags": [
+      "skills",
+      "generation",
+      "testing-handbook"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 92,
@@ -555,9 +633,16 @@
         "Read Grep Glob Bash Write Task AskUserQuestion mcp__serena__activate_project mcp__serena__find_symbol mcp__serena__find_referencing_symbols mcp__serena__get_symbols_overview"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/data-protection",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "cryptography",
+      "memory",
+      "zeroization",
+      "secrets"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 92,
@@ -595,9 +680,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "github",
+      "gh-cli",
+      "authentication",
+      "api"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 92,
@@ -637,9 +727,13 @@
         "Read Write Grep Glob Bash"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "diff",
+      "code-review",
+      "changes"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 92,
@@ -679,9 +773,14 @@
       "readsEnv": true,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "docs-formats/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "word",
+      "docx",
+      "ooxml",
+      "documents"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 91,
@@ -721,9 +820,16 @@
       "readsEnv": true,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "docs-formats/general",
+    "also": [
+      "design-creative/general"
+    ],
+    "tags": [
+      "powerpoint",
+      "pptx",
+      "ooxml",
+      "slides"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 91,
@@ -763,9 +869,16 @@
       "readsEnv": true,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "docs-formats/general",
+    "also": [
+      "data-analytics/general"
+    ],
+    "tags": [
+      "excel",
+      "xlsx",
+      "spreadsheets",
+      "formulas"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 91,
@@ -807,9 +920,16 @@
         "Bash Read Write"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "productivity/general"
+    ],
+    "tags": [
+      "prompting",
+      "goal-mode",
+      "claude-code",
+      "codex"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 91,
@@ -849,9 +969,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trailmark",
+      "code-graph",
+      "diff"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -889,9 +1013,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trailmark",
+      "code-graph",
+      "binary-analysis"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -929,9 +1057,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "cpp",
+      "c++20",
+      "modernisation",
+      "idioms"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -969,9 +1102,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contracts",
+      "algorand",
+      "scanner"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1009,9 +1146,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contracts",
+      "cairo",
+      "starknet",
+      "scanner"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1049,9 +1191,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contracts",
+      "solana",
+      "scanner"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1089,9 +1235,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contracts",
+      "ton",
+      "scanner"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1131,9 +1281,16 @@
         "Bash Read Glob Grep"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "data-analytics/general"
+    ],
+    "tags": [
+      "sarif",
+      "codeql",
+      "semgrep",
+      "static-analysis"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 91,
@@ -1175,9 +1332,14 @@
         "Bash Read Grep Glob Write"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "business-product/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "hiring",
+      "teams",
+      "assessment",
+      "coaching"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 91,
@@ -1217,9 +1379,13 @@
         "Agent AskUserQuestion SendMessage TaskCreate TaskUpdate TaskList Read Write Bash"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "rust",
+      "unsafe",
+      "memory-safety"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1262,9 +1428,13 @@
         "Bash Read Glob AskUserQuestion TaskCreate TaskList TaskUpdate"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "semgrep",
+      "SAST",
+      "scanning"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1302,9 +1472,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trailmark",
+      "sarif",
+      "audit-findings"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1344,9 +1518,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "writing-docs/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "mermaid",
+      "diagrams",
+      "trailmark",
+      "call-graph"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1384,9 +1565,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "mutation-testing",
+      "trailmark",
+      "test-gaps"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 91,
@@ -1426,9 +1613,13 @@
         "Bash Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trailmark",
+      "code-graph",
+      "structural-analysis"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1468,9 +1659,13 @@
         "Bash Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trailmark",
+      "code-graph",
+      "entry-points"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 91,
@@ -1508,9 +1703,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "cryptography",
+      "test-vectors",
+      "mutation-testing"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 91,
@@ -1552,9 +1751,14 @@
         "Read Write Bash Glob Grep"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/supply-chain",
     "also": [],
-    "tags": [],
+    "tags": [
+      "dependencies",
+      "Supply Chain",
+      "advisories",
+      "typosquatting"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 89,
@@ -1594,9 +1798,14 @@
         "Bash Read Write Edit Glob Grep WebFetch Workflow"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "semgrep",
+      "SAST",
+      "rules",
+      "porting"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 88,
@@ -1636,9 +1845,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/detection-forensics",
     "also": [],
-    "tags": [],
+    "tags": [
+      "yara",
+      "malware",
+      "detection",
+      "rules"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 88,
@@ -1676,9 +1890,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "variant-analysis",
+      "root-cause",
+      "bug-hunting"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 88,
@@ -1718,9 +1936,15 @@
         "Workflow Task Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/compliance-grc"
+    ],
+    "tags": [
+      "specifications",
+      "traceability",
+      "documentation"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 88,
@@ -1758,9 +1982,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "lean4",
+      "formal-verification",
+      "mathlib",
+      "proofs"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 88,
@@ -1802,9 +2031,13 @@
         "Bash Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "productivity/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "planning",
+      "entropy",
+      "decision-making"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 87,
@@ -1842,9 +2075,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "design-creative/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "ui",
+      "frontend",
+      "visual-design",
+      "css"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 86,
@@ -1882,9 +2122,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/compliance-grc"
+    ],
+    "tags": [
+      "triage",
+      "cve",
+      "bug-bounty",
+      "prioritisation"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 86,
@@ -1924,9 +2171,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trailmark",
+      "slicing",
+      "context"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 86,
@@ -1970,9 +2221,13 @@
         "Write"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trailmark",
+      "triage",
+      "sarif"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 86,
@@ -2016,9 +2271,15 @@
         "Write"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/cicd-pipeline",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "trailmark",
+      "review-gate",
+      "pull-request"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 86,
@@ -2062,9 +2323,13 @@
         "Write"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trailmark",
+      "variant-analysis",
+      "code-graph"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 86,
@@ -2104,9 +2369,15 @@
         "Bash Glob Read TaskOutput TaskStop Workflow"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "refactoring",
+      "review-loop",
+      "automation"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2146,9 +2417,15 @@
         "Bash Glob Read TaskOutput TaskStop Workflow"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "pull-request",
+      "review-loop",
+      "automation"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2188,9 +2465,13 @@
         "Bash Glob Read TaskOutput TaskStop Workflow"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "agent-authoring/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "skills",
+      "review-loop",
+      "claude-code"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2228,9 +2509,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "asan",
+      "memory-safety",
+      "c",
+      "cpp"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2268,9 +2556,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "afl",
+      "c",
+      "cpp"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2308,9 +2601,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "python",
+      "libfuzzer"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2348,9 +2645,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "rust",
+      "cargo"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2388,9 +2689,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "cryptography",
+      "side-channel",
+      "dudect",
+      "timing"
+    ],
     "securityRelevant": true,
     "listed": true,
     "score": 83,
@@ -2428,9 +2736,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "fuzzing",
+      "coverage",
+      "llvm-cov"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2468,9 +2782,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "dictionary",
+      "corpus"
+    ],
     "securityRelevant": false,
     "listed": true,
     "score": 83,
@@ -2508,9 +2826,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "checksums",
+      "instrumentation"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 83,
@@ -2548,9 +2870,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "harness",
+      "c",
+      "rust"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 83,
@@ -2588,9 +2915,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "libafl",
+      "rust"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 83,
@@ -2628,9 +2959,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "libfuzzer",
+      "llvm"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 83,
@@ -2668,9 +3003,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "fuzzing",
+      "oss-fuzz",
+      "continuous-fuzzing"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 83,
@@ -2708,9 +3049,12 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fuzzing",
+      "ruby"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 83,
@@ -2748,9 +3092,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "cryptography",
+      "test-vectors",
+      "wycheproof"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 83,
@@ -2790,9 +3138,16 @@
         "Bash({baseDir}/scanner.sh:*) Bash(apktool:*) Bash(curl:*) Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/cloud-permissions",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "firebase",
+      "android",
+      "apk",
+      "misconfiguration"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 83,
@@ -2830,9 +3185,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "testing",
+      "hypothesis",
+      "proptest",
+      "fast-check"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 81,
@@ -2872,9 +3232,13 @@
         "Read Grep Glob LSP Bash Task Write Edit AskUserQuestion TaskCreate TaskUpdate TaskList TaskGet"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "false-positives",
+      "verification",
+      "triage"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 80,
@@ -2914,9 +3278,13 @@
         "Bash Read Write Edit Glob Grep WebFetch"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "semgrep",
+      "SAST",
+      "rules"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 79,
@@ -2956,9 +3324,16 @@
         "Bash Read Glob Grep AskUserQuestion"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "code-review",
+      "llm",
+      "codex",
+      "gemini"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 79,
@@ -2998,9 +3373,14 @@
       "readsEnv": true,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "agent-authoring/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "skills",
+      "authoring",
+      "evaluation",
+      "claude-code"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 78,
@@ -3040,9 +3420,15 @@
         "Bash Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "cryptography",
+      "side-channel",
+      "constant-time"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 78,
@@ -3082,9 +3468,16 @@
         "Read Write Edit Bash Grep Glob WebSearch WebFetch"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "dwarf",
+      "binaries",
+      "debug-info",
+      "elf"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 78,
@@ -3122,9 +3515,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "devops-infra/general"
+    ],
+    "tags": [
+      "MCP",
+      "chrome",
+      "troubleshooting"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 78,
@@ -3164,9 +3563,16 @@
         "Bash Read Grep Agent AskUserQuestion Write"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "productivity/general",
+    "also": [
+      "devops-infra/general"
+    ],
+    "tags": [
+      "github",
+      "issues",
+      "pull-request",
+      "triage"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 77,
@@ -3206,9 +3612,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "docs-formats/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "pdf",
+      "forms",
+      "extraction",
+      "documents"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 76,
@@ -3248,9 +3659,15 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/threat-modeling"
+    ],
+    "tags": [
+      "api-design",
+      "secure-defaults",
+      "footguns"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 75,
@@ -3288,9 +3705,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "devcontainer",
+      "docker",
+      "tooling",
+      "claude-code"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 75,
@@ -3330,9 +3754,16 @@
         "Read Grep Glob Bash"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/cicd-pipeline",
+    "also": [
+      "security/ai-agent-security"
+    ],
+    "tags": [
+      "github-actions",
+      "CI/CD",
+      "prompt-injection",
+      "workflows"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 75,
@@ -3374,9 +3805,14 @@
         "Bash Read"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "burpsuite",
+      "DAST",
+      "web",
+      "proxy"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 75,
@@ -3416,9 +3852,13 @@
         "Read Write Grep List Glob Task TodoRead TodoWrite"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "units",
+      "dimensions",
+      "annotations"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 75,
@@ -3458,9 +3898,15 @@
         "Read Grep Glob Bash"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/threat-modeling"
+    ],
+    "tags": [
+      "smart-contracts",
+      "entry-points",
+      "attack-surface"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 75,
@@ -3500,9 +3946,14 @@
         "Read Write Bash Grep"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "mutation-testing",
+      "mewt",
+      "muton",
+      "test-quality"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 75,
@@ -3540,9 +3991,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "design-creative/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "p5js",
+      "generative-art",
+      "creative-coding"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3580,9 +4035,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "design-creative/general",
+    "also": [
+      "business-product/general"
+    ],
+    "tags": [
+      "branding",
+      "typography",
+      "color"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3620,9 +4081,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "design-creative/general",
+    "also": [
+      "docs-formats/general"
+    ],
+    "tags": [
+      "layout",
+      "poster",
+      "print",
+      "pdf"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3660,9 +4128,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "writing-docs/general",
+    "also": [
+      "business-product/general"
+    ],
+    "tags": [
+      "communication",
+      "memo",
+      "announcements"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3702,9 +4176,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "MCP",
+      "servers",
+      "tools",
+      "integration"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3742,9 +4223,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "design-creative/general",
+    "also": [
+      "productivity/general"
+    ],
+    "tags": [
+      "slack",
+      "gif",
+      "animation"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3782,9 +4269,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "design-creative/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "theming",
+      "styling",
+      "artifacts"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3824,9 +4315,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "design-creative/general"
+    ],
+    "tags": [
+      "html",
+      "react",
+      "artifacts",
+      "frontend"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3866,9 +4364,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "playwright",
+      "testing",
+      "browser",
+      "e2e"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 74,
@@ -3906,9 +4409,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/threat-modeling",
+    "also": [
+      "writing-docs/general"
+    ],
+    "tags": [
+      "cryptography",
+      "protocols",
+      "mermaid",
+      "modelling"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 72,
@@ -3946,9 +4456,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/threat-modeling",
     "also": [],
-    "tags": [],
+    "tags": [
+      "cryptography",
+      "proverif",
+      "formal-verification",
+      "protocols"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 72,
@@ -3986,9 +4501,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contracts",
+      "cosmos",
+      "cosmwasm",
+      "scanner"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 72,
@@ -4026,9 +4546,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contracts",
+      "substrate",
+      "polkadot",
+      "scanner"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 69,
@@ -4066,9 +4591,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "python",
+      "uv",
+      "ruff",
+      "tooling"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 69,
@@ -4106,9 +4636,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "writing-docs/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "documentation",
+      "co-authoring",
+      "workflow"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 63,
@@ -4146,9 +4680,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "agent-authoring/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "template",
+      "scaffold",
+      "skills"
+    ],
     "securityRelevant": false,
     "listed": false,
     "score": 63,
