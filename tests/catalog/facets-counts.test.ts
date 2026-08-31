@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { SortableCard } from '../../src/lib/facets.ts';
-import { facetCount, pageNumbers, pageView, sortCards } from '../../src/lib/facets.ts';
+import { facetCount, filtersWithout, pageNumbers, pageView, sortCards } from '../../src/lib/facets.ts';
 
 const filters = { risk: { network: 3, 'reads-env': 1 }, runtime: { claude: 2 } };
 const totalFilters = { risk: { network: 9, 'reads-env': 4 }, runtime: { claude: 7 } };
@@ -20,6 +20,40 @@ describe('facetCount', () => {
 
   it('reports zero for an entirely unknown key', () => {
     expect(facetCount('licence', 'MIT', {}, filters, totalFilters)).toBe(0);
+  });
+
+  // Pagefind fills totalFilters only for a term search. The catalog browses with a null term
+  // whenever the box is empty, and there it comes back present but entirely zero — so the rail
+  // painted 0 next to every value of the key you had just checked, including the checked one.
+  // A key cannot legitimately be all-zero while one of its values is selected: the selection
+  // matched something. So treat all-zero as absent and fall back to the narrowed count, which is
+  // a smaller true number rather than a false one.
+  it('falls back to the narrowed count when the unfiltered map is missing', () => {
+    expect(facetCount('risk', 'reads-env', { risk: ['network'] }, filters, {})).toBe(1);
+  });
+
+  it('falls back when the unfiltered map is present but entirely zero', () => {
+    const zeroed = { risk: { network: 0, 'reads-env': 0 } };
+    expect(facetCount('risk', 'reads-env', { risk: ['network'] }, filters, zeroed)).toBe(1);
+    expect(facetCount('risk', 'network', { risk: ['network'] }, filters, zeroed)).toBe(3);
+  });
+
+  it('still prefers the unfiltered map when it carries real counts', () => {
+    expect(facetCount('risk', 'reads-env', { risk: ['network'] }, filters, totalFilters)).toBe(4);
+  });
+});
+
+describe('filtersWithout', () => {
+  it('drops one key so the search answers "how many if this key were unselected"', () => {
+    expect(filtersWithout({ risk: ['network'], runtime: ['claude'] }, 'risk')).toEqual({ runtime: ['claude'] });
+  });
+
+  it('leaves a selection it does not name untouched', () => {
+    expect(filtersWithout({ runtime: ['claude'] }, 'risk')).toEqual({ runtime: ['claude'] });
+  });
+
+  it('returns an empty selection when the dropped key was the only one', () => {
+    expect(filtersWithout({ risk: ['network'] }, 'risk')).toEqual({});
   });
 });
 

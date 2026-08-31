@@ -320,6 +320,7 @@ const config = {
     DEFAULT_SORT,
     activeChips,
     facetCount,
+    filtersWithout,
     INDEX_FILTER_KEYS,
     pageNumbers,
     pageView,
@@ -442,13 +443,37 @@ const config = {
       if (searchInput && searchInput.value !== query.q) searchInput.value = query.q;
     }
 
+    /**
+     * "How many would checking this add" for a key that already has a selection. Pagefind answers
+     * that with totalFilters, but only for a term search — on a null browse it returns the map
+     * present and entirely zero. So ask it directly: one more search per ACTIVE key, with that
+     * key's own selection dropped. Nothing is checked on the common path, so this costs nothing
+     * there, and the index is 60 entries held in memory.
+     */
+    async function unfilteredCounts(
+      pf: PagefindApi,
+      query: CatalogQuery,
+      term: string | null,
+      sort: Record<string, 'asc' | 'desc'>,
+      totalFilters: Record<string, Record<string, number>>,
+    ): Promise<Record<string, Record<string, number>>> {
+      const counts: Record<string, Record<string, number>> = { ...totalFilters };
+      for (const key of INDEX_FILTER_KEYS) {
+        if ((query.filters[key] ?? []).length === 0) continue;
+        const relaxed = await pf.search(term, { filters: filtersWithout(query.filters, key), sort });
+        const forKey = relaxed.filters?.[key];
+        if (forKey) counts[key] = forKey;
+      }
+      return counts;
+    }
+
     async function render(): Promise<void> {
       const query = parseQuery(location.search);
       const pf = await getPagefind();
-      const response = await pf.search(query.q.trim() || null, {
-        filters: query.filters,
-        sort: PF_SORT[query.sort] ?? PF_SORT[DEFAULT_SORT],
-      });
+      const term = query.q.trim() || null;
+      const sort = PF_SORT[query.sort] ?? PF_SORT[DEFAULT_SORT];
+      const response = await pf.search(term, { filters: query.filters, sort });
+      const unfiltered = await unfilteredCounts(pf, query, term, sort, response.totalFilters);
       const view = pageView(response.results.length, query.page, config.pageSize);
       const payloads = await Promise.all(response.results.slice(view.from, view.to).map((r) => r.data()));
 
@@ -471,7 +496,7 @@ const config = {
       renderPagination(query, view);
       renderSortTabs(query);
       syncControls(query);
-      document.dispatchEvent(new CustomEvent('catalog:rendered', { detail: { query, response, view } }));
+      document.dispatchEvent(new CustomEvent('catalog:rendered', { detail: { query, response, view, unfiltered } }));
     }
 
     document.addEventListener('change', (event) => {
@@ -551,6 +576,7 @@ const config = {
         filters: Record<string, Record<string, number>>;
         totalFilters: Record<string, Record<string, number>>;
       };
+      unfiltered: Record<string, Record<string, number>>;
     }): void {
       for (const row of document.querySelectorAll<HTMLElement>('[data-facet-value]')) {
         const slot = row.querySelector('[data-facet-count]');
@@ -561,7 +587,7 @@ const config = {
             row.dataset.facetValue ?? '',
             detail.query.filters,
             detail.response.filters,
-            detail.response.totalFilters,
+            detail.unfiltered,
           ),
         );
       }
