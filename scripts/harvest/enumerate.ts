@@ -100,3 +100,26 @@ export function filterSkillFiles(files: TreeFile[]): TreeFile[] {
   );
   return dedupeByBlobSha(kept);
 }
+
+const RAW = 'https://raw.githubusercontent.com';
+
+/**
+ * Content comes from raw.githubusercontent.com: unauthenticated, CORS *, no core-bucket cost.
+ * `ref` must be a branch, tag or COMMIT sha — raw.githubusercontent.com does not resolve blob
+ * shas, and passing one 404s silently. Callers pin a commit sha (see enumerateSkills).
+ */
+export async function fetchRawFile(
+  repo: string,
+  ref: string,
+  path: string,
+  deps: EnumerateDeps = {},
+): Promise<string | null> {
+  const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
+  const encoded = path.split('/').map(encodeURIComponent).join('/');
+  const res = await fetchImpl(`${RAW}/${repo}/${ref}/${encoded}`, {
+    headers: { 'user-agent': 'ai-tools-hub-harvest' },
+  });
+  if (res.status === 404) return null;
+  if (!res.ok) throw new Error(`raw ${repo}:${path}: HTTP ${res.status}`);
+  return await res.text();
+}
