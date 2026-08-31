@@ -15,6 +15,9 @@ interface Props {
 const { skill, lang, rank = null, expanded = false } = Astro.props;
 const L = (key: SkillKey): string => strings[lang][key];
 
+/** RULE 5. A5's harvest copy and B3's rail copy carry the same five values in the same order. */
+const RUNTIME_ORDER = ['claude', 'openclaw', 'codex', 'cursor', 'generic'] as const;
+
 /** §7: the author's own text, truncated on the card and full on expand. */
 const MAX_DESCRIPTION = 160;
 function clip(input: string): string {
@@ -28,6 +31,14 @@ const shortDescription = clip(lang === 'pt' && skill.descriptionPt ? skill.descr
   <summary class="skill-card__summary">
     <div class="skill-card__head">
       {rank !== null && <span class="skill-card__rank" data-field="rank" data-rank={rank}>#{rank}</span>}
+      <ul class="leds" aria-label={L('skill.runtimes')}>
+        {RUNTIME_ORDER.map((runtime) => (
+          <li class:list={['led', skill.runtimes.includes(runtime) && 'led--on']} data-runtime={runtime}>
+            <span class="led__dot" aria-hidden="true"></span>
+            <span class="sr-only">{runtime}: {skill.runtimes.includes(runtime) ? L('skill.supported') : L('skill.unsupported')}</span>
+          </li>
+        ))}
+      </ul>
       <a class="skill-card__score" data-field="score" href={withBase(`/${lang}/methodology/#score`)}>{skill.score}</a>
     </div>
     <h2 class="skill-card__name" data-field="name">{skill.name}</h2>
@@ -58,6 +69,20 @@ const shortDescription = clip(lang === 'pt' && skill.descriptionPt ? skill.descr
     font-size: 0.75rem;
   }
   .skill-card__rank { color: var(--color-n-11); }
+  .leds {
+    display: flex;
+    gap: 0.25rem;
+    margin: 0 0 0 0.5rem;
+    padding: 0;
+    list-style: none;
+  }
+  .led__dot {
+    display: block;
+    width: 6px;
+    height: 6px;
+    background: var(--color-n-6);
+  }
+  .led--on .led__dot { background: var(--color-a-9); }
   .skill-card__score {
     margin-left: auto;
     color: var(--color-a-9);
