@@ -104,3 +104,38 @@ export function scansNetwork(source: string): boolean {
 export function readsEnvironment(source: string): boolean {
   return ENV_PATTERNS.some((pattern) => pattern.test(source));
 }
+
+/** The reference validator's exact vocabulary (spec §4.2). No category, tags, author or version. */
+export const ALLOWED_FIELDS: readonly string[] = [
+  'name',
+  'description',
+  'license',
+  'allowed-tools',
+  'metadata',
+  'compatibility',
+];
+
+const ALLOWED_FIELD_SET = new Set(ALLOWED_FIELDS);
+
+/**
+ * True when every frontmatter key is spec-conformant — the +9 completeness term (spec §5).
+ * One argument, defined once, here. Portability is a property of the frontmatter alone.
+ */
+export function isPortable(frontmatter: Record<string, unknown>): boolean {
+  return Object.keys(frontmatter).every((key) => ALLOWED_FIELD_SET.has(key));
+}
+
+/** `allowed-tools` verbatim, else null ("not declared"). Present on only 9% of skills. */
+export function declaredTools(frontmatter: Record<string, unknown>): string[] | null {
+  const raw = frontmatter['allowed-tools'];
+  let tools: string[];
+  if (Array.isArray(raw)) {
+    tools = raw.map((tool) => String(tool).trim());
+  } else if (typeof raw === 'string') {
+    tools = raw.split(',').map((tool) => tool.trim());
+  } else {
+    return null;
+  }
+  const cleaned = tools.filter((tool) => tool !== '');
+  return cleaned.length > 0 ? cleaned : null;
+}
