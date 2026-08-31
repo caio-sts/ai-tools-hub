@@ -232,3 +232,92 @@ export function activeChips(filters: FilterState): ActiveChip[] {
   }
   return chips;
 }
+
+export type FacetCounts = Record<string, Record<string, number>>;
+
+/**
+ * Pagefind ORs within a key and ANDs across keys. `filters` is narrowed by the active selection, so
+ * a sibling of an already-checked value reads 0; `totalFilters` ignores the selection and is the
+ * closest available answer to "what would adding this return".
+ */
+export function facetCount(
+  key: string,
+  value: string,
+  active: FilterState,
+  filters: FacetCounts,
+  totalFilters: FacetCounts,
+): number {
+  const keyIsActive = ((active as Record<string, string[] | undefined>)[key] ?? []).length > 0;
+  const source = keyIsActive ? totalFilters : filters;
+  return source?.[key]?.[value] ?? 0;
+}
+
+export interface PageView {
+  page: number;
+  totalPages: number;
+  from: number;
+  to: number;
+  total: number;
+}
+
+export function pageView(total: number, page: number, pageSize: number = PAGE_SIZE): PageView {
+  const size = Math.max(1, Math.floor(pageSize));
+  const count = Math.max(0, Math.floor(total));
+  const totalPages = Math.max(1, Math.ceil(count / size));
+  const requested = Math.floor(page);
+  const current = Math.min(Math.max(1, Number.isFinite(requested) ? requested : 1), totalPages);
+  const from = (current - 1) * size;
+  return { page: current, totalPages, from, to: Math.min(from + size, count), total: count };
+}
+
+export function pageNumbers(current: number, total: number): (number | 'gap')[] {
+  if (total <= 0) return [];
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const wanted = new Set<number>([1, total]);
+  for (let p = current - 1; p <= current + 1; p += 1) {
+    if (p >= 1 && p <= total) wanted.add(p);
+  }
+  const sorted = [...wanted].sort((a, b) => a - b);
+  const out: (number | 'gap')[] = [];
+  let previous = 0;
+  for (const page of sorted) {
+    if (previous !== 0 && page - previous > 1) out.push('gap');
+    out.push(page);
+    previous = page;
+  }
+  return out;
+}
+
+export interface SortableCard {
+  id: string;
+  score: number;
+  stars: number;
+  forks: number;
+  newest: number;
+  updated: number;
+}
+
+export function toSortableCard(skill: Skill, collection: Collection | null): SortableCard {
+  const parsed = Date.parse(skill.indexedAt);
+  return {
+    id: skill.id,
+    score: skill.score,
+    stars: collection?.stars ?? 0,
+    forks: collection?.forks ?? 0,
+    newest: Number.isNaN(parsed) ? 0 : parsed,
+    updated: skill.updatedDays,
+  };
+}
+
+export function sortCards(cards: SortableCard[], sort: SortKey): SortableCard[] {
+  const direction: Record<SortKey, 1 | -1> = { score: -1, stars: -1, forks: -1, newest: -1, updated: 1 };
+  const field: Record<SortKey, keyof Omit<SortableCard, 'id'>> = {
+    score: 'score', stars: 'stars', forks: 'forks', newest: 'newest', updated: 'updated',
+  };
+  const key = field[sort];
+  const sign = direction[sort];
+  return [...cards].sort((a, b) => {
+    if (a[key] !== b[key]) return (a[key] - b[key]) * sign;
+    return a.id < b.id ? -1 : a.id > b.id ? 1 : 0;
+  });
+}
