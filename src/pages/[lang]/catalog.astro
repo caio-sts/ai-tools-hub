@@ -5,6 +5,8 @@ import FacetRail from '../../components/FacetRail.astro';
 import SearchBox from '../../components/SearchBox.astro';
 import SkillCard from '../../components/SkillCard.astro';
 import {
+  pageNumbers,
+  pageView,
   DEFAULT_SORT,
   PAGEFIND_BASE_URL,
   PAGEFIND_BUNDLE_PATH,
@@ -42,6 +44,7 @@ const ordered = sortCards(
   DEFAULT_SORT,
 );
 const catalogPath = withBase(`/${lang}/catalog/`);
+const initialView = pageView(ordered.length, 1, PAGE_SIZE);
 const blank = { filters: {}, q: '', sort: DEFAULT_SORT, page: 1 };
 const config = {
   baseUrl: PAGEFIND_BASE_URL,
@@ -94,6 +97,29 @@ const config = {
             </li>
           ))}
         </ul>
+        <div class="catalog-empty" data-empty hidden>
+          <h3 class="catalog-empty-title">{t('catalog.empty.title', lang)}</h3>
+          <p class="catalog-empty-body">{t('catalog.empty.body', lang)}</p>
+          <button type="button" class="catalog-clear" data-clear-all>{t('catalog.empty.action', lang)}</button>
+        </div>
+        <nav class="catalog-pagination" data-pagination aria-label={t('catalog.pagination', lang)}>
+          <ul class="page-list" data-page-list>
+            {pageNumbers(initialView.page, initialView.totalPages).map((entry) => (
+              <li>
+                {entry === 'gap' ? (
+                  <span class="page-gap" aria-hidden="true">&#8230;</span>
+                ) : (
+                  <a
+                    class="page-link"
+                    href={`${catalogPath}${serializeQuery({ ...blank, page: entry })}`}
+                    data-page={entry}
+                    aria-current={entry === initialView.page ? 'page' : undefined}
+                  >{entry}</a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </div>
   </div>
@@ -145,4 +171,41 @@ const config = {
     .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 599px) { .catalog-grid { grid-template-columns: minmax(0, 1fr); } }
+  .catalog-empty { border: 1px solid var(--border, #333); padding: 2rem; max-width: 44rem; }
+  .catalog-empty-title { margin: 0 0 0.5rem; font-size: 1rem; }
+  .catalog-empty-body { margin: 0 0 1rem; color: var(--muted-foreground, #888); }
+  .catalog-clear {
+    min-height: 40px;
+    min-width: 24px;
+    padding: 0 1rem;
+    border: 1px solid var(--border, #333);
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+  }
+  .catalog-pagination { margin: 1.5rem 0; }
+  .page-list { display: flex; gap: 1px; list-style: none; margin: 0; padding: 0; }
+  .page-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 24px;
+    min-width: 24px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--border, #333);
+    text-decoration: none;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    font-size: 0.8125rem;
+    scroll-margin-top: var(--header-h, 3.5rem);
+  }
+  .page-link[aria-current="page"] { background: var(--muted, rgba(127, 127, 127, 0.16)); font-weight: 600; }
+  .page-gap {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    min-width: 24px;
+    padding: 0.5rem 0.25rem;
+    color: var(--muted-foreground, #888);
+  }
 </style>
