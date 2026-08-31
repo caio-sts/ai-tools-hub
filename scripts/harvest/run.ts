@@ -1,8 +1,9 @@
-import type { Assignment, Collection, RawSkill, Safety, Skill } from '../../src/types.ts';
+import type { Assignment, Collection, RawSkill, Safety, Skill, TreeFile } from '../../src/types.ts';
 import { scoreSkill } from '../../src/lib/score.ts';
 import { isPortable } from '../../src/lib/safety.ts';
 import { resolveLicense } from '../../src/lib/license.ts';
 import { detectRuntimes } from './enrich.ts';
+import { fetchRawFile, type EnumerateDeps } from './enumerate.ts';
 
 /** Primary key for a skill: skills have no version and no namespace primitive (spec §4.1). */
 export function skillId(repo: string, sha: string, path: string): string {
@@ -117,4 +118,31 @@ export function buildSkill(input: BuildSkillInput): Skill {
     score: breakdown.total,
     breakdown,
   };
+}
+
+/** Per-skill cap on raw content requests, so one 846-path monorepo cannot burn the core budget. */
+export const MAX_SCRIPT_FILES = 25;
+
+/**
+ * Fetch the given files at one ref. The caller passes the repository head COMMIT sha: the tree
+ * these paths came from was read at HEAD (A4.12), so HEAD is the ref at which all of them resolve.
+ */
+export async function fetchScriptContents(
+  repo: string,
+  commitSha: string,
+  files: TreeFile[],
+  deps: EnumerateDeps = {},
+): Promise<Map<string, string>> {
+  const contents = new Map<string, string>();
+
+  for (const file of files.slice(0, MAX_SCRIPT_FILES)) {
+    try {
+      const text = await fetchRawFile(repo, commitSha, file.path, deps);
+      if (text !== null) contents.set(file.path, text);
+    } catch {
+      // One unreadable script costs that script's network/env signal, never the whole crawl.
+    }
+  }
+
+  return contents;
 }

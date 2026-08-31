@@ -54,6 +54,22 @@ function baseName(path: string): string {
 }
 
 /** The repo's only license resolver. One argument, four tiers, the winning tier recorded. */
+/**
+ * The LICENSE* file sitting next to a SKILL.md, or null. Selects exactly the file
+ * resolveLicense tier 2 looks for; the harvest fetches its text and passes it back in.
+ */
+export function siblingLicensePath(skillPath: string, treePaths: string[]): string | null {
+  const cut = skillPath.lastIndexOf("/");
+  const dir = cut === -1 ? "" : skillPath.slice(0, cut + 1);
+  for (const path of treePaths) {
+    if (!path.startsWith(dir)) continue;
+    const name = path.slice(dir.length);
+    if (name.includes("/")) continue;
+    if (/^licen[cs]e/i.test(name)) return path;
+  }
+  return null;
+}
+
 export function resolveLicense(input: LicenseInput): LicenseResolution {
   // Tier 1 — the skill declares it itself.
   const declared = input.frontmatter.license;
