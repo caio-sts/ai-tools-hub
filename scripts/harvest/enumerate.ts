@@ -55,3 +55,8 @@ export async function fetchTree(
   }
   return out;
 }
+
+/** A skill is a directory containing SKILL.md; a bare root SKILL.md is a repo README. */
+export function isSkillPath(path: string): boolean {
+  return path.endsWith('/SKILL.md');
+}
