@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { STALE_DAYS, relativeDays } from '../../src/lib/format.ts';
+import { STALE_DAYS, compactNumber, relativeDays } from '../../src/lib/format.ts';
 
 describe('relativeDays()', () => {
   it('calls anything under a day today', () => {
@@ -39,5 +39,38 @@ describe('STALE_DAYS', () => {
     expect(Number.isInteger(STALE_DAYS) && STALE_DAYS > 0, 'not a positive whole day count').toBe(
       true,
     );
+  });
+});
+
+describe('compactNumber()', () => {
+  it('leaves counts under a thousand alone', () => {
+    expect(compactNumber(0, 'en')).toBe('0');
+    expect(compactNumber(7, 'pt')).toBe('7');
+    expect(compactNumber(999, 'pt')).toBe('999');
+  });
+
+  it('uses the locale decimal separator with a shared K unit', () => {
+    expect(compactNumber(1000, 'en')).toBe('1K');
+    expect(compactNumber(1234, 'en')).toBe('1.2K');
+    expect(compactNumber(1234, 'pt')).toBe('1,2K');
+    expect(compactNumber(1500, 'pt')).toBe('1,5K');
+  });
+
+  it('drops the fraction once the scaled value reaches ten', () => {
+    expect(compactNumber(52244, 'en')).toBe('52K');
+    expect(compactNumber(52244, 'pt')).toBe('52K');
+    expect(compactNumber(388017, 'en')).toBe('388K');
+  });
+
+  it('promotes the unit before rounding could print 1,000K', () => {
+    expect(compactNumber(999499, 'en')).toBe('999K');
+    expect(compactNumber(999500, 'en')).toBe('1M');
+    expect(compactNumber(1234567, 'pt')).toBe('1,2M');
+    expect(compactNumber(1500000000, 'pt')).toBe('1,5B');
+  });
+
+  it('reads non-finite input as zero rather than printing NaN', () => {
+    expect(compactNumber(Number.NaN, 'en')).toBe('0');
+    expect(compactNumber(Number.POSITIVE_INFINITY, 'pt')).toBe('0');
   });
 });
