@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import strings from '../../src/lib/i18n/skill.ts';
-import { cardOf, classesOf, distFiles, elementWith, pageFor, tagWith, text } from '../helpers/skill-card.ts';
+import { allCss, cardOf, classesOf, distFiles, elementWith, pageFor, tagWith, text } from '../helpers/skill-card.ts';
 import { readFileSync } from 'node:fs';
 
 const SKILLS = loadSkills();
@@ -76,5 +76,23 @@ describe('the safety strip', () => {
     const card = cardOf(pageFor('pt', SKILLS[0]));
     expect(text(elementWith(card, 'data-signal="network"'))).toContain(strings.pt['skill.network']);
     expect(text(elementWith(card, 'data-signal="env"'))).toContain(strings.pt['skill.env']);
+  });
+
+  it('lays the three verdicts across one row and gives declared tools a row of its own', () => {
+    const css = allCss();
+    expect(css).toMatch(/\.safety-strip[^{]*\{[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
+    // The only value with no bound on its length must not be confined to a third of the card.
+    expect(css).toMatch(/\.safety-row[^{]*\[data-signal=["']?tools["']?\][^{]*\{[^}]*grid-column:1\/-1/);
+  });
+
+  it('falls back to compact rows against the card\'s own measure, not the viewport\'s', () => {
+    // The same card is 456px wide at three columns and 288px at two: no viewport breakpoint
+    // states that, so the strip asks the card it sits in.
+    const css = allCss();
+    expect(css).toMatch(/@container card ?\((?:max-width:22rem|width<=22rem)\)/);
+    // Lightning CSS folds container-name + container-type into the `container` shorthand.
+    expect(css, 'the card must declare the container the strip queries').toMatch(
+      /\.skill-card[^{]*\{[^}]*container(?:-name)?:card[\/;]/,
+    );
   });
 });

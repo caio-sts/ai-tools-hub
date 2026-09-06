@@ -54,31 +54,73 @@ const rows = [
 </div>
 
 <style>
-  /* This strip is the product's whole argument, so it gets the card's only rule lines and sits
-     directly under the description rather than among the repo statistics. */
+  /* This strip is the product's whole argument, so it is the one block on the card built as a
+     panel rather than a list of caption rows. Three columns across the top, because the three
+     verdicts are one comparable set — does it run, does it call out, does it read your
+     environment — and the label sits above its value so each reads as a unit rather than as
+     another label-left/value-right row indistinguishable from the repo statistics below.
+
+     Declared tools is not a verdict but a declaration, and it is the only value with no bound on
+     its length, so it takes a full-width row of its own underneath: a long list wraps there
+     instead of towering inside a third of a card.
+
+     The cells are separated by borders, not by a background, so the card's own surface shows
+     through and the strip still lightens with the card on hover and on open. */
   .safety-strip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     margin: 0.75rem 0 0;
-    padding: 0.5rem 0;
-    border-top: 1px solid var(--color-n-6);
-    border-bottom: 1px solid var(--color-n-6);
+    border: 1px solid var(--color-n-6);
     font-family: var(--font-mono);
     font-size: var(--text-xs);
-    line-height: 1.45;
+    line-height: 1.4;
   }
-  /* Label left, value right, and the value may wrap under a long label instead of forcing the
-     row to two full lines — at six columns a card is ~300px and every row was wrapping. */
   .safety-row {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    gap: 0 0.5rem;
-    color: var(--color-n-11);
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    padding: 0.4rem 0.5rem;
+    color: var(--color-n-12);
   }
-  .safety-row__label { color: var(--color-n-9); }
-  .safety-row__value { text-align: right; margin-left: auto; }
-  /* A hazard row is stated twice — colour and a leading marker — so it survives greyscale,
-     colour-blindness and a low-contrast display. */
-  .safety-row--hazard { color: var(--color-hazard); }
+  .safety-row + .safety-row { border-left: 1px solid var(--color-n-6); }
+  .safety-row[data-signal='tools'] {
+    grid-column: 1 / -1;
+    border-top: 1px solid var(--color-n-6);
+    border-left-width: 0;
+  }
+  .safety-row__label {
+    color: var(--color-n-9);
+    font-size: 0.625rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+  .safety-row__value { overflow-wrap: anywhere; }
+  /* A hazard is stated three times — a tinted cell, the colour, and a leading marker — so it
+     survives greyscale, colour-blindness and a low-contrast display. The tint is what makes risk
+     legible across a grid of cards without reading a single word. */
+  .safety-row--hazard {
+    background: color-mix(in oklab, var(--color-hazard) 9%, transparent);
+    color: var(--color-hazard);
+  }
   .safety-row--hazard .safety-row__label { color: inherit; font-weight: 600; }
   .safety-row--hazard .safety-row__label::before { content: '! '; }
+  /* Below roughly 350px of card there is no room for three sentences side by side, and the panel
+     form turns into three towers of wrapped words. The measure that matters is the card's, not
+     the viewport's — the same card is 456px at three columns and 271px at two — so this asks the
+     card and falls back to the compact rows the strip has always used when it cannot afford
+     anything better. */
+  @container card (max-width: 22rem) {
+    .safety-strip { grid-template-columns: minmax(0, 1fr); }
+    .safety-row {
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 0 0.5rem;
+      padding: 0.15rem 0.5rem;
+    }
+    .safety-row + .safety-row { border-left-width: 0; }
+    .safety-row[data-signal='tools'] { border-top-width: 0; }
+    .safety-row__value { margin-left: auto; text-align: right; }
+  }
 </style>
