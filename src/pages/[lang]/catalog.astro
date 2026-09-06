@@ -189,7 +189,16 @@ const config = {
     align-items: start;
     border-top: 1px solid var(--border);
   }
-  .catalog-main { padding: 1.125rem 1rem 3rem; min-width: 0; }
+  /* The cap belongs to the whole results column, not to the grid alone. Capping only the grid
+     left the heading and the count hanging off its left edge on a wide display; capping the
+     column keeps every band aligned with the cards and centres the block as one thing. */
+  .catalog-main {
+    width: 100%;
+    max-width: calc(87.5rem + 2rem);
+    margin-inline: auto;
+    padding: 1.125rem 1rem 3rem;
+    min-width: 0;
+  }
   .catalog-results-heading {
     margin: 0;
     font-family: var(--font-mono);
@@ -206,15 +215,15 @@ const config = {
     color: var(--muted-foreground);
     font-variant-numeric: tabular-nums;
   }
-  /* Three columns, and a ceiling. Six columns bought density at 198px a card, which forced every
-     block inside the card into the same mono caption and flattened the hierarchy. Three at a
-     capped width gives the card ~465px — enough for the safety strip to read as a band and the
-     repo statistics to demote to a single line. The cap matters as much as the count: unbounded,
-     three columns on a 1920px display would hand each card 535px of mostly empty measure. */
+  /* Three columns, and a ceiling — the ceiling lives on .catalog-main above. Six columns bought
+     density at 198px a card, which forced every block inside the card into the same mono caption
+     and flattened the hierarchy. Three at a capped width gives the card ~456px — enough for the
+     safety strip to read as a band and the repo statistics to demote to a single line. The cap
+     matters as much as the count: unbounded, three columns on a 2560px display would hand each
+     card 730px of mostly empty measure. */
   .catalog-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    max-width: 87.5rem;
     gap: 1rem;
     list-style: none;
     margin: 0;
