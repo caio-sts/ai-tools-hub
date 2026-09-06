@@ -530,7 +530,10 @@ category lands you in an empty dead end — which is what every awesome-list fee
 - Multi-select checkboxes, active-filter chips with individual remove, clear-all, designed empty state.
 - **Sort as tabs, not a dropdown** — each a distinct URL.
 - **Numbered pagination**, not infinite scroll — crawlable.
-- **Card grid, 4/5/6 columns** (default 6, degrading to 5 below 1500 px and 4 below 1280 px).
+- **Card grid, three columns, capped at 1400 px** — degrading to 2 below 1100 px and 1 below
+  600 px. Six columns bought density at 198 px a card, which forced every block inside the card
+  into the same monospace caption; three at a capped width gives the card ~456 px, enough for a
+  real hierarchy, and the cap keeps a wide display from stretching it to empty measure.
 
 ### 10.3 Card anatomy
 

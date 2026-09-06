@@ -206,22 +206,24 @@ const config = {
     color: var(--muted-foreground);
     font-variant-numeric: tabular-nums;
   }
+  /* Three columns, and a ceiling. Six columns bought density at 198px a card, which forced every
+     block inside the card into the same mono caption and flattened the hierarchy. Three at a
+     capped width gives the card ~465px — enough for the safety strip to read as a band and the
+     repo statistics to demote to a single line. The cap matters as much as the count: unbounded,
+     three columns on a 1920px display would hand each card 535px of mostly empty measure. */
   .catalog-grid {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
-    gap: 1px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 87.5rem;
+    gap: 1rem;
     list-style: none;
     margin: 0;
     padding: 0;
   }
   .catalog-item { display: flex; flex-direction: column; position: relative; min-width: 0; }
   .catalog-item[hidden] { display: none !important; }
-  @media (max-width: 1499px) { .catalog-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
-  @media (max-width: 1279px) { .catalog-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
-  @media (max-width: 899px) {
-    .catalog-body { grid-template-columns: minmax(0, 1fr); }
-    .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
+  @media (max-width: 1099px) { .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 899px) { .catalog-body { grid-template-columns: minmax(0, 1fr); } }
   @media (max-width: 599px) { .catalog-grid { grid-template-columns: minmax(0, 1fr); } }
   .catalog-empty {
     max-width: 44rem;

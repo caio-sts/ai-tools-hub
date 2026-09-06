@@ -13,8 +13,8 @@ const en = {
   'skill.script': 'script',
   'skill.scripts': 'scripts',
   // The key asks and the value answers: "Environment: No environment reads" said environment
-  // twice and wrapped on every card at six columns. The hazard answers stay sentences on purpose
-  // (B4.5: two states, no green) — the inert state is the quiet one.
+  // twice and wrapped on every card back when a card was 198px. The hazard answers stay sentences
+  // on purpose (B4.5: two states, no green) — the inert state is the quiet one.
   'skill.noScripts': 'No',
   'skill.network': 'Network',
   'skill.networkYes': 'Makes network calls',

@@ -88,17 +88,27 @@ describe('catalog card grid', () => {
     ).toBeGreaterThanOrEqual(items.length * 2);
   });
 
-  it('degrades 6 columns to 5 below 1500px and 4 below 1280px', () => {
-    // Lightning CSS rewrites `@media (max-width: 1499px)` into the modern range syntax
-    // `@media (width<=1499px)`, so accept either spelling of the same breakpoint.
+  it('degrades 3 columns to 2 below 1100px and 1 below 600px', () => {
+    // Lightning CSS rewrites `@media (max-width: 1099px)` into the modern range syntax
+    // `@media (width<=1099px)`, so accept either spelling of the same breakpoint.
     const atMost = (px: number): string => `(?:\\(max-width:${px}px\\)|\\(width<=${px}px\\))`;
-    expect(css).toMatch(/\.catalog-grid\{[^}]*grid-template-columns:repeat\(6,minmax\(0,1fr\)\)/);
+    expect(css).toMatch(/\.catalog-grid\{[^}]*grid-template-columns:repeat\(3,minmax\(0,1fr\)\)/);
     expect(css).toMatch(
-      new RegExp(`@media${atMost(1499)}\\{\\.catalog-grid\\{grid-template-columns:repeat\\(5,minmax\\(0,1fr\\)\\)\\}`),
+      new RegExp(`@media${atMost(1099)}\\{\\.catalog-grid\\{grid-template-columns:repeat\\(2,minmax\\(0,1fr\\)\\)\\}`),
     );
     expect(css).toMatch(
-      new RegExp(`@media${atMost(1279)}\\{\\.catalog-grid\\{grid-template-columns:repeat\\(4,minmax\\(0,1fr\\)\\)\\}`),
+      new RegExp(`@media${atMost(599)}\\{\\.catalog-grid\\{grid-template-columns:minmax\\(0,1fr\\)\\}`),
     );
+  });
+
+  it('caps the grid so three columns stop widening instead of stretching to the viewport', () => {
+    expect(css).toMatch(/\.catalog-grid\{[^}]*max-width:87\.5rem/);
+  });
+
+  it('separates the cards by one gap, equal down both axes', () => {
+    const gap = css.match(/\.catalog-grid\{[^}]*?gap:([^;}]+)/)?.[1];
+    expect(gap, 'no gap declared on .catalog-grid').toBeTruthy();
+    expect(gap!.trim().split(/\s+/), 'row and column gap must not be set apart').toHaveLength(1);
   });
 
   it('shows every card when JavaScript is off, since pagination would be a lie', () => {
