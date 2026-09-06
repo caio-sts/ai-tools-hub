@@ -101,8 +101,14 @@ describe('catalog card grid', () => {
     );
   });
 
-  it('caps the grid so three columns stop widening instead of stretching to the viewport', () => {
-    expect(css).toMatch(/\.catalog-grid\{[^}]*max-width:87\.5rem/);
+  it('caps and centres the results column, so every band stays aligned with the cards', () => {
+    // The cap sits on the column rather than the grid: capping the grid alone left the heading
+    // and the count hanging off its left edge once a display was wider than the cap.
+    expect(css).toMatch(/\.catalog-main\{[^}]*max-width:/);
+    expect(css).toMatch(/\.catalog-main\{[^}]*margin(?:-inline)?:[^;}]*auto/);
+    expect(css, 'the grid must not carry a second, competing cap').not.toMatch(
+      /\.catalog-grid\{[^}]*max-width:/,
+    );
   });
 
   it('separates the cards by one gap, equal down both axes', () => {
