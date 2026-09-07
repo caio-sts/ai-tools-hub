@@ -34,8 +34,9 @@ is actively maintained, and has 583 stars. What is genuinely empty is taxonomy d
 honest safety surface, so this competes on precision and auditability. **Never optimise for
 entry count.**
 
-Current state: **101 skills** harvested from **3 sources**, 60 of them listed after the
-per-subdomain cap, across **13 domains / 27 leaves**.
+Current state: **101 skills** harvested from **3 sources**, all of them listed, across
+**13 domains / 27 leaves**. The listing cap is 60 per subdomain, not a global ceiling, and the
+largest leaf holds 41 — it does not bite at this corpus size and is not expected to soon.
 
 ## How the data gets there
 
@@ -154,10 +155,15 @@ gh secret set CATALOG_PAT
 - **pt-BR is card-deep.** `descriptionPt` is filled for all 101 entries; `longPt` is
   deliberately `null`, so the expanded panel fetches the author's own `SKILL.md` body in both
   locales. The reader loses no content to the translation.
-- **Light mode is inherited**, not art-directed. Legible, but it was designed dark-first.
-- **Mobile is unverified** — no narrow-viewport pass has been done.
-- Spec §15 parks two calibrations that now have real data to answer them: the minimum-mass
-  threshold of 5, and the 25/30/25/20 score weights.
+- **The sticky header still costs permanent height on a phone.** Below 900px the header wraps to
+  two rows; tightening those rows bought most of it back, but what is left is pinned there by the
+  sticky behaviour `A11yBehavior` measures for `scroll-margin`. Dropping the sticky below 900px
+  would return it and change a designed behaviour — parked as the maintainer's call, not an
+  oversight.
+- **Spec §15 reopens if a fourth source lands.** The minimum-mass threshold (5 → 4) and the
+  25/30/25/20 weights were both settled against the first full corpus, and the argument was that
+  the corpus is homogeneous: three of the four score terms barely vary and twelve entries tie with
+  identical vectors. A fourth source is what would make that argument stop holding.
 
 ## Documentation
 

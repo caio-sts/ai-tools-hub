@@ -69,7 +69,7 @@ export interface Taxonomy {
   domains: TaxonomyNode[];
   protected: string[];
   aliases: Record<string, string>;
-  minimumMass: number;        // 5
+  minimumMass: number;        // 4 — see data/taxonomy.json, which is the value that counts
 }
 
 // data/assignments.json is an Assignments object keyed by Skill.id — never an array.
