@@ -6,6 +6,16 @@ A bilingual, security-first catalog of **agent skills**, published as a static s
 Every entry shows what it can do to your machine, where it came from, and why it is filed
 where it is.
 
+## Em português
+
+Um catálogo de **agent skills** com foco em segurança, publicado como site estático em
+**<https://caio-sts.github.io/ai-tools-hub/pt/>**. Cada entrada diz o que a skill pode fazer na
+sua máquina, de onde ela veio e por que está arquivada onde está.
+
+O site é bilíngue; esta documentação não. Ela é operacional — comandos, tokens, agendamento — e
+fica só em inglês de propósito: procedimento de manutenção mantido em dois idiomas diverge sem
+que nada acuse, e quem seguir a versão velha quebra a própria máquina.
+
 ## What this is, and what it is not
 
 It is a **catalog** — discover an entry, evaluate it, copy the install command. It does not
