@@ -405,8 +405,10 @@ const bars = [
     font-size: var(--text-sm);
     line-height: 1.45;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
+    /* Three lines, not two: §7 pays for 160 characters and at 456px two lines showed barely 110
+       of them, so the clamp — not the budget — was doing the truncating. */
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
     -webkit-box-orient: vertical;
     overflow: hidden;
   }

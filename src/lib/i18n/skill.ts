@@ -15,11 +15,13 @@ const en = {
   // The key asks and the value answers: "Environment: No environment reads" said environment
   // twice and wrapped on every card back when a card was 198px. The hazard answers stay sentences
   // on purpose (B4.5: two states, no green) — the inert state is the quiet one.
+  // The key names the axis it measures, not just its subject: "Environment" left the reader to
+  // guess whether the answer was about reading it, writing it or needing it.
   'skill.noScripts': 'No',
-  'skill.network': 'Network',
+  'skill.network': 'Uses network',
   'skill.networkYes': 'Makes network calls',
   'skill.networkNo': 'No',
-  'skill.env': 'Environment',
+  'skill.env': 'Reads env vars',
   'skill.envYes': 'Reads environment variables',
   'skill.envNo': 'No',
   'skill.tools': 'Declared tools',
@@ -65,16 +67,16 @@ const pt: Record<keyof typeof en, string> = {
   'skill.script': 'script',
   'skill.scripts': 'scripts',
   'skill.noScripts': 'Não',
-  'skill.network': 'Rede',
+  'skill.network': 'Usa rede',
   'skill.networkYes': 'Faz chamadas de rede',
   'skill.networkNo': 'Não',
-  'skill.env': 'Ambiente',
+  'skill.env': 'Lê variáveis',
   'skill.envYes': 'Lê variáveis de ambiente',
   'skill.envNo': 'Não',
-  // "Ferramentas declaradas" took 145 of the block's 183px on its own and wrapped on every card.
-  // The declared/derived contrast it carried is already stated by the strip's own title, "Sinais
-  // de risco derivados": this is the one row that is not derived.
-  'skill.tools': 'Ferramentas',
+  // Shortened to "Ferramentas" while the key shared a 183px line with its value. The row is
+  // full-width now and the key owns it, so the qualifier fits again — and it is the one this row
+  // cannot do without: we read what a skill declares, and only ~9% declare anything at all.
+  'skill.tools': 'Ferramentas declaradas',
   'skill.toolsNotDeclared': 'Nenhuma',
   'skill.source': 'Origem',
   'skill.stars': 'Estrelas',
