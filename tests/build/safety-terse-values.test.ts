@@ -38,11 +38,15 @@ describe.each(['en', 'pt'] as const)('the inert safety answers in %s', (lang) =>
       .toBeGreaterThan(1);
   });
 
-  // Measured on the current card: the key sits ABOVE its value in a cell a third of the strip
-  // wide, about 124px, and a mono glyph at --text-xs is about 6.6px — roughly 18 characters to a
-  // line. A verdict key that needs a second line pushes its own answer out of the cell.
-  it.each(VERDICTS)('keeps the key %s to one line of its cell', (keyId) => {
-    expect(strings[lang][keyId].length).toBeLessThanOrEqual(18);
+  // Measured in a browser at the three-column width, where a card is 456px: the key sits ABOVE
+  // its value in a cell 140px wide, 124px of it usable once the row's 0.5rem padding is taken,
+  // and an uppercase mono glyph at 0.625rem with 0.07em tracking measures 6.7px. That is 18
+  // characters — but the bound belongs to the hazard state, not the inert one. A flagged row
+  // prepends "! " through ::before, 13.4px it takes from the same 124px, so a key that fits when
+  // the answer is No wraps the moment the answer is Yes, and every verdict here can be flagged.
+  // 124px less the prefix, over 6.7px a glyph, is 16.
+  it.each(VERDICTS)('keeps the key %s to one line of its cell, flagged or not', (keyId) => {
+    expect(strings[lang][keyId].length).toBeLessThanOrEqual(16);
   });
 
   // The key may already own two lines of the cell, so the inert answer stays an answer.
