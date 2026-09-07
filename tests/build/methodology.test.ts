@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { readBuiltCss } from '../styles/built-css.ts';
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
@@ -23,6 +24,23 @@ function catalog(lang: 'en' | 'pt'): string {
   if (!existsSync(file)) throw new Error(`Missing ${file} — the catalog route did not build`);
   return readFileSync(file, 'utf8');
 }
+
+describe('the methodology page column', () => {
+  const css = readBuiltCss('dist');
+  // Astro scopes a component's own rules with a [data-astro-cid-…] attribute; the catalog's
+  // equivalent rule is global. Accept either shape so this asserts the layout, not the tooling.
+  const rule = (klass: string, decl: string) =>
+    new RegExp(`\\.${klass}(?:\\[[^\\]]*\\])?\\{[^}]*${decl}`);
+
+  it('centres the reading column instead of stranding it against the left edge', () => {
+    // 68ch is a reading measure and it should stay one — the defect is not the cap, it is a cap
+    // with no auto margin. Measured at 1745px: the article was 584px wide sitting at x=0, with
+    // 1161px of empty page beside it, because <main> is full width and nothing centred the
+    // column inside it. This is the same defect .catalog-main carries a test for.
+    expect(css).toMatch(rule('methodology', 'max-width:'));
+    expect(css).toMatch(rule('methodology', 'margin-inline:[^;}]*auto'));
+  });
+});
 
 describe('the methodology page discharges spec §10.6', () => {
   it('renders all six sections as linkable anchors', () => {

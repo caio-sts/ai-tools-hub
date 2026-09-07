@@ -157,11 +157,16 @@ const aliasPairs = Object.entries(taxonomy.aliases);
      vertical rhythm, four lists rendering as undifferentiated prose, and the single line it exists
      to publish — the formula — cut off behind a horizontal scrollbar.
 
-     Left-aligned at the site's 1rem gutter, not centred: every other page starts there, and a
-     centred column here would read as a different site. The measure stays at 68ch, which is what
-     prose needs. */
+     Centred, and it was not always: this column was deliberately left-aligned at the site's 1rem
+     gutter on the argument that every other page starts there. That stopped being true when the
+     catalog capped and centred its results column, and this page is the one place where the
+     difference is not cosmetic — every other page fills the width with something and caps a block
+     inside it, while this page IS the capped block. Left-aligned at 1745px that read as 584px of
+     content against 1161px of empty page. The measure stays at 68ch, which is what prose needs;
+     only the leftover space changed sides. */
   .methodology {
     max-width: 68ch;
+    margin-inline: auto;
     padding: 2.5rem 1rem 5rem;
     line-height: 1.65;
   }
