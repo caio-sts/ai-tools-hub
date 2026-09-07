@@ -10,6 +10,17 @@ ENV_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/ai-tools-hub"
 DISTRO="${WSL_DISTRO_NAME:-Ubuntu-26.04}"
 TASK_NAME="ai-tools-hub-wsl-boot"
 
+# Stamped into the unit's PATH — see the comment beside it in the .service. Resolved here rather
+# than hard-coded because a version manager's path carries the version in it and moves on the next
+# upgrade. Installing nothing beats installing a timer that fails 127 in silence every four hours.
+if ! command -v node > /dev/null 2>&1 || ! command -v npm > /dev/null 2>&1; then
+  echo "node and npm must be on PATH to install the schedule — load your version manager and re-run" >&2
+  exit 1
+fi
+NODE_BIN="$(cd "$(dirname "$(command -v node)")" && pwd)"
+NPM_BIN="$(cd "$(dirname "$(command -v npm)")" && pwd)"
+[ "$NPM_BIN" = "$NODE_BIN" ] || NODE_BIN="$NODE_BIN:$NPM_BIN"
+
 mkdir -p "$UNIT_DIR" "$ENV_DIR"
 
 if [ ! -f "$ENV_DIR/harvest.env" ]; then
@@ -18,7 +29,9 @@ if [ ! -f "$ENV_DIR/harvest.env" ]; then
   echo "created $ENV_DIR/harvest.env — put the fine-grained PAT in it before the next run"
 fi
 
-sed "s|@REPO_DIR@|$REPO_DIR|g" "$REPO_DIR/ops/ai-tools-hub-harvest.service" > "$UNIT_DIR/ai-tools-hub-harvest.service"
+sed -e "s|@REPO_DIR@|$REPO_DIR|g" -e "s|@NODE_BIN@|$NODE_BIN|g" \
+  "$REPO_DIR/ops/ai-tools-hub-harvest.service" > "$UNIT_DIR/ai-tools-hub-harvest.service"
+echo "the unit will run node from $NODE_BIN"
 cp "$REPO_DIR/ops/ai-tools-hub-harvest.timer" "$UNIT_DIR/ai-tools-hub-harvest.timer"
 
 # Without lingering the user manager dies with the last session, and the timer with it.

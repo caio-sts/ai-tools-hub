@@ -44,6 +44,17 @@ describe('the service runs the harvest and publishes the result', () => {
     expect(service).toContain('WorkingDirectory=@REPO_DIR@');
     expect(install).toContain('s|@REPO_DIR@|$REPO_DIR|g');
   });
+
+  // The systemd user manager hands a service PATH=/usr/local/bin:/usr/bin:/bin and nothing else.
+  // A version manager (nvm, fnm, asdf) puts node under $HOME, outside every one of those, so
+  // `env npm` resolves to nothing and each ExecStart below dies 127 with no output — four times a
+  // day, for as long as nobody reads the journal. Measured on the maintainer's machine:
+  //   $ env -i PATH=/usr/local/bin:/usr/bin:/bin /usr/bin/env npm --version
+  //   env: 'npm': No such file or directory
+  it('gives the unit a PATH that can reach the node the installer ran under', () => {
+    expect(service).toContain('Environment=PATH=@NODE_BIN@:');
+    expect(install).toContain('s|@NODE_BIN@|$NODE_BIN|g');
+  });
 });
 
 describe('install-schedule.sh installs both halves of the trigger', () => {
@@ -56,6 +67,15 @@ describe('install-schedule.sh installs both halves of the trigger', () => {
     expect(install).toContain('systemd/user');
     expect(install).toContain('systemctl --user daemon-reload');
     expect(install).toContain('systemctl --user enable --now ai-tools-hub-harvest.timer');
+  });
+
+  // Resolved at install time and never hard-coded: a version manager's path carries the version
+  // in it (~/.nvm/versions/node/v24.17.0/bin), so it moves on the next upgrade. Better to install
+  // nothing than to install a unit that fails silently every four hours.
+  it('refuses to install when it cannot resolve node and npm', () => {
+    expect(install).toMatch(/command -v node/);
+    expect(install).toMatch(/command -v npm/);
+    expect(install).toMatch(/exit 1/);
   });
 
   it('registers the Windows logon task idempotently', () => {
