@@ -3,6 +3,9 @@ import { existsSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readBuiltCss } from '../styles/built-css.ts';
+import { loadMeta } from '../../src/lib/data.ts';
+import { coverage } from '../../src/lib/format.ts';
+import { t } from '../../src/lib/i18n/index.ts';
 
 const ROOT = fileURLToPath(new URL('../..', import.meta.url));
 
@@ -112,6 +115,15 @@ describe('the methodology page discharges spec §10.6', () => {
     // classification session has run — so accept both forms rather than fabricate a placeholder.
     expect(html).toMatch(/data-crawled-at(="[^"]*")?[\s>]/);
     expect(html).toMatch(/data-classified-at(="[^"]*")?[\s>]/);
+  });
+
+  it('states source coverage the same way the home page does', () => {
+    const meta = loadMeta();
+    for (const lang of ['en', 'pt'] as const) {
+      const cell = page(lang).match(/<dd[^>]*data-source-count="[^"]*"[^>]*>([^<]*)</);
+      expect(cell, `no data-source-count cell on the ${lang} page`).not.toBeNull();
+      expect(cell![1]!.trim()).toBe(coverage(meta.sourceCount, meta.discoveredCount, t('stats.coverageOf', lang), String));
+    }
   });
 
   it('is hand-written in pt-BR, with no English prose leaking through', () => {

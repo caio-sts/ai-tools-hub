@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { STALE_DAYS, compactNumber, relativeDays } from '../../src/lib/format.ts';
+import { STALE_DAYS, compactNumber, coverage, relativeDays } from '../../src/lib/format.ts';
 
 describe('relativeDays()', () => {
   it('calls anything under a day today', () => {
@@ -72,5 +72,19 @@ describe('compactNumber()', () => {
   it('reads non-finite input as zero rather than printing NaN', () => {
     expect(compactNumber(Number.NaN, 'en')).toBe('0');
     expect(compactNumber(Number.POSITIVE_INFINITY, 'pt')).toBe('0');
+  });
+});
+
+describe('coverage()', () => {
+  const render = (n: number) => String(n);
+
+  it('reads "N of M" while the catalog holds fewer repos than discovery admitted', () => {
+    expect(coverage(1830, 4400, 'of', render)).toBe('1830 of 4400');
+    expect(coverage(1830, 4400, 'de', (n) => compactNumber(n, 'pt'))).toBe('1,8K de 4,4K');
+  });
+
+  it('reads the bare number once coverage is complete', () => {
+    expect(coverage(4400, 4400, 'of', render)).toBe('4400');
+    expect(coverage(3, 3, 'of', render)).toBe('3');
   });
 });

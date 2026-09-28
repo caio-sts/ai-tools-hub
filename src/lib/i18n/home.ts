@@ -21,11 +21,12 @@ const en = {
   'home.nodeThin': 'below minimum mass',
   'home.nodeEmpty': 'no entries yet',
   // No day count and no cadence in the prose: STALE_DAYS (src/lib/format.ts, B1) is the only
-  // place the threshold is written, and the schedule (a local systemd timer every 4h, with the
-  // weekly Action as fallback — §6.1) lives in ops/, not in a string.
+  // place the threshold is written, and the schedule (the daily crawl.yml, §6.1) lives in
+  // .github/workflows/, not in a string.
   'home.staleNote': 'this figure is stale — the refresh may be stuck',
   'stats.skills': 'Skills indexed',
   'stats.sources': 'Sources',
+  'stats.coverageOf': 'of',
   'stats.domains': 'Domains',
   'stats.lastRefresh': 'Last refresh',
 } as const;
@@ -49,6 +50,7 @@ const pt: Record<keyof typeof en, string> = {
   'home.staleNote': 'este número está defasado — a atualização pode ter parado',
   'stats.skills': 'Skills indexadas',
   'stats.sources': 'Fontes',
+  'stats.coverageOf': 'de',
   'stats.domains': 'Domínios',
   'stats.lastRefresh': 'Última atualização',
 };

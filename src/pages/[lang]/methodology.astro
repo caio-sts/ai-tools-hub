@@ -3,6 +3,7 @@ import Layout from '../../components/Layout.astro';
 import { loadMeta } from '../../lib/data.ts';
 import { loadTaxonomy } from '../../lib/taxonomy.ts';
 import { evaluateStaleness, parseMeta } from '../../lib/staleness.ts';
+import { coverage } from '../../lib/format.ts';
 import { t } from '../../lib/i18n/index.ts';
 import type { Lang } from '../../types.ts';
 
@@ -32,7 +33,9 @@ const FORMULA = `SCORE = ${TERMS.map((t) => `${FORMULA_NAMES[t.term]} ${t.weight
 const MAX_WEIGHT = Math.max(...TERMS.map((t) => t.weight));
 
 const taxonomy = loadTaxonomy();
-const report = evaluateStaleness(parseMeta(loadMeta()), new Date());
+const meta = loadMeta();
+const report = evaluateStaleness(parseMeta(meta), new Date());
+const sources = coverage(meta.sourceCount, meta.discoveredCount, t('stats.coverageOf', lang), String);
 const aliasPairs = Object.entries(taxonomy.aliases);
 ---
 
@@ -133,7 +136,7 @@ const aliasPairs = Object.entries(taxonomy.aliases);
         <dt>{t('methodology.provenance.skillsLabel', lang)}</dt>
         <dd data-skill-count={String(report.skillCount)}>{report.skillCount}</dd>
         <dt>{t('methodology.provenance.sourceCountLabel', lang)}</dt>
-        <dd data-source-count={String(report.sourceCount)}>{report.sourceCount}</dd>
+        <dd data-source-count={String(report.sourceCount)}>{sources}</dd>
       </dl>
 
       <h3>{t('methodology.provenance.freshnessLabel', lang)}</h3>

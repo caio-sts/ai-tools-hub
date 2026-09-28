@@ -15,6 +15,7 @@ const KEYS = [
   'home.otherLead',
   'home.securityLead',
   'home.staleNote',
+  'stats.coverageOf',
   'stats.domains',
   'stats.lastRefresh',
   'stats.skills',

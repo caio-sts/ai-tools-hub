@@ -45,3 +45,8 @@ export function compactNumber(n: number, lang: Lang): string {
   if (abs < 999_500_000) return scaled(locale, value / 1_000_000, 'M');
   return scaled(locale, value / 1_000_000_000, 'B');
 }
+
+/** "N of M" while a crawl is still reaching every discovered repo; the bare N once it has. */
+export function coverage(read: number, discovered: number, of: string, render: (n: number) => string): string {
+  return read < discovered ? `${render(read)} ${of} ${render(discovered)}` : render(read);
+}

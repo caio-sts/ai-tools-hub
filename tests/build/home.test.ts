@@ -2,7 +2,7 @@ import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { loadMeta } from '../../src/lib/data.ts';
-import { compactNumber, relativeDays } from '../../src/lib/format.ts';
+import { compactNumber, coverage, relativeDays } from '../../src/lib/format.ts';
 import { t } from '../../src/lib/i18n/index.ts';
 import { loadTaxonomy } from '../../src/lib/taxonomy.ts';
 
@@ -59,7 +59,13 @@ describe('home page shell', () => {
 
   it('shows the skill and source counts meta.json actually holds', () => {
     expect(statValue(en, 'skills')).toBe(compactNumber(meta.skillCount, 'en'));
-    expect(statValue(en, 'sources')).toBe(compactNumber(meta.sourceCount, 'en'));
+    const of = (lang: 'en' | 'pt') => t('stats.coverageOf', lang);
+    expect(statValue(en, 'sources')).toBe(
+      coverage(meta.sourceCount, meta.discoveredCount, of('en'), (n) => compactNumber(n, 'en')),
+    );
+    expect(statValue(pt, 'sources')).toBe(
+      coverage(meta.sourceCount, meta.discoveredCount, of('pt'), (n) => compactNumber(n, 'pt')),
+    );
     expect(statValue(pt, 'skills')).toBe(compactNumber(meta.skillCount, 'pt'));
   });
 
