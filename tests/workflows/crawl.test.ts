@@ -61,6 +61,9 @@ describe('crawl.yml keeps its own schedule alive (spec §6.5)', () => {
     expect(yml).toContain('gh issue create');
     expect(yml).toContain('P1: crawl failed');
     expect(yml).toContain('issues: write');
+    // Under `set -e`, a bare assignment propagates the command's exit status: the lookup
+    // failing (not just finding zero issues) must not abort the step before gh issue create.
+    expect(yml).toMatch(/OPEN=\$\(gh issue list[^\n]*\|\| true\)/);
   });
 
   it('stops the harvest on its own clock well before the job is killed', () => {

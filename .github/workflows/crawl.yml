@@ -77,7 +77,7 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-          OPEN=$(gh issue list --state open --search 'in:title "P1: crawl failed"' --json number --jq '.[0].number // empty')
+          OPEN=$(gh issue list --state open --search 'in:title "P1: crawl failed"' --json number --jq '.[0].number // empty' || true)
           if [ -n "$OPEN" ]; then
             gh issue comment "$OPEN" --body "Failed again on $(date -u +%Y-%m-%d): $RUN_URL"
           else
