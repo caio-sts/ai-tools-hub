@@ -126,28 +126,33 @@ Checks 7 and 8 guard the `PROTECTED` list — `CI/CD`, `Kubernetes`, `Supply Cha
 languages. `Supply Chain` in particular stays `Supply Chain`; the logistics translation is not
 security language.
 
-## Outstanding manual setup
+## Scheduling
 
-Neither crawl schedule runs yet. **Until one of them does, the catalog cannot refresh itself**,
-which is the project's largest risk.
-
-**1. The local schedule (primary).** A systemd user timer every 4 hours, backed by a Windows
-Task Scheduler task at logon whose only job is to start WSL. `Persistent=true`, so a run missed
-with the machine off fires on the next boot.
-
-```bash
-mkdir -p ~/.config/ai-tools-hub
-printf 'CATALOG_PAT=github_pat_...\n' > ~/.config/ai-tools-hub/harvest.env   # public repos, read-only
-chmod 600 ~/.config/ai-tools-hub/harvest.env
-bash ops/install-schedule.sh
-systemctl --user is-enabled ai-tools-hub-harvest.timer   # expected: enabled
-```
-
-**2. The fallback workflow.** `.github/workflows/crawl.yml` runs weekly (Mondays 06:37 UTC) and
-fails without its secret:
+**`.github/workflows/crawl.yml` is the primary schedule: daily at 06:37 UTC.** It needs one
+secret, a fine-grained PAT with *Public repositories* access and no extra permissions
+(`GITHUB_TOKEN` cannot do global code search):
 
 ```bash
 gh secret set CATALOG_PAT
+```
+
+A full crawl does not fit one run. Each run stops on its own budget — 35 minutes, or when the
+core or GraphQL quota drops below 200 — commits what it read, and the next run resumes where it
+stopped: never-read repos first, then the repos whose stored data is oldest. Until every
+discovered repo has been read once, the site's Sources figure reads "N of M". A run that stops
+without reading anything, fails, or times out comments on the open `P1: crawl failed` issue (or
+opens one).
+
+**The local timer is optional.** `ops/install-schedule.sh` installs a systemd user timer every
+4 hours (plus a Windows logon task that starts WSL). It shares the PAT's quota with the Action;
+the budget stops whichever runs second.
+
+```bash
+mkdir -p ~/.config/ai-tools-hub
+printf 'CATALOG_PAT=github_pat_...\n' > ~/.config/ai-tools-hub/harvest.env
+chmod 600 ~/.config/ai-tools-hub/harvest.env
+bash ops/install-schedule.sh
+systemctl --user is-enabled ai-tools-hub-harvest.timer   # expected: enabled
 ```
 
 ## Known gaps

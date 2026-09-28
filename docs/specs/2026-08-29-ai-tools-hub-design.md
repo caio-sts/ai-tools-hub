@@ -334,6 +334,12 @@ formula decorative, which is precisely the failure we call out in §1.1.
 
 ### 6.1 Pipeline — two workflows, never one
 
+> **Amended 2026-09-27** by [the budgeted-crawl spec](2026-09-27-budgeted-crawl-design.md): the
+> first full-discovery run never finished (7,005 repos against a 5,000/h core budget and a 50-min
+> job timeout). `crawl.yml` is now the **daily primary** and the local timer optional; discovery
+> drops `mcp-server` and keeps `claude-code` above 100 stars; each run stops on a quota/time budget
+> and resumes from the stored `pushedAt`. The paragraphs below describe the original design.
+
 **Where the harvest runs.** The primary schedule is **local**, on the maintainer's machine, because
 that is where the Claude Code subscription lives and it makes each run free. WSL2 shuts itself down
 when idle, so the trigger has two halves:
@@ -382,6 +388,10 @@ Two constraints follow:
   the correct failure mode: stale-but-honest, never silently wrong. See §13.
 
 ### 6.2 Measured rate limits 📄
+
+> **Amended 2026-09-27:** the per-`SKILL.md` commit lookup was the dominant `core` cost (one REST
+> call per path). It now runs as aliased GraphQL `history(first: 1, path:)`, 50 paths per query
+> for 1 point — measured identical sha and date to REST.
 
 | Bucket | Limit | Note |
 |---|---|---|
