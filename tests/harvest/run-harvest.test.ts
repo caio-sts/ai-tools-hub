@@ -1,10 +1,12 @@
-import { mkdtemp, writeFile } from 'node:fs/promises';
+import { mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Collection, RawSkill, Safety, Skill, TreeFile } from '../../src/types.ts';
 import { loadSkills } from '../../src/lib/data.ts';
-import { runHarvest, type HarvestDeps } from '../../scripts/harvest/run.ts';
+import { RateLimitedError, type Budget } from '../../scripts/harvest/budget.ts';
+import type { RepoSnapshot } from '../../scripts/harvest/enumerate.ts';
+import { StuckCrawlError, runHarvest, type HarvestDeps } from '../../scripts/harvest/run.ts';
 
 const HEAD_COMMIT = '4c9e1f7a2b3d5e6f7081920a3b4c5d6e7f809102';
 const PATH_SHA = 'newsha0000000000000000000000000000000000';
@@ -71,13 +73,14 @@ async function seededDataDir(): Promise<string> {
 
 interface Spy {
   enumerated: string[];
+  treeRefs: string[];
   contentRefs: string[];
   licenseRefs: string[];
   safetyFrontmatter: Array<Record<string, unknown>>;
 }
 
 function spy(): Spy {
-  return { enumerated: [], contentRefs: [], licenseRefs: [], safetyFrontmatter: [] };
+  return { enumerated: [], treeRefs: [], contentRefs: [], licenseRefs: [], safetyFrontmatter: [] };
 }
 
 const tree: TreeFile[] = [
@@ -100,21 +103,35 @@ const raw: RawSkill = {
   updatedDays: 0,
 };
 
-function deps(s: Spy, headSha: string | null = HEAD_COMMIT): Partial<HarvestDeps> {
+interface DepsOptions {
+  fresh?: Collection[];
+  headOids?: Map<string, string>;
+  rawsFor?: (repo: string) => RawSkill[];
+  fetchTree?: HarvestDeps['fetchTree'];
+}
+
+function deps(s: Spy, options: DepsOptions = {}): Partial<HarvestDeps> {
+  const fresh = options.fresh ?? [
+    collection('cached/repo', '2026-08-01T00:00:00Z', 500),
+    collection('fresh/repo', '2026-08-29T00:00:00Z', 999),
+  ];
+  const headOids = options.headOids ?? new Map(fresh.map((c) => [c.repo, HEAD_COMMIT]));
   return {
     discoverRepos: async () => {
       throw new Error('discovery must not run when an allowlist is supplied');
     },
-    enrichCollections: async () => [
-      collection('cached/repo', '2026-08-01T00:00:00Z', 500),
-      collection('fresh/repo', '2026-08-29T00:00:00Z', 999),
-    ],
-    enumerateSkills: async (repo) => {
-      s.enumerated.push(repo.repo);
-      return repo.repo === 'fresh/repo' ? [raw] : [];
+    enrichCollections: async () => ({ collections: fresh, headOids }),
+    fetchTree:
+      options.fetchTree ??
+      (async (_repo, ref) => {
+        s.treeRefs.push(ref);
+        return tree;
+      }),
+    enumerateSkills: async (snapshot: RepoSnapshot) => {
+      s.enumerated.push(snapshot.repo.repo);
+      if (options.rawsFor) return options.rawsFor(snapshot.repo.repo);
+      return snapshot.repo.repo === 'fresh/repo' ? [raw] : [];
     },
-    fetchTree: async () => tree,
-    fetchHeadCommit: async () => headSha,
     fetchRawFile: async (_repo, ref) => {
       s.licenseRefs.push(ref);
       return 'MIT License\n';
@@ -128,6 +145,17 @@ function deps(s: Spy, headSha: string | null = HEAD_COMMIT): Partial<HarvestDeps
       return { ...INERT, executesCode: true, scriptCount: 1, languages: ['python'], declaredTools: ['Bash'] };
     },
     now: () => new Date('2026-08-29T06:37:00.000Z'),
+    log: () => {},
+  };
+}
+
+/** Lets `repos` repos start, then reports the time budget spent. */
+function budgetAllowing(repos: number): Budget {
+  let checks = 0;
+  return {
+    observeCore() {},
+    observeGraphql() {},
+    exhausted: () => (checks++ < repos ? null : 'time budget'),
   };
 }
 
@@ -157,28 +185,35 @@ describe('runHarvest', () => {
       sourceCount: 2,
       discoveredCount: 2,
     });
+    expect(s.treeRefs).toEqual([HEAD_COMMIT]);
   });
 
-  it('pins every raw fetch to the head COMMIT sha, never to the skill or blob sha', async () => {
+  it('reads the tree and pins every raw fetch to the enrichment oid, never the skill or blob sha', async () => {
     const dir = await seededDataDir();
     const s = spy();
     await runHarvest({ token: 'tok', dataDir: dir, allowlist: ['fresh/repo'], deps: deps(s) });
 
+    expect(s.treeRefs).toEqual([HEAD_COMMIT]);
     expect(s.contentRefs).toEqual([HEAD_COMMIT]);
     expect(s.licenseRefs).toEqual([HEAD_COMMIT]);
     expect(s.contentRefs).not.toContain(PATH_SHA);
     expect(s.contentRefs).not.toContain(BLOB_SHA);
   });
 
-  it('makes no raw request at all when the head commit sha cannot be resolved', async () => {
+  it('treats a repo with no default branch as empty: no request, no skills, but a row', async () => {
     const dir = await seededDataDir();
     const s = spy();
-    const { skills } = await runHarvest({ token: 'tok', dataDir: dir, allowlist: ['fresh/repo'], deps: deps(s, null) });
+    const { skills, collections } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['fresh/repo'],
+      deps: deps(s, { headOids: new Map() }),
+    });
 
-    expect(s.contentRefs).toEqual([]);
-    expect(s.licenseRefs).toEqual([]);
-    // The entry still lands, with a tree-only safety surface.
-    expect(skills.find((k) => k.repo === 'fresh/repo')).toBeDefined();
+    expect(s.treeRefs).toEqual([]);
+    expect(s.enumerated).toEqual([]);
+    expect(skills.find((k) => k.repo === 'fresh/repo')).toBeUndefined();
+    expect(collections.map((c) => c.repo)).toContain('fresh/repo');
   });
 
   it('passes the frontmatter through to deriveSafety so declaredTools is populated (spec §4.3)', async () => {
@@ -246,5 +281,123 @@ describe('runHarvest', () => {
     const fresh = skills.find((k) => k.repo === 'fresh/repo');
     expect(fresh?.primary).toBe('security/containers-kubernetes');
     expect(fresh?.tags).toEqual(['trivy']);
+  });
+
+  it('stops cleanly on the budget, keeps what it read, and leaves never-read repos out', async () => {
+    const dir = await seededDataDir();
+    const s = spy();
+    const fresh = [
+      collection('a/small', '2026-09-01T00:00:00Z', 5),
+      collection('b/medium', '2026-09-01T00:00:00Z', 50),
+      collection('c/large', '2026-09-01T00:00:00Z', 500),
+    ];
+
+    const { collections, meta, summary } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: deps(s, { fresh }),
+      budget: budgetAllowing(2),
+    });
+
+    expect(s.enumerated).toEqual(['c/large', 'b/medium']);
+    expect(collections.map((c) => c.repo)).toEqual(['b/medium', 'c/large']);
+    expect(meta.sourceCount).toBe(2);
+    expect(meta.discoveredCount).toBe(3);
+    expect(summary).toEqual({ read: 2, unchanged: 0, deferred: 1, stopped: 'time budget' });
+  });
+
+  it('keeps the previous row and skills of a changed repo it did not reach, so it stays queued', async () => {
+    const dir = await seededDataDir();
+    const s = spy();
+    const fresh = [
+      collection('cached/repo', '2026-09-20T00:00:00Z', 500),
+      collection('fresh/repo', '2026-08-29T00:00:00Z', 999),
+    ];
+
+    const { skills, collections } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: deps(s, { fresh }),
+      budget: budgetAllowing(1),
+    });
+
+    expect(s.enumerated).toEqual(['fresh/repo']);
+    const cached = collections.find((c) => c.repo === 'cached/repo');
+    expect(cached?.pushedAt).toBe('2026-08-01T00:00:00Z');
+    expect(skills.map((k) => k.id)).toContain('cached/repo@old:SKILL.md');
+  });
+
+  it('discards a repo refused mid-read, commits the ones before it, and exits normally', async () => {
+    const dir = await seededDataDir();
+    const s = spy();
+    const fresh = [
+      collection('first/repo', '2026-09-01T00:00:00Z', 900),
+      collection('second/repo', '2026-09-01T00:00:00Z', 100),
+    ];
+
+    const { collections, summary } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: deps(s, {
+        fresh,
+        fetchTree: async (repo) => {
+          if (repo === 'second/repo') throw new RateLimitedError(`tree ${repo}`);
+          return tree;
+        },
+      }),
+    });
+
+    expect(collections.map((c) => c.repo)).toEqual(['first/repo']);
+    expect(summary.stopped).toBe('rate limited');
+    expect(summary.deferred).toBe(1);
+  });
+
+  it('gives a repo it read a row even when it yields zero skills, so it is not re-read', async () => {
+    const dir = await seededDataDir();
+    const fresh = [collection('empty/skills', '2026-09-01T00:00:00Z', 50)];
+
+    const { collections } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['empty/skills'],
+      deps: deps(spy(), { fresh, rawsFor: () => [] }),
+    });
+
+    expect(collections.map((c) => c.repo)).toEqual(['empty/skills']);
+  });
+
+  it('fails loudly, and writes nothing, when it cannot read a single repo of a non-empty queue', async () => {
+    const dir = await seededDataDir();
+    const before = await readFile(join(dir, 'meta.json'), 'utf8');
+    const fresh = [collection('never/read', '2026-09-01T00:00:00Z', 50)];
+
+    await expect(
+      runHarvest({
+        token: 'tok',
+        dataDir: dir,
+        allowlist: ['never/read'],
+        deps: deps(spy(), { fresh }),
+        budget: budgetAllowing(0),
+      }),
+    ).rejects.toBeInstanceOf(StuckCrawlError);
+    expect(await readFile(join(dir, 'meta.json'), 'utf8')).toBe(before);
+  });
+
+  it('succeeds with nothing to do when every repo is unchanged', async () => {
+    const dir = await seededDataDir();
+    const fresh = [collection('cached/repo', '2026-08-01T00:00:00Z', 500)];
+
+    const { summary } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['cached/repo'],
+      deps: deps(spy(), { fresh }),
+      budget: budgetAllowing(0),
+    });
+
+    expect(summary).toEqual({ read: 0, unchanged: 1, deferred: 0, stopped: null });
   });
 });

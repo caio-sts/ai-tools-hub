@@ -243,37 +243,6 @@ export function parseFrontmatter(text: string): ParsedFrontmatter {
   return { frontmatter: fm, body };
 }
 
-interface CommitItem {
-  sha?: string;
-  commit?: { committer?: { date?: string }; author?: { date?: string } };
-}
-
-/**
- * The repo's default-branch HEAD COMMIT sha. This is the only correct fallback when a path has
- * no commit history: raw.githubusercontent.com resolves commit shas, never blob shas, so
- * falling back to a tree entry's `sha` would 404 every content and safety fetch downstream.
- * Fetched lazily by enumerateSkills — most repos never need it.
- *
- * This is the ONE head-commit fetcher in the codebase. A6's collection LICENSE pass imports it
- * from here (`import { fetchHeadCommit } from './enumerate.ts'`) instead of writing a second
- * implementation, so there is exactly one place where "the repo's current commit" is defined.
- */
-export async function fetchHeadCommit(
-  repo: string,
-  token: string,
-  deps: EnumerateDeps = {},
-): Promise<string | null> {
-  const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
-  const res = await fetchImpl(`${API}/repos/${repo}/commits?per_page=1`, {
-    headers: ghHeaders(token),
-  });
-  if (res.status === 404 || res.status === 409) return null;
-  if (!res.ok) throw new Error(`commits ${repo}: HTTP ${res.status}`);
-  const body = (await res.json()) as CommitItem[];
-  const first = Array.isArray(body) ? body[0] : undefined;
-  return typeof first?.sha === 'string' ? first.sha : null;
-}
-
 /** No commit history for the path: score it as maximally stale rather than inventing freshness. */
 export const UNKNOWN_UPDATED_DAYS = 3650;
 

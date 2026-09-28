@@ -19,9 +19,17 @@ import { EVICT_RANK, applyListing, compareForRank } from '../../src/lib/rank.ts'
 import { deriveSafety, isPortable, scriptFilesFor } from '../../src/lib/safety.ts';
 import { scoreSkill } from '../../src/lib/score.ts';
 import { loadTaxonomy } from '../../src/lib/taxonomy.ts';
+import {
+  RateLimitedError,
+  createBudget,
+  timeBudgetFromEnv,
+  type Budget,
+  type BudgetLimits,
+  type StopReason,
+} from './budget.ts';
 import { discoverRepos } from './discover.ts';
-import { enumerateSkills, fetchHeadCommit, fetchRawFile, fetchTree, type EnumerateDeps } from './enumerate.ts';
-import { detectRuntimes, enrichCollections } from './enrich.ts';
+import { enumerateSkills, fetchRawFile, fetchTree, type EnumerateDeps, type RepoSnapshot } from './enumerate.ts';
+import { detectRuntimes, enrichCollections, type EnrichResult } from './enrich.ts';
 
 /** Primary key for a skill: skills have no version and no namespace primitive (spec §4.1). */
 export function skillId(repo: string, sha: string, path: string): string {
@@ -282,7 +290,16 @@ export function partitionRepos(
     }
   }
 
-  return { crawl, skipped };
+  // Never-read first (by stars), then changed repos whose stored data is oldest: the stored
+  // pushedAt is the resume cursor (budgeted-crawl spec §3.3).
+  const neverRead = crawl
+    .filter((collection) => !index.has(collection.repo))
+    .sort((a, b) => b.stars - a.stars || a.repo.localeCompare(b.repo));
+  const changed = crawl
+    .filter((collection) => index.has(collection.repo))
+    .sort((a, b) => index.get(a.repo)!.localeCompare(index.get(b.repo)!) || a.repo.localeCompare(b.repo));
+
+  return { crawl: [...neverRead, ...changed], skipped };
 }
 
 /**
@@ -315,14 +332,14 @@ export function carryForward(
 
 export interface HarvestDeps {
   discoverRepos(token: string): Promise<RepoRef[]>;
-  enrichCollections(repos: RepoRef[], token: string): Promise<Collection[]>;
-  enumerateSkills(repo: RepoRef, token: string): Promise<RawSkill[]>;
-  fetchTree(repo: string, token: string): Promise<TreeFile[]>;
-  fetchHeadCommit(repo: string, token: string): Promise<string | null>;
+  enrichCollections(repos: RepoRef[], token: string): Promise<EnrichResult>;
+  fetchTree(repo: string, ref: string, token: string): Promise<TreeFile[]>;
+  enumerateSkills(snapshot: RepoSnapshot, token: string): Promise<RawSkill[]>;
   fetchRawFile(repo: string, ref: string, path: string): Promise<string | null>;
   fetchScriptContents(repo: string, ref: string, files: TreeFile[]): Promise<Map<string, string>>;
   deriveSafety(files: TreeFile[], contents: Map<string, string>, frontmatter: Record<string, unknown>): Safety;
   now(): Date;
+  log(message: string): void;
 }
 
 export interface HarvestOptions {
@@ -330,24 +347,90 @@ export interface HarvestOptions {
   dataDir: string;
   allowlist?: string[] | null;
   deps?: Partial<HarvestDeps>;
+  limits?: Partial<BudgetLimits>;
+  /** Injected by tests; otherwise built from `limits`. */
+  budget?: Budget;
 }
 
-const DEFAULT_DEPS: HarvestDeps = {
-  discoverRepos: (token) => discoverRepos(token),
-  enrichCollections,
-  enumerateSkills: (repo, token) => enumerateSkills(repo, token),
-  fetchTree: (repo, token) => fetchTree(repo, token),
-  fetchHeadCommit: (repo, token) => fetchHeadCommit(repo, token),
-  fetchRawFile: (repo, ref, path) => fetchRawFile(repo, ref, path),
-  fetchScriptContents: (repo, ref, files) => fetchScriptContents(repo, ref, files),
-  deriveSafety,
-  now: () => new Date(),
-};
+export interface HarvestSummary {
+  read: number;
+  unchanged: number;
+  deferred: number;
+  stopped: StopReason | null;
+}
+
+/** A guard stopped the run before it read anything: the crawler is stuck, not idle. */
+export class StuckCrawlError extends Error {
+  constructor(reason: StopReason, queued: number) {
+    super(`harvest: stopped on ${reason} before reading any of ${queued} queued repos`);
+    this.name = 'StuckCrawlError';
+  }
+}
+
+function defaultDeps(budget: Budget): HarvestDeps {
+  const log = (message: string): void => console.log(message);
+  const core: EnumerateDeps = { log, onCoreResponse: (res) => budget.observeCore(res) };
+  const onGraphqlRemaining = (remaining: number): void => budget.observeGraphql(remaining);
+  return {
+    discoverRepos: (token) => discoverRepos(token, { log }),
+    enrichCollections: (repos, token) => enrichCollections(repos, token, { onGraphqlRemaining }),
+    fetchTree: (repo, ref, token) => fetchTree(repo, token, core, ref),
+    enumerateSkills: (snapshot, token) => enumerateSkills(snapshot, token, { ...core, onGraphqlRemaining }),
+    fetchRawFile: (repo, ref, path) => fetchRawFile(repo, ref, path),
+    fetchScriptContents: (repo, ref, files) => fetchScriptContents(repo, ref, files),
+    deriveSafety,
+    now: () => new Date(),
+    log,
+  };
+}
+
+interface ReadContext {
+  deps: HarvestDeps;
+  token: string;
+  assignments: Map<string, Assignment>;
+  translations: Map<string, TranslationCarry>;
+  indexedAt: string;
+}
+
+/** One repo at its pinned oid. A throw means nothing of this repo is kept. */
+async function readRepo(collection: Collection, oid: string | null, context: ReadContext): Promise<Skill[]> {
+  if (oid === null) return [];
+  const { deps, token } = context;
+
+  const tree = await deps.fetchTree(collection.repo, oid, token);
+  const raws = await deps.enumerateSkills({ repo: { repo: collection.repo, stars: collection.stars }, oid, tree }, token);
+  const treePaths = tree.filter((file) => file.type === 'blob').map((file) => file.path);
+
+  const built: Skill[] = [];
+  for (const raw of raws) {
+    const scriptFiles = scriptFilesFor(tree, raw.path);
+    const contents = await deps.fetchScriptContents(collection.repo, oid, scriptFiles);
+    const safety = deps.deriveSafety(scriptFiles, contents, raw.frontmatter);
+
+    const licensePath = siblingLicensePath(raw.path, treePaths);
+    const siblingLicenseText = licensePath === null ? null : await deps.fetchRawFile(collection.repo, oid, licensePath);
+
+    built.push(
+      buildSkill({
+        raw,
+        collection,
+        safety,
+        treePaths,
+        siblingLicenseText,
+        assignment: context.assignments.get(identityKey(raw.repo, raw.path)),
+        previousTranslation: context.translations.get(identityKey(raw.repo, raw.path)),
+        indexedAt: context.indexedAt,
+      }),
+    );
+  }
+  return built;
+}
 
 export async function runHarvest(
   options: HarvestOptions,
-): Promise<{ skills: Skill[]; collections: Collection[]; meta: Meta }> {
-  const deps: HarvestDeps = { ...DEFAULT_DEPS, ...(options.deps ?? {}) };
+): Promise<{ skills: Skill[]; collections: Collection[]; meta: Meta; summary: HarvestSummary }> {
+  const budget = options.budget ?? createBudget(options.limits);
+  const deps: HarvestDeps = { ...defaultDeps(budget), ...(options.deps ?? {}) };
   const { token, dataDir } = options;
   const allowlist = options.allowlist ?? null;
 
@@ -356,7 +439,7 @@ export async function runHarvest(
       ? allowlist.map((repo) => ({ repo, stars: 0 }))
       : await deps.discoverRepos(token);
 
-  const collections = await deps.enrichCollections(repos, token);
+  const { collections, headOids } = await deps.enrichCollections(repos, token);
 
   const previous: CatalogSnapshot = { skills: loadSkills(dataDir), collections: loadCollections(dataDir) };
   const previousMeta = loadMeta(dataDir);
@@ -366,48 +449,37 @@ export async function runHarvest(
   const { crawl, skipped } = partitionRepos(collections, pushedAtIndex(previous));
   const skills: Skill[] = carryForward(previous, skipped, assignments);
   const indexedAt = deps.now().toISOString();
+  const context: ReadContext = { deps, token, assignments, translations, indexedAt };
 
-  for (const collection of crawl) {
-    const raws = await deps.enumerateSkills({ repo: collection.repo, stars: collection.stars }, token);
-    if (raws.length === 0) continue;
-
-    const tree = await deps.fetchTree(collection.repo, token);
-    const treePaths = tree.filter((file) => file.type === 'blob').map((file) => file.path);
-
-    // treePaths came from git/trees/HEAD (A4.12), so the neighbours listed there exist at HEAD,
-    // not necessarily at the SKILL.md's own per-path commit. Resolve the head COMMIT sha once
-    // per repo with A4.19's fetchHeadCommit and pin every sibling fetch to it.
-    const commitSha = await deps.fetchHeadCommit(collection.repo, token);
-
-    for (const raw of raws) {
-      const scriptFiles = scriptFilesFor(tree, raw.path);
-      const contents =
-        commitSha === null
-          ? new Map<string, string>()
-          : await deps.fetchScriptContents(collection.repo, commitSha, scriptFiles);
-
-      const safety = deps.deriveSafety(scriptFiles, contents, raw.frontmatter);
-
-      const licensePath = siblingLicensePath(raw.path, treePaths);
-      const siblingLicenseText =
-        licensePath === null || commitSha === null
-          ? null
-          : await deps.fetchRawFile(collection.repo, commitSha, licensePath);
-
-      skills.push(
-        buildSkill({
-          raw,
-          collection,
-          safety,
-          treePaths,
-          siblingLicenseText,
-          assignment: assignments.get(identityKey(raw.repo, raw.path)),
-          previousTranslation: translations.get(identityKey(raw.repo, raw.path)),
-          indexedAt,
-        }),
-      );
+  let stopped: StopReason | null = null;
+  let next = 0;
+  for (; next < crawl.length; next += 1) {
+    stopped = budget.exhausted();
+    if (stopped !== null) break;
+    const collection = crawl[next]!;
+    try {
+      skills.push(...(await readRepo(collection, headOids.get(collection.repo) ?? null, context)));
+    } catch (error) {
+      if (error instanceof RateLimitedError) {
+        stopped = 'rate limited';
+        break;
+      }
+      throw error;
     }
   }
+
+  const deferred = crawl.slice(next);
+  if (next === 0 && deferred.length > 0) throw new StuckCrawlError(stopped ?? 'rate limited', deferred.length);
+
+  // Budgeted-crawl spec §3.5: a changed repo not reached keeps its previous row (old pushedAt, so
+  // it stays queued) and skills; a never-read one is left out until a run reaches it.
+  const previousRows = new Map(previous.collections.map((collection) => [collection.repo, collection]));
+  const deferredRepos = new Set(deferred.map((collection) => collection.repo));
+  const kept = deferred.flatMap((collection) => previousRows.get(collection.repo) ?? []);
+  skills.push(...carryForward(previous, kept, assignments));
+  const rows = collections.flatMap((collection) =>
+    deferredRepos.has(collection.repo) ? (previousRows.get(collection.repo) ?? []) : [collection],
+  );
 
   skills.sort(compareForRank);
 
@@ -423,14 +495,18 @@ export async function runHarvest(
     // Harvest never classifies; the classification PR owns this field (spec §6.1).
     classifiedAt: previousMeta.classifiedAt,
     skillCount: listed.length,
-    sourceCount: collections.length,
+    sourceCount: rows.length,
     discoveredCount: collections.length,
   };
 
-  await writeCatalog(dataDir, { skills: listed, collections });
+  await writeCatalog(dataDir, { skills: listed, collections: rows });
   await writeMeta(dataDir, meta);
 
-  return { skills: listed, collections, meta };
+  const summary: HarvestSummary = { read: next, unchanged: skipped.length, deferred: deferred.length, stopped };
+  deps.log(
+    `harvest: read ${summary.read}, unchanged ${summary.unchanged}, deferred ${summary.deferred}, stopped: ${stopped ?? 'queue drained'}`,
+  );
+  return { skills: listed, collections: rows, meta, summary };
 }
 
 export function parseArgs(argv: string[]): { allowlist: string[] | null; dataDir: string } {
@@ -463,8 +539,11 @@ export async function main(argv: string[], env: Record<string, string | undefine
   }
 
   const { allowlist, dataDir } = parseArgs(argv);
-  const { meta } = await runHarvest({ token, dataDir, allowlist });
-  console.log(`harvest: ${meta.skillCount} skills from ${meta.sourceCount} sources at ${meta.crawledAt}`);
+  const timeBudgetMs = timeBudgetFromEnv(env['HARVEST_TIME_BUDGET_MIN']);
+  const { meta } = await runHarvest({ token, dataDir, allowlist, limits: { timeBudgetMs } });
+  console.log(
+    `harvest: ${meta.skillCount} skills from ${meta.sourceCount} of ${meta.discoveredCount} sources at ${meta.crawledAt}`,
+  );
   return 0;
 }
 

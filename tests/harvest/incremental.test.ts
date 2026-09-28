@@ -53,7 +53,7 @@ describe('pushedAtIndex', () => {
 });
 
 describe('partitionRepos (spec §6.1: skip repos whose pushedAt is unchanged)', () => {
-  it('skips unchanged repos and crawls changed and unseen ones', () => {
+  it('skips unchanged repos and queues never-read ones before changed ones', () => {
     const fresh = [
       collection('cached/repo', '2026-08-01T00:00:00Z'),
       collection('changed/repo', '2026-08-28T09:00:00Z'),
@@ -62,7 +62,23 @@ describe('partitionRepos (spec §6.1: skip repos whose pushedAt is unchanged)', 
 
     const { crawl, skipped } = partitionRepos(fresh, pushedAtIndex(previous));
     expect(skipped.map((c) => c.repo)).toEqual(['cached/repo']);
-    expect(crawl.map((c) => c.repo)).toEqual(['changed/repo', 'brand/new']);
+    expect(crawl.map((c) => c.repo)).toEqual(['brand/new', 'changed/repo']);
+  });
+
+  it('reads never-read repos by stars, and changed repos stalest data first', () => {
+    const star = (repo: string, stars: number): Collection => ({ ...collection(repo, '2026-09-01T00:00:00Z'), stars });
+    const index = new Map([
+      ['old/data', '2026-01-01T00:00:00Z'],
+      ['recent/data', '2026-08-01T00:00:00Z'],
+    ]);
+    const fresh = [star('recent/data', 9000), star('small/new', 10), star('old/data', 1), star('big/new', 500)];
+
+    expect(partitionRepos(fresh, index).crawl.map((c) => c.repo)).toEqual([
+      'big/new',
+      'small/new',
+      'old/data',
+      'recent/data',
+    ]);
   });
 
   it('crawls everything on a cold start', () => {
