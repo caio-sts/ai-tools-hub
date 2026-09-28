@@ -42,13 +42,7 @@ export function createPacer(perMinute: number, deps: PacerDeps = {}): Pacer {
 }
 
 /** Topic sweeps. Content categories are NEVER seeded from topics (spec 3.4). */
-export const DISCOVERY_TOPICS = [
-  'claude-skills',
-  'agent-skills',
-  'openclaw-skills',
-  'claude-code',
-  'mcp-server',
-] as const;
+export const DISCOVERY_TOPICS = ['claude-skills', 'agent-skills', 'openclaw-skills', 'claude-code'] as const;
 
 /**
  * Star partitions beat the hard 1,000-result cap on /search/repositories.
@@ -57,13 +51,22 @@ export const DISCOVERY_TOPICS = [
  */
 export const STAR_PARTITIONS: readonly string[] = ['>=1000', '100..999', `${MIN_STARS}..99`];
 
+/**
+ * Per-topic bands, each a subset of STAR_PARTITIONS: a topic may raise its floor, never lower it.
+ * claude-code 10..99 alone held 7,610 repos on 2026-09-27 (budgeted-crawl spec §3.1).
+ */
+export const TOPIC_PARTITIONS: Readonly<Record<string, readonly string[]>> = {
+  'claude-code': ['>=1000', '100..999'],
+};
+
 export function buildSearchQueries(
   topics: readonly string[] = DISCOVERY_TOPICS,
   partitions: readonly string[] = STAR_PARTITIONS,
+  overrides: Readonly<Record<string, readonly string[]>> = TOPIC_PARTITIONS,
 ): string[] {
   const out: string[] = [];
   for (const topic of topics) {
-    for (const partition of partitions) {
+    for (const partition of overrides[topic] ?? partitions) {
       out.push(`topic:${topic} stars:${partition}`);
     }
   }

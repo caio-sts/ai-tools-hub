@@ -53,7 +53,7 @@ describe('discoverRepos', () => {
           ],
         });
       }
-      if (query === 'topic:mcp-server stars:10..99') {
+      if (query === 'topic:openclaw-skills stars:10..99') {
         return json({
           total_count: 3,
           items: [
@@ -148,7 +148,7 @@ describe('discoverRepos', () => {
     expect(repos.some((r) => r.repo === 'owner/b049')).toBe(true);
   });
 
-  it('issues 15 topic requests plus one code-search request when everything is empty', async () => {
+  it('issues 11 topic requests plus one code-search request when everything is empty', async () => {
     let calls = 0;
     const fetchImpl = stubFetch(() => {
       calls += 1;
@@ -159,7 +159,7 @@ describe('discoverRepos', () => {
       sleepImpl: async () => {},
       now: () => 1_000_000,
     });
-    expect(calls).toBe(16);
+    expect(calls).toBe(12);
     expect(repos).toEqual([]);
   });
 });
