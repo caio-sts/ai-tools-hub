@@ -510,6 +510,36 @@ describe('runHarvest', () => {
     expect(summary).toEqual({ read: 2, unchanged: 0, deferred: 1, failed: 1, stopped: null });
   });
 
+  it('logs how long a repo took to read once it takes a minute or more', async () => {
+    const dir = await seededDataDir();
+    const logs: string[] = [];
+    let clock = Date.parse('2026-09-28T06:37:00.000Z');
+    const fresh = [
+      collection('slow/repo', '2026-09-01T00:00:00Z', 900),
+      collection('quick/repo', '2026-09-01T00:00:00Z', 100),
+    ];
+
+    await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: {
+        ...deps(spy(), {
+          fresh,
+          fetchTree: async (repo) => {
+            clock += repo === 'slow/repo' ? 61_000 : 59_999;
+            return tree;
+          },
+        }),
+        now: () => new Date(clock),
+        log: (message: string) => logs.push(message),
+      },
+    });
+
+    expect(logs).toContain('harvest: slow/repo read in 61s');
+    expect(logs.filter((line) => line.includes(' read in '))).toHaveLength(1);
+  });
+
   it('fails loudly, and writes nothing, when every repo of the queue fails', async () => {
     const dir = await seededDataDir();
     const before = await Promise.all(

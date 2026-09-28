@@ -403,6 +403,7 @@ interface ReadContext {
 async function readRepo(collection: Collection, oid: string | null, context: ReadContext): Promise<Skill[]> {
   if (oid === null) return [];
   const { deps, token } = context;
+  const started = deps.now().getTime();
 
   const tree = await deps.fetchTree(collection.repo, oid, token);
   const raws = await deps.enumerateSkills({ repo: { repo: collection.repo, stars: collection.stars }, oid, tree }, token);
@@ -430,6 +431,10 @@ async function readRepo(collection: Collection, oid: string | null, context: Rea
       }),
     );
   }
+
+  // Sizes the margin between the time budget and timeout-minutes (budgeted-crawl spec §3.4).
+  const elapsedMs = deps.now().getTime() - started;
+  if (elapsedMs >= 60_000) deps.log(`harvest: ${collection.repo} read in ${Math.round(elapsedMs / 1000)}s`);
   return built;
 }
 

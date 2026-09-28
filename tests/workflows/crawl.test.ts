@@ -86,8 +86,9 @@ describe('crawl.yml keeps its own schedule alive (spec §6.5)', () => {
     const budget = Number(yml.match(/HARVEST_TIME_BUDGET_MIN:\s*'(\d+)'/)?.[1]);
     const timeout = Number(yml.match(/timeout-minutes:\s*(\d+)/)?.[1]);
     expect(budget).toBe(35);
-    expect(timeout).toBe(50);
-    expect(timeout - budget).toBeGreaterThanOrEqual(10);
+    expect(timeout).toBe(90);
+    // The guard runs between repos: the margin covers the largest repo (~13 min) and the commit.
+    expect(timeout - budget).toBeGreaterThanOrEqual(45);
   });
 });
 
