@@ -140,10 +140,11 @@ summary line, e.g. `harvest: read 1830, unchanged 0, deferred 2570, stopped: tim
 - **`meta.discoveredCount: number`** — repos admitted by this run's discovery ("M").
 - `meta.sourceCount` keeps its meaning and invariant: `collections.json` length, the repos we hold
   data for ("N"). **Partial** ⇔ `sourceCount < discoveredCount`.
-- `Meta` (`src/types.ts`), `loadMeta` (`src/lib/data.ts`) and the `SiteMeta` reader
-  (`src/lib/staleness.ts`) all learn the field. `loadMeta` copies known fields only, and
-  `scripts/apply-assignments.ts` rewrites `meta.json` through it — without this, every
-  classification PR would erase the field.
+- `Meta` (`src/types.ts`) and `loadMeta` (`src/lib/data.ts`) learn the field. `loadMeta` copies
+  known fields only, and `scripts/apply-assignments.ts` rewrites `meta.json` through it — without
+  this, every classification PR would erase the field. The `SiteMeta` reader in
+  `src/lib/staleness.ts` only reads, never writes, and no staleness logic needs coverage, so it is
+  left alone.
 - A `meta.json` without the field reads as `discoveredCount = sourceCount` (complete).
 - `validateCatalog` adds `discoveredCount >= sourceCount`.
 - `skills.json` and `collections.json` row shapes do not change. `collections.json` now lists repos
