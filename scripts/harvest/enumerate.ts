@@ -9,6 +9,7 @@ import {
 } from '../../src/lib/inclusion.ts';
 import type { FetchLike } from './discover.ts';
 import { RateLimitedError, isRateLimited } from './budget.ts';
+import { fetchPathCommits, type PathHistoryDeps } from './path-history.ts';
 
 const API = 'https://api.github.com';
 
@@ -242,36 +243,9 @@ export function parseFrontmatter(text: string): ParsedFrontmatter {
   return { frontmatter: fm, body };
 }
 
-export interface PathCommit {
-  sha: string;
-  updatedDays: number;
-}
-
 interface CommitItem {
   sha?: string;
   commit?: { committer?: { date?: string }; author?: { date?: string } };
-}
-
-/** Maintenance decays on the PATH's last commit, not the repo's; the sha also pins provenance. */
-export async function fetchPathCommit(
-  repo: string,
-  path: string,
-  token: string,
-  deps: EnumerateDeps = {},
-): Promise<PathCommit | null> {
-  const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
-  const now = deps.now ?? (() => Date.now());
-  const url = `${API}/repos/${repo}/commits?path=${encodeURIComponent(path)}&per_page=1`;
-  const res = await fetchImpl(url, { headers: ghHeaders(token) });
-  if (res.status === 404 || res.status === 409) return null;
-  if (!res.ok) throw new Error(`commits ${repo}:${path}: HTTP ${res.status}`);
-  const body = (await res.json()) as CommitItem[];
-  const first = Array.isArray(body) ? body[0] : undefined;
-  if (first === undefined || typeof first.sha !== 'string') return null;
-  const iso = first.commit?.committer?.date ?? first.commit?.author?.date;
-  if (iso === undefined) return null;
-  const ms = now() - Date.parse(iso);
-  return { sha: first.sha, updatedDays: Math.max(0, Math.floor(ms / 86_400_000)) };
 }
 
 /**
@@ -313,23 +287,28 @@ function conceptOf(path: string, frontmatter: Record<string, unknown>): string {
   return normalizeConcept(segments[segments.length - 2] ?? path);
 }
 
+export interface RepoSnapshot {
+  repo: RepoRef;
+  /** The commit this run reads the repo at (enrichment's default-branch oid). */
+  oid: string;
+  tree: TreeFile[];
+}
+
 /**
- * Stage 1 for one repo. Every `RawSkill.sha` returned here is a COMMIT sha — the per-path commit
- * when one exists, otherwise the repo HEAD commit from `fetchHeadCommit`; a path with neither is
- * skipped outright. A blob sha therefore never reaches `RawSkill.sha`, and downstream stages can
- * pin content, LICENSE and safety fetches to it directly. The tree entry's blob sha travels
- * separately as `blobSha`, for change detection only.
+ * Stage 1 for one repo, at one pinned commit. `RawSkill.sha` is the per-path commit when the path
+ * has history, otherwise the snapshot oid — a COMMIT sha either way, never a blob sha, because
+ * raw.githubusercontent.com resolves commits only. Makes no core request.
  */
 export async function enumerateSkills(
-  repo: RepoRef,
+  snapshot: RepoSnapshot,
   token: string,
-  deps: EnumerateDeps = {},
+  deps: EnumerateDeps & PathHistoryDeps = {},
 ): Promise<RawSkill[]> {
+  const { repo, oid, tree } = snapshot;
   const log = deps.log ?? (() => {});
   const wait =
     deps.sleepImpl ?? ((ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms)));
 
-  const tree = await fetchTree(repo.repo, token, deps);
   if (tree.length === 0) return [];
 
   // Spec 6.4 "has a README" is a repo-level fact — check it once, before spending any requests.
@@ -340,22 +319,20 @@ export async function enumerateSkills(
 
   const files: TreeFile[] = filterSkillFiles(tree);
   log(`${repo.repo}: ${files.length} candidate skills from ${tree.length} tree entries`);
+  if (files.length === 0) return [];
 
-  let headSha: string | null | undefined;
+  const commits = await fetchPathCommits(
+    repo.repo,
+    oid,
+    files.map((file) => file.path),
+    token,
+    deps,
+  );
   const raws: RawSkill[] = [];
 
   for (const file of files) {
-    const commit = await fetchPathCommit(repo.repo, file.path, token, deps);
-    if (commit === null && headSha === undefined) {
-      headSha = await fetchHeadCommit(repo.repo, token, deps);
-    }
-    // raw.githubusercontent.com resolves COMMIT shas only; a blob sha would 404 here and in
-    // every downstream safety and license fetch, so a skill with no commit sha is dropped.
-    const ref = commit?.sha ?? headSha ?? null;
-    if (ref === null) {
-      log(`${repo.repo}:${file.path} has no commit sha; skipped rather than pinned to a blob`);
-      continue;
-    }
+    const commit = commits.get(file.path);
+    const ref = commit?.sha ?? oid;
 
     const text = await fetchRawFile(repo.repo, ref, file.path, deps);
     if (text === null) {

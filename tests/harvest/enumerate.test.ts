@@ -25,29 +25,33 @@ const SKILL_MD = [
   '',
 ].join('\n');
 
+const OID = '9892f18037231b42bdbdb6cc6ecdb2f5d58eff0e';
+const ALIAS_RE = /^ +(p\d+): history\(first: 1, path: "([^"]+)"\)/gm;
+
 interface RouteOptions {
-  tree?: unknown;
-  pathCommits?: unknown;
-  headCommits?: unknown;
+  /** path -> [sha, committedDate]; a path left out has no history. */
+  history?: Record<string, [string, string]>;
   raw?: (url: string) => Response;
 }
 
 function router(options: RouteOptions = {}) {
   const urls: string[] = [];
-  const fetchImpl = (async (input: RequestInfo | URL) => {
+  const fetchImpl = (async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
     urls.push(url);
-    if (url.includes('/git/trees/')) {
-      return new Response(JSON.stringify(options.tree ?? TREE), { status: 200 });
+    if (url === 'https://api.github.com/graphql') {
+      const query = (JSON.parse(String(init?.body)) as { query: string }).query;
+      const object: Record<string, unknown> = {};
+      for (const [, alias, path] of query.matchAll(ALIAS_RE)) {
+        const hit = options.history?.[path!];
+        object[alias!] = { nodes: hit === undefined ? [] : [{ oid: hit[0], committedDate: hit[1] }] };
+      }
+      return new Response(JSON.stringify({ data: { rateLimit: { cost: 1, remaining: 4999 }, repository: { object } } }), {
+        status: 200,
+      });
     }
     if (url.startsWith('https://raw.githubusercontent.com/')) {
       return options.raw?.(url) ?? new Response(SKILL_MD, { status: 200 });
-    }
-    if (url.includes('/commits?path=')) {
-      return new Response(JSON.stringify(options.pathCommits ?? []), { status: 200 });
-    }
-    if (url.includes('/commits?per_page=')) {
-      return new Response(JSON.stringify(options.headCommits ?? []), { status: 200 });
     }
     return new Response('', { status: 404 });
   }) as typeof fetch;
@@ -56,16 +60,18 @@ function router(options: RouteOptions = {}) {
 
 const BASE = { sleepImpl: async () => {}, now: () => NOW } as const;
 
+function snapshot(tree: unknown = TREE) {
+  const entries = (tree as { tree: Array<{ path: string; mode: string; sha: string; type: string }> }).tree;
+  return { repo: { repo: 'owner/repo', stars: 120 }, oid: OID, tree: entries };
+}
+
 describe('enumerateSkills', () => {
   it('returns one RawSkill per real skill, pinned to the per-path commit sha', async () => {
     const { urls, fetchImpl } = router({
-      pathCommits: [{ sha: 'c0ffee1', commit: { committer: { date: '2026-07-15T00:00:00Z' } } }],
+      history: { 'skills/alpha/SKILL.md': ['c0ffee1', '2026-07-15T00:00:00Z'] },
     });
 
-    const skills = await enumerateSkills({ repo: 'owner/repo', stars: 120 }, 'tok', {
-      ...BASE,
-      fetchImpl,
-    });
+    const skills = await enumerateSkills(snapshot(), 'tok', { ...BASE, fetchImpl });
 
     expect(skills).toEqual([
       {
@@ -81,98 +87,72 @@ describe('enumerateSkills', () => {
         updatedDays: 45,
       },
     ]);
-    expect(urls).toContain(
-      'https://raw.githubusercontent.com/owner/repo/c0ffee1/skills/alpha/SKILL.md',
-    );
+    expect(urls).toContain('https://raw.githubusercontent.com/owner/repo/c0ffee1/skills/alpha/SKILL.md');
   });
 
-  it('falls back to the repo HEAD commit sha, never to a blob sha', async () => {
-    const { urls, fetchImpl } = router({ headCommits: [{ sha: 'headc0m' }] });
-
-    const skills = await enumerateSkills({ repo: 'owner/repo', stars: 120 }, 'tok', {
-      ...BASE,
-      fetchImpl,
+  it('makes no core request: one GraphQL batch, then raw content only', async () => {
+    const { urls, fetchImpl } = router({
+      history: { 'skills/alpha/SKILL.md': ['c0ffee1', '2026-07-15T00:00:00Z'] },
     });
-
-    expect(skills[0].sha).toBe('headc0m');
-    expect(skills[0].blobSha).toBe('blob-a');
-    expect(skills[0].updatedDays).toBe(UNKNOWN_UPDATED_DAYS);
-    expect(UNKNOWN_UPDATED_DAYS).toBe(3650);
-    expect(urls).toContain(
-      'https://raw.githubusercontent.com/owner/repo/headc0m/skills/alpha/SKILL.md',
-    );
-    expect(urls.some((u) => u.includes('/blob-a/'))).toBe(false);
+    await enumerateSkills(snapshot(), 'tok', { ...BASE, fetchImpl });
+    expect(urls.filter((u) => u.startsWith('https://api.github.com/') && !u.endsWith('/graphql'))).toEqual([]);
+    expect(urls.filter((u) => u.endsWith('/graphql'))).toHaveLength(1);
   });
 
-  it('skips a path when neither a path commit nor a head commit exists', async () => {
-    const logs: string[] = [];
+  it('pins a path with no history to the snapshot oid, never to a blob sha', async () => {
     const { urls, fetchImpl } = router();
 
-    const skills = await enumerateSkills({ repo: 'owner/repo', stars: 120 }, 'tok', {
-      ...BASE,
-      fetchImpl,
-      log: (m) => logs.push(m),
-    });
+    const skills = await enumerateSkills(snapshot(), 'tok', { ...BASE, fetchImpl });
 
-    expect(skills).toEqual([]);
-    expect(urls.some((u) => u.startsWith('https://raw.githubusercontent.com/'))).toBe(false);
-    expect(logs.join('\n')).toContain('no commit sha');
+    expect(skills[0]!.sha).toBe(OID);
+    expect(skills[0]!.blobSha).toBe('blob-a');
+    expect(skills[0]!.updatedDays).toBe(UNKNOWN_UPDATED_DAYS);
+    expect(UNKNOWN_UPDATED_DAYS).toBe(3650);
+    expect(urls).toContain(`https://raw.githubusercontent.com/owner/repo/${OID}/skills/alpha/SKILL.md`);
+    expect(urls.some((u) => u.includes('/blob-a/'))).toBe(false);
   });
 
   it('skips a path whose content 404s between tree and raw fetch', async () => {
     const { fetchImpl } = router({
-      pathCommits: [{ sha: 'c0ffee1', commit: { committer: { date: '2026-07-15T00:00:00Z' } } }],
+      history: { 'skills/alpha/SKILL.md': ['c0ffee1', '2026-07-15T00:00:00Z'] },
       raw: () => new Response('404: Not Found', { status: 404 }),
     });
+    expect(await enumerateSkills(snapshot(), 'tok', { ...BASE, fetchImpl })).toEqual([]);
+  });
 
-    const skills = await enumerateSkills({ repo: 'owner/repo', stars: 120 }, 'tok', {
+  it('returns [] for a repo with no tree at all, without a request', async () => {
+    const { urls, fetchImpl } = router();
+    const skills = await enumerateSkills({ repo: { repo: 'owner/empty', stars: 50 }, oid: OID, tree: [] }, 'tok', {
       ...BASE,
       fetchImpl,
     });
     expect(skills).toEqual([]);
+    expect(urls).toHaveLength(0);
   });
 
-  it('returns [] for a repo with no tree at all', async () => {
-    const fetchImpl = (async () => new Response('', { status: 409 })) as typeof fetch;
-    const skills = await enumerateSkills({ repo: 'owner/empty', stars: 50 }, 'tok', {
-      ...BASE,
-      fetchImpl,
-    });
-    expect(skills).toEqual([]);
-  });
-
-  it('excludes a repo with no root README after exactly one request', async () => {
+  it('excludes a repo with no root README before spending any request', async () => {
     const logs: string[] = [];
-    const { urls, fetchImpl } = router({
-      tree: {
-        truncated: false,
-        tree: [{ path: 'skills/alpha/SKILL.md', mode: '100644', sha: 'blob-a', type: 'blob' }],
-      },
-    });
+    const { urls, fetchImpl } = router();
 
-    const skills = await enumerateSkills({ repo: 'owner/repo', stars: 120 }, 'tok', {
-      ...BASE,
-      fetchImpl,
-      log: (m) => logs.push(m),
-    });
+    const skills = await enumerateSkills(
+      snapshot({ truncated: false, tree: [{ path: 'skills/alpha/SKILL.md', mode: '100644', sha: 'blob-a', type: 'blob' }] }),
+      'tok',
+      { ...BASE, fetchImpl, log: (m) => logs.push(m) },
+    );
 
     expect(skills).toEqual([]);
-    expect(urls).toHaveLength(1);
+    expect(urls).toHaveLength(0);
     expect(logs.join('\n')).toContain('README');
   });
 
   it('excludes a skill whose description fails the inclusion filter', async () => {
     const logs: string[] = [];
     const { fetchImpl } = router({
-      pathCommits: [{ sha: 'c0ffee1', commit: { committer: { date: '2026-07-15T00:00:00Z' } } }],
+      history: { 'skills/alpha/SKILL.md': ['c0ffee1', '2026-07-15T00:00:00Z'] },
       raw: () => new Response('---\nname: alpha\ndescription: Helper.\n---\nBody.', { status: 200 }),
     });
 
-    const skills = await enumerateSkills({ repo: 'owner/repo', stars: 120 }, 'tok', {
-      ...BASE,
-      fetchImpl,
-      log: (m) => logs.push(m),
-    });
+    const skills = await enumerateSkills(snapshot(), 'tok', { ...BASE, fetchImpl, log: (m) => logs.push(m) });
 
     expect(skills).toEqual([]);
     expect(logs.join('\n')).toContain('weak-description');
@@ -189,8 +169,6 @@ describe('enumerateSkills', () => {
       ],
     };
     const { fetchImpl } = router({
-      tree,
-      pathCommits: [{ sha: 'c0ffee1', commit: { committer: { date: '2026-07-15T00:00:00Z' } } }],
       raw: (url) =>
         new Response(
           url.includes('/omega/')
@@ -200,14 +178,8 @@ describe('enumerateSkills', () => {
         ),
     });
 
-    const skills = await enumerateSkills({ repo: 'owner/repo', stars: 120 }, 'tok', {
-      ...BASE,
-      fetchImpl,
-    });
+    const skills = await enumerateSkills(snapshot(tree), 'tok', { ...BASE, fetchImpl });
 
-    expect(skills.map((s) => s.path)).toEqual([
-      'packs/alpha/SKILL.md',
-      'skills/omega/SKILL.md',
-    ]);
+    expect(skills.map((s) => s.path)).toEqual(['packs/alpha/SKILL.md', 'skills/omega/SKILL.md']);
   });
 });
