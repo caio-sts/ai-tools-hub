@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       allowlist:
-        description: 'Comma-separated owner/repo list. Leave empty for a full discovery crawl.'
+        description: 'Comma-separated owner/repo list. Replaces the whole catalog with only these repos. Leave empty for a full discovery crawl.'
         required: false
         default: ''
 

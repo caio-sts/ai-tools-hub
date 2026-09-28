@@ -18,6 +18,6 @@ ExecStart=/usr/bin/env npm run harvest
 ExecStart=/usr/bin/env node scripts/build-rescue-index.ts
 ExecStart=/usr/bin/env git add data/skills.json data/collections.json data/meta.json public/rescue-index
 ExecStart=/usr/bin/env git commit --allow-empty -m "chore(crawl): local refresh"
-# crawl.yml commits the same three files weekly, so rebase before pushing.
+# crawl.yml commits the same three files daily, so rebase before pushing.
 ExecStart=/usr/bin/env git pull --rebase --autostash
 ExecStart=/usr/bin/env git push

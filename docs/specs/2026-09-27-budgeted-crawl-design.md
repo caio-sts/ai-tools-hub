@@ -112,9 +112,13 @@ Before starting each repo, the run stops cleanly if any of these holds:
 | GraphQL remaining < reserve | `rateLimit { remaining }` on the last query | 200 |
 | Elapsed ≥ time budget | `HARVEST_TIME_BUDGET_MIN` env; unset means no time limit | 35 in `crawl.yml` |
 
-A 403/429 inside a repo means that repo is discarded whole, and the run stops cleanly. It never
-writes a half-read repo. The guard runs between repos, so the time margin (50 − 35 min) must
-cover the largest single repo plus the commit step.
+A 403/429 inside a repo means that repo is discarded whole, and the run stops cleanly. Any other
+error inside a repo (a 5xx, a network failure, a data-less GraphQL body) discards that repo whole
+too, and the run **continues** with the next one; the job fails after the commit (§7). No retries.
+It never writes a half-read repo. The guard runs between repos, so the time margin (90 − 35 min)
+must cover the largest single repo plus the commit step: the largest discovered repo,
+`sickn33/antigravity-awesome-skills` (2,741 `SKILL.md` paths), is estimated at ~13 min, which the
+old 15-min margin (50 − 35) did not safely cover. There is no in-repo deadline.
 
 ### 3.5 What each run writes
 
@@ -133,7 +137,10 @@ re-read every run. A repo discarded mid-read (§3.4) is treated as "not reached"
 ### 3.6 Logging
 
 `DEFAULT_DEPS` passes `log: console.log` to discovery and enumeration. Each run ends with one
-summary line, e.g. `harvest: read 1830, unchanged 0, deferred 2570, stopped: time budget`.
+summary line, e.g. `harvest: read 1830, unchanged 0, deferred 2570, failed 2, stopped: time budget`
+(`deferred` counts every queued repo not read, failed ones included). Per repo, it logs
+`harvest: <repo> failed: <message>` (the run continues), `harvest: <repo> discarded: <message>`
+(rate limited; the run stops), and `harvest: <repo> read in <n>s` when a read took ≥ 60 s.
 
 ## 4. Data contract
 
@@ -162,22 +169,29 @@ summary line, e.g. `harvest: read 1830, unchanged 0, deferred 2570, stopped: tim
 
 - `crawl.yml` cron → daily, `'37 6 * * *'` (off the hour, inside the 03–09 UTC window). The header
   comment is rewritten: Actions is now the primary, the local timer optional.
-- `HARVEST_TIME_BUDGET_MIN: '35'` on the harvest step; `timeout-minutes: 50` unchanged.
+- `HARVEST_TIME_BUDGET_MIN: '35'` on the harvest step; `timeout-minutes: 90` (was 50; §3.4).
+- The harvest step records node's exit code (`set +e`, `exit=$?` to `$GITHUB_OUTPUT`) instead of
+  failing on it, so the rescue index, commit and publish still run; a final step fails the job when
+  that code is not 0. A missing PAT still fails the step at once.
+- A publish step after the push dispatches `deploy.yml` and `ci.yml` (`actions: write`): a push
+  made with `GITHUB_TOKEN` starts no workflow, and `deploy.yml` is the only Pages publisher.
 - Issue step runs on `failure() || cancelled()`. Cost: a manual cancel also reports.
 - Issue title becomes `P1: crawl failed`. If one is open, a new failure **comments on it** instead of
   opening another; daily cadence would otherwise open up to 30 a month.
 - The daily `--allow-empty` commit still keeps the schedule alive (§6.5).
-- `ops/` is unchanged. Local and Actions runs share one PAT's quota; the guards stop whichever runs
-  second.
+- `ops/` is unchanged but for one comment. Local and Actions runs share one PAT's quotas; running
+  both at once can conflict on `data/*.json`, and a second run that reads nothing fails loudly.
+  Prefer one schedule.
 
 ## 7. Failure handling
 
 | Situation | Exit | Effect |
 |---|---|---|
 | Stopped by a guard, ≥1 repo read | 0 | partial progress committed, reason logged |
-| 403/429 mid-repo | 0 | that repo discarded, earlier repos committed |
-| Stopped by a guard with **0 repos read and a non-empty queue** | **1** | issue — the crawler is stuck, and that must not be silent |
-| Any other HTTP error or bug | 1 | issue, as today |
+| 403/429 mid-repo, ≥1 repo read | 0 | that repo discarded and logged, the run stops; earlier repos committed |
+| Any other error inside a repo, ≥1 repo read | **1, after the commit** | that repo discarded and logged, the run continues; everything read is committed and published, then issue |
+| **0 repos read and a non-empty queue** — a guard, a 403/429, or every repo failing | **1** | `StuckCrawlError`, nothing written; issue — the crawler is stuck, and that must not be silent |
+| An error outside a repo (discovery, enrichment) or a bug | 1 | nothing written; issue, as today |
 | Job timeout (should not happen with §3.4) | cancelled | issue, via `cancelled()` |
 
 ## 8. Testing and verification
@@ -220,3 +234,8 @@ lever if bootstrap proves too slow; not in scope.
 - **Carried-forward scores are not recomputed.** Only `buildSkill` calls `scoreSkill`, so skipped
   and deferred rows keep their old score and `updatedDays`, contrary to §5 ("recomputed for every
   entry on every run"). Pre-existing; this design carries more rows forward, so the gap grows.
+- **Output volume.** `skills.json` is ~2 KB per row: ~25k rows passes GitHub's 50 MB warning and
+  ~50k hits the 100 MB push limit. Choose a storage plan before that.
+- **A repo refused mid-read on every run.** It stays at the head of the queue, so an oversized repo
+  that trips a rate limit every time keeps the crawler stuck — loudly (§7), but stuck.
+- **A repo needing more than 55 minutes** (90 − 35) would still cancel the job.

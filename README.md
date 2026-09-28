@@ -138,14 +138,17 @@ gh secret set CATALOG_PAT
 
 A full crawl does not fit one run. Each run stops on its own budget — 35 minutes, or when the
 core or GraphQL quota drops below 200 — commits what it read, and the next run resumes where it
-stopped: never-read repos first, then the repos whose stored data is oldest. Until every
-discovered repo has been read once, the site's Sources figure reads "N of M". A run that stops
-without reading anything, fails, or times out comments on the open `P1: crawl failed` issue (or
-opens one).
+stopped: never-read repos first, then the repos whose stored data is oldest. The crawl commit
+dispatches the deploy and CI itself (a push made with `GITHUB_TOKEN` starts no workflow).
+Until every discovered repo has been read once, the site's Sources figure reads "N of M". A run
+that stops without reading anything, fails, or times out comments on the open `P1: crawl failed`
+issue (or opens one).
 
 **The local timer is optional.** `ops/install-schedule.sh` installs a systemd user timer every
-4 hours (plus a Windows logon task that starts WSL). It shares the PAT's quota with the Action;
-the budget stops whichever runs second.
+4 hours (plus a Windows logon task that starts WSL). Both schedules share one PAT's quotas, and
+running both at once can conflict on `data/*.json`; a second run that reads nothing fails loudly.
+Prefer one schedule. A local run has no time limit unless `HARVEST_TIME_BUDGET_MIN` is set in
+`harvest.env`.
 
 ```bash
 mkdir -p ~/.config/ai-tools-hub

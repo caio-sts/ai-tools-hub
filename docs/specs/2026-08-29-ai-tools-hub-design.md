@@ -674,7 +674,7 @@ Each answers a failure observed in a real catalog.
 
 | Risk | Mitigation |
 |---|---|
-| **Local runs stop when the machine is off.** | The weekly Action fallback (§6.1) bounds how stale the catalog can get regardless, and `Persistent=true` makes the local timer catch up rather than skip. |
+| **Local runs stop when the machine is off.** | The weekly Action fallback (§6.1; amended 2026-09-27: the daily Action is primary) bounds how stale the catalog can get regardless, and `Persistent=true` makes the local timer catch up rather than skip. |
 | **The pipeline silently stops. This is now the largest risk.** Per §1.0 the self-updating flow *is* the product: a catalog frozen in September is worse than none, because it is trusted and wrong. | Every failure must be loud. Staleness banner driven by `updated_at`, reporting crawl date and classification lag separately (§6.1); `workflow_dispatch` as a manual escape hatch; the nightly commit is itself the repository activity that keeps the schedule alive. **Treat a silent crawler as a P1 bug, not a maintenance chore.** |
 | **Solo maintenance.** Every incumbent has failed this. | Committing cron keeps itself alive; no human-in-the-loop step that can become a queue. |
 | **Classification depends on a human account.** The scheduled Claude session is not a robot; if the maintainer stops, new entries queue unclassified. | Harvest stays in Actions so data never goes stale on its own; unclassified entries land in the domain's `general` leaf rather than disappearing, and the staleness banner reports the classification lag separately from the crawl date. |
