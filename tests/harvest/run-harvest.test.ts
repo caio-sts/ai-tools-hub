@@ -404,21 +404,42 @@ describe('runHarvest', () => {
     expect(collections.map((c) => c.repo)).toEqual(['empty/skills']);
   });
 
-  it('fails loudly, and writes nothing, when it cannot read a single repo of a non-empty queue', async () => {
+  it.each([
+    { reason: 'time budget', budget: budgetAllowing(0), fetchTree: undefined },
+    {
+      reason: 'repo failures',
+      budget: undefined,
+      fetchTree: async (repo: string): Promise<TreeFile[]> => {
+        throw new Error(`tree ${repo}: 500`);
+      },
+    },
+    {
+      reason: 'rate limited',
+      budget: undefined,
+      fetchTree: async (repo: string): Promise<TreeFile[]> => {
+        throw new RateLimitedError(`tree ${repo}`);
+      },
+    },
+  ])('fails loudly, and writes nothing, when it reads no repo of a non-empty queue ($reason)', async ({ reason, budget, fetchTree }) => {
     const dir = await seededDataDir();
-    const before = await readFile(join(dir, 'meta.json'), 'utf8');
-    const fresh = [collection('never/read', '2026-09-01T00:00:00Z', 50)];
+    const files = ['skills.json', 'collections.json', 'meta.json'];
+    const before = await Promise.all(files.map((file) => readFile(join(dir, file), 'utf8')));
+    const fresh = [
+      collection('a/first', '2026-09-01T00:00:00Z', 900),
+      collection('b/second', '2026-09-01T00:00:00Z', 500),
+    ];
 
-    await expect(
-      runHarvest({
-        token: 'tok',
-        dataDir: dir,
-        allowlist: ['never/read'],
-        deps: deps(spy(), { fresh }),
-        budget: budgetAllowing(0),
-      }),
-    ).rejects.toBeInstanceOf(StuckCrawlError);
-    expect(await readFile(join(dir, 'meta.json'), 'utf8')).toBe(before);
+    const error = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: deps(spy(), { fresh, fetchTree }),
+      budget,
+    }).catch((caught: unknown) => caught);
+
+    expect(error).toBeInstanceOf(StuckCrawlError);
+    expect((error as StuckCrawlError).reason).toBe(reason);
+    expect(await Promise.all(files.map((file) => readFile(join(dir, file), 'utf8')))).toEqual(before);
   });
 
   it('succeeds with nothing to do when every repo is unchanged', async () => {
@@ -538,58 +559,6 @@ describe('runHarvest', () => {
 
     expect(logs).toContain('harvest: slow/repo read in 61s');
     expect(logs.filter((line) => line.includes(' read in '))).toHaveLength(1);
-  });
-
-  it('fails loudly, and writes nothing, when every repo of the queue fails', async () => {
-    const dir = await seededDataDir();
-    const before = await Promise.all(
-      ['skills.json', 'collections.json', 'meta.json'].map((file) => readFile(join(dir, file), 'utf8')),
-    );
-    const fresh = [
-      collection('a/first', '2026-09-01T00:00:00Z', 900),
-      collection('b/second', '2026-09-01T00:00:00Z', 500),
-    ];
-
-    const error = await runHarvest({
-      token: 'tok',
-      dataDir: dir,
-      allowlist: fresh.map((c) => c.repo),
-      deps: deps(spy(), {
-        fresh,
-        fetchTree: async (repo) => {
-          throw new Error(`tree ${repo}: 500`);
-        },
-      }),
-    }).catch((caught: unknown) => caught);
-
-    expect(error).toBeInstanceOf(StuckCrawlError);
-    expect((error as StuckCrawlError).reason).toBe('repo failures');
-    const after = await Promise.all(
-      ['skills.json', 'collections.json', 'meta.json'].map((file) => readFile(join(dir, file), 'utf8')),
-    );
-    expect(after).toEqual(before);
-  });
-
-  it('fails loudly when the very first repo is rate limited', async () => {
-    const dir = await seededDataDir();
-    const before = await readFile(join(dir, 'meta.json'), 'utf8');
-    const fresh = [collection('a/first', '2026-09-01T00:00:00Z', 900)];
-
-    const error = await runHarvest({
-      token: 'tok',
-      dataDir: dir,
-      allowlist: ['a/first'],
-      deps: deps(spy(), {
-        fresh,
-        fetchTree: async (repo) => {
-          throw new RateLimitedError(`tree ${repo}`);
-        },
-      }),
-    }).catch((caught: unknown) => caught);
-
-    expect(error).toBeInstanceOf(StuckCrawlError);
-    expect((error as StuckCrawlError).reason).toBe('rate limited');
-    expect(await readFile(join(dir, 'meta.json'), 'utf8')).toBe(before);
   });
 });
 

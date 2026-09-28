@@ -164,8 +164,9 @@ export interface EnrichResult {
   headOids: Map<string, string>;
 }
 
-async function postEnrichQuery(query: string, token: string, fetchImpl: FetchLike): Promise<EnrichPayload> {
-  const res = await fetchImpl(GITHUB_GRAPHQL_URL, {
+/** The one GraphQL request builder; callers own status and rate-limit handling. */
+export function postGraphql(query: string, token: string, fetchImpl: FetchLike): Promise<Response> {
+  return fetchImpl(GITHUB_GRAPHQL_URL, {
     method: 'POST',
     headers: {
       authorization: `bearer ${token}`,
@@ -174,6 +175,10 @@ async function postEnrichQuery(query: string, token: string, fetchImpl: FetchLik
     },
     body: JSON.stringify({ query }),
   });
+}
+
+async function postEnrichQuery(query: string, token: string, fetchImpl: FetchLike): Promise<EnrichPayload> {
+  const res = await postGraphql(query, token, fetchImpl);
   if (!res.ok) {
     const body = await res.text();
     throw new Error(`enrich: GraphQL HTTP ${res.status} — ${body.slice(0, 200)}`);

@@ -1,6 +1,6 @@
 import { RateLimitedError, isRateLimited } from './budget.ts';
 import type { FetchLike } from './discover.ts';
-import { GITHUB_GRAPHQL_URL, splitRepo } from './enrich.ts';
+import { postGraphql, splitRepo } from './enrich.ts';
 
 /**
  * One GraphQL query answers 50 "last commit touching this path" lookups for 1 point, where REST
@@ -97,15 +97,7 @@ export async function fetchPathCommits(
 
   for (let i = 0; i < paths.length; i += PATH_BATCH_SIZE) {
     const batch = paths.slice(i, i + PATH_BATCH_SIZE);
-    const res = await fetchImpl(GITHUB_GRAPHQL_URL, {
-      method: 'POST',
-      headers: {
-        authorization: `bearer ${token}`,
-        'content-type': 'application/json',
-        'user-agent': 'ai-tools-hub-harvest',
-      },
-      body: JSON.stringify({ query: buildPathHistoryQuery(repo, oid, batch) }),
-    });
+    const res = await postGraphql(buildPathHistoryQuery(repo, oid, batch), token, fetchImpl);
     if (isRateLimited(res)) throw new RateLimitedError(`path history ${repo}`);
     if (!res.ok) throw new Error(`path history ${repo}: GraphQL HTTP ${res.status}`);
     const { commits, remaining } = parsePathHistory((await res.json()) as PathHistoryPayload, batch, now());

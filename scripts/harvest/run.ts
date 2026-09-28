@@ -279,26 +279,21 @@ export function partitionRepos(
   fresh: Collection[],
   index: Map<string, string>,
 ): { crawl: Collection[]; skipped: Collection[] } {
-  const crawl: Collection[] = [];
+  const neverRead: Collection[] = [];
+  const changed: Collection[] = [];
   const skipped: Collection[] = [];
 
   for (const collection of fresh) {
     const seen = index.get(collection.repo);
-    if (seen !== undefined && seen === collection.pushedAt) {
-      skipped.push(collection);
-    } else {
-      crawl.push(collection);
-    }
+    if (seen === undefined) neverRead.push(collection);
+    else if (seen === collection.pushedAt) skipped.push(collection);
+    else changed.push(collection);
   }
 
   // Never-read first (by stars), then changed repos whose stored data is oldest: the stored
   // pushedAt is the resume cursor (budgeted-crawl spec §3.3).
-  const neverRead = crawl
-    .filter((collection) => !index.has(collection.repo))
-    .sort((a, b) => b.stars - a.stars || a.repo.localeCompare(b.repo));
-  const changed = crawl
-    .filter((collection) => index.has(collection.repo))
-    .sort((a, b) => index.get(a.repo)!.localeCompare(index.get(b.repo)!) || a.repo.localeCompare(b.repo));
+  neverRead.sort((a, b) => b.stars - a.stars || a.repo.localeCompare(b.repo));
+  changed.sort((a, b) => index.get(a.repo)!.localeCompare(index.get(b.repo)!) || a.repo.localeCompare(b.repo));
 
   return { crawl: [...neverRead, ...changed], skipped };
 }
@@ -459,7 +454,7 @@ export async function runHarvest(
   const translations = translationIndex(previous.skills);
 
   const { crawl, skipped } = partitionRepos(collections, pushedAtIndex(previous));
-  const skills: Skill[] = carryForward(previous, skipped, assignments);
+  const skills: Skill[] = [];
   const indexedAt = deps.now().toISOString();
   const context: ReadContext = { deps, token, assignments, translations, indexedAt };
 
@@ -495,7 +490,7 @@ export async function runHarvest(
   const previousRows = new Map(previous.collections.map((collection) => [collection.repo, collection]));
   const deferredRepos = new Set(deferred.map((collection) => collection.repo));
   const kept = deferred.flatMap((collection) => previousRows.get(collection.repo) ?? []);
-  skills.push(...carryForward(previous, kept, assignments));
+  skills.push(...carryForward(previous, [...skipped, ...kept], assignments));
   const rows = collections.flatMap((collection) =>
     deferredRepos.has(collection.repo) ? (previousRows.get(collection.repo) ?? []) : [collection],
   );
