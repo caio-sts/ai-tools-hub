@@ -155,6 +155,7 @@ describe('runHarvest', () => {
       classifiedAt: '2026-08-10T00:00:00.000Z',
       skillCount: 2,
       sourceCount: 2,
+      discoveredCount: 2,
     });
   });
 

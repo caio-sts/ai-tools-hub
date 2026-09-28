@@ -103,6 +103,7 @@ const meta: Meta = {
   classifiedAt: null,
   skillCount: 1,
   sourceCount: 1,
+  discoveredCount: 1,
 };
 
 const taxonomy: Taxonomy = {

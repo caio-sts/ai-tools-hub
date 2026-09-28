@@ -87,4 +87,6 @@ export interface Meta {
   classifiedAt: string | null;
   skillCount: number;
   sourceCount: number;
+  /** Repos the last discovery admitted; sourceCount < discoveredCount means partial. */
+  discoveredCount: number;
 }

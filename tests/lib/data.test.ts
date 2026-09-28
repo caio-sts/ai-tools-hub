@@ -60,7 +60,29 @@ describe('loading returns the canonical shapes', () => {
   it('normalises a partial meta.json instead of returning undefined fields', async () => {
     const dir = await scratch();
     await writeFile(join(dir, 'meta.json'), '{"skillCount":7}', 'utf8');
-    expect(loadMeta(dir)).toEqual({ crawledAt: NEVER_CRAWLED, classifiedAt: null, skillCount: 7, sourceCount: 0 });
+    expect(loadMeta(dir)).toEqual({
+      crawledAt: NEVER_CRAWLED,
+      classifiedAt: null,
+      skillCount: 7,
+      sourceCount: 0,
+      discoveredCount: 0,
+    });
+  });
+
+  it('reads a meta.json written before discoveredCount existed as a complete catalog', async () => {
+    const dir = await scratch();
+    await writeFile(
+      join(dir, 'meta.json'),
+      '{"crawledAt":"2026-08-31T02:43:59.295Z","classifiedAt":null,"skillCount":101,"sourceCount":3}',
+      'utf8',
+    );
+    expect(loadMeta(dir).discoveredCount).toBe(3);
+  });
+
+  it('keeps discoveredCount when meta.json carries it', async () => {
+    const dir = await scratch();
+    await writeFile(join(dir, 'meta.json'), '{"skillCount":1,"sourceCount":3,"discoveredCount":4400}', 'utf8');
+    expect(loadMeta(dir).discoveredCount).toBe(4400);
   });
 
   it('keeps well-formed assignment rows and drops malformed ones', async () => {

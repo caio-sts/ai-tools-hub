@@ -424,6 +424,7 @@ export async function runHarvest(
     classifiedAt: previousMeta.classifiedAt,
     skillCount: listed.length,
     sourceCount: collections.length,
+    discoveredCount: collections.length,
   };
 
   await writeCatalog(dataDir, { skills: listed, collections });
@@ -562,6 +563,7 @@ export function validateCatalog(skills: Skill[], collections: Collection[], meta
 
   if (meta.skillCount !== skills.length) add('meta', 'meta.skillCount does not match the catalog');
   if (meta.sourceCount !== collections.length) add('meta', 'meta.sourceCount does not match the catalog');
+  if (meta.discoveredCount < meta.sourceCount) add('meta', 'meta.discoveredCount is below meta.sourceCount');
 
   const crawled = new Date(meta.crawledAt);
   if (Number.isNaN(crawled.getTime()) || crawled.toISOString() !== meta.crawledAt) {

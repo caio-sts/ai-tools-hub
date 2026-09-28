@@ -53,7 +53,7 @@ function skill(overrides: Partial<Skill> = {}): Skill {
 }
 
 function meta(overrides: Partial<Meta> = {}): Meta {
-  return { crawledAt: '2026-08-29T00:00:00.000Z', classifiedAt: null, skillCount: 1, sourceCount: 1, ...overrides };
+  return { crawledAt: '2026-08-29T00:00:00.000Z', classifiedAt: null, skillCount: 1, sourceCount: 1, discoveredCount: 1, ...overrides };
 }
 
 describe('validateCatalog accepts a consistent catalog', () => {
@@ -163,6 +163,12 @@ describe('validateCatalog catches every way the pipeline can lie', () => {
     expect(found).toContain('meta.skillCount does not match the catalog');
     expect(found).toContain('meta.sourceCount does not match the catalog');
     expect(found).toContain('meta.crawledAt is not an ISO timestamp');
+  });
+
+  it('refuses a coverage figure that claims fewer discovered repos than it holds', () => {
+    expect(problems([], [], meta({ skillCount: 0, sourceCount: 0, discoveredCount: 0 }))).toEqual([]);
+    const found = problems([], [], meta({ skillCount: 0, sourceCount: 0, discoveredCount: -1 }));
+    expect(found).toContain('meta.discoveredCount is below meta.sourceCount');
   });
 });
 

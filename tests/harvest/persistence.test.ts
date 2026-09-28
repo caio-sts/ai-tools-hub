@@ -49,6 +49,7 @@ describe('writing produces stable, diff-friendly, canonically shaped files', () 
       classifiedAt: '2026-08-28T00:00:00.000Z',
       skillCount: 24,
       sourceCount: 3,
+      discoveredCount: 5,
     };
     await writeMeta(dir, meta);
     expect(loadMeta(dir)).toEqual(meta);

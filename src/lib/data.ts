@@ -11,6 +11,7 @@ export const EMPTY_META: Meta = {
   classifiedAt: null,
   skillCount: 0,
   sourceCount: 0,
+  discoveredCount: 0,
 };
 
 /**
@@ -54,11 +55,14 @@ export function loadCollections(dataDir: string = DEFAULT_DATA_DIR): Collection[
 export function loadMeta(dataDir: string = DEFAULT_DATA_DIR): Meta {
   const parsed = readJson(dataDir, 'meta.json') as Partial<Meta> | null;
   if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) return { ...EMPTY_META };
+  const sourceCount = typeof parsed.sourceCount === 'number' ? parsed.sourceCount : 0;
   return {
     crawledAt: typeof parsed.crawledAt === 'string' ? parsed.crawledAt : NEVER_CRAWLED,
     classifiedAt: typeof parsed.classifiedAt === 'string' ? parsed.classifiedAt : null,
     skillCount: typeof parsed.skillCount === 'number' ? parsed.skillCount : 0,
-    sourceCount: typeof parsed.sourceCount === 'number' ? parsed.sourceCount : 0,
+    sourceCount,
+    // Written before coverage existed: that crawl claimed to be complete.
+    discoveredCount: typeof parsed.discoveredCount === 'number' ? parsed.discoveredCount : sourceCount,
   };
 }
 

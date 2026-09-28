@@ -94,6 +94,19 @@ describe('applyAssignmentsToCatalog (the offline half of the classification sess
     expect(meta.classifiedAt).toBe('2026-08-31T12:00:00.000Z');
   });
 
+  it('keeps discoveredCount, because it rewrites meta.json through loadMeta', async () => {
+    const dir = await seed({ [`tob/skills@${SHA}:${PATH}`]: ASSIGNMENT });
+    await writeFile(
+      join(dir, 'meta.json'),
+      `${JSON.stringify({ crawledAt: '2026-08-01T00:00:00.000Z', classifiedAt: null, skillCount: 1, sourceCount: 1, discoveredCount: 4400 }, null, 2)}\n`,
+      'utf8',
+    );
+    await applyAssignmentsToCatalog(dir, '2026-08-31T12:00:00.000Z');
+
+    const meta = JSON.parse(await readFile(join(dir, 'meta.json'), 'utf8')) as { discoveredCount: number };
+    expect(meta.discoveredCount).toBe(4400);
+  });
+
   it('counts every stored row in skillCount, not just the listed ones', async () => {
     const dir = await mkdtemp(join(tmpdir(), 'ai-tools-hub-apply-'));
     const evicted = skill({ id: `tob/skills@${SHA}:skills/other/SKILL.md`, path: 'skills/other/SKILL.md', listed: false });
