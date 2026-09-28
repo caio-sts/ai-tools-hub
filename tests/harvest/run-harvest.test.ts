@@ -407,20 +407,13 @@ describe('runHarvest', () => {
   it.each([
     { reason: 'time budget', budget: budgetAllowing(0), fetchTree: undefined },
     {
-      reason: 'repo failures',
-      budget: undefined,
-      fetchTree: async (repo: string): Promise<TreeFile[]> => {
-        throw new Error(`tree ${repo}: 500`);
-      },
-    },
-    {
       reason: 'rate limited',
       budget: undefined,
       fetchTree: async (repo: string): Promise<TreeFile[]> => {
         throw new RateLimitedError(`tree ${repo}`);
       },
     },
-  ])('fails loudly, and writes nothing, when it reads no repo of a non-empty queue ($reason)', async ({ reason, budget, fetchTree }) => {
+  ])('fails loudly, and writes nothing, when a stop leaves every queued repo unread ($reason)', async ({ reason, budget, fetchTree }) => {
     const dir = await seededDataDir();
     const files = ['skills.json', 'collections.json', 'meta.json'];
     const before = await Promise.all(files.map((file) => readFile(join(dir, file), 'utf8')));
@@ -559,6 +552,31 @@ describe('runHarvest', () => {
 
     expect(logs).toContain('harvest: slow/repo read in 61s');
     expect(logs.filter((line) => line.includes(' read in '))).toHaveLength(1);
+  });
+  it('still writes when every queued repo fails without a stop, so the rest of the catalog refreshes', async () => {
+    const dir = await seededDataDir();
+    const fresh = [
+      collection('cached/repo', '2026-08-01T00:00:00Z', 777),
+      collection('a/first', '2026-09-01T00:00:00Z', 900),
+      collection('b/second', '2026-09-01T00:00:00Z', 500),
+    ];
+
+    const { collections, meta, summary } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: deps(spy(), {
+        fresh,
+        fetchTree: async (repo) => {
+          throw new Error(`tree ${repo}: 500`);
+        },
+      }),
+    });
+
+    expect(summary).toEqual({ read: 0, unchanged: 1, deferred: 2, failed: 2, stopped: null });
+    expect(collections.map((c) => [c.repo, c.stars])).toEqual([['cached/repo', 777]]);
+    expect(meta.crawledAt).toBe('2026-08-29T06:37:00.000Z');
+    expect(loadSkills(dir).map((k) => k.id)).toEqual(['cached/repo@old:SKILL.md']);
   });
 });
 

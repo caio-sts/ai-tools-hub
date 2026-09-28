@@ -189,9 +189,9 @@ summary line, e.g. `harvest: read 1830, unchanged 0, deferred 2570, failed 2, st
 |---|---|---|
 | Stopped by a guard, ≥1 repo read | 0 | partial progress committed, reason logged |
 | 403/429 mid-repo, ≥1 repo read | 0 | that repo discarded and logged, the run stops; earlier repos committed |
-| Any other error inside a repo, ≥1 repo read | **1, after the commit** | that repo discarded and logged, the run continues; everything read is committed and published, then issue |
-| **0 repos read and a non-empty queue** — a guard, a 403/429, or every repo failing | **1** | `StuckCrawlError`, nothing written; issue — the crawler is stuck, and that must not be silent |
-| An error outside a repo (discovery, enrichment) or a bug | 1 | nothing written; issue, as today |
+| Any other error inside a repo (including a bug in the read path) | **1, after the commit** | that repo discarded and logged, the run continues; everything else (reads, unchanged repos, `crawledAt`) is committed and published, then issue — even when every queued repo failed |
+| **A stop (guard or 403/429) with 0 repos read** | **1** | `StuckCrawlError`, nothing written; issue — the crawler is stuck, and that must not be silent |
+| An error outside a repo read (discovery, enrichment, writing) | 1 | nothing written; issue, as today |
 | Job timeout (should not happen with §3.4) | cancelled | issue, via `cancelled()` |
 
 ## 8. Testing and verification

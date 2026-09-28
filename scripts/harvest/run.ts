@@ -356,13 +356,11 @@ export interface HarvestSummary {
   stopped: StopReason | null;
 }
 
-export type StuckReason = StopReason | 'repo failures';
-
-/** The run read nothing of a non-empty queue: the crawler is stuck, not idle. */
+/** A stop left every queued repo unread: the crawler is stuck, not idle. */
 export class StuckCrawlError extends Error {
-  readonly reason: StuckReason;
+  readonly reason: StopReason;
 
-  constructor(reason: StuckReason, queued: number) {
+  constructor(reason: StopReason, queued: number) {
     super(`harvest: stopped on ${reason} before reading any of ${queued} queued repos`);
     this.name = 'StuckCrawlError';
     this.reason = reason;
@@ -482,8 +480,8 @@ export async function runHarvest(
   }
 
   const deferred = [...failed, ...crawl.slice(next)];
-  // With no guard stop, a queue that read nothing ran to its end with every repo failing.
-  if (read === 0 && crawl.length > 0) throw new StuckCrawlError(stopped ?? 'repo failures', crawl.length);
+  // Failures alone ran the queue to its end: write the rest; main still exits 1 on them.
+  if (read === 0 && stopped !== null) throw new StuckCrawlError(stopped, crawl.length);
 
   // Budgeted-crawl spec §3.5: a changed repo not reached, or failed, keeps its previous row (old
   // pushedAt, so it stays queued) and skills; a never-read one is left out until a run reaches it.
