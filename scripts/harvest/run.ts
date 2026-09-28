@@ -357,14 +357,20 @@ export interface HarvestSummary {
   read: number;
   unchanged: number;
   deferred: number;
+  failed: number;
   stopped: StopReason | null;
 }
 
-/** A guard stopped the run before it read anything: the crawler is stuck, not idle. */
+export type StuckReason = StopReason | 'repo failures';
+
+/** The run read nothing of a non-empty queue: the crawler is stuck, not idle. */
 export class StuckCrawlError extends Error {
-  constructor(reason: StopReason, queued: number) {
+  readonly reason: StuckReason;
+
+  constructor(reason: StuckReason, queued: number) {
     super(`harvest: stopped on ${reason} before reading any of ${queued} queued repos`);
     this.name = 'StuckCrawlError';
+    this.reason = reason;
   }
 }
 
@@ -453,6 +459,8 @@ export async function runHarvest(
   const context: ReadContext = { deps, token, assignments, translations, indexedAt };
 
   let stopped: StopReason | null = null;
+  let read = 0;
+  const failed: Collection[] = [];
   let next = 0;
   for (; next < crawl.length; next += 1) {
     stopped = budget.exhausted();
@@ -460,20 +468,25 @@ export async function runHarvest(
     const collection = crawl[next]!;
     try {
       skills.push(...(await readRepo(collection, headOids.get(collection.repo) ?? null, context)));
+      read += 1;
     } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
       if (error instanceof RateLimitedError) {
+        deps.log(`harvest: ${collection.repo} discarded: ${message}`);
         stopped = 'rate limited';
         break;
       }
-      throw error;
+      deps.log(`harvest: ${collection.repo} failed: ${message}`);
+      failed.push(collection);
     }
   }
 
-  const deferred = crawl.slice(next);
-  if (next === 0 && deferred.length > 0) throw new StuckCrawlError(stopped ?? 'rate limited', deferred.length);
+  const deferred = [...failed, ...crawl.slice(next)];
+  // With no guard stop, a queue that read nothing ran to its end with every repo failing.
+  if (read === 0 && crawl.length > 0) throw new StuckCrawlError(stopped ?? 'repo failures', crawl.length);
 
-  // Budgeted-crawl spec §3.5: a changed repo not reached keeps its previous row (old pushedAt, so
-  // it stays queued) and skills; a never-read one is left out until a run reaches it.
+  // Budgeted-crawl spec §3.5: a changed repo not reached, or failed, keeps its previous row (old
+  // pushedAt, so it stays queued) and skills; a never-read one is left out until a run reaches it.
   const previousRows = new Map(previous.collections.map((collection) => [collection.repo, collection]));
   const deferredRepos = new Set(deferred.map((collection) => collection.repo));
   const kept = deferred.flatMap((collection) => previousRows.get(collection.repo) ?? []);
@@ -503,9 +516,15 @@ export async function runHarvest(
   await writeCatalog(dataDir, { skills: listed, collections: rows });
   await writeMeta(dataDir, meta);
 
-  const summary: HarvestSummary = { read: next, unchanged: skipped.length, deferred: deferred.length, stopped };
+  const summary: HarvestSummary = {
+    read,
+    unchanged: skipped.length,
+    deferred: deferred.length,
+    failed: failed.length,
+    stopped,
+  };
   deps.log(
-    `harvest: read ${summary.read}, unchanged ${summary.unchanged}, deferred ${summary.deferred}, stopped: ${stopped ?? 'queue drained'}`,
+    `harvest: read ${summary.read}, unchanged ${summary.unchanged}, deferred ${summary.deferred}, failed ${summary.failed}, stopped: ${stopped ?? 'queue drained'}`,
   );
   return { skills: listed, collections: rows, meta, summary };
 }
@@ -529,7 +548,12 @@ export function parseArgs(argv: string[]): { allowlist: string[] | null; dataDir
   return { allowlist, dataDir };
 }
 
-export async function main(argv: string[], env: Record<string, string | undefined>): Promise<number> {
+/** `deps` is a test seam; production passes none. */
+export async function main(
+  argv: string[],
+  env: Record<string, string | undefined>,
+  deps?: Partial<HarvestDeps>,
+): Promise<number> {
   const token = env['CATALOG_PAT'] ?? '';
   if (token === '') {
     console.error(
@@ -541,11 +565,12 @@ export async function main(argv: string[], env: Record<string, string | undefine
 
   const { allowlist, dataDir } = parseArgs(argv);
   const timeBudgetMs = timeBudgetFromEnv(env['HARVEST_TIME_BUDGET_MIN']);
-  const { meta } = await runHarvest({ token, dataDir, allowlist, limits: { timeBudgetMs } });
+  const { meta, summary } = await runHarvest({ token, dataDir, allowlist, deps, limits: { timeBudgetMs } });
   console.log(
     `harvest: ${meta.skillCount} skills from ${meta.sourceCount} of ${meta.discoveredCount} sources at ${meta.crawledAt}`,
   );
-  return 0;
+  // Written and committable, but a failed repo must still fail the job.
+  return summary.failed > 0 ? 1 : 0;
 }
 
 const invokedPath = process.argv[1];

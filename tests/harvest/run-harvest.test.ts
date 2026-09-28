@@ -6,7 +6,7 @@ import type { Collection, RawSkill, Safety, Skill, TreeFile } from '../../src/ty
 import { loadSkills } from '../../src/lib/data.ts';
 import { RateLimitedError, type Budget } from '../../scripts/harvest/budget.ts';
 import type { RepoSnapshot } from '../../scripts/harvest/enumerate.ts';
-import { StuckCrawlError, runHarvest, type HarvestDeps } from '../../scripts/harvest/run.ts';
+import { StuckCrawlError, main, runHarvest, type HarvestDeps } from '../../scripts/harvest/run.ts';
 
 const HEAD_COMMIT = '4c9e1f7a2b3d5e6f7081920a3b4c5d6e7f809102';
 const PATH_SHA = 'newsha0000000000000000000000000000000000';
@@ -304,7 +304,7 @@ describe('runHarvest', () => {
     expect(collections.map((c) => c.repo)).toEqual(['b/medium', 'c/large']);
     expect(meta.sourceCount).toBe(2);
     expect(meta.discoveredCount).toBe(3);
-    expect(summary).toEqual({ read: 2, unchanged: 0, deferred: 1, stopped: 'time budget' });
+    expect(summary).toEqual({ read: 2, unchanged: 0, deferred: 1, failed: 0, stopped: 'time budget' });
   });
 
   it('keeps the previous row and skills of a changed repo it did not reach, so it stays queued', async () => {
@@ -332,6 +332,7 @@ describe('runHarvest', () => {
   it('discards a repo refused mid-read, commits the ones before it, and exits normally', async () => {
     const dir = await seededDataDir();
     const s = spy();
+    const logs: string[] = [];
     const fresh = [
       collection('first/repo', '2026-09-01T00:00:00Z', 900),
       collection('second/repo', '2026-09-01T00:00:00Z', 100),
@@ -341,18 +342,22 @@ describe('runHarvest', () => {
       token: 'tok',
       dataDir: dir,
       allowlist: fresh.map((c) => c.repo),
-      deps: deps(s, {
-        fresh,
-        fetchTree: async (repo) => {
-          if (repo === 'second/repo') throw new RateLimitedError(`tree ${repo}`);
-          return tree;
-        },
-      }),
+      deps: {
+        ...deps(s, {
+          fresh,
+          fetchTree: async (repo) => {
+            if (repo === 'second/repo') throw new RateLimitedError(`tree ${repo}`);
+            return tree;
+          },
+        }),
+        log: (message: string) => logs.push(message),
+      },
     });
 
     expect(collections.map((c) => c.repo)).toEqual(['first/repo']);
     expect(summary.stopped).toBe('rate limited');
     expect(summary.deferred).toBe(1);
+    expect(logs).toContain('harvest: second/repo discarded: tree second/repo: rate limited');
   });
 
   it('discards a changed repo refused mid-read, keeps its previous row and skills, and resolves', async () => {
@@ -428,6 +433,160 @@ describe('runHarvest', () => {
       budget: budgetAllowing(0),
     });
 
-    expect(summary).toEqual({ read: 0, unchanged: 1, deferred: 0, stopped: null });
+    expect(summary).toEqual({ read: 0, unchanged: 1, deferred: 0, failed: 0, stopped: null });
+  });
+
+  it('logs a failing never-read repo, leaves it out, and reads the rest', async () => {
+    const dir = await seededDataDir();
+    const s = spy();
+    const logs: string[] = [];
+    const fresh = [
+      collection('a/first', '2026-09-01T00:00:00Z', 900),
+      collection('b/second', '2026-09-01T00:00:00Z', 500),
+      collection('c/third', '2026-09-01T00:00:00Z', 100),
+    ];
+
+    const { collections, summary } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: {
+        ...deps(s, {
+          fresh,
+          rawsFor: (repo) => [{ ...raw, repo }],
+          fetchTree: async (repo) => {
+            if (repo === 'b/second') throw new Error('fetch failed');
+            return tree;
+          },
+        }),
+        log: (message: string) => logs.push(message),
+      },
+    });
+
+    expect(s.enumerated).toEqual(['a/first', 'c/third']);
+    expect(collections.map((c) => c.repo)).toEqual(['a/first', 'c/third']);
+    expect(loadSkills(dir).map((k) => k.repo).sort()).toEqual(['a/first', 'c/third']);
+    expect(summary).toEqual({ read: 2, unchanged: 0, deferred: 1, failed: 1, stopped: null });
+    expect(logs).toContain('harvest: b/second failed: fetch failed');
+    expect(logs).toContain('harvest: read 2, unchanged 0, deferred 1, failed 1, stopped: queue drained');
+  });
+
+  it('keeps the previous row and skills of a changed repo that fails mid-read', async () => {
+    const dir = await seededDataDir();
+    await writeFile(
+      join(dir, 'collections.json'),
+      `${JSON.stringify(
+        [collection('cached/repo', '2026-08-01T00:00:00Z', 500), collection('older/repo', '2026-08-15T00:00:00Z', 50)],
+        null,
+        2,
+      )}\n`,
+      'utf8',
+    );
+    const s = spy();
+    const fresh = [
+      collection('a/first', '2026-09-01T00:00:00Z', 900),
+      collection('cached/repo', '2026-09-20T00:00:00Z', 500),
+      collection('older/repo', '2026-09-20T00:00:00Z', 50),
+    ];
+
+    const { skills, collections, summary } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: {
+        ...deps(s, { fresh, rawsFor: (repo) => [{ ...raw, repo }] }),
+        fetchScriptContents: async (repo: string) => {
+          if (repo === 'cached/repo') throw new Error('raw cached/repo: 502');
+          return new Map([['skills/fresh/scripts/run.py', 'import os\n']]);
+        },
+      },
+    });
+
+    expect(s.enumerated).toEqual(['a/first', 'cached/repo', 'older/repo']);
+    expect(collections.find((c) => c.repo === 'cached/repo')?.pushedAt).toBe('2026-08-01T00:00:00Z');
+    expect(collections.find((c) => c.repo === 'older/repo')?.pushedAt).toBe('2026-09-20T00:00:00Z');
+    expect(skills.filter((k) => k.repo === 'cached/repo').map((k) => k.id)).toEqual(['cached/repo@old:SKILL.md']);
+    expect(skills.find((k) => k.repo === 'older/repo')).toBeDefined();
+    expect(summary).toEqual({ read: 2, unchanged: 0, deferred: 1, failed: 1, stopped: null });
+  });
+
+  it('fails loudly, and writes nothing, when every repo of the queue fails', async () => {
+    const dir = await seededDataDir();
+    const before = await Promise.all(
+      ['skills.json', 'collections.json', 'meta.json'].map((file) => readFile(join(dir, file), 'utf8')),
+    );
+    const fresh = [
+      collection('a/first', '2026-09-01T00:00:00Z', 900),
+      collection('b/second', '2026-09-01T00:00:00Z', 500),
+    ];
+
+    const error = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: deps(spy(), {
+        fresh,
+        fetchTree: async (repo) => {
+          throw new Error(`tree ${repo}: 500`);
+        },
+      }),
+    }).catch((caught: unknown) => caught);
+
+    expect(error).toBeInstanceOf(StuckCrawlError);
+    expect((error as StuckCrawlError).reason).toBe('repo failures');
+    const after = await Promise.all(
+      ['skills.json', 'collections.json', 'meta.json'].map((file) => readFile(join(dir, file), 'utf8')),
+    );
+    expect(after).toEqual(before);
+  });
+
+  it('fails loudly when the very first repo is rate limited', async () => {
+    const dir = await seededDataDir();
+    const before = await readFile(join(dir, 'meta.json'), 'utf8');
+    const fresh = [collection('a/first', '2026-09-01T00:00:00Z', 900)];
+
+    const error = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['a/first'],
+      deps: deps(spy(), {
+        fresh,
+        fetchTree: async (repo) => {
+          throw new RateLimitedError(`tree ${repo}`);
+        },
+      }),
+    }).catch((caught: unknown) => caught);
+
+    expect(error).toBeInstanceOf(StuckCrawlError);
+    expect((error as StuckCrawlError).reason).toBe('rate limited');
+    expect(await readFile(join(dir, 'meta.json'), 'utf8')).toBe(before);
+  });
+});
+
+describe('main', () => {
+  const env = { CATALOG_PAT: 'tok' };
+  const fresh = [
+    collection('a/first', '2026-09-01T00:00:00Z', 900),
+    collection('b/second', '2026-09-01T00:00:00Z', 500),
+  ];
+  const argv = (dir: string) => [`--allowlist=${fresh.map((c) => c.repo).join(',')}`, `--data-dir=${dir}`];
+
+  it('exits 1 after writing when a repo failed', async () => {
+    const dir = await seededDataDir();
+    const failing = deps(spy(), {
+      fresh,
+      fetchTree: async (repo) => {
+        if (repo === 'b/second') throw new Error('fetch failed');
+        return tree;
+      },
+    });
+
+    expect(await main(argv(dir), env, failing)).toBe(1);
+    expect(JSON.parse(await readFile(join(dir, 'collections.json'), 'utf8'))).toHaveLength(1);
+  });
+
+  it('exits 0 when every queued repo was read', async () => {
+    const dir = await seededDataDir();
+    expect(await main(argv(dir), env, deps(spy(), { fresh }))).toBe(0);
   });
 });

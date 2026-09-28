@@ -107,6 +107,37 @@ describe('crawl.yml publishes what it commits', () => {
   });
 });
 
+describe('crawl.yml commits what a failing harvest wrote, then fails (budgeted-crawl spec §7)', () => {
+  const harvestIndex = () => stepIndex((step) => step.id === 'harvest', 'has id: harvest');
+
+  it('still fails at once, before node runs, when the PAT is missing', () => {
+    const run = steps[harvestIndex()]!.run!;
+    const check = run.indexOf('if [ -z "$CATALOG_PAT" ]; then');
+    expect(check).toBeGreaterThan(-1);
+    expect(run.slice(check, run.indexOf('\nfi\n', check))).toContain('exit 1');
+    expect(check).toBeLessThan(run.indexOf('set +e'));
+  });
+
+  it('records the harvest exit code instead of stopping the job on it', () => {
+    const run = steps[harvestIndex()]!.run!;
+    expect(run).toContain('set +e');
+    // `$?` after `fi` is the status of the node command the branch ran.
+    expect(run).toMatch(/node scripts\/harvest\/run\.ts\n\s*fi\n\s*echo "exit=\$\?" >> "\$GITHUB_OUTPUT"/);
+  });
+
+  it('fails the job on that exit code only after the commit and publish, and before the report', () => {
+    const commit = stepIndex((step) => step.run?.includes('git push') ?? false, 'pushes');
+    const publish = stepIndex((step) => step.run?.includes('gh workflow run deploy.yml') ?? false, 'dispatches deploy');
+    const fail = stepIndex((step) => step.if === "steps.harvest.outputs.exit != '0'", 'fails on the harvest exit');
+    const report = stepIndex((step) => step.if === 'failure() || cancelled()', 'reports failures');
+    expect(harvestIndex()).toBeLessThan(commit);
+    expect(fail).toBeGreaterThan(publish);
+    expect(report).toBeGreaterThan(fail);
+    expect(steps[fail]!.run).toContain('::error::');
+    expect(steps[fail]!.run!.trim()).toMatch(/exit 1$/);
+  });
+});
+
 describe('crawl.yml pins its actions and never injects inputs into a shell', () => {
   it('pins checkout and setup-node, on a Node that strips types by default', () => {
     expect(yml).toContain('actions/checkout@v5');
