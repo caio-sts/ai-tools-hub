@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { fetchTree } from '../../scripts/harvest/enumerate.ts';
+import { RateLimitedError } from '../../scripts/harvest/budget.ts';
 
 function stubFetch(handler: (url: string, init?: RequestInit) => Response): typeof fetch {
   return (async (input: RequestInfo | URL, init?: RequestInit) =>
@@ -62,5 +63,40 @@ describe('fetchTree', () => {
     await expect(fetchTree('owner/repo', 'tok', { fetchImpl })).rejects.toThrow(
       'tree owner/repo: HTTP 500',
     );
+  });
+
+  it('reads the tree at a pinned commit oid when one is given', async () => {
+    const urls: string[] = [];
+    const fetchImpl = stubFetch((url) => {
+      urls.push(url);
+      return new Response(JSON.stringify({ truncated: false, tree: [] }), { status: 200 });
+    });
+    await fetchTree('owner/repo', 'tok', { fetchImpl }, '9892f18037231b42bdbdb6cc6ecdb2f5d58eff0e');
+    expect(urls).toEqual([
+      'https://api.github.com/repos/owner/repo/git/trees/9892f18037231b42bdbdb6cc6ecdb2f5d58eff0e?recursive=1',
+    ]);
+  });
+
+  it('hands every response to the core-quota observer', async () => {
+    const seen: string[] = [];
+    const fetchImpl = stubFetch(
+      () =>
+        new Response(JSON.stringify({ truncated: false, tree: [] }), {
+          status: 200,
+          headers: { 'x-ratelimit-remaining': '4321' },
+        }),
+    );
+    await fetchTree('owner/repo', 'tok', {
+      fetchImpl,
+      onCoreResponse: (res) => seen.push(res.headers.get('x-ratelimit-remaining') ?? ''),
+    });
+    expect(seen).toEqual(['4321']);
+  });
+
+  it('throws RateLimitedError, not a plain HTTP error, when the quota is spent', async () => {
+    const fetchImpl = stubFetch(
+      () => new Response('', { status: 403, headers: { 'x-ratelimit-remaining': '0' } }),
+    );
+    await expect(fetchTree('owner/repo', 'tok', { fetchImpl })).rejects.toBeInstanceOf(RateLimitedError);
   });
 });

@@ -8,6 +8,7 @@ import {
   publisherOf,
 } from '../../src/lib/inclusion.ts';
 import type { FetchLike } from './discover.ts';
+import { RateLimitedError, isRateLimited } from './budget.ts';
 
 const API = 'https://api.github.com';
 
@@ -16,6 +17,7 @@ export interface EnumerateDeps {
   sleepImpl?: (ms: number) => Promise<void>;
   now?: () => number;
   log?: (msg: string) => void;
+  onCoreResponse?: (res: Response) => void;
 }
 
 function ghHeaders(token: string): Record<string, string> {
@@ -34,17 +36,20 @@ interface TreeEntry {
   type?: string;
 }
 
-/** One recursive tree call per repo. Missing (404) and empty (409) repos yield []. */
+/** One recursive tree call per repo, at `ref`. Missing (404) and empty (409) repos yield []. */
 export async function fetchTree(
   repo: string,
   token: string,
   deps: EnumerateDeps = {},
+  ref = 'HEAD',
 ): Promise<TreeFile[]> {
   const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
   const log = deps.log ?? (() => {});
-  const res = await fetchImpl(`${API}/repos/${repo}/git/trees/HEAD?recursive=1`, {
+  const res = await fetchImpl(`${API}/repos/${repo}/git/trees/${ref}?recursive=1`, {
     headers: ghHeaders(token),
   });
+  deps.onCoreResponse?.(res);
+  if (isRateLimited(res)) throw new RateLimitedError(`tree ${repo}`);
   if (res.status === 404 || res.status === 409) return [];
   if (!res.ok) throw new Error(`tree ${repo}: HTTP ${res.status}`);
   const body = (await res.json()) as { truncated?: boolean; tree?: TreeEntry[] };
