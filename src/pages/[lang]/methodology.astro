@@ -35,7 +35,7 @@ const MAX_WEIGHT = Math.max(...TERMS.map((t) => t.weight));
 const taxonomy = loadTaxonomy();
 const meta = loadMeta();
 const report = evaluateStaleness(parseMeta(meta), new Date());
-const sources = coverage(meta.sourceCount, meta.discoveredCount, t('stats.coverageOf', lang), String);
+const sources = coverage(meta.sourceCount, meta.discoveredCount, t('stats.coverageOf', lang), lang, String);
 const aliasPairs = Object.entries(taxonomy.aliases);
 ---
 

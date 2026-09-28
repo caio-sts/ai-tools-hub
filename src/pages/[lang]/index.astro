@@ -40,7 +40,9 @@ const stats = [
   {
     key: 'sources',
     label: t('stats.sources', lang),
-    value: coverage(meta.sourceCount, meta.discoveredCount, t('stats.coverageOf', lang), (n) => compactNumber(n, lang)),
+    value: coverage(meta.sourceCount, meta.discoveredCount, t('stats.coverageOf', lang), lang, (n) =>
+      compactNumber(n, lang),
+    ),
   },
   {
     key: 'domains',

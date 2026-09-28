@@ -122,7 +122,9 @@ describe('the methodology page discharges spec §10.6', () => {
     for (const lang of ['en', 'pt'] as const) {
       const cell = page(lang).match(/<dd[^>]*data-source-count="[^"]*"[^>]*>([^<]*)</);
       expect(cell, `no data-source-count cell on the ${lang} page`).not.toBeNull();
-      expect(cell![1]!.trim()).toBe(coverage(meta.sourceCount, meta.discoveredCount, t('stats.coverageOf', lang), String));
+      expect(cell![1]!.trim()).toBe(
+        coverage(meta.sourceCount, meta.discoveredCount, t('stats.coverageOf', lang), lang, String),
+      );
     }
   });
 

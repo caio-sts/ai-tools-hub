@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { STALE_DAYS, compactNumber, coverage, relativeDays } from '../../src/lib/format.ts';
+import { STALE_DAYS, compactNumber, coverage, fullNumber, relativeDays } from '../../src/lib/format.ts';
 
 describe('relativeDays()', () => {
   it('calls anything under a day today', () => {
@@ -75,16 +75,30 @@ describe('compactNumber()', () => {
   });
 });
 
-describe('coverage()', () => {
-  const render = (n: number) => String(n);
+describe('fullNumber()', () => {
+  it('prints every digit, grouped with the locale separator', () => {
+    expect(fullNumber(999, 'en')).toBe('999');
+    expect(fullNumber(1830, 'en')).toBe('1,830');
+    expect(fullNumber(1830, 'pt')).toBe('1.830');
+    expect(fullNumber(1234567, 'pt')).toBe('1.234.567');
+  });
+});
 
-  it('reads "N of M" while the catalog holds fewer repos than discovery admitted', () => {
-    expect(coverage(1830, 4400, 'of', render)).toBe('1830 of 4400');
-    expect(coverage(1830, 4400, 'de', (n) => compactNumber(n, 'pt'))).toBe('1,8K de 4,4K');
+describe('coverage()', () => {
+  const compact = (n: number) => compactNumber(n, 'en');
+
+  it('reads "N of M" in full numbers while the catalog holds fewer repos than discovery admitted', () => {
+    expect(coverage(1830, 4400, 'of', 'en', String)).toBe('1,830 of 4,400');
+    expect(coverage(1830, 4400, 'de', 'pt', String)).toBe('1.830 de 4.400');
   });
 
-  it('reads the bare number once coverage is complete', () => {
-    expect(coverage(4400, 4400, 'of', render)).toBe('4400');
-    expect(coverage(3, 3, 'of', render)).toBe('3');
+  it('never compacts the partial figure, where compacting would read as complete', () => {
+    expect(coverage(4380, 4400, 'of', 'en', compact)).toBe('4,380 of 4,400');
+  });
+
+  it("reads the bare number, in the caller's rendering, once coverage is complete", () => {
+    expect(coverage(4400, 4400, 'of', 'en', String)).toBe('4400');
+    expect(coverage(4400, 4400, 'of', 'en', compact)).toBe('4.4K');
+    expect(coverage(3, 3, 'de', 'pt', String)).toBe('3');
   });
 });

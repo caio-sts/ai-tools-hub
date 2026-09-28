@@ -46,7 +46,21 @@ export function compactNumber(n: number, lang: Lang): string {
   return scaled(locale, value / 1_000_000_000, 'B');
 }
 
-/** "N of M" while a crawl is still reaching every discovered repo; the bare N once it has. */
-export function coverage(read: number, discovered: number, of: string, render: (n: number) => string): string {
-  return read < discovered ? `${render(read)} ${of} ${render(discovered)}` : render(read);
+/** Every digit, locale-grouped: 1830 -> "1,830" (en) / "1.830" (pt). */
+export function fullNumber(n: number, lang: Lang): string {
+  return new Intl.NumberFormat(LOCALES[lang] ?? LOCALES.en, { maximumFractionDigits: 0 }).format(n);
+}
+
+/**
+ * "N of M" in full numbers while a crawl is still reaching every discovered repo (compacting
+ * could print "4.4K of 4.4K"); the bare N, in the caller's `render`, once it has.
+ */
+export function coverage(
+  read: number,
+  discovered: number,
+  of: string,
+  lang: Lang,
+  render: (n: number) => string,
+): string {
+  return read < discovered ? `${fullNumber(read, lang)} ${of} ${fullNumber(discovered, lang)}` : render(read);
 }

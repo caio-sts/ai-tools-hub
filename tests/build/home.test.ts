@@ -61,10 +61,10 @@ describe('home page shell', () => {
     expect(statValue(en, 'skills')).toBe(compactNumber(meta.skillCount, 'en'));
     const of = (lang: 'en' | 'pt') => t('stats.coverageOf', lang);
     expect(statValue(en, 'sources')).toBe(
-      coverage(meta.sourceCount, meta.discoveredCount, of('en'), (n) => compactNumber(n, 'en')),
+      coverage(meta.sourceCount, meta.discoveredCount, of('en'), 'en', (n) => compactNumber(n, 'en')),
     );
     expect(statValue(pt, 'sources')).toBe(
-      coverage(meta.sourceCount, meta.discoveredCount, of('pt'), (n) => compactNumber(n, 'pt')),
+      coverage(meta.sourceCount, meta.discoveredCount, of('pt'), 'pt', (n) => compactNumber(n, 'pt')),
     );
     expect(statValue(pt, 'skills')).toBe(compactNumber(meta.skillCount, 'pt'));
   });
