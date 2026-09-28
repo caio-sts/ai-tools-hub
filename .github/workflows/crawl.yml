@@ -2,13 +2,12 @@ name: crawl
 
 on:
   schedule:
-    # Mondays 06:37 UTC — WEEKLY, and deliberately not nightly. The primary schedule is the
-    # local systemd timer installed by ops/install-schedule.sh (spec §6.1); this workflow is
-    # the fallback that bounds staleness when the machine is off for days, which §13 names as
-    # the largest risk. Off the hour on purpose: schedule events at :00 are dropped under
-    # load, and the commit below is itself the repository activity that keeps this schedule
-    # from being auto-disabled after 60 days (spec §6.5).
-    - cron: '37 6 * * 1'
+    # Daily at 06:37 UTC. This is the primary schedule: it runs whether or not the maintainer's
+    # machine is on, and each run stops on its own budget and resumes the next day. The local
+    # timer from ops/install-schedule.sh is optional. Off the hour on purpose: schedule events at
+    # :00 are dropped under load, and the commit below is the repository activity that keeps this
+    # schedule from being auto-disabled after 60 days (spec §6.5).
+    - cron: '37 6 * * *'
   workflow_dispatch:
     inputs:
       allowlist:
@@ -46,6 +45,8 @@ jobs:
           # GITHUB_TOKEN is repo-scoped and cannot perform global search (spec §6.2).
           CATALOG_PAT: ${{ secrets.CATALOG_PAT }}
           ALLOWLIST: ${{ inputs.allowlist }}
+          # Stop cleanly before timeout-minutes, leaving room for the largest repo and the commit.
+          HARVEST_TIME_BUDGET_MIN: '35'
         run: |
           if [ -z "$CATALOG_PAT" ]; then
             echo "::error::CATALOG_PAT is unset or expired. A fine-grained PAT with public-repo read is mandatory; GITHUB_TOKEN cannot perform global search."
@@ -69,11 +70,18 @@ jobs:
           git pull --rebase --autostash origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
 
-      - name: Open a P1 issue when the crawl fails
-        if: failure()
+      - name: Report the failure on the open P1 issue, or open one
+        # A timeout concludes `cancelled`, not `failure`: without cancelled() it would be silent.
+        if: failure() || cancelled()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh issue create \
-            --title "P1: weekly fallback crawl failed on $(date -u +%Y-%m-%d)" \
-            --body "The weekly fallback harvest failed, so the catalog now depends entirely on the local timer. A silent crawler is a P1 bug, not a maintenance chore (spec §13). Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          OPEN=$(gh issue list --state open --search 'in:title "P1: crawl failed"' --json number --jq '.[0].number // empty')
+          if [ -n "$OPEN" ]; then
+            gh issue comment "$OPEN" --body "Failed again on $(date -u +%Y-%m-%d): $RUN_URL"
+          else
+            gh issue create \
+              --title "P1: crawl failed" \
+              --body "The daily harvest failed, so the catalog is going stale. A silent crawler is a P1 bug, not a maintenance chore (spec §13). Run: $RUN_URL"
+          fi
