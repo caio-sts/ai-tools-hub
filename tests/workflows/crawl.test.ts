@@ -1,7 +1,23 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { parse } from 'yaml';
+
+interface Step {
+  name?: string;
+  id?: string;
+  if?: string;
+  run?: string;
+  env?: Record<string, string>;
+}
 
 const yml = readFileSync('.github/workflows/crawl.yml', 'utf8');
+const steps: Step[] = parse(yml).jobs.harvest.steps;
+
+function stepIndex(predicate: (step: Step) => boolean, what: string): number {
+  const index = steps.findIndex(predicate);
+  if (index === -1) throw new Error(`crawl.yml has no step that ${what}`);
+  return index;
+}
 
 describe('crawl.yml schedule hygiene (spec §6.5)', () => {
   it('contains no tab characters', () => {
@@ -72,6 +88,22 @@ describe('crawl.yml keeps its own schedule alive (spec §6.5)', () => {
     expect(budget).toBe(35);
     expect(timeout).toBe(50);
     expect(timeout - budget).toBeGreaterThanOrEqual(10);
+  });
+});
+
+describe('crawl.yml publishes what it commits', () => {
+  // A push made with GITHUB_TOKEN starts no workflow run, and deploy.yml is the only publisher.
+  it('dispatches deploy and CI with the permission that needs', () => {
+    expect(yml).toContain('actions: write');
+    expect(yml).toContain('gh workflow run deploy.yml --ref "$GITHUB_REF_NAME"');
+    expect(yml).toContain('gh workflow run ci.yml --ref "$GITHUB_REF_NAME"');
+  });
+
+  it('dispatches only after the push', () => {
+    const push = stepIndex((step) => step.run?.includes('git push') ?? false, 'pushes');
+    const publish = stepIndex((step) => step.run?.includes('gh workflow run deploy.yml') ?? false, 'dispatches deploy');
+    expect(publish).toBeGreaterThan(push);
+    expect(steps[publish]!.env?.['GH_TOKEN']).toBe('${{ secrets.GITHUB_TOKEN }}');
   });
 });
 

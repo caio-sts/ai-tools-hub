@@ -18,6 +18,7 @@ on:
 permissions:
   contents: write
   issues: write
+  actions: write
 
 concurrency:
   group: crawl
@@ -69,6 +70,14 @@ jobs:
           git commit --allow-empty -m "chore(crawl): refresh catalog data $(date -u +%Y-%m-%dT%H:%MZ)"
           git pull --rebase --autostash origin "$GITHUB_REF_NAME"
           git push origin "HEAD:$GITHUB_REF_NAME"
+
+      - name: Publish the refreshed catalog
+        # A push made with GITHUB_TOKEN starts no workflow, so deploy and CI are dispatched.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run deploy.yml --ref "$GITHUB_REF_NAME"
+          gh workflow run ci.yml --ref "$GITHUB_REF_NAME"
 
       - name: Report the failure on the open P1 issue, or open one
         # A timeout concludes `cancelled`, not `failure`: without cancelled() it would be silent.
