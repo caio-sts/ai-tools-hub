@@ -30,6 +30,7 @@ function node(nameWithOwner: string) {
     licenseInfo: { spdxId: 'MIT' },
     repositoryTopics: { nodes: [{ topic: { name: 'agent-skills' } }] },
     owner: { __typename: 'User' },
+    defaultBranchRef: { target: { oid: `oid-${nameWithOwner}` } },
   };
 }
 
@@ -55,7 +56,7 @@ describe('enrichCollections', () => {
     const repos = Array.from({ length: 51 }, (_, i) => ({ repo: `owner/repo-${i}`, stars: i }));
     const mock = stubFetch(4900);
 
-    const collections = await enrichCollections(repos, 'ghp_test');
+    const { collections, headOids } = await enrichCollections(repos, 'ghp_test');
 
     expect(mock).toHaveBeenCalledTimes(2);
     expect([...queryOf(mock.mock.calls[0]).matchAll(ALIAS_RE)]).toHaveLength(ENRICH_BATCH_SIZE);
@@ -64,6 +65,15 @@ describe('enrichCollections', () => {
     expect(collections[0].repo).toBe('owner/repo-0');
     expect(collections[50].repo).toBe('owner/repo-50');
     expect(collections[0].stars).toBe(100);
+    expect(headOids.get('owner/repo-50')).toBe('oid-owner/repo-50');
+  });
+
+  it('reports the GraphQL points left after every batch', async () => {
+    stubFetch(4900);
+    const reported: number[] = [];
+    const repos = Array.from({ length: 51 }, (_, i) => ({ repo: `owner/repo-${i}`, stars: i }));
+    await enrichCollections(repos, 'ghp_test', { onGraphqlRemaining: (r) => reported.push(r) });
+    expect(reported).toEqual([4900, 4900]);
   });
 
   it('sends the token as a bearer credential to the GraphQL endpoint', async () => {

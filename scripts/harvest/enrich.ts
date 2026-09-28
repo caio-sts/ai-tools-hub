@@ -1,5 +1,6 @@
 import { RUNTIME_ORDER } from '../../src/lib/safety.ts';
 import type { Collection, RepoRef, Runtime } from '../../src/types.ts';
+import type { FetchLike } from './discover.ts';
 
 /**
  * GraphQL costs 1 point per 4 aliased repositories against a 5,000 point/hour budget (spec §6.2),
@@ -44,6 +45,7 @@ export function buildEnrichQuery(repos: RepoRef[]): string {
     '  licenseInfo { spdxId }',
     '  repositoryTopics(first: 25) { nodes { topic { name } } }',
     '  owner { __typename }',
+    '  defaultBranchRef { target { oid } }',
     '}',
     '',
     'query EnrichCollections {',
@@ -62,6 +64,7 @@ export interface EnrichRepoNode {
   licenseInfo: { spdxId: string | null } | null;
   repositoryTopics: { nodes: Array<{ topic: { name: string } } | null> } | null;
   owner: { __typename: string } | null;
+  defaultBranchRef: { target: { oid: string } | null } | null;
 }
 
 export interface EnrichPayload {
@@ -75,6 +78,8 @@ export interface EnrichBatchResult {
   missing: string[];
   /** GraphQL points left in the hour, or -1 when the response omitted rateLimit. */
   remaining: number;
+  /** The commit every read of the repo in this run is pinned to. Empty repos have none. */
+  headOids: Map<string, string>;
 }
 
 export function parseEnrichResponse(
@@ -90,6 +95,7 @@ export function parseEnrichResponse(
   const rate = data.rateLimit as { cost: number; remaining: number } | null | undefined;
   const collections: Collection[] = [];
   const missing: string[] = [];
+  const headOids = new Map<string, string>();
 
   batch.forEach((ref, index) => {
     const node = data[repoAlias(index)] as EnrichRepoNode | null | undefined;
@@ -97,6 +103,8 @@ export function parseEnrichResponse(
       missing.push(ref.repo);
       return;
     }
+    const oid = node.defaultBranchRef?.target?.oid;
+    if (typeof oid === 'string') headOids.set(ref.repo, oid);
     const topics = (node.repositoryTopics?.nodes ?? [])
       .filter((n): n is { topic: { name: string } } => Boolean(n && n.topic && n.topic.name))
       .map((n) => n.topic.name.toLowerCase());
@@ -113,7 +121,7 @@ export function parseEnrichResponse(
     });
   });
 
-  return { collections, missing, remaining: rate?.remaining ?? -1 };
+  return { collections, missing, remaining: rate?.remaining ?? -1, headOids };
 }
 
 export const GITHUB_GRAPHQL_URL = 'https://api.github.com/graphql';
@@ -146,8 +154,18 @@ export function dedupeRepos(repos: RepoRef[]): RepoRef[] {
   return out;
 }
 
-async function postEnrichQuery(query: string, token: string): Promise<EnrichPayload> {
-  const res = await fetch(GITHUB_GRAPHQL_URL, {
+export interface EnrichDeps {
+  fetchImpl?: FetchLike;
+  onGraphqlRemaining?: (remaining: number) => void;
+}
+
+export interface EnrichResult {
+  collections: Collection[];
+  headOids: Map<string, string>;
+}
+
+async function postEnrichQuery(query: string, token: string, fetchImpl: FetchLike): Promise<EnrichPayload> {
+  const res = await fetchImpl(GITHUB_GRAPHQL_URL, {
     method: 'POST',
     headers: {
       authorization: `bearer ${token}`,
@@ -163,29 +181,37 @@ async function postEnrichQuery(query: string, token: string): Promise<EnrichPayl
   return (await res.json()) as EnrichPayload;
 }
 
-export async function enrichCollections(repos: RepoRef[], token: string): Promise<Collection[]> {
+export async function enrichCollections(
+  repos: RepoRef[],
+  token: string,
+  deps: EnrichDeps = {},
+): Promise<EnrichResult> {
   if (!token) {
     throw new Error('enrich: a CATALOG_PAT token is required');
   }
+  const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
   const unique = dedupeRepos(repos);
   const curated = curatedSet();
-  const out: Collection[] = [];
+  const collections: Collection[] = [];
+  const headOids = new Map<string, string>();
 
   for (let i = 0; i < unique.length; i += ENRICH_BATCH_SIZE) {
     const batch = unique.slice(i, i + ENRICH_BATCH_SIZE);
-    const payload = await postEnrichQuery(buildEnrichQuery(batch), token);
+    const payload = await postEnrichQuery(buildEnrichQuery(batch), token, fetchImpl);
     const result = parseEnrichResponse(payload, batch, curated);
-    out.push(...result.collections);
+    collections.push(...result.collections);
+    for (const [repo, oid] of result.headOids) headOids.set(repo, oid);
     for (const repo of result.missing) {
       console.warn(`enrich: no repository node for ${repo} (renamed, deleted or now private)`);
     }
+    deps.onGraphqlRemaining?.(result.remaining);
     if (result.remaining >= 0 && result.remaining < ENRICH_MIN_BUDGET) {
       throw new Error(
-        `enrich: GraphQL budget down to ${result.remaining} points after ${out.length} repos — failing loudly instead of committing a partial index`,
+        `enrich: GraphQL budget down to ${result.remaining} points after ${collections.length} repos — failing loudly instead of committing a partial index`,
       );
     }
   }
-  return out;
+  return { collections, headOids };
 }
 
 /**

@@ -17,6 +17,7 @@ describe('parseEnrichResponse', () => {
             licenseInfo: null,
             repositoryTopics: { nodes: [{ topic: { name: 'Claude-Code' } }, { topic: { name: 'agent-skills' } }] },
             owner: { __typename: 'Organization' },
+            defaultBranchRef: { target: { oid: 'head-r0' } },
           },
           r1: {
             nameWithOwner: 'someone/personal-skills',
@@ -26,6 +27,7 @@ describe('parseEnrichResponse', () => {
             licenseInfo: { spdxId: 'MIT' },
             repositoryTopics: { nodes: [] },
             owner: { __typename: 'User' },
+            defaultBranchRef: null,
           },
         },
       },
@@ -60,6 +62,7 @@ describe('parseEnrichResponse', () => {
         curated: false,
       },
     ]);
+    expect(result.headOids).toEqual(new Map([['anthropics/skills', 'head-r0']]));
   });
 
   it('reports a null node as missing instead of failing the batch', () => {

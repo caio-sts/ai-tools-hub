@@ -23,6 +23,7 @@ describe('buildEnrichQuery', () => {
     expect(query).toContain('  licenseInfo { spdxId }');
     expect(query).toContain('  repositoryTopics(first: 25) { nodes { topic { name } } }');
     expect(query).toContain('  owner { __typename }');
+    expect(query).toContain('  defaultBranchRef { target { oid } }');
     expect(query.startsWith('fragment repoFields on Repository {')).toBe(true);
   });
 
