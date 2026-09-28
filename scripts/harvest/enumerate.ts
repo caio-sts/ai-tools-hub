@@ -132,6 +132,7 @@ export async function fetchRawFile(
   const res = await fetchImpl(`${RAW}/${repo}/${ref}/${encoded}`, {
     headers: { 'user-agent': 'ai-tools-hub-harvest' },
   });
+  if (isRateLimited(res)) throw new RateLimitedError(`raw ${repo}:${path}`);
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`raw ${repo}:${path}: HTTP ${res.status}`);
   return await res.text();

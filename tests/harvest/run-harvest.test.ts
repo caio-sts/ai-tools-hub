@@ -355,6 +355,36 @@ describe('runHarvest', () => {
     expect(summary.deferred).toBe(1);
   });
 
+  it('discards a changed repo refused mid-read, keeps its previous row and skills, and resolves', async () => {
+    const dir = await seededDataDir();
+    const s = spy();
+    const fresh = [
+      collection('first/repo', '2026-09-01T00:00:00Z', 900),
+      collection('cached/repo', '2026-09-20T00:00:00Z', 500),
+    ];
+
+    const { skills, collections, summary } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: fresh.map((c) => c.repo),
+      deps: {
+        ...deps(s, { fresh, rawsFor: (repo) => [{ ...raw, repo }] }),
+        fetchScriptContents: async (repo: string, ref: string) => {
+          if (repo === 'cached/repo') throw new RateLimitedError(`content ${repo}`);
+          s.contentRefs.push(ref);
+          return new Map([['skills/fresh/scripts/run.py', 'import os\n']]);
+        },
+      },
+    });
+
+    expect(s.enumerated).toEqual(['first/repo', 'cached/repo']);
+    expect(skills.find((k) => k.repo === 'first/repo')).toBeDefined();
+    expect(skills.map((k) => k.id)).toContain('cached/repo@old:SKILL.md');
+    const cached = collections.find((c) => c.repo === 'cached/repo');
+    expect(cached?.pushedAt).toBe('2026-08-01T00:00:00Z');
+    expect(summary.stopped).toBe('rate limited');
+  });
+
   it('gives a repo it read a row even when it yields zero skills, so it is not re-read', async () => {
     const dir = await seededDataDir();
     const fresh = [collection('empty/skills', '2026-09-01T00:00:00Z', 50)];

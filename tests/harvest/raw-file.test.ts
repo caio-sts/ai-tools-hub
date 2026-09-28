@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { RateLimitedError } from '../../scripts/harvest/budget.ts';
 import { fetchRawFile } from '../../scripts/harvest/enumerate.ts';
 
 function stubFetch(handler: (url: string, init?: RequestInit) => Response): typeof fetch {
@@ -49,5 +50,19 @@ describe('fetchRawFile', () => {
     await expect(
       fetchRawFile('owner/repo', 'c0ffee1', 'a/SKILL.md', { fetchImpl }),
     ).rejects.toThrow('raw owner/repo:a/SKILL.md: HTTP 503');
+  });
+
+  it('rejects with RateLimitedError on 429', async () => {
+    const fetchImpl = stubFetch(() => new Response('', { status: 429 }));
+    await expect(
+      fetchRawFile('owner/repo', 'c0ffee1', 'a/SKILL.md', { fetchImpl }),
+    ).rejects.toBeInstanceOf(RateLimitedError);
+  });
+
+  it('keeps throwing an ordinary Error, not RateLimitedError, on a plain 403', async () => {
+    const fetchImpl = stubFetch(() => new Response('', { status: 403 }));
+    const promise = fetchRawFile('owner/repo', 'c0ffee1', 'a/SKILL.md', { fetchImpl });
+    await expect(promise).rejects.toThrow('raw owner/repo:a/SKILL.md: HTTP 403');
+    await expect(promise).rejects.not.toBeInstanceOf(RateLimitedError);
   });
 });

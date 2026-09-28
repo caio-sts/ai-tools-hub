@@ -208,8 +208,8 @@ export function buildSkill(input: BuildSkillInput): Skill {
 export const MAX_SCRIPT_FILES = 25;
 
 /**
- * Fetch the given files at one ref. The caller passes the repository head COMMIT sha: the tree
- * these paths came from was read at HEAD (A4.12), so HEAD is the ref at which all of them resolve.
+ * Fetch the given files at one ref: the enrichment oid the repo is pinned to for this run, so
+ * every file resolves at the same commit the tree was read at.
  */
 export async function fetchScriptContents(
   repo: string,
@@ -223,7 +223,8 @@ export async function fetchScriptContents(
     try {
       const text = await fetchRawFile(repo, commitSha, file.path, deps);
       if (text !== null) contents.set(file.path, text);
-    } catch {
+    } catch (error) {
+      if (error instanceof RateLimitedError) throw error;
       // One unreadable script costs that script's network/env signal, never the whole crawl.
     }
   }

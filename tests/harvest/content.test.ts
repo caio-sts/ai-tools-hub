@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { TreeFile } from '../../src/types.ts';
 import { siblingLicensePath } from '../../src/lib/license.ts';
+import { RateLimitedError } from '../../scripts/harvest/budget.ts';
 import { MAX_SCRIPT_FILES, fetchScriptContents } from '../../scripts/harvest/run.ts';
 
 const COMMIT = '4c9e1f7a2b3d5e6f7081920a3b4c5d6e7f809102';
@@ -50,6 +51,13 @@ describe('fetchScriptContents', () => {
     const contents = await fetchScriptContents('a/b', COMMIT, files.slice(0, 2), { fetchImpl: rec.impl });
     expect(contents.size).toBe(1);
     expect(contents.has('skills/x/scripts/a.py')).toBe(true);
+  });
+
+  it('rethrows a RateLimitedError instead of swallowing it', async () => {
+    const rec = recordingFetch(() => new Response('', { status: 429 }));
+    await expect(
+      fetchScriptContents('a/b', COMMIT, files.slice(0, 1), { fetchImpl: rec.impl }),
+    ).rejects.toBeInstanceOf(RateLimitedError);
   });
 
   it('never fetches more than MAX_SCRIPT_FILES per skill', async () => {
