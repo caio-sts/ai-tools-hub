@@ -1,5 +1,24 @@
 [
   {
+    "repo": "affaan-m/ECC",
+    "stars": 272601,
+    "forks": 40704,
+    "pushedAt": "2026-10-02T02:01:14Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "anthropic",
+      "claude",
+      "claude-code",
+      "developer-tools",
+      "llm",
+      "mcp",
+      "productivity"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "anthropics/skills",
     "stars": 172661,
     "forks": 20510,
@@ -25,8 +44,8 @@
   },
   {
     "repo": "heilcheng/awesome-agent-skills",
-    "stars": 6157,
-    "forks": 653,
+    "stars": 6258,
+    "forks": 733,
     "pushedAt": "2026-04-05T20:39:24Z",
     "license": "MIT",
     "topics": [
