@@ -27,12 +27,12 @@ describe('buildEnrichQuery', () => {
     expect(query.startsWith('fragment repoFields on Repository {')).toBe(true);
   });
 
-  it('caps a batch at 50 aliases', () => {
+  it('caps a batch at 25 aliases', () => {
     const many = Array.from({ length: ENRICH_BATCH_SIZE + 1 }, (_, i) => ({
       repo: `owner/repo-${i}`,
       stars: 10,
     }));
-    expect(() => buildEnrichQuery(many)).toThrow('exceeds ENRICH_BATCH_SIZE 50');
+    expect(() => buildEnrichQuery(many)).toThrow('exceeds ENRICH_BATCH_SIZE 25');
     expect(() => buildEnrichQuery(many.slice(0, ENRICH_BATCH_SIZE))).not.toThrow();
   });
 

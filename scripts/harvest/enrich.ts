@@ -1,12 +1,15 @@
 import { RUNTIME_ORDER } from '../../src/lib/safety.ts';
 import type { Collection, RepoRef, Runtime } from '../../src/types.ts';
-import type { FetchLike } from './discover.ts';
+import { sleep, type FetchLike } from './discover.ts';
 
 /**
- * GraphQL costs 1 point per 4 aliased repositories against a 5,000 point/hour budget (spec §6.2),
- * so 50 aliases per query is ~13 points per call.
+ * Bounded by GitHub's ~10 s GraphQL timeout, not by points (a query costs 1): 50 aliases took
+ * ~6 s and overran it daily with a 502/504; 25 take ~3 s.
  */
-export const ENRICH_BATCH_SIZE = 50;
+export const ENRICH_BATCH_SIZE = 25;
+
+/** An overrun comes back as a 5xx, a dropped connection, or a 200 with no data; retry it twice. */
+const ENRICH_ATTEMPTS = 3;
 
 const REPO_RE = /^[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+$/;
 
@@ -82,6 +85,11 @@ export interface EnrichBatchResult {
   headOids: Map<string, string>;
 }
 
+function noDataFailure(payload: EnrichPayload): string {
+  const detail = (payload.errors ?? []).map((e) => e.message).join('; ') || 'no data field';
+  return `response carried no data (${detail})`;
+}
+
 export function parseEnrichResponse(
   payload: EnrichPayload,
   batch: RepoRef[],
@@ -89,8 +97,7 @@ export function parseEnrichResponse(
 ): EnrichBatchResult {
   const data = payload.data;
   if (!data) {
-    const detail = (payload.errors ?? []).map((e) => e.message).join('; ') || 'no data field';
-    throw new Error(`enrich: GraphQL response carried no data (${detail})`);
+    throw new Error(`enrich: GraphQL ${noDataFailure(payload)}`);
   }
   const rate = data.rateLimit as { cost: number; remaining: number } | null | undefined;
   const collections: Collection[] = [];
@@ -156,6 +163,7 @@ export function dedupeRepos(repos: RepoRef[]): RepoRef[] {
 
 export interface EnrichDeps {
   fetchImpl?: FetchLike;
+  sleepImpl?: (ms: number) => Promise<void>;
   onGraphqlRemaining?: (remaining: number) => void;
 }
 
@@ -177,13 +185,42 @@ export function postGraphql(query: string, token: string, fetchImpl: FetchLike):
   });
 }
 
-async function postEnrichQuery(query: string, token: string, fetchImpl: FetchLike): Promise<EnrichPayload> {
-  const res = await postGraphql(query, token, fetchImpl);
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`enrich: GraphQL HTTP ${res.status} — ${body.slice(0, 200)}`);
+async function postEnrichQuery(
+  query: string,
+  token: string,
+  fetchImpl: FetchLike,
+  wait: (ms: number) => Promise<void>,
+): Promise<EnrichPayload> {
+  let failure = '';
+  for (let attempt = 1; attempt <= ENRICH_ATTEMPTS; attempt += 1) {
+    if (attempt > 1) {
+      console.warn(`enrich: GraphQL ${failure}; retrying (attempt ${attempt} of ${ENRICH_ATTEMPTS})`);
+      await wait(2000 * (attempt - 1));
+    }
+    let res: Response;
+    try {
+      res = await postGraphql(query, token, fetchImpl);
+    } catch (error) {
+      failure = `request failed (${(error as Error).message})`;
+      continue;
+    }
+    if (!res.ok) {
+      const body = await res.text().catch(() => '');
+      failure = `HTTP ${res.status} — ${body.slice(0, 200)}`;
+      if (res.status < 500) break;
+      continue;
+    }
+    let payload: EnrichPayload;
+    try {
+      payload = (await res.json()) as EnrichPayload;
+    } catch (error) {
+      failure = `unreadable body (${(error as Error).message})`;
+      continue;
+    }
+    if (payload.data) return payload;
+    failure = noDataFailure(payload);
   }
-  return (await res.json()) as EnrichPayload;
+  throw new Error(`enrich: GraphQL ${failure}`);
 }
 
 export async function enrichCollections(
@@ -195,6 +232,7 @@ export async function enrichCollections(
     throw new Error('enrich: a CATALOG_PAT token is required');
   }
   const fetchImpl = deps.fetchImpl ?? globalThis.fetch;
+  const wait = deps.sleepImpl ?? sleep;
   const unique = dedupeRepos(repos);
   const curated = curatedSet();
   const collections: Collection[] = [];
@@ -202,7 +240,7 @@ export async function enrichCollections(
 
   for (let i = 0; i < unique.length; i += ENRICH_BATCH_SIZE) {
     const batch = unique.slice(i, i + ENRICH_BATCH_SIZE);
-    const payload = await postEnrichQuery(buildEnrichQuery(batch), token, fetchImpl);
+    const payload = await postEnrichQuery(buildEnrichQuery(batch), token, fetchImpl, wait);
     const result = parseEnrichResponse(payload, batch, curated);
     collections.push(...result.collections);
     for (const [repo, oid] of result.headOids) headOids.set(repo, oid);
