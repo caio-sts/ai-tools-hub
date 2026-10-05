@@ -114,7 +114,11 @@ Before starting each repo, the run stops cleanly if any of these holds:
 
 A 403/429 inside a repo means that repo is discarded whole, and the run stops cleanly. Any other
 error inside a repo (a 5xx, a network failure, a data-less GraphQL body) discards that repo whole
-too, and the run **continues** with the next one; the job fails after the commit (§7). No retries.
+too, and the run **continues** with the next one; the job fails after the commit (§7). No retries
+inside a repo. Enrichment is the one exception: a lost query there loses the whole run, so each
+batch is retried twice on a 5xx, a network failure, an unreadable body or a data-less body
+(2 s, then 4 s apart). Batches are 25 repos — 50 took ~6 s against GitHub's ~10 s GraphQL
+timeout and overran it on most daily runs.
 It never writes a half-read repo. The guard runs between repos, so the time margin (90 − 35 min)
 must cover the largest single repo plus the commit step: the largest discovered repo,
 `sickn33/antigravity-awesome-skills` (2,741 `SKILL.md` paths), is estimated at ~13 min, which the
@@ -191,7 +195,7 @@ summary line, e.g. `harvest: read 1830, unchanged 0, deferred 2570, failed 2, st
 | 403/429 mid-repo, ≥1 repo read | 0 | that repo discarded and logged, the run stops; earlier repos committed |
 | Any other error inside a repo (including a bug in the read path) | **1, after the commit** | that repo discarded and logged, the run continues; everything else (reads, unchanged repos, `crawledAt`) is committed and published, then issue — even when every queued repo failed |
 | **A stop (guard or 403/429) with 0 repos read** | **1** | `StuckCrawlError`, nothing written; issue — the crawler is stuck, and that must not be silent |
-| An error outside a repo read (discovery, enrichment, writing) | 1 | nothing written; issue, as today |
+| An error outside a repo read (discovery, enrichment after its retries, writing) | 1 | nothing written; issue, as today |
 | Job timeout (should not happen with §3.4) | cancelled | issue, via `cancelled()` |
 
 ## 8. Testing and verification

@@ -34,26 +34,66 @@ function node(nameWithOwner: string) {
   };
 }
 
+function answer(init: unknown, remaining = 4900) {
+  const query = (JSON.parse((init as FetchInit).body) as { query: string }).query;
+  const data: Record<string, unknown> = { rateLimit: { cost: 1, remaining } };
+  for (const [, alias, owner, name] of query.matchAll(ALIAS_RE)) {
+    data[alias] = node(`${owner}/${name}`);
+  }
+  return { ok: true, status: 200, json: async () => ({ data }), text: async () => '' };
+}
+
 function stubFetch(remaining: number) {
+  const mock = vi.fn(async (_url: unknown, init: unknown) => answer(init, remaining));
+  vi.stubGlobal('fetch', mock);
+  return mock;
+}
+
+/** Fails with each response (or rejects with each Error) in turn, then answers normally. */
+function flakyFetch(...failures: object[]) {
   const mock = vi.fn(async (_url: unknown, init: unknown) => {
-    const query = (JSON.parse((init as FetchInit).body) as { query: string }).query;
-    const data: Record<string, unknown> = { rateLimit: { cost: 13, remaining } };
-    for (const [, alias, owner, name] of query.matchAll(ALIAS_RE)) {
-      data[alias] = node(`${owner}/${name}`);
-    }
-    return { ok: true, status: 200, json: async () => ({ data }), text: async () => '' };
+    const next = failures.shift();
+    if (next instanceof Error) throw next;
+    return next ?? answer(init);
   });
   vi.stubGlobal('fetch', mock);
   return mock;
 }
+
+const httpError = (status: number, body = '<!DOCTYPE html>') => ({
+  ok: false,
+  status,
+  json: async () => ({}),
+  text: async () => body,
+});
+
+// GitHub sometimes closes an overrun query with a 200 and no body.
+const emptyBody = {
+  ok: true,
+  status: 200,
+  json: async () => {
+    throw new SyntaxError('Unexpected end of JSON input');
+  },
+  text: async () => '',
+};
+
+// ...or with a 200 that carries errors and `data: null`.
+const noData = {
+  ok: true,
+  status: 200,
+  json: async () => ({ data: null, errors: [{ message: 'This may be the result of a timeout' }] }),
+  text: async () => '',
+};
+
+const NO_WAIT = { sleepImpl: async () => {} };
 
 afterEach(() => {
   vi.unstubAllGlobals();
 });
 
 describe('enrichCollections', () => {
-  it('splits 51 repos into two queries and returns one Collection each', async () => {
-    const repos = Array.from({ length: 51 }, (_, i) => ({ repo: `owner/repo-${i}`, stars: i }));
+  it('splits one batch plus one repo into two queries and returns one Collection each', async () => {
+    const repos = Array.from({ length: ENRICH_BATCH_SIZE + 1 }, (_, i) => ({ repo: `owner/repo-${i}`, stars: i }));
     const mock = stubFetch(4900);
 
     const { collections, headOids } = await enrichCollections(repos, 'ghp_test');
@@ -61,17 +101,17 @@ describe('enrichCollections', () => {
     expect(mock).toHaveBeenCalledTimes(2);
     expect([...queryOf(mock.mock.calls[0]).matchAll(ALIAS_RE)]).toHaveLength(ENRICH_BATCH_SIZE);
     expect([...queryOf(mock.mock.calls[1]).matchAll(ALIAS_RE)]).toHaveLength(1);
-    expect(collections).toHaveLength(51);
+    expect(collections).toHaveLength(ENRICH_BATCH_SIZE + 1);
     expect(collections[0].repo).toBe('owner/repo-0');
-    expect(collections[50].repo).toBe('owner/repo-50');
+    expect(collections[ENRICH_BATCH_SIZE].repo).toBe(`owner/repo-${ENRICH_BATCH_SIZE}`);
     expect(collections[0].stars).toBe(100);
-    expect(headOids.get('owner/repo-50')).toBe('oid-owner/repo-50');
+    expect(headOids.get(`owner/repo-${ENRICH_BATCH_SIZE}`)).toBe(`oid-owner/repo-${ENRICH_BATCH_SIZE}`);
   });
 
   it('reports the GraphQL points left after every batch', async () => {
     stubFetch(4900);
     const reported: number[] = [];
-    const repos = Array.from({ length: 51 }, (_, i) => ({ repo: `owner/repo-${i}`, stars: i }));
+    const repos = Array.from({ length: ENRICH_BATCH_SIZE + 1 }, (_, i) => ({ repo: `owner/repo-${i}`, stars: i }));
     await enrichCollections(repos, 'ghp_test', { onGraphqlRemaining: (r) => reported.push(r) });
     expect(reported).toEqual([4900, 4900]);
   });
@@ -93,14 +133,44 @@ describe('enrichCollections', () => {
     );
   });
 
-  it('throws on a non-OK HTTP response', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn(async () => ({ ok: false, status: 401, json: async () => ({}), text: async () => 'Bad credentials' })),
-    );
-    await expect(enrichCollections([{ repo: 'a/b', stars: 1 }], 'bad')).rejects.toThrow(
+  it('throws on a client error without retrying it', async () => {
+    const mock = flakyFetch(httpError(401, 'Bad credentials'));
+    await expect(enrichCollections([{ repo: 'a/b', stars: 1 }], 'bad', NO_WAIT)).rejects.toThrow(
       'enrich: GraphQL HTTP 401 — Bad credentials',
     );
+    expect(mock).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries a gateway timeout and keeps the batch', async () => {
+    const mock = flakyFetch(httpError(502), httpError(504));
+    const waits: number[] = [];
+    const { collections } = await enrichCollections([{ repo: 'a/b', stars: 1 }], 'ghp_test', {
+      sleepImpl: async (ms) => {
+        waits.push(ms);
+      },
+    });
+    expect(mock).toHaveBeenCalledTimes(3);
+    expect(waits).toEqual([2000, 4000]);
+    expect(collections.map((c) => c.repo)).toEqual(['a/b']);
+  });
+
+  it.each([
+    ['a 200 with an empty body', emptyBody],
+    ['a 200 with errors but no data', noData],
+    ['a network-level failure', new TypeError('fetch failed')],
+  ])('retries %s', async (_case, failure) => {
+    const mock = flakyFetch(failure);
+    const { collections } = await enrichCollections([{ repo: 'a/b', stars: 1 }], 'ghp_test', NO_WAIT);
+    expect(mock).toHaveBeenCalledTimes(2);
+    expect(collections).toHaveLength(1);
+  });
+
+  it('gives up after three attempts at the same batch', async () => {
+    const mock = flakyFetch(httpError(504), httpError(504), httpError(504));
+    await expect(enrichCollections([{ repo: 'a/b', stars: 1 }], 'ghp_test', NO_WAIT)).rejects.toThrow(
+      'enrich: GraphQL HTTP 504',
+    );
+    expect(mock).toHaveBeenCalledTimes(3);
   });
 
   it('requires a token', async () => {
