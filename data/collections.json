@@ -108,8 +108,8 @@
   },
   {
     "repo": "nextlevelbuilder/ui-ux-pro-max-skill",
-    "stars": 133497,
-    "forks": 14145,
+    "stars": 133751,
+    "forks": 14176,
     "pushedAt": "2026-10-03T16:05:26Z",
     "license": "MIT",
     "topics": [
@@ -190,8 +190,8 @@
   },
   {
     "repo": "addyosmani/agent-skills",
-    "stars": 101734,
-    "forks": 10667,
+    "stars": 102433,
+    "forks": 10735,
     "pushedAt": "2026-10-03T18:21:11Z",
     "license": "MIT",
     "topics": [
@@ -293,8 +293,8 @@
   },
   {
     "repo": "Panniantong/Agent-Reach",
-    "stars": 92386,
-    "forks": 8103,
+    "stars": 92990,
+    "forks": 8145,
     "pushedAt": "2026-09-15T16:16:24Z",
     "license": "MIT",
     "topics": [
@@ -433,8 +433,8 @@
   },
   {
     "repo": "shareAI-lab/learn-claude-code",
-    "stars": 78065,
-    "forks": 12520,
+    "stars": 78105,
+    "forks": 12524,
     "pushedAt": "2026-09-28T13:49:16Z",
     "license": "MIT",
     "topics": [
@@ -454,8 +454,8 @@
   },
   {
     "repo": "ComposioHQ/awesome-claude-skills",
-    "stars": 76588,
-    "forks": 8967,
+    "stars": 76646,
+    "forks": 8978,
     "pushedAt": "2026-09-18T07:16:11Z",
     "license": null,
     "topics": [
@@ -512,37 +512,6 @@
     "curated": false
   },
   {
-    "repo": "career-ops-hq/career-ops",
-    "stars": 73480,
-    "forks": 13803,
-    "pushedAt": "2026-10-04T19:58:06Z",
-    "license": "MIT",
-    "topics": [
-      "ai-agent",
-      "career",
-      "claude-code",
-      "cli",
-      "interview-prep",
-      "job-search",
-      "open-source",
-      "resume",
-      "careerops",
-      "ats",
-      "job-application",
-      "ai-job-search",
-      "cover-letter",
-      "cv",
-      "local-first",
-      "agent-skills",
-      "career-ops",
-      "job-hunting",
-      "latex",
-      "terminal"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
     "repo": "diegosouzapw/OmniRoute",
     "stars": 73227,
     "forks": 10502,
@@ -571,6 +540,37 @@
       "kimi"
     ],
     "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "career-ops-hq/career-ops",
+    "stars": 73480,
+    "forks": 13803,
+    "pushedAt": "2026-10-04T19:58:06Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agent",
+      "career",
+      "claude-code",
+      "cli",
+      "interview-prep",
+      "job-search",
+      "open-source",
+      "resume",
+      "careerops",
+      "ats",
+      "job-application",
+      "ai-job-search",
+      "cover-letter",
+      "cv",
+      "local-first",
+      "agent-skills",
+      "career-ops",
+      "job-hunting",
+      "latex",
+      "terminal"
+    ],
+    "isOrg": true,
     "curated": false
   },
   {
@@ -663,8 +663,8 @@
   },
   {
     "repo": "gsd-build/get-shit-done",
-    "stars": 64370,
-    "forks": 5430,
+    "stars": 64361,
+    "forks": 5431,
     "pushedAt": "2026-05-31T17:46:54Z",
     "license": "MIT",
     "topics": [
@@ -738,9 +738,26 @@
     "curated": false
   },
   {
+    "repo": "ayghri/i-have-adhd",
+    "stars": 54155,
+    "forks": 3111,
+    "pushedAt": "2026-09-19T16:44:46Z",
+    "license": "MIT",
+    "topics": [
+      "adhd",
+      "claude-",
+      "claude-code-plugin",
+      "claude-skills",
+      "developer-tools",
+      "productivity"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "blader/humanizer",
-    "stars": 54311,
-    "forks": 4309,
+    "stars": 54554,
+    "forks": 4327,
     "pushedAt": "2026-09-28T05:55:12Z",
     "license": "MIT",
     "topics": [
@@ -778,23 +795,6 @@
       "muse"
     ],
     "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "ayghri/i-have-adhd",
-    "stars": 54155,
-    "forks": 3111,
-    "pushedAt": "2026-09-19T16:44:46Z",
-    "license": "MIT",
-    "topics": [
-      "adhd",
-      "claude-",
-      "claude-code-plugin",
-      "claude-skills",
-      "developer-tools",
-      "productivity"
-    ],
-    "isOrg": false,
     "curated": false
   },
   {
@@ -842,8 +842,8 @@
   },
   {
     "repo": "Imbad0202/academic-research-skills",
-    "stars": 50633,
-    "forks": 3905,
+    "stars": 50753,
+    "forks": 3909,
     "pushedAt": "2026-10-03T14:29:44Z",
     "license": "NOASSERTION",
     "topics": [
@@ -861,8 +861,8 @@
   },
   {
     "repo": "jeecgboot/JeecgBoot",
-    "stars": 48091,
-    "forks": 16204,
+    "stars": 48101,
+    "forks": 16203,
     "pushedAt": "2026-09-22T14:26:15Z",
     "license": "Apache-2.0",
     "topics": [
@@ -1032,6 +1032,25 @@
     "curated": false
   },
   {
+    "repo": "cathrynlavery/diagram-design",
+    "stars": 43336,
+    "forks": 2796,
+    "pushedAt": "2026-10-01T17:03:07Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "claude-code",
+      "codex",
+      "data-visualization",
+      "diagrams",
+      "drawio",
+      "mermaid",
+      "svg"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "alibaba/open-code-review",
     "stars": 43710,
     "forks": 3152,
@@ -1067,25 +1086,6 @@
       "mcp-server"
     ],
     "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "cathrynlavery/diagram-design",
-    "stars": 43336,
-    "forks": 2796,
-    "pushedAt": "2026-10-01T17:03:07Z",
-    "license": "MIT",
-    "topics": [
-      "agent-skills",
-      "claude-code",
-      "codex",
-      "data-visualization",
-      "diagrams",
-      "drawio",
-      "mermaid",
-      "svg"
-    ],
-    "isOrg": false,
     "curated": false
   },
   {
@@ -1139,7 +1139,7 @@
   },
   {
     "repo": "chatboxai/chatbox",
-    "stars": 41954,
+    "stars": 41958,
     "forks": 4268,
     "pushedAt": "2026-09-24T14:09:13Z",
     "license": "GPL-3.0",
@@ -1162,8 +1162,8 @@
   },
   {
     "repo": "luongnv89/claude-howto",
-    "stars": 41761,
-    "forks": 5121,
+    "stars": 41767,
+    "forks": 5123,
     "pushedAt": "2026-09-30T12:33:25Z",
     "license": "MIT",
     "topics": [
@@ -1338,8 +1338,8 @@
   },
   {
     "repo": "mukul975/Anthropic-Cybersecurity-Skills",
-    "stars": 33842,
-    "forks": 4110,
+    "stars": 33888,
+    "forks": 4115,
     "pushedAt": "2026-08-31T04:32:44Z",
     "license": "Apache-2.0",
     "topics": [
@@ -1369,8 +1369,8 @@
   },
   {
     "repo": "iOfficeAI/AionUi",
-    "stars": 33347,
-    "forks": 3470,
+    "stars": 33352,
+    "forks": 3469,
     "pushedAt": "2026-09-09T07:57:01Z",
     "license": "Apache-2.0",
     "topics": [
@@ -1438,8 +1438,8 @@
   },
   {
     "repo": "hesamsheikh/awesome-openclaw-usecases",
-    "stars": 31678,
-    "forks": 2707,
+    "stars": 31677,
+    "forks": 2706,
     "pushedAt": "2026-03-24T14:54:56Z",
     "license": "MIT",
     "topics": [
@@ -1555,8 +1555,8 @@
   },
   {
     "repo": "decolua/9router",
-    "stars": 30356,
-    "forks": 5764,
+    "stars": 30405,
+    "forks": 5780,
     "pushedAt": "2026-10-01T03:46:37Z",
     "license": "MIT",
     "topics": [
@@ -1586,8 +1586,8 @@
   },
   {
     "repo": "zarazhangrui/frontend-slides",
-    "stars": 30209,
-    "forks": 2351,
+    "stars": 30244,
+    "forks": 2353,
     "pushedAt": "2026-06-23T20:08:19Z",
     "license": "MIT",
     "topics": [
@@ -1630,8 +1630,8 @@
   },
   {
     "repo": "jarrodwatts/claude-hud",
-    "stars": 28339,
-    "forks": 1313,
+    "stars": 28366,
+    "forks": 1311,
     "pushedAt": "2026-10-03T21:32:41Z",
     "license": "MIT",
     "topics": [
@@ -1648,8 +1648,8 @@
   },
   {
     "repo": "alirezarezvani/claude-skills",
-    "stars": 27767,
-    "forks": 3902,
+    "stars": 27805,
+    "forks": 3905,
     "pushedAt": "2026-08-30T09:46:16Z",
     "license": "MIT",
     "topics": [
@@ -1721,6 +1721,28 @@
     "curated": false
   },
   {
+    "repo": "op7418/guizang-ppt-skill",
+    "stars": 27353,
+    "forks": 1895,
+    "pushedAt": "2026-08-07T03:58:08Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "ai-agent",
+      "claude-code",
+      "codex",
+      "image-generation",
+      "ppt",
+      "presentation",
+      "skill",
+      "swiss-design",
+      "web-ppt",
+      "html-deck",
+      "skills"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "OthmanAdi/planning-with-files",
     "stars": 27304,
     "forks": 2268,
@@ -1752,31 +1774,9 @@
     "curated": false
   },
   {
-    "repo": "op7418/guizang-ppt-skill",
-    "stars": 27294,
-    "forks": 1893,
-    "pushedAt": "2026-08-07T03:58:08Z",
-    "license": "AGPL-3.0",
-    "topics": [
-      "ai-agent",
-      "claude-code",
-      "codex",
-      "image-generation",
-      "ppt",
-      "presentation",
-      "skill",
-      "swiss-design",
-      "web-ppt",
-      "html-deck",
-      "skills"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "onlook-dev/onlook",
-    "stars": 26868,
-    "forks": 2117,
+    "stars": 26878,
+    "forks": 2123,
     "pushedAt": "2026-08-25T01:06:22Z",
     "license": "Apache-2.0",
     "topics": [
@@ -1806,8 +1806,8 @@
   },
   {
     "repo": "phuryn/pm-skills",
-    "stars": 26808,
-    "forks": 2840,
+    "stars": 26819,
+    "forks": 2841,
     "pushedAt": "2026-09-14T21:15:33Z",
     "license": "MIT",
     "topics": [
@@ -1824,8 +1824,8 @@
   },
   {
     "repo": "JimLiu/baoyu-skills",
-    "stars": 26369,
-    "forks": 2910,
+    "stars": 26390,
+    "forks": 2912,
     "pushedAt": "2026-09-10T15:13:43Z",
     "license": "MIT",
     "topics": [
@@ -1839,8 +1839,8 @@
   },
   {
     "repo": "agentskills/agentskills",
-    "stars": 25937,
-    "forks": 1945,
+    "stars": 25952,
+    "forks": 1950,
     "pushedAt": "2026-08-09T20:36:04Z",
     "license": "Apache-2.0",
     "topics": [
@@ -1851,8 +1851,8 @@
   },
   {
     "repo": "Donchitos/Claude-Code-Game-Studios",
-    "stars": 25811,
-    "forks": 3664,
+    "stars": 25847,
+    "forks": 3666,
     "pushedAt": "2026-09-29T12:55:08Z",
     "license": "MIT",
     "topics": [
@@ -1905,8 +1905,8 @@
   },
   {
     "repo": "titanwings/distilly",
-    "stars": 25334,
-    "forks": 2179,
+    "stars": 25369,
+    "forks": 2182,
     "pushedAt": "2026-09-22T14:01:08Z",
     "license": "MIT",
     "topics": [
@@ -1981,7 +1981,7 @@
   },
   {
     "repo": "winfunc/opcode",
-    "stars": 22423,
+    "stars": 22419,
     "forks": 1711,
     "pushedAt": "2026-09-18T16:18:10Z",
     "license": "AGPL-3.0",
@@ -2022,8 +2022,8 @@
   },
   {
     "repo": "KKKKhazix/khazix-skills",
-    "stars": 21188,
-    "forks": 2241,
+    "stars": 21219,
+    "forks": 2242,
     "pushedAt": "2026-10-01T13:15:32Z",
     "license": "MIT",
     "topics": [
@@ -2042,8 +2042,8 @@
   },
   {
     "repo": "jnMetaCode/agency-agents-zh",
-    "stars": 21073,
-    "forks": 3390,
+    "stars": 21093,
+    "forks": 3393,
     "pushedAt": "2026-10-05T13:05:32Z",
     "license": "MIT",
     "topics": [
@@ -2072,8 +2072,8 @@
   },
   {
     "repo": "liyupi/ai-guide",
-    "stars": 20737,
-    "forks": 2291,
+    "stars": 20777,
+    "forks": 2294,
     "pushedAt": "2026-09-28T03:09:27Z",
     "license": "NOASSERTION",
     "topics": [
@@ -2176,8 +2176,8 @@
   },
   {
     "repo": "AgriciDaniel/claude-seo",
-    "stars": 18361,
-    "forks": 2693,
+    "stars": 18465,
+    "forks": 2702,
     "pushedAt": "2026-10-04T23:41:12Z",
     "license": "MIT",
     "topics": [
@@ -2254,8 +2254,8 @@
   },
   {
     "repo": "tradecatlabs/vibe-coding-cn",
-    "stars": 17152,
-    "forks": 1734,
+    "stars": 17195,
+    "forks": 1736,
     "pushedAt": "2026-10-01T00:43:45Z",
     "license": "MIT",
     "topics": [
@@ -2283,8 +2283,8 @@
   },
   {
     "repo": "MemoriLabs/Memori",
-    "stars": 17078,
-    "forks": 3660,
+    "stars": 17092,
+    "forks": 3673,
     "pushedAt": "2026-10-03T01:33:14Z",
     "license": "NOASSERTION",
     "topics": [
@@ -2306,34 +2306,6 @@
       "enterprise",
       "hermes",
       "openclaw"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "kubesphere/kubesphere",
-    "stars": 17060,
-    "forks": 2756,
-    "pushedAt": "2026-07-15T01:14:39Z",
-    "license": "NOASSERTION",
-    "topics": [
-      "devops",
-      "cncf",
-      "cloud-native",
-      "servicemesh",
-      "kubesphere",
-      "kubernetes",
-      "observability",
-      "multi-cluster",
-      "hacktoberfest",
-      "ebpf",
-      "llm",
-      "agent-skills",
-      "ai",
-      "multi-tenancy",
-      "skills",
-      "skills-sh",
-      "skillsmp"
     ],
     "isOrg": true,
     "curated": false
@@ -2370,6 +2342,34 @@
     "curated": false
   },
   {
+    "repo": "kubesphere/kubesphere",
+    "stars": 17060,
+    "forks": 2754,
+    "pushedAt": "2026-07-15T01:14:39Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "devops",
+      "cncf",
+      "cloud-native",
+      "servicemesh",
+      "kubesphere",
+      "kubernetes",
+      "observability",
+      "multi-cluster",
+      "hacktoberfest",
+      "ebpf",
+      "llm",
+      "agent-skills",
+      "ai",
+      "multi-tenancy",
+      "skills",
+      "skills-sh",
+      "skillsmp"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
     "repo": "lidge-jun/opencodex",
     "stars": 16953,
     "forks": 1280,
@@ -2402,8 +2402,8 @@
   },
   {
     "repo": "citrolabs/ego-lite",
-    "stars": 16870,
-    "forks": 900,
+    "stars": 16882,
+    "forks": 903,
     "pushedAt": "2026-09-23T07:16:19Z",
     "license": "MIT",
     "topics": [
@@ -2454,8 +2454,8 @@
   },
   {
     "repo": "alibaba/zvec",
-    "stars": 16067,
-    "forks": 1010,
+    "stars": 16072,
+    "forks": 1008,
     "pushedAt": "2026-09-29T05:56:15Z",
     "license": "Apache-2.0",
     "topics": [
@@ -2520,8 +2520,8 @@
   },
   {
     "repo": "AgriciDaniel/claude-obsidian",
-    "stars": 15378,
-    "forks": 1531,
+    "stars": 15392,
+    "forks": 1532,
     "pushedAt": "2026-09-10T17:44:23Z",
     "license": "MIT",
     "topics": [
@@ -2551,8 +2551,8 @@
   },
   {
     "repo": "travisvn/awesome-claude-skills",
-    "stars": 15288,
-    "forks": 2017,
+    "stars": 15298,
+    "forks": 2016,
     "pushedAt": "2026-04-28T19:30:24Z",
     "license": null,
     "topics": [
@@ -2573,8 +2573,8 @@
   },
   {
     "repo": "yusufkaraaslan/Skill_Seekers",
-    "stars": 15107,
-    "forks": 1540,
+    "stars": 15112,
+    "forks": 1539,
     "pushedAt": "2026-09-30T18:49:17Z",
     "license": "MIT",
     "topics": [
@@ -2633,8 +2633,8 @@
   },
   {
     "repo": "kyegomez/OpenMythos",
-    "stars": 14906,
-    "forks": 3283,
+    "stars": 14908,
+    "forks": 3281,
     "pushedAt": "2026-05-23T11:58:48Z",
     "license": "MIT",
     "topics": [
@@ -2687,7 +2687,7 @@
   },
   {
     "repo": "NevaMind-AI/memU",
-    "stars": 14503,
+    "stars": 14512,
     "forks": 1084,
     "pushedAt": "2026-10-01T14:39:47Z",
     "license": "NOASSERTION",
@@ -2708,8 +2708,8 @@
   },
   {
     "repo": "nidhinjs/prompt-master",
-    "stars": 14107,
-    "forks": 1637,
+    "stars": 14137,
+    "forks": 1638,
     "pushedAt": "2026-08-24T07:30:40Z",
     "license": "MIT",
     "topics": [
@@ -2719,29 +2719,6 @@
       "prompt-engineering"
     ],
     "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "siteboon/claudecodeui",
-    "stars": 13961,
-    "forks": 2011,
-    "pushedAt": "2026-10-05T03:35:26Z",
-    "license": "AGPL-3.0",
-    "topics": [
-      "claude",
-      "claude-api",
-      "claude-code",
-      "gui",
-      "ui",
-      "anthropic",
-      "anthropic-ai",
-      "anthropic-claude",
-      "react",
-      "claudecode",
-      "mobile-first",
-      "claude-code-ui"
-    ],
-    "isOrg": true,
     "curated": false
   },
   {
@@ -2762,9 +2739,32 @@
     "curated": false
   },
   {
+    "repo": "siteboon/claudecodeui",
+    "stars": 13967,
+    "forks": 2013,
+    "pushedAt": "2026-10-05T03:35:26Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "claude",
+      "claude-api",
+      "claude-code",
+      "gui",
+      "ui",
+      "anthropic",
+      "anthropic-ai",
+      "anthropic-claude",
+      "react",
+      "claudecode",
+      "mobile-first",
+      "claude-code-ui"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
     "repo": "Orchestra-Research/AI-Research-SKILLs",
-    "stars": 13305,
-    "forks": 940,
+    "stars": 13325,
+    "forks": 941,
     "pushedAt": "2026-06-16T01:36:46Z",
     "license": "MIT",
     "topics": [
@@ -2808,20 +2808,6 @@
     "curated": false
   },
   {
-    "repo": "Piebald-AI/claude-code-system-prompts",
-    "stars": 12833,
-    "forks": 2035,
-    "pushedAt": "2026-10-03T21:54:21Z",
-    "license": "MIT",
-    "topics": [
-      "claude-code",
-      "claude-code-system-prompts",
-      "system-prompts"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
     "repo": "OrchestratorInc/agent-orchestrator",
     "stars": 12780,
     "forks": 1765,
@@ -2841,6 +2827,20 @@
       "parallel-coding",
       "agent-ide",
       "agent-orchestration"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "Piebald-AI/claude-code-system-prompts",
+    "stars": 12833,
+    "forks": 2035,
+    "pushedAt": "2026-10-03T21:54:21Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "claude-code-system-prompts",
+      "system-prompts"
     ],
     "isOrg": true,
     "curated": false
@@ -2868,8 +2868,8 @@
   },
   {
     "repo": "krillinai/OpenCreator",
-    "stars": 12606,
-    "forks": 1295,
+    "stars": 12613,
+    "forks": 1298,
     "pushedAt": "2026-10-05T01:38:19Z",
     "license": "Apache-2.0",
     "topics": [
@@ -2891,8 +2891,8 @@
   },
   {
     "repo": "zilliztech/claude-context",
-    "stars": 12587,
-    "forks": 941,
+    "stars": 12589,
+    "forks": 942,
     "pushedAt": "2026-07-14T12:00:38Z",
     "license": "MIT",
     "topics": [
@@ -2921,9 +2921,40 @@
     "curated": false
   },
   {
+    "repo": "morluto/rea",
+    "stars": 7174,
+    "forks": 797,
+    "pushedAt": "2026-10-06T13:20:11Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "binary-analysis",
+      "cli",
+      "coding-agents",
+      "decompiler",
+      "disassembler",
+      "mcp",
+      "mcp-server",
+      "model-context-protocol",
+      "reverse-engineering",
+      "static-analysis",
+      "agent-skills",
+      "reverse-engineering-tools",
+      "ai-agent-tools",
+      "dsh-plugin",
+      "cordis",
+      "dsh",
+      "hopper",
+      "ghidra",
+      "ctf"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "Jeffallan/claude-skills",
-    "stars": 11748,
-    "forks": 1137,
+    "stars": 11757,
+    "forks": 1136,
     "pushedAt": "2026-10-03T15:49:55Z",
     "license": "MIT",
     "topics": [
@@ -2938,7 +2969,7 @@
   },
   {
     "repo": "humanlayer/humanlayer",
-    "stars": 11664,
+    "stars": 11673,
     "forks": 961,
     "pushedAt": "2026-06-19T03:27:53Z",
     "license": "NOASSERTION",
@@ -2959,7 +2990,7 @@
   },
   {
     "repo": "yizhiyanhua-ai/fireworks-tech-graph",
-    "stars": 11609,
+    "stars": 11616,
     "forks": 919,
     "pushedAt": "2026-09-05T14:55:00Z",
     "license": "MIT",
@@ -2976,8 +3007,8 @@
   },
   {
     "repo": "holaboss-ai/holaOS",
-    "stars": 11449,
-    "forks": 730,
+    "stars": 11451,
+    "forks": 728,
     "pushedAt": "2026-08-21T13:11:13Z",
     "license": "NOASSERTION",
     "topics": [
@@ -3113,6 +3144,31 @@
     "curated": false
   },
   {
+    "repo": "simonlin1212/a-stock-data",
+    "stars": 10598,
+    "forks": 1925,
+    "pushedAt": "2026-09-25T09:56:12Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "a-share",
+      "ai-agent",
+      "ai-skill",
+      "china-stocks",
+      "claude-code",
+      "financial-data",
+      "fintech",
+      "investment-research",
+      "llm-tools",
+      "market-data",
+      "python",
+      "quantitative-finance",
+      "stock-market",
+      "trading"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "omnigent-ai/omnigent",
     "stars": 10590,
     "forks": 1693,
@@ -3140,34 +3196,9 @@
     "curated": false
   },
   {
-    "repo": "simonlin1212/a-stock-data",
-    "stars": 10598,
-    "forks": 1925,
-    "pushedAt": "2026-09-25T09:56:12Z",
-    "license": "Apache-2.0",
-    "topics": [
-      "a-share",
-      "ai-agent",
-      "ai-skill",
-      "china-stocks",
-      "claude-code",
-      "financial-data",
-      "fintech",
-      "investment-research",
-      "llm-tools",
-      "market-data",
-      "python",
-      "quantitative-finance",
-      "stock-market",
-      "trading"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "Vincentwei1021/video-shotcraft",
-    "stars": 10430,
-    "forks": 922,
+    "stars": 10583,
+    "forks": 941,
     "pushedAt": "2026-10-05T09:12:26Z",
     "license": "Apache-2.0",
     "topics": [
@@ -3191,8 +3222,8 @@
   },
   {
     "repo": "Kuberwastaken/claurst",
-    "stars": 10313,
-    "forks": 7715,
+    "stars": 10315,
+    "forks": 7710,
     "pushedAt": "2026-09-02T15:57:58Z",
     "license": "GPL-3.0",
     "topics": [
@@ -3225,7 +3256,7 @@
   },
   {
     "repo": "ykdojo/claude-code-tips",
-    "stars": 10200,
+    "stars": 10202,
     "forks": 827,
     "pushedAt": "2026-09-25T03:50:54Z",
     "license": "NOASSERTION",
@@ -3248,8 +3279,8 @@
   },
   {
     "repo": "Agents365-ai/drawio-skill",
-    "stars": 9956,
-    "forks": 700,
+    "stars": 9977,
+    "forks": 702,
     "pushedAt": "2026-10-02T11:13:54Z",
     "license": "MIT",
     "topics": [
@@ -3279,7 +3310,7 @@
   },
   {
     "repo": "AgriciDaniel/claude-ads",
-    "stars": 9744,
+    "stars": 9773,
     "forks": 1446,
     "pushedAt": "2026-10-02T21:05:04Z",
     "license": "MIT",
@@ -3320,6 +3351,34 @@
     "curated": false
   },
   {
+    "repo": "trailhq/Graft",
+    "stars": 9583,
+    "forks": 881,
+    "pushedAt": "2026-10-05T14:43:18Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "claude-code",
+      "code-graph",
+      "context-engineering",
+      "developer-tools",
+      "knowledge-graph",
+      "llm",
+      "mcp",
+      "mcp-server",
+      "tree-sitter",
+      "anthropic",
+      "cli",
+      "codex",
+      "cursor",
+      "gemini",
+      "open-source",
+      "openai"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
     "repo": "xonsh/xonsh",
     "stars": 9658,
     "forks": 746,
@@ -3345,34 +3404,6 @@
       "nix",
       "nixos",
       "python-automation"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "trailhq/Graft",
-    "stars": 9583,
-    "forks": 881,
-    "pushedAt": "2026-10-05T14:43:18Z",
-    "license": "MIT",
-    "topics": [
-      "ai-agents",
-      "claude-code",
-      "code-graph",
-      "context-engineering",
-      "developer-tools",
-      "knowledge-graph",
-      "llm",
-      "mcp",
-      "mcp-server",
-      "tree-sitter",
-      "anthropic",
-      "cli",
-      "codex",
-      "cursor",
-      "gemini",
-      "open-source",
-      "openai"
     ],
     "isOrg": true,
     "curated": false
@@ -3405,8 +3436,8 @@
   },
   {
     "repo": "chuspeeism/dashi-ppt-skill",
-    "stars": 9181,
-    "forks": 815,
+    "stars": 9218,
+    "forks": 817,
     "pushedAt": "2026-09-12T14:13:08Z",
     "license": "AGPL-3.0",
     "topics": [
@@ -3449,9 +3480,25 @@
     "curated": false
   },
   {
+    "repo": "tigerless-labs/autoharness",
+    "stars": 7929,
+    "forks": 597,
+    "pushedAt": "2026-10-05T12:08:52Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "claude-code",
+      "claude-code-plugin",
+      "llm-agents",
+      "python"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
     "repo": "revfactory/harness",
-    "stars": 9125,
-    "forks": 1294,
+    "stars": 9131,
+    "forks": 1295,
     "pushedAt": "2026-09-28T05:19:20Z",
     "license": "Apache-2.0",
     "topics": [
@@ -3465,7 +3512,7 @@
   },
   {
     "repo": "nexu-io/html-anything",
-    "stars": 9014,
+    "stars": 9020,
     "forks": 871,
     "pushedAt": "2026-09-15T03:36:24Z",
     "license": "Apache-2.0",
@@ -3544,8 +3591,8 @@
   },
   {
     "repo": "Maciek-roboblog/Claude-Code-Usage-Monitor",
-    "stars": 8731,
-    "forks": 463,
+    "stars": 8734,
+    "forks": 462,
     "pushedAt": "2026-07-05T04:52:21Z",
     "license": "MIT",
     "topics": [
@@ -3564,8 +3611,8 @@
   },
   {
     "repo": "smtg-ai/claude-squad",
-    "stars": 8573,
-    "forks": 628,
+    "stars": 8574,
+    "forks": 626,
     "pushedAt": "2026-08-20T05:09:53Z",
     "license": "AGPL-3.0",
     "topics": [
@@ -3611,7 +3658,7 @@
   },
   {
     "repo": "automazeio/ccpm",
-    "stars": 8400,
+    "stars": 8405,
     "forks": 841,
     "pushedAt": "2026-03-18T12:15:24Z",
     "license": "MIT",
@@ -3628,7 +3675,7 @@
   },
   {
     "repo": "jnMetaCode/superpowers-zh",
-    "stars": 8263,
+    "stars": 8267,
     "forks": 771,
     "pushedAt": "2026-10-04T15:51:54Z",
     "license": "MIT",
@@ -3655,8 +3702,8 @@
   },
   {
     "repo": "xixu-me/xget",
-    "stars": 8195,
-    "forks": 1278,
+    "stars": 8192,
+    "forks": 1277,
     "pushedAt": "2026-10-04T10:07:53Z",
     "license": "AGPL-3.0",
     "topics": [
@@ -3667,24 +3714,8 @@
     "curated": false
   },
   {
-    "repo": "tigerless-labs/autoharness",
-    "stars": 7929,
-    "forks": 597,
-    "pushedAt": "2026-10-05T12:08:52Z",
-    "license": "MIT",
-    "topics": [
-      "agent-skills",
-      "claude-code",
-      "claude-code-plugin",
-      "llm-agents",
-      "python"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
     "repo": "YaoApp/yao",
-    "stars": 8081,
+    "stars": 8093,
     "forks": 721,
     "pushedAt": "2026-10-05T12:17:43Z",
     "license": "NOASSERTION",
@@ -3713,7 +3744,7 @@
   {
     "repo": "OpenCoworkAI/open-codesign",
     "stars": 8010,
-    "forks": 839,
+    "forks": 842,
     "pushedAt": "2026-10-04T22:06:55Z",
     "license": "MIT",
     "topics": [
@@ -3798,7 +3829,7 @@
   },
   {
     "repo": "refly-ai/refly",
-    "stars": 7532,
+    "stars": 7533,
     "forks": 727,
     "pushedAt": "2026-07-29T05:25:23Z",
     "license": "NOASSERTION",
@@ -3868,7 +3899,7 @@
   },
   {
     "repo": "op7418/guizang-social-card-skill",
-    "stars": 7363,
+    "stars": 7385,
     "forks": 569,
     "pushedAt": "2026-07-01T16:39:11Z",
     "license": "AGPL-3.0",
@@ -3893,26 +3924,9 @@
     "curated": false
   },
   {
-    "repo": "SnailSploit/Claude-Red",
-    "stars": 7308,
-    "forks": 953,
-    "pushedAt": "2026-09-19T23:46:22Z",
-    "license": "MIT",
-    "topics": [
-      "claude-ai",
-      "claude-skills",
-      "redteam",
-      "redteam-tools",
-      "skills",
-      "claude-pt"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "zenstory-ai/oh-story-claudecode",
-    "stars": 7297,
-    "forks": 1040,
+    "stars": 7333,
+    "forks": 1050,
     "pushedAt": "2026-10-03T08:56:23Z",
     "license": "MIT",
     "topics": [
@@ -3938,6 +3952,23 @@
       "webnovel"
     ],
     "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "SnailSploit/Claude-Red",
+    "stars": 7329,
+    "forks": 957,
+    "pushedAt": "2026-09-19T23:46:22Z",
+    "license": "MIT",
+    "topics": [
+      "claude-ai",
+      "claude-skills",
+      "redteam",
+      "redteam-tools",
+      "skills",
+      "claude-pt"
+    ],
+    "isOrg": false,
     "curated": false
   },
   {
@@ -3971,7 +4002,7 @@
   },
   {
     "repo": "deanpeters/Product-Manager-Skills",
-    "stars": 7177,
+    "stars": 7187,
     "forks": 852,
     "pushedAt": "2026-09-01T22:34:38Z",
     "license": "NOASSERTION",
@@ -3981,37 +4012,6 @@
       "claude-skills",
       "product-management",
       "pm-frameworks"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "morluto/rea",
-    "stars": 7174,
-    "forks": 797,
-    "pushedAt": "2026-10-06T13:20:11Z",
-    "license": "MIT",
-    "topics": [
-      "ai-agents",
-      "binary-analysis",
-      "cli",
-      "coding-agents",
-      "decompiler",
-      "disassembler",
-      "mcp",
-      "mcp-server",
-      "model-context-protocol",
-      "reverse-engineering",
-      "static-analysis",
-      "agent-skills",
-      "reverse-engineering-tools",
-      "ai-agent-tools",
-      "dsh-plugin",
-      "cordis",
-      "dsh",
-      "hopper",
-      "ghidra",
-      "ctf"
     ],
     "isOrg": false,
     "curated": false
@@ -4038,7 +4038,7 @@
   },
   {
     "repo": "htdt/godogen",
-    "stars": 7051,
+    "stars": 7059,
     "forks": 659,
     "pushedAt": "2026-10-01T18:40:42Z",
     "license": "MIT",
@@ -4055,33 +4055,6 @@
       "skills"
     ],
     "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "grab/cursor-talk-to-figma-mcp",
-    "stars": 7049,
-    "forks": 778,
-    "pushedAt": "2026-07-26T07:14:26Z",
-    "license": "MIT",
-    "topics": [
-      "agent",
-      "agentic",
-      "agentic-ai",
-      "ai",
-      "cursor",
-      "design",
-      "figma",
-      "mcp",
-      "ai-agents",
-      "llm",
-      "llms",
-      "automation",
-      "generative-ai",
-      "model-context-protocol",
-      "claude-code",
-      "codex"
-    ],
-    "isOrg": true,
     "curated": false
   },
   {
@@ -4111,8 +4084,35 @@
     "curated": false
   },
   {
+    "repo": "grab/cursor-talk-to-figma-mcp",
+    "stars": 7047,
+    "forks": 778,
+    "pushedAt": "2026-07-26T07:14:26Z",
+    "license": "MIT",
+    "topics": [
+      "agent",
+      "agentic",
+      "agentic-ai",
+      "ai",
+      "cursor",
+      "design",
+      "figma",
+      "mcp",
+      "ai-agents",
+      "llm",
+      "llms",
+      "automation",
+      "generative-ai",
+      "model-context-protocol",
+      "claude-code",
+      "codex"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
     "repo": "tech-leads-club/agent-skills",
-    "stars": 7033,
+    "stars": 7039,
     "forks": 558,
     "pushedAt": "2026-09-20T12:37:19Z",
     "license": "NOASSERTION",
@@ -4130,8 +4130,8 @@
   },
   {
     "repo": "open-multi-agent/open-multi-agent",
-    "stars": 6981,
-    "forks": 2434,
+    "stars": 6985,
+    "forks": 2435,
     "pushedAt": "2026-10-04T00:21:46Z",
     "license": "MIT",
     "topics": [
@@ -4217,8 +4217,8 @@
   },
   {
     "repo": "SawyerHood/dev-browser",
-    "stars": 6652,
-    "forks": 435,
+    "stars": 6654,
+    "forks": 434,
     "pushedAt": "2026-09-05T00:44:45Z",
     "license": "MIT",
     "topics": [
@@ -4231,7 +4231,7 @@
   },
   {
     "repo": "uditgoenka/autoresearch",
-    "stars": 6517,
+    "stars": 6527,
     "forks": 482,
     "pushedAt": "2026-08-12T22:28:18Z",
     "license": "MIT",
@@ -4251,7 +4251,7 @@
   },
   {
     "repo": "op7418/CodePilot",
-    "stars": 6495,
+    "stars": 6494,
     "forks": 699,
     "pushedAt": "2026-09-22T03:24:52Z",
     "license": "NOASSERTION",
@@ -4270,7 +4270,7 @@
   },
   {
     "repo": "htmlstreamofficial/preline",
-    "stars": 6472,
+    "stars": 6476,
     "forks": 414,
     "pushedAt": "2026-08-31T01:53:38Z",
     "license": "NOASSERTION",
@@ -4289,7 +4289,7 @@
   },
   {
     "repo": "internet-court/internet-court-skill",
-    "stars": 6394,
+    "stars": 6400,
     "forks": 114,
     "pushedAt": "2026-08-19T15:00:54Z",
     "license": "NOASSERTION",
@@ -4319,28 +4319,8 @@
     "curated": false
   },
   {
-    "repo": "rullerzhou-afk/clawd-on-desk",
-    "stars": 6370,
-    "forks": 674,
-    "pushedAt": "2026-10-05T08:41:54Z",
-    "license": "AGPL-3.0",
-    "topics": [
-      "claude-code",
-      "codex",
-      "copilot",
-      "cursor",
-      "desktop-pet",
-      "electron",
-      "gemini",
-      "pixel-art",
-      "svg-animation"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "ningzimu/codex-ppt-skill",
-    "stars": 6363,
+    "stars": 6395,
     "forks": 310,
     "pushedAt": "2026-10-02T13:41:19Z",
     "license": "MIT",
@@ -4356,6 +4336,26 @@
       "ai-ppt",
       "ppt-skill",
       "skill"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "rullerzhou-afk/clawd-on-desk",
+    "stars": 6370,
+    "forks": 674,
+    "pushedAt": "2026-10-05T08:41:54Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "claude-code",
+      "codex",
+      "copilot",
+      "cursor",
+      "desktop-pet",
+      "electron",
+      "gemini",
+      "pixel-art",
+      "svg-animation"
     ],
     "isOrg": false,
     "curated": false
@@ -4391,8 +4391,8 @@
   },
   {
     "repo": "builderz-labs/mission-control",
-    "stars": 6314,
-    "forks": 105,
+    "stars": 6318,
+    "forks": 106,
     "pushedAt": "2026-09-28T09:02:07Z",
     "license": "MIT",
     "topics": [
@@ -4417,8 +4417,8 @@
   },
   {
     "repo": "gosom/google-maps-scraper",
-    "stars": 6294,
-    "forks": 991,
+    "stars": 6307,
+    "forks": 993,
     "pushedAt": "2026-09-24T04:54:54Z",
     "license": "MIT",
     "topics": [
@@ -4438,8 +4438,8 @@
   },
   {
     "repo": "heilcheng/awesome-agent-skills",
-    "stars": 6263,
-    "forks": 738,
+    "stars": 6262,
+    "forks": 740,
     "pushedAt": "2026-04-05T20:39:24Z",
     "license": "MIT",
     "topics": [
@@ -4525,8 +4525,8 @@
   },
   {
     "repo": "KimYx0207/AI-Coding-Guide-Zh",
-    "stars": 6170,
-    "forks": 1057,
+    "stars": 6174,
+    "forks": 1058,
     "pushedAt": "2026-10-03T14:13:25Z",
     "license": "MIT",
     "topics": [
@@ -4599,7 +4599,7 @@
   },
   {
     "repo": "browser-act/skills",
-    "stars": 6106,
+    "stars": 6110,
     "forks": 305,
     "pushedAt": "2026-08-24T14:56:52Z",
     "license": "MIT",
@@ -4661,8 +4661,8 @@
   },
   {
     "repo": "UfoMiao/zcf",
-    "stars": 6080,
-    "forks": 421,
+    "stars": 6082,
+    "forks": 422,
     "pushedAt": "2026-08-31T03:02:03Z",
     "license": "MIT",
     "topics": [
@@ -4692,8 +4692,8 @@
   },
   {
     "repo": "larashero3-dotcom/lieflat-charts",
-    "stars": 5956,
-    "forks": 364,
+    "stars": 5964,
+    "forks": 363,
     "pushedAt": "2026-09-05T02:40:41Z",
     "license": "NOASSERTION",
     "topics": [
@@ -4711,7 +4711,7 @@
   },
   {
     "repo": "antfu/skills",
-    "stars": 5942,
+    "stars": 5944,
     "forks": 334,
     "pushedAt": "2026-09-30T05:41:33Z",
     "license": "MIT",
@@ -4724,8 +4724,8 @@
   },
   {
     "repo": "fengshao1227/ccg-workflow",
-    "stars": 5926,
-    "forks": 456,
+    "stars": 5928,
+    "forks": 453,
     "pushedAt": "2026-09-15T11:50:03Z",
     "license": "MIT",
     "topics": [
@@ -4778,8 +4778,8 @@
   },
   {
     "repo": "epoko77-ai/im-not-ai",
-    "stars": 5867,
-    "forks": 656,
+    "stars": 5879,
+    "forks": 658,
     "pushedAt": "2026-09-26T05:27:56Z",
     "license": "MIT",
     "topics": [
@@ -4801,8 +4801,8 @@
   },
   {
     "repo": "0xNyk/awesome-hermes-agent",
-    "stars": 5799,
-    "forks": 430,
+    "stars": 5806,
+    "forks": 433,
     "pushedAt": "2026-09-22T06:26:00Z",
     "license": "NOASSERTION",
     "topics": [
@@ -4822,7 +4822,7 @@
   },
   {
     "repo": "OpenSenseNova/SenseNova-Skills",
-    "stars": 5740,
+    "stars": 5744,
     "forks": 401,
     "pushedAt": "2026-09-18T02:53:18Z",
     "license": "MIT",
@@ -4865,8 +4865,8 @@
   },
   {
     "repo": "Galaxy-Dawn/claude-scholar",
-    "stars": 5680,
-    "forks": 445,
+    "stars": 5693,
+    "forks": 446,
     "pushedAt": "2026-09-23T07:23:56Z",
     "license": "MIT",
     "topics": [
@@ -4887,9 +4887,26 @@
     "curated": false
   },
   {
+    "repo": "yetone/magpie",
+    "stars": 5370,
+    "forks": 383,
+    "pushedAt": "2026-10-06T13:34:12Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "codex",
+      "deepseek",
+      "gemini-cli",
+      "llm",
+      "macos"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "wuyoscar/GPT-Image2-Skill",
-    "stars": 5634,
-    "forks": 471,
+    "stars": 5646,
+    "forks": 472,
     "pushedAt": "2026-09-30T11:54:50Z",
     "license": "MIT",
     "topics": [
@@ -4914,9 +4931,31 @@
     "curated": false
   },
   {
+    "repo": "mvschwarz/openrig",
+    "stars": 5388,
+    "forks": 397,
+    "pushedAt": "2026-10-06T12:33:39Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agent-harness",
+      "agent-orchestration",
+      "agent-skills",
+      "ai-coding",
+      "claude-code",
+      "cli",
+      "codex-cli",
+      "multi-agent",
+      "tmux",
+      "typescript",
+      "multi-agent-systems"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "junhoyeo/tokscale",
-    "stars": 5631,
-    "forks": 465,
+    "stars": 5636,
+    "forks": 464,
     "pushedAt": "2026-10-05T06:07:43Z",
     "license": "MIT",
     "topics": [
@@ -5024,45 +5063,6 @@
     "curated": false
   },
   {
-    "repo": "mvschwarz/openrig",
-    "stars": 5388,
-    "forks": 397,
-    "pushedAt": "2026-10-06T12:33:39Z",
-    "license": "Apache-2.0",
-    "topics": [
-      "agent-harness",
-      "agent-orchestration",
-      "agent-skills",
-      "ai-coding",
-      "claude-code",
-      "cli",
-      "codex-cli",
-      "multi-agent",
-      "tmux",
-      "typescript",
-      "multi-agent-systems"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "yetone/magpie",
-    "stars": 5370,
-    "forks": 383,
-    "pushedAt": "2026-10-06T13:34:12Z",
-    "license": "MIT",
-    "topics": [
-      "claude-code",
-      "codex",
-      "deepseek",
-      "gemini-cli",
-      "llm",
-      "macos"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "metalbear-co/mirrord",
     "stars": 5355,
     "forks": 219,
@@ -5114,8 +5114,8 @@
   },
   {
     "repo": "looplj/axonhub",
-    "stars": 5336,
-    "forks": 723,
+    "stars": 5337,
+    "forks": 722,
     "pushedAt": "2026-10-05T14:48:53Z",
     "license": "Apache-2.0",
     "topics": [
@@ -5140,8 +5140,8 @@
   },
   {
     "repo": "awarexone/Agentic-Bug-Hunter",
-    "stars": 5278,
-    "forks": 932,
+    "stars": 5289,
+    "forks": 933,
     "pushedAt": "2026-10-05T06:15:09Z",
     "license": "MIT",
     "topics": [
@@ -5160,6 +5160,28 @@
       "hacking-tool"
     ],
     "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "54yyyu/zotero-mcp",
+    "stars": 5270,
+    "forks": 418,
+    "pushedAt": "2026-10-07T12:54:22Z",
+    "license": "MIT",
+    "topics": [
+      "claude",
+      "mcp",
+      "zotero",
+      "semantic-search",
+      "ai-agent",
+      "chatgpt",
+      "claude-code",
+      "mcp-server",
+      "model-context-protocol",
+      "research-tools",
+      "zotero-plugin"
+    ],
+    "isOrg": false,
     "curated": false
   },
   {
@@ -5226,7 +5248,7 @@
   },
   {
     "repo": "su-kaka/gcli2api",
-    "stars": 5225,
+    "stars": 5229,
     "forks": 1364,
     "pushedAt": "2026-10-03T16:01:56Z",
     "license": "NOASSERTION",
@@ -5246,8 +5268,8 @@
   },
   {
     "repo": "dmmulroy/anti-slop",
-    "stars": 5208,
-    "forks": 122,
+    "stars": 5228,
+    "forks": 124,
     "pushedAt": "2026-09-10T13:53:24Z",
     "license": "MIT",
     "topics": [
@@ -5261,8 +5283,8 @@
   },
   {
     "repo": "Waishnav/devspace",
-    "stars": 5195,
-    "forks": 585,
+    "stars": 5208,
+    "forks": 587,
     "pushedAt": "2026-10-05T12:03:47Z",
     "license": "MIT",
     "topics": [
@@ -5278,9 +5300,26 @@
     "curated": false
   },
   {
+    "repo": "tiann/hapi",
+    "stars": 5185,
+    "forks": 595,
+    "pushedAt": "2026-10-05T09:14:11Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "app",
+      "claude-code",
+      "codex",
+      "gemini-cli",
+      "opencode",
+      "remote-control"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "tinyplex/tinybase",
-    "stars": 5186,
-    "forks": 136,
+    "stars": 5187,
+    "forks": 137,
     "pushedAt": "2026-09-29T04:42:19Z",
     "license": "MIT",
     "topics": [
@@ -5302,25 +5341,8 @@
     "curated": false
   },
   {
-    "repo": "tiann/hapi",
-    "stars": 5185,
-    "forks": 595,
-    "pushedAt": "2026-10-05T09:14:11Z",
-    "license": "AGPL-3.0",
-    "topics": [
-      "app",
-      "claude-code",
-      "codex",
-      "gemini-cli",
-      "opencode",
-      "remote-control"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "iflytek/skillhub",
-    "stars": 5151,
+    "stars": 5154,
     "forks": 835,
     "pushedAt": "2026-10-01T18:23:22Z",
     "license": "Apache-2.0",
@@ -5398,6 +5420,48 @@
     "curated": false
   },
   {
+    "repo": "rehan-remade/universal-modder",
+    "stars": 4264,
+    "forks": 377,
+    "pushedAt": "2026-10-06T13:21:39Z",
+    "license": "MIT",
+    "topics": [
+      "age-of-empires",
+      "claude-code",
+      "claude-code-plugin",
+      "fal",
+      "game-assets",
+      "game-modding",
+      "mcp",
+      "modding",
+      "reverse-engineering",
+      "tmodloader"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "breferrari/obsidian-mind",
+    "stars": 4930,
+    "forks": 552,
+    "pushedAt": "2026-10-06T08:55:40Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "claude-code",
+      "codex-cli",
+      "gemini-cli",
+      "knowledge-management",
+      "obsidian",
+      "obsidian-vault",
+      "persistent-memory",
+      "second-brain",
+      "template"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "qixing-jk/all-api-hub",
     "stars": 4912,
     "forks": 330,
@@ -5420,27 +5484,6 @@
       "ai",
       "newapi",
       "openrouter"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "breferrari/obsidian-mind",
-    "stars": 4910,
-    "forks": 551,
-    "pushedAt": "2026-10-06T08:55:40Z",
-    "license": "MIT",
-    "topics": [
-      "ai-agents",
-      "claude-code",
-      "codex-cli",
-      "gemini-cli",
-      "knowledge-management",
-      "obsidian",
-      "obsidian-vault",
-      "persistent-memory",
-      "second-brain",
-      "template"
     ],
     "isOrg": false,
     "curated": false
@@ -5492,8 +5535,8 @@
   },
   {
     "repo": "eugeniughelbur/obsidian-second-brain",
-    "stars": 4682,
-    "forks": 579,
+    "stars": 4690,
+    "forks": 580,
     "pushedAt": "2026-10-01T15:27:54Z",
     "license": "MIT",
     "topics": [
@@ -5537,6 +5580,27 @@
     "curated": false
   },
   {
+    "repo": "miqdadbadjuber/anti-slop",
+    "stars": 4677,
+    "forks": 326,
+    "pushedAt": "2026-10-04T19:32:36Z",
+    "license": "MIT",
+    "topics": [
+      "accessibility",
+      "agent-skills",
+      "ai-agents",
+      "ai-coding-agent",
+      "ai-slop",
+      "anti-slop",
+      "claude-code",
+      "copywriting",
+      "design-rules",
+      "ui-design"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "zebbern/claude-code-guide",
     "stars": 4648,
     "forks": 470,
@@ -5568,30 +5632,9 @@
     "curated": false
   },
   {
-    "repo": "miqdadbadjuber/anti-slop",
-    "stars": 4578,
-    "forks": 323,
-    "pushedAt": "2026-10-04T19:32:36Z",
-    "license": "MIT",
-    "topics": [
-      "accessibility",
-      "agent-skills",
-      "ai-agents",
-      "ai-coding-agent",
-      "ai-slop",
-      "anti-slop",
-      "claude-code",
-      "copywriting",
-      "design-rules",
-      "ui-design"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "xianyu110/awesome-openclaw-tutorial",
-    "stars": 4566,
-    "forks": 677,
+    "stars": 4567,
+    "forks": 678,
     "pushedAt": "2026-10-04T03:18:13Z",
     "license": "NOASSERTION",
     "topics": [
@@ -5621,8 +5664,8 @@
   },
   {
     "repo": "0xNyk/council-of-high-intelligence",
-    "stars": 4543,
-    "forks": 430,
+    "stars": 4549,
+    "forks": 429,
     "pushedAt": "2026-10-05T05:40:13Z",
     "license": "MIT",
     "topics": [
@@ -5646,8 +5689,8 @@
   },
   {
     "repo": "brycewang-stanford/Auto-Empirical-Research-Skills",
-    "stars": 4505,
-    "forks": 535,
+    "stars": 4520,
+    "forks": 536,
     "pushedAt": "2026-10-05T13:51:21Z",
     "license": "NOASSERTION",
     "topics": [
@@ -5670,6 +5713,37 @@
       "copaper"
     ],
     "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Ryze-AI-Adgent/open-seo-mcp-skills",
+    "stars": 4455,
+    "forks": 365,
+    "pushedAt": "2026-09-24T01:53:55Z",
+    "license": "MIT",
+    "topics": [
+      "ai-seo",
+      "backlinks",
+      "claude",
+      "claude-skills",
+      "dataforseo",
+      "generative-engine-optimization",
+      "geo",
+      "keyword-research",
+      "mcp",
+      "mcp-server",
+      "open-source-seo",
+      "rank-tracking",
+      "seo",
+      "seo-audit",
+      "ai-visibility",
+      "claude-code",
+      "geo-mcp",
+      "llm-seo",
+      "seo-mcp",
+      "seo-mcp-server"
+    ],
+    "isOrg": true,
     "curated": false
   },
   {
@@ -5724,8 +5798,8 @@
   },
   {
     "repo": "IvanMurzak/Unity-MCP",
-    "stars": 4390,
-    "forks": 387,
+    "stars": 4395,
+    "forks": 388,
     "pushedAt": "2026-10-04T08:59:47Z",
     "license": "Apache-2.0",
     "topics": [
@@ -5753,28 +5827,23 @@
     "curated": false
   },
   {
-    "repo": "lintsinghua/claude-code-book",
-    "stars": 4290,
-    "forks": 836,
-    "pushedAt": "2026-10-01T10:15:54Z",
-    "license": null,
+    "repo": "0x0funky/agent-sprite-forge",
+    "stars": 4280,
+    "forks": 413,
+    "pushedAt": "2026-10-06T03:13:04Z",
+    "license": "MIT",
     "topics": [
-      "agent",
-      "agent-architecture",
-      "ai-agent",
-      "anthropic",
-      "book",
-      "chinese",
-      "claude-code",
-      "llm",
-      "mcp"
+      "agent-skills",
+      "codex",
+      "pixel-art",
+      "sprite-generator"
     ],
     "isOrg": false,
     "curated": false
   },
   {
     "repo": "composio-community/open-claude-cowork",
-    "stars": 4289,
+    "stars": 4288,
     "forks": 702,
     "pushedAt": "2026-05-23T11:52:19Z",
     "license": "MIT",
@@ -5792,89 +5861,23 @@
     "curated": false
   },
   {
-    "repo": "0x0funky/agent-sprite-forge",
-    "stars": 4280,
-    "forks": 413,
-    "pushedAt": "2026-10-06T03:13:04Z",
-    "license": "MIT",
+    "repo": "lintsinghua/claude-code-book",
+    "stars": 4288,
+    "forks": 836,
+    "pushedAt": "2026-10-01T10:15:54Z",
+    "license": null,
     "topics": [
-      "agent-skills",
-      "codex",
-      "pixel-art",
-      "sprite-generator"
+      "agent",
+      "agent-architecture",
+      "ai-agent",
+      "anthropic",
+      "book",
+      "chinese",
+      "claude-code",
+      "llm",
+      "mcp"
     ],
     "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "rehan-remade/universal-modder",
-    "stars": 4264,
-    "forks": 377,
-    "pushedAt": "2026-10-06T13:21:39Z",
-    "license": "MIT",
-    "topics": [
-      "age-of-empires",
-      "claude-code",
-      "claude-code-plugin",
-      "fal",
-      "game-assets",
-      "game-modding",
-      "mcp",
-      "modding",
-      "reverse-engineering",
-      "tmodloader"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "JimLiu/baoyu-design",
-    "stars": 4256,
-    "forks": 290,
-    "pushedAt": "2026-09-23T05:34:49Z",
-    "license": "MIT",
-    "topics": [
-      "agent-skills",
-      "claude",
-      "claude-code",
-      "claude-design",
-      "cursor",
-      "design",
-      "prototyping",
-      "ui-design"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "Ryze-AI-Adgent/open-seo-mcp-skills",
-    "stars": 4221,
-    "forks": 364,
-    "pushedAt": "2026-09-24T01:53:55Z",
-    "license": "MIT",
-    "topics": [
-      "ai-seo",
-      "backlinks",
-      "claude",
-      "claude-skills",
-      "dataforseo",
-      "generative-engine-optimization",
-      "geo",
-      "keyword-research",
-      "mcp",
-      "mcp-server",
-      "open-source-seo",
-      "rank-tracking",
-      "seo",
-      "seo-audit",
-      "ai-visibility",
-      "claude-code",
-      "geo-mcp",
-      "llm-seo",
-      "seo-mcp",
-      "seo-mcp-server"
-    ],
-    "isOrg": true,
     "curated": false
   },
   {
@@ -5909,9 +5912,28 @@
     "curated": false
   },
   {
+    "repo": "JimLiu/baoyu-design",
+    "stars": 4258,
+    "forks": 289,
+    "pushedAt": "2026-09-23T05:34:49Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "claude",
+      "claude-code",
+      "claude-design",
+      "cursor",
+      "design",
+      "prototyping",
+      "ui-design"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "crafter-station/petdex",
-    "stars": 4202,
-    "forks": 210,
+    "stars": 4205,
+    "forks": 209,
     "pushedAt": "2026-09-28T21:17:19Z",
     "license": "MIT",
     "topics": [
@@ -5980,118 +6002,6 @@
     "curated": false
   },
   {
-    "repo": "flypythoncom/python",
-    "stars": 4151,
-    "forks": 1412,
-    "pushedAt": "2026-10-05T01:10:24Z",
-    "license": "NOASSERTION",
-    "topics": [
-      "python",
-      "learning-python",
-      "python-course",
-      "claude-code",
-      "codex",
-      "ai-agents",
-      "ai-coding",
-      "cursor",
-      "mcp",
-      "pandas"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "get-bb/bb",
-    "stars": 4144,
-    "forks": 600,
-    "pushedAt": "2026-10-06T12:35:10Z",
-    "license": "MIT",
-    "topics": [
-      "ade",
-      "agent-ide",
-      "claude-code",
-      "codex",
-      "devtools",
-      "ide"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "liustack/modlens",
-    "stars": 4136,
-    "forks": 130,
-    "pushedAt": "2026-10-04T07:39:35Z",
-    "license": "MIT",
-    "topics": [
-      "agent-skills",
-      "claude-code",
-      "claude-skills",
-      "codex",
-      "deepseek",
-      "dsh-plugin",
-      "glm",
-      "harness",
-      "harness-engineering",
-      "hermes-agent",
-      "openclaw",
-      "pi-agent",
-      "text-only-llm",
-      "vision-transformer",
-      "image-to-text",
-      "multimodal",
-      "ocr",
-      "vision",
-      "cordis",
-      "dsh"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "ccch1mneyyy/dsh-TUI",
-    "stars": 4111,
-    "forks": 240,
-    "pushedAt": "2026-10-06T13:34:16Z",
-    "license": "MIT",
-    "topics": [
-      "claude-code",
-      "coding-agent",
-      "deepseek",
-      "deepseek-harness",
-      "dsh-plugin",
-      "ink",
-      "react",
-      "terminal",
-      "tui"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "milind-soni/OpenMausBot",
-    "stars": 4083,
-    "forks": 704,
-    "pushedAt": "2026-10-06T12:31:31Z",
-    "license": "Apache-2.0",
-    "topics": [
-      "ai-agents",
-      "claude-code",
-      "codex",
-      "computer-use",
-      "docker",
-      "electron",
-      "expo",
-      "self-hosted",
-      "typescript",
-      "grok-bot",
-      "grok",
-      "grok-bot-alternative"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "Observal/Observal",
     "stars": 4068,
     "forks": 1126,
@@ -6121,8 +6031,138 @@
     "curated": false
   },
   {
-    "repo": "anymorph-ai/Claudable",
+    "repo": "get-bb/bb",
+    "stars": 4144,
+    "forks": 600,
+    "pushedAt": "2026-10-06T12:35:10Z",
+    "license": "MIT",
+    "topics": [
+      "ade",
+      "agent-ide",
+      "claude-code",
+      "codex",
+      "devtools",
+      "ide"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "ccch1mneyyy/dsh-TUI",
+    "stars": 4111,
+    "forks": 240,
+    "pushedAt": "2026-10-06T13:34:16Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "coding-agent",
+      "deepseek",
+      "deepseek-harness",
+      "dsh-plugin",
+      "ink",
+      "react",
+      "terminal",
+      "tui"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "flypythoncom/python",
+    "stars": 4153,
+    "forks": 1415,
+    "pushedAt": "2026-10-05T01:10:24Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "python",
+      "learning-python",
+      "python-course",
+      "claude-code",
+      "codex",
+      "ai-agents",
+      "ai-coding",
+      "cursor",
+      "mcp",
+      "pandas"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "liustack/modlens",
+    "stars": 4150,
+    "forks": 130,
+    "pushedAt": "2026-10-04T07:39:35Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "claude-code",
+      "claude-skills",
+      "codex",
+      "deepseek",
+      "dsh-plugin",
+      "glm",
+      "harness",
+      "harness-engineering",
+      "hermes-agent",
+      "openclaw",
+      "pi-agent",
+      "text-only-llm",
+      "vision-transformer",
+      "image-to-text",
+      "multimodal",
+      "ocr",
+      "vision",
+      "cordis",
+      "dsh"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "milind-soni/OpenMausBot",
+    "stars": 4083,
+    "forks": 704,
+    "pushedAt": "2026-10-06T12:31:31Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "ai-agents",
+      "claude-code",
+      "codex",
+      "computer-use",
+      "docker",
+      "electron",
+      "expo",
+      "self-hosted",
+      "typescript",
+      "grok-bot",
+      "grok",
+      "grok-bot-alternative"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "muxuuu/serenity-skill",
     "stars": 4054,
+    "forks": 626,
+    "pushedAt": "2026-09-16T12:58:45Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-agents",
+      "claude-code",
+      "codex",
+      "investment-research",
+      "stock-research",
+      "supply-chain"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "anymorph-ai/Claudable",
+    "stars": 4052,
     "forks": 623,
     "pushedAt": "2026-04-11T03:03:40Z",
     "license": "MIT",
@@ -6143,27 +6183,9 @@
     "curated": false
   },
   {
-    "repo": "muxuuu/serenity-skill",
-    "stars": 4053,
-    "forks": 626,
-    "pushedAt": "2026-09-16T12:58:45Z",
-    "license": "MIT",
-    "topics": [
-      "agent-skills",
-      "ai-agents",
-      "claude-code",
-      "codex",
-      "investment-research",
-      "stock-research",
-      "supply-chain"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "badrisnarayanan/antigravity-claude-proxy",
-    "stars": 3995,
-    "forks": 565,
+    "stars": 4003,
+    "forks": 566,
     "pushedAt": "2026-09-06T08:49:45Z",
     "license": "MIT",
     "topics": [
@@ -6182,8 +6204,8 @@
   },
   {
     "repo": "VoltAgent/awesome-claude-design",
-    "stars": 3985,
-    "forks": 441,
+    "stars": 3995,
+    "forks": 444,
     "pushedAt": "2026-06-20T17:54:18Z",
     "license": "MIT",
     "topics": [
@@ -6197,40 +6219,9 @@
     "curated": false
   },
   {
-    "repo": "matt1398/claude-devtools",
-    "stars": 3962,
-    "forks": 305,
-    "pushedAt": "2026-09-26T07:43:48Z",
-    "license": "MIT",
-    "topics": [
-      "ai",
-      "ai-tools",
-      "claude",
-      "claude-code",
-      "desktop-app",
-      "developer-tools",
-      "electron",
-      "typescript",
-      "ai-agent",
-      "ai-debugging",
-      "anthropic",
-      "claude-code-tools",
-      "debugging",
-      "devtools",
-      "llm",
-      "macos-app",
-      "observability",
-      "open-source",
-      "session-viewer",
-      "token-usage"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "KKKKhazix/human-writing",
-    "stars": 3955,
-    "forks": 299,
+    "stars": 3972,
+    "forks": 300,
     "pushedAt": "2026-08-11T15:07:45Z",
     "license": "MIT",
     "topics": [
@@ -6261,6 +6252,37 @@
     "curated": false
   },
   {
+    "repo": "matt1398/claude-devtools",
+    "stars": 3968,
+    "forks": 305,
+    "pushedAt": "2026-09-26T07:43:48Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "ai-tools",
+      "claude",
+      "claude-code",
+      "desktop-app",
+      "developer-tools",
+      "electron",
+      "typescript",
+      "ai-agent",
+      "ai-debugging",
+      "anthropic",
+      "claude-code-tools",
+      "debugging",
+      "devtools",
+      "llm",
+      "macos-app",
+      "observability",
+      "open-source",
+      "session-viewer",
+      "token-usage"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "parcadei/Continuous-Claude-v3",
     "stars": 3940,
     "forks": 303,
@@ -6283,7 +6305,7 @@
   {
     "repo": "evalstate/fast-agent",
     "stars": 3929,
-    "forks": 447,
+    "forks": 446,
     "pushedAt": "2026-10-04T20:42:38Z",
     "license": "Apache-2.0",
     "topics": [
@@ -6336,8 +6358,8 @@
   },
   {
     "repo": "isjiamu/gzh-design-skill",
-    "stars": 3908,
-    "forks": 436,
+    "stars": 3924,
+    "forks": 439,
     "pushedAt": "2026-10-03T12:02:42Z",
     "license": "NOASSERTION",
     "topics": [
@@ -6359,8 +6381,39 @@
     "curated": false
   },
   {
+    "repo": "Louis-CFM/coucou",
+    "stars": 3778,
+    "forks": 627,
+    "pushedAt": "2026-10-06T12:15:32Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "anthropic",
+      "claude",
+      "claude-code",
+      "dynamic-island",
+      "macos",
+      "macos-app",
+      "menubar-app",
+      "notch",
+      "open-source",
+      "swift",
+      "swiftui",
+      "antigravity",
+      "gemini-cli",
+      "linux",
+      "windows",
+      "codex",
+      "cursor",
+      "ios",
+      "iphon"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "nowork-studio/notfair-plugin",
-    "stars": 3903,
+    "stars": 3905,
     "forks": 494,
     "pushedAt": "2026-10-01T05:12:03Z",
     "license": "MIT",
@@ -6410,6 +6463,24 @@
     "curated": false
   },
   {
+    "repo": "Leonxlnx/unlazy",
+    "stars": 3856,
+    "forks": 285,
+    "pushedAt": "2026-09-03T09:31:17Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "claude",
+      "claude-code",
+      "llm",
+      "productivity",
+      "prompt-engineering",
+      "skill"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "golutra/golutra",
     "stars": 3850,
     "forks": 441,
@@ -6441,46 +6512,10 @@
     "curated": false
   },
   {
-    "repo": "Leonxlnx/unlazy",
-    "stars": 3840,
-    "forks": 285,
-    "pushedAt": "2026-09-03T09:31:17Z",
-    "license": "MIT",
-    "topics": [
-      "ai-agents",
-      "claude",
-      "claude-code",
-      "llm",
-      "productivity",
-      "prompt-engineering",
-      "skill"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "tigerless-labs/cost-xray",
-    "stars": 3838,
-    "forks": 315,
-    "pushedAt": "2026-09-29T19:03:47Z",
-    "license": "MIT",
-    "topics": [
-      "claude-code",
-      "codex-cli",
-      "cost-tracking",
-      "observability",
-      "prompt-caching",
-      "token-counting",
-      "proxy"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "xintaofei/codeg",
-    "stars": 3816,
-    "forks": 490,
-    "pushedAt": "2026-10-03T06:20:25Z",
+    "repo": "spacering-net/codeg",
+    "stars": 3842,
+    "forks": 492,
+    "pushedAt": "2026-10-07T12:38:23Z",
     "license": "Apache-2.0",
     "topics": [
       "acp",
@@ -6499,7 +6534,54 @@
       "vibe-coding",
       "worktrees"
     ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "irinabuht12-oss/marketing-skills",
+    "stars": 3841,
+    "forks": 545,
+    "pushedAt": "2026-09-24T01:53:56Z",
+    "license": null,
+    "topics": [
+      "ai-visibility",
+      "claude-code",
+      "claude-plugin",
+      "claude-skills",
+      "cursor",
+      "geo",
+      "google-ads",
+      "marketing",
+      "mcp",
+      "mcp-server",
+      "meta-ads",
+      "seo",
+      "claude-desktop",
+      "google-ads-mcp",
+      "marketing-skills",
+      "meta-ads-mcp",
+      "claude-marketing-skills",
+      "claude-skills-for-marketing"
+    ],
     "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "tigerless-labs/cost-xray",
+    "stars": 3833,
+    "forks": 315,
+    "pushedAt": "2026-09-29T19:03:47Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "codex-cli",
+      "cost-tracking",
+      "observability",
+      "prompt-caching",
+      "token-counting",
+      "proxy"
+    ],
+    "isOrg": true,
     "curated": false
   },
   {
@@ -6534,9 +6616,34 @@
     "curated": false
   },
   {
+    "repo": "jordan-gibbs/hyperresearch",
+    "stars": 3795,
+    "forks": 373,
+    "pushedAt": "2026-10-01T19:00:21Z",
+    "license": "MIT",
+    "topics": [
+      "agents",
+      "agentskills",
+      "claude-code",
+      "deep-research",
+      "deep-research-agent",
+      "codex",
+      "deepresearch",
+      "research",
+      "research-agent",
+      "research-tools",
+      "codex-plugin",
+      "codex-skill",
+      "citations",
+      "mcp-server"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "tutti-os/tutti",
-    "stars": 3793,
-    "forks": 384,
+    "stars": 3794,
+    "forks": 382,
     "pushedAt": "2026-09-05T07:16:52Z",
     "license": "Apache-2.0",
     "topics": [
@@ -6562,62 +6669,6 @@
       "vibe-coding"
     ],
     "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "jordan-gibbs/hyperresearch",
-    "stars": 3789,
-    "forks": 373,
-    "pushedAt": "2026-10-01T19:00:21Z",
-    "license": "MIT",
-    "topics": [
-      "agents",
-      "agentskills",
-      "claude-code",
-      "deep-research",
-      "deep-research-agent",
-      "codex",
-      "deepresearch",
-      "research",
-      "research-agent",
-      "research-tools",
-      "codex-plugin",
-      "codex-skill",
-      "citations",
-      "mcp-server"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "Louis-CFM/coucou",
-    "stars": 3778,
-    "forks": 627,
-    "pushedAt": "2026-10-06T12:15:32Z",
-    "license": "MIT",
-    "topics": [
-      "ai-agents",
-      "anthropic",
-      "claude",
-      "claude-code",
-      "dynamic-island",
-      "macos",
-      "macos-app",
-      "menubar-app",
-      "notch",
-      "open-source",
-      "swift",
-      "swiftui",
-      "antigravity",
-      "gemini-cli",
-      "linux",
-      "windows",
-      "codex",
-      "cursor",
-      "ios",
-      "iphon"
-    ],
-    "isOrg": false,
     "curated": false
   },
   {
@@ -6651,32 +6702,6 @@
     "curated": false
   },
   {
-    "repo": "glitternetwork/pinme",
-    "stars": 3747,
-    "forks": 276,
-    "pushedAt": "2026-09-12T05:23:49Z",
-    "license": "MIT",
-    "topics": [
-      "deployment",
-      "hosting",
-      "ai-tools",
-      "deployment-tools",
-      "frontend",
-      "frontend-deployment",
-      "serverless",
-      "static-site",
-      "static-site-deploy",
-      "static-site-hosting",
-      "web-hosting",
-      "zero-configuration",
-      "claude-skills",
-      "claude-code-skill",
-      "skills"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
     "repo": "seakee/CPA-Manager-Plus",
     "stars": 3746,
     "forks": 396,
@@ -6698,6 +6723,32 @@
       "cpa"
     ],
     "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "glitternetwork/pinme",
+    "stars": 3746,
+    "forks": 274,
+    "pushedAt": "2026-09-12T05:23:49Z",
+    "license": "MIT",
+    "topics": [
+      "deployment",
+      "hosting",
+      "ai-tools",
+      "deployment-tools",
+      "frontend",
+      "frontend-deployment",
+      "serverless",
+      "static-site",
+      "static-site-deploy",
+      "static-site-hosting",
+      "web-hosting",
+      "zero-configuration",
+      "claude-skills",
+      "claude-code-skill",
+      "skills"
+    ],
+    "isOrg": true,
     "curated": false
   },
   {
@@ -6727,7 +6778,7 @@
   },
   {
     "repo": "Windy3f3f3f3f/how-claude-code-works",
-    "stars": 3707,
+    "stars": 3711,
     "forks": 713,
     "pushedAt": "2026-08-17T08:27:42Z",
     "license": "MIT",
@@ -6748,7 +6799,7 @@
   },
   {
     "repo": "gotalab/cc-sdd",
-    "stars": 3701,
+    "stars": 3708,
     "forks": 290,
     "pushedAt": "2026-09-23T07:26:39Z",
     "license": "MIT",
@@ -6772,7 +6823,7 @@
   {
     "repo": "graykode/abtop",
     "stars": 3701,
-    "forks": 330,
+    "forks": 332,
     "pushedAt": "2026-09-14T04:45:00Z",
     "license": "MIT",
     "topics": [
@@ -6795,8 +6846,8 @@
   },
   {
     "repo": "geekjourneyx/md2wechat-skill",
-    "stars": 3690,
-    "forks": 412,
+    "stars": 3688,
+    "forks": 411,
     "pushedAt": "2026-09-24T08:59:11Z",
     "license": "NOASSERTION",
     "topics": [
@@ -6822,6 +6873,49 @@
       "wechat-official-account"
     ],
     "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "zenbu-labs/terminal-browser",
+    "stars": 3669,
+    "forks": 172,
+    "pushedAt": "2026-10-05T23:24:07Z",
+    "license": "MIT",
+    "topics": [
+      "browser",
+      "cli",
+      "rust",
+      "terminal",
+      "web",
+      "claude-code",
+      "claude-skills",
+      "codex",
+      "herdr-plugin",
+      "claude-code-plugin"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "Ontos-AI/knowhere",
+    "stars": 3677,
+    "forks": 338,
+    "pushedAt": "2026-10-05T03:27:28Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "ai-agents",
+      "claude-code",
+      "cursor",
+      "langchain",
+      "rag-pipeline",
+      "skills",
+      "agent-harness",
+      "codex",
+      "document-intelligence",
+      "mutli-agent",
+      "vector-database"
+    ],
+    "isOrg": true,
     "curated": false
   },
   {
@@ -6852,81 +6946,9 @@
     "curated": false
   },
   {
-    "repo": "Ontos-AI/knowhere",
-    "stars": 3674,
-    "forks": 338,
-    "pushedAt": "2026-10-05T03:27:28Z",
-    "license": "Apache-2.0",
-    "topics": [
-      "ai-agents",
-      "claude-code",
-      "cursor",
-      "langchain",
-      "rag-pipeline",
-      "skills",
-      "agent-harness",
-      "codex",
-      "document-intelligence",
-      "mutli-agent",
-      "vector-database"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "zenbu-labs/terminal-browser",
-    "stars": 3669,
-    "forks": 172,
-    "pushedAt": "2026-10-05T23:24:07Z",
-    "license": "MIT",
-    "topics": [
-      "browser",
-      "cli",
-      "rust",
-      "terminal",
-      "web",
-      "claude-code",
-      "claude-skills",
-      "codex",
-      "herdr-plugin",
-      "claude-code-plugin"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
-    "repo": "irinabuht12-oss/marketing-skills",
-    "stars": 3667,
-    "forks": 542,
-    "pushedAt": "2026-09-24T01:53:56Z",
-    "license": null,
-    "topics": [
-      "ai-visibility",
-      "claude-code",
-      "claude-plugin",
-      "claude-skills",
-      "cursor",
-      "geo",
-      "google-ads",
-      "marketing",
-      "mcp",
-      "mcp-server",
-      "meta-ads",
-      "seo",
-      "claude-desktop",
-      "google-ads-mcp",
-      "marketing-skills",
-      "meta-ads-mcp",
-      "claude-marketing-skills",
-      "claude-skills-for-marketing"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "hamed-elfayome/Claude-Usage-Tracker",
-    "stars": 3618,
-    "forks": 191,
+    "stars": 3620,
+    "forks": 192,
     "pushedAt": "2026-08-31T09:28:00Z",
     "license": "MIT",
     "topics": [
@@ -6942,7 +6964,7 @@
   },
   {
     "repo": "dembrandt/dembrandt",
-    "stars": 3606,
+    "stars": 3612,
     "forks": 318,
     "pushedAt": "2026-10-04T17:39:27Z",
     "license": "MIT",
@@ -6973,7 +6995,7 @@
   },
   {
     "repo": "SamurAIGPT/llm-wiki-agent",
-    "stars": 3602,
+    "stars": 3605,
     "forks": 417,
     "pushedAt": "2026-10-05T10:29:09Z",
     "license": "MIT",
@@ -7004,8 +7026,8 @@
   },
   {
     "repo": "davepoon/buildwithclaude",
-    "stars": 3597,
-    "forks": 563,
+    "stars": 3604,
+    "forks": 565,
     "pushedAt": "2026-10-06T12:39:52Z",
     "license": "MIT",
     "topics": [
@@ -7027,8 +7049,8 @@
   },
   {
     "repo": "foryourhealth111-pixel/Vibe-Skills",
-    "stars": 3580,
-    "forks": 317,
+    "stars": 3598,
+    "forks": 318,
     "pushedAt": "2026-08-31T13:52:09Z",
     "license": "Apache-2.0",
     "topics": [
@@ -7054,6 +7076,25 @@
       "dsh-plugin"
     ],
     "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "plannotator/effective-html",
+    "stars": 3559,
+    "forks": 240,
+    "pushedAt": "2026-09-14T18:38:24Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "skills",
+      "claude-code",
+      "codex",
+      "html-artifacts",
+      "html-prototype",
+      "prototyping",
+      "html-wireframe"
+    ],
+    "isOrg": true,
     "curated": false
   },
   {
@@ -7088,20 +7129,26 @@
     "curated": false
   },
   {
-    "repo": "plannotator/effective-html",
-    "stars": 3545,
-    "forks": 238,
-    "pushedAt": "2026-09-14T18:38:24Z",
-    "license": "MIT",
+    "repo": "NVIDIA/skills",
+    "stars": 3527,
+    "forks": 432,
+    "pushedAt": "2026-10-06T07:06:10Z",
+    "license": "Apache-2.0",
     "topics": [
       "agent-skills",
-      "skills",
+      "agentic-ai",
+      "ai-agents",
       "claude-code",
       "codex",
-      "html-artifacts",
-      "html-prototype",
-      "prototyping",
-      "html-wireframe"
+      "coding-agents",
+      "cuda",
+      "developer-tools",
+      "llm",
+      "omniverse",
+      "physical-ai",
+      "rag",
+      "robotics",
+      "simulation"
     ],
     "isOrg": true,
     "curated": false
@@ -7136,31 +7183,6 @@
     "curated": false
   },
   {
-    "repo": "NVIDIA/skills",
-    "stars": 3527,
-    "forks": 432,
-    "pushedAt": "2026-10-06T07:06:10Z",
-    "license": "Apache-2.0",
-    "topics": [
-      "agent-skills",
-      "agentic-ai",
-      "ai-agents",
-      "claude-code",
-      "codex",
-      "coding-agents",
-      "cuda",
-      "developer-tools",
-      "llm",
-      "omniverse",
-      "physical-ai",
-      "rag",
-      "robotics",
-      "simulation"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
     "repo": "agenticnotetaking/arscontexta",
     "stars": 3492,
     "forks": 231,
@@ -7178,29 +7200,9 @@
     "curated": false
   },
   {
-    "repo": "batrachianai/toad",
-    "stars": 3466,
-    "forks": 159,
-    "pushedAt": "2026-05-26T08:43:50Z",
-    "license": "AGPL-3.0",
-    "topics": [
-      "agents-ui",
-      "ai",
-      "textual",
-      "tui",
-      "claude",
-      "claude-code",
-      "codex-cli",
-      "copilot",
-      "commercial-license"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
     "repo": "jangviktor-web/nihaixia",
-    "stars": 3459,
-    "forks": 623,
+    "stars": 3476,
+    "forks": 626,
     "pushedAt": "2026-10-02T17:42:57Z",
     "license": null,
     "topics": [
@@ -7225,6 +7227,26 @@
     "curated": false
   },
   {
+    "repo": "batrachianai/toad",
+    "stars": 3467,
+    "forks": 159,
+    "pushedAt": "2026-05-26T08:43:50Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "agents-ui",
+      "ai",
+      "textual",
+      "tui",
+      "claude",
+      "claude-code",
+      "codex-cli",
+      "copilot",
+      "commercial-license"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
     "repo": "RunMaestro/Maestro",
     "stars": 3423,
     "forks": 365,
@@ -7242,7 +7264,7 @@
   },
   {
     "repo": "samber/cc-skills-golang",
-    "stars": 3403,
+    "stars": 3413,
     "forks": 227,
     "pushedAt": "2026-10-01T12:32:20Z",
     "license": "MIT",
@@ -7272,8 +7294,8 @@
   },
   {
     "repo": "ljagiello/ctf-skills",
-    "stars": 3396,
-    "forks": 394,
+    "stars": 3401,
+    "forks": 396,
     "pushedAt": "2026-09-13T21:09:41Z",
     "license": "MIT",
     "topics": [
@@ -7295,7 +7317,7 @@
   },
   {
     "repo": "ding113/claude-code-hub",
-    "stars": 3389,
+    "stars": 3391,
     "forks": 398,
     "pushedAt": "2026-10-01T16:44:03Z",
     "license": "MIT",
@@ -7340,8 +7362,8 @@
   },
   {
     "repo": "codeaashu/claude-code",
-    "stars": 3367,
-    "forks": 3669,
+    "stars": 3369,
+    "forks": 3667,
     "pushedAt": "2026-08-29T20:16:27Z",
     "license": "NOASSERTION",
     "topics": [
@@ -7360,7 +7382,7 @@
   },
   {
     "repo": "nicedreamzapp/claude-code-local",
-    "stars": 3345,
+    "stars": 3343,
     "forks": 631,
     "pushedAt": "2026-10-03T04:38:08Z",
     "license": "MIT",
@@ -7391,7 +7413,7 @@
   },
   {
     "repo": "giancarloerra/SocratiCode",
-    "stars": 3338,
+    "stars": 3335,
     "forks": 428,
     "pushedAt": "2026-10-02T16:37:55Z",
     "license": "AGPL-3.0",
@@ -7422,8 +7444,8 @@
   },
   {
     "repo": "AlephAITech/WorkBuddyGuide",
-    "stars": 3326,
-    "forks": 477,
+    "stars": 3333,
+    "forks": 478,
     "pushedAt": "2026-09-18T15:22:08Z",
     "license": "MIT",
     "topics": [
@@ -7472,8 +7494,8 @@
   },
   {
     "repo": "oboard/claude-code-rev",
-    "stars": 3314,
-    "forks": 3802,
+    "stars": 3313,
+    "forks": 3801,
     "pushedAt": "2026-08-13T08:29:11Z",
     "license": null,
     "topics": [
@@ -7484,7 +7506,7 @@
   },
   {
     "repo": "PenglongHuang/chinese-novelist-skill",
-    "stars": 3303,
+    "stars": 3313,
     "forks": 468,
     "pushedAt": "2026-10-06T05:12:10Z",
     "license": "MIT",
@@ -7510,7 +7532,7 @@
   },
   {
     "repo": "chuspeeism/dashi-taskboard",
-    "stars": 3292,
+    "stars": 3298,
     "forks": 474,
     "pushedAt": "2026-09-29T07:54:30Z",
     "license": "Apache-2.0",
@@ -7524,26 +7546,6 @@
       "dsh",
       "dsh-plugin",
       "skills"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
-    "repo": "edison7009/EchoBird",
-    "stars": 3289,
-    "forks": 371,
-    "pushedAt": "2026-10-06T03:25:07Z",
-    "license": "MIT",
-    "topics": [
-      "claude-code",
-      "kimi-code",
-      "openclaw",
-      "opencode",
-      "zcode",
-      "dsh-plugin",
-      "dsh-plugins",
-      "deepseek",
-      "deepseek-harness"
     ],
     "isOrg": false,
     "curated": false
@@ -7580,8 +7582,28 @@
     "curated": false
   },
   {
+    "repo": "edison7009/EchoBird",
+    "stars": 3289,
+    "forks": 372,
+    "pushedAt": "2026-10-06T03:25:07Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "kimi-code",
+      "openclaw",
+      "opencode",
+      "zcode",
+      "dsh-plugin",
+      "dsh-plugins",
+      "deepseek",
+      "deepseek-harness"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "nexu-io/nexu",
-    "stars": 3282,
+    "stars": 3281,
     "forks": 262,
     "pushedAt": "2026-04-26T13:40:30Z",
     "license": "MIT",
@@ -7611,8 +7633,8 @@
   },
   {
     "repo": "taishi-i/awesome-ChatGPT-repositories",
-    "stars": 3278,
-    "forks": 486,
+    "stars": 3280,
+    "forks": 487,
     "pushedAt": "2026-10-04T16:21:11Z",
     "license": "CC0-1.0",
     "topics": [
@@ -7632,8 +7654,31 @@
     "curated": false
   },
   {
+    "repo": "ScrapeCreators/social-media-research-skills",
+    "stars": 3268,
+    "forks": 47,
+    "pushedAt": "2026-08-26T17:26:01Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-agents",
+      "claude-code",
+      "claude-skills",
+      "competitor-analysis",
+      "content-marketing",
+      "cursor",
+      "influencer-marketing",
+      "market-research",
+      "social-media",
+      "social-media-research",
+      "workflow-automation"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
     "repo": "liaohch3/claude-tap",
-    "stars": 3263,
+    "stars": 3267,
     "forks": 284,
     "pushedAt": "2026-09-22T12:22:17Z",
     "license": "MIT",
@@ -7663,29 +7708,6 @@
     "curated": false
   },
   {
-    "repo": "ScrapeCreators/social-media-research-skills",
-    "stars": 3238,
-    "forks": 45,
-    "pushedAt": "2026-08-26T17:26:01Z",
-    "license": "MIT",
-    "topics": [
-      "agent-skills",
-      "ai-agents",
-      "claude-code",
-      "claude-skills",
-      "competitor-analysis",
-      "content-marketing",
-      "cursor",
-      "influencer-marketing",
-      "market-research",
-      "social-media",
-      "social-media-research",
-      "workflow-automation"
-    ],
-    "isOrg": true,
-    "curated": false
-  },
-  {
     "repo": "rlaope/oh-my-hermes",
     "stars": 3187,
     "forks": 244,
@@ -7707,8 +7729,8 @@
   },
   {
     "repo": "rebelytics/one-skill-to-rule-them-all",
-    "stars": 3180,
-    "forks": 305,
+    "stars": 3199,
+    "forks": 306,
     "pushedAt": "2026-10-02T12:59:54Z",
     "license": "CC-BY-4.0",
     "topics": [
@@ -7736,7 +7758,7 @@
   },
   {
     "repo": "lackeyjb/playwright-skill",
-    "stars": 3173,
+    "stars": 3175,
     "forks": 245,
     "pushedAt": "2026-10-01T07:39:15Z",
     "license": "MIT",
@@ -7757,8 +7779,8 @@
   },
   {
     "repo": "wquguru/harness-books",
-    "stars": 3168,
-    "forks": 377,
+    "stars": 3171,
+    "forks": 378,
     "pushedAt": "2026-04-19T03:01:21Z",
     "license": null,
     "topics": [
@@ -7777,7 +7799,7 @@
   },
   {
     "repo": "Forward-Future/loopy",
-    "stars": 3166,
+    "stars": 3168,
     "forks": 280,
     "pushedAt": "2026-09-11T03:57:03Z",
     "license": "MIT",
@@ -7794,7 +7816,7 @@
   },
   {
     "repo": "mikeyobrien/ralph-orchestrator",
-    "stars": 3165,
+    "stars": 3166,
     "forks": 300,
     "pushedAt": "2026-10-05T05:46:53Z",
     "license": "MIT",
@@ -7819,9 +7841,28 @@
     "curated": false
   },
   {
+    "repo": "realiti4/claude-swap",
+    "stars": 3131,
+    "forks": 348,
+    "pushedAt": "2026-10-05T01:10:54Z",
+    "license": "MIT",
+    "topics": [
+      "claude",
+      "claude-code",
+      "account-manager",
+      "account-switcher",
+      "anthropic",
+      "cli",
+      "multi-account",
+      "tui"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "KhazP/vibe-coding-prompt-template",
     "stars": 3128,
-    "forks": 385,
+    "forks": 386,
     "pushedAt": "2026-10-04T17:01:18Z",
     "license": "MIT",
     "topics": [
@@ -7896,7 +7937,7 @@
   },
   {
     "repo": "coder/claudecode.nvim",
-    "stars": 3108,
+    "stars": 3107,
     "forks": 220,
     "pushedAt": "2026-09-13T20:22:47Z",
     "license": "MIT",
@@ -7909,28 +7950,9 @@
     "curated": false
   },
   {
-    "repo": "realiti4/claude-swap",
-    "stars": 3102,
-    "forks": 346,
-    "pushedAt": "2026-10-05T01:10:54Z",
-    "license": "MIT",
-    "topics": [
-      "claude",
-      "claude-code",
-      "account-manager",
-      "account-switcher",
-      "anthropic",
-      "cli",
-      "multi-account",
-      "tui"
-    ],
-    "isOrg": false,
-    "curated": false
-  },
-  {
     "repo": "wesammustafa/Claude-Code-Everything-You-Need-to-Know",
-    "stars": 3099,
-    "forks": 360,
+    "stars": 3102,
+    "forks": 359,
     "pushedAt": "2026-10-06T13:32:08Z",
     "license": "MIT",
     "topics": [
@@ -7977,9 +7999,3113 @@
     "curated": false
   },
   {
+    "repo": "zeronsh/zeron",
+    "stars": 3076,
+    "forks": 291,
+    "pushedAt": "2026-10-07T06:50:51Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "claude-code",
+      "codex",
+      "coding-agent",
+      "cursor",
+      "developer-tools",
+      "gpui",
+      "local-first",
+      "open-source",
+      "rust"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "bergside/awesome-design-skills",
+    "stars": 3072,
+    "forks": 296,
+    "pushedAt": "2026-06-28T10:05:22Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "agentic-ai",
+      "agentic-workflow",
+      "agents",
+      "ai",
+      "ai-agents",
+      "ai-tools",
+      "awesome",
+      "awesome-list",
+      "awesome-readme",
+      "design",
+      "design-system",
+      "skills",
+      "design-md",
+      "claude-design",
+      "codex",
+      "cursor",
+      "google-stitch"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "dwgx/WindsurfAPI",
+    "stars": 3068,
+    "forks": 635,
+    "pushedAt": "2026-10-07T04:06:44Z",
+    "license": "MIT",
+    "topics": [
+      "openai-compatible",
+      "windsurf",
+      "anthropic-compatible",
+      "claude-code",
+      "cline",
+      "cursor",
+      "api-gateway",
+      "claude",
+      "codeium",
+      "deepseek",
+      "devin",
+      "gemini",
+      "gemini-compatible",
+      "gpt",
+      "llm",
+      "openai",
+      "reverse-proxy",
+      "self-hosted",
+      "devin-api",
+      "swe-1-5"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "motiful/cc-gateway",
+    "stars": 3061,
+    "forks": 504,
+    "pushedAt": "2026-04-02T10:50:07Z",
+    "license": "MIT",
+    "topics": [
+      "anthropic",
+      "api-gateway",
+      "claude-code",
+      "docker",
+      "fingerprint",
+      "privacy",
+      "reverse-proxy",
+      "telemetry",
+      "typescript"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "collabs-inc/collab-public",
+    "stars": 3059,
+    "forks": 302,
+    "pushedAt": "2026-08-08T14:53:31Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "agents",
+      "ai",
+      "claude-code",
+      "codex-cli",
+      "ide",
+      "terminal"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "RKiding/Awesome-finance-skills",
+    "stars": 3055,
+    "forks": 387,
+    "pushedAt": "2026-03-29T05:03:47Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agent",
+      "agent-skills",
+      "finances",
+      "fintech"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "FreedomIntelligence/OpenClaw-Medical-Skills",
+    "stars": 3051,
+    "forks": 414,
+    "pushedAt": "2026-07-21T01:01:51Z",
+    "license": null,
+    "topics": [
+      "awesome",
+      "claude-code",
+      "clawhub",
+      "medical",
+      "nanoclaw",
+      "openclaw",
+      "openclaw-skills",
+      "skills"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "NarratorAI-Studio/narrator-ai-cli-skill",
+    "stars": 3030,
+    "forks": 402,
+    "pushedAt": "2026-07-05T14:10:21Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-agent",
+      "ai-video",
+      "claude-code",
+      "claude-code-skill",
+      "content-creation",
+      "cursor",
+      "film-commentary",
+      "narrator-ai",
+      "openclaw",
+      "openclaw-skill",
+      "short-drama",
+      "skill-md",
+      "video-narration",
+      "windsurf"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "Nanako0129/sepia",
+    "stars": 3012,
+    "forks": 193,
+    "pushedAt": "2026-10-06T11:00:39Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-writing",
+      "antigravity",
+      "claude-code",
+      "codex",
+      "developer-tools",
+      "fiction",
+      "grok",
+      "humanizer",
+      "llm",
+      "prompt-engineering",
+      "writing-tools"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Tiger3807861189/J-Space-Cognition-Suite",
+    "stars": 3001,
+    "forks": 223,
+    "pushedAt": "2026-09-14T03:26:53Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "dsh-plugin",
+      "agent-skills",
+      "ai",
+      "ai-agent",
+      "ai-agents",
+      "claude-code",
+      "codex",
+      "cognitive-enhancement",
+      "deepseek",
+      "deepseek-harness",
+      "developer-tools",
+      "dsh",
+      "global-workspace",
+      "hermes-agent",
+      "j-space",
+      "opencode",
+      "react",
+      "tailwindcss",
+      "inference-time-control"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Kuddev/pebrel",
+    "stars": 2986,
+    "forks": 159,
+    "pushedAt": "2026-10-07T13:44:32Z",
+    "license": "GPL-3.0",
+    "topics": [
+      "ai-cli",
+      "claude-code",
+      "codex",
+      "developer-tools",
+      "gpu-accelerated",
+      "opengl",
+      "powershell",
+      "rust",
+      "session-persistence",
+      "ssh",
+      "terminal",
+      "terminal-emulator",
+      "ai-terminal",
+      "conpty",
+      "split-panes",
+      "ssh-client",
+      "windows"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "michaelshimeles/ralphy",
+    "stars": 2977,
+    "forks": 365,
+    "pushedAt": "2026-02-05T16:28:20Z",
+    "license": null,
+    "topics": [
+      "claude-code",
+      "opencode",
+      "ralph-loop",
+      "ralph-wiggum",
+      "ralphy"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "nateherkai/scroll-craft",
+    "stars": 2977,
+    "forks": 439,
+    "pushedAt": "2026-09-30T13:31:42Z",
+    "license": "MIT",
+    "topics": [
+      "accessibility",
+      "agent-skills",
+      "ai-web-design",
+      "anthropic",
+      "claude-code",
+      "claude-code-plugin",
+      "creative-coding",
+      "design-system",
+      "frontend",
+      "interaction-design",
+      "landing-page",
+      "scroll-animation",
+      "scrollytelling",
+      "typography",
+      "web-design"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "filtalgo/Filtmall-Shopping-Skill",
+    "stars": 2975,
+    "forks": 32,
+    "pushedAt": "2026-09-17T07:40:31Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agent-skills",
+      "ai-agent",
+      "ecommerce",
+      "openclaw",
+      "product-search",
+      "shopping",
+      "filtalgo",
+      "filtmall",
+      "skillsmp",
+      "claude-skills"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "open-gitagent/opengap",
+    "stars": 2971,
+    "forks": 352,
+    "pushedAt": "2026-07-02T21:15:45Z",
+    "license": "MIT",
+    "topics": [
+      "agent",
+      "agent-framework",
+      "agent-skills",
+      "agents",
+      "assistant",
+      "claude-code",
+      "gitagent",
+      "open-standard",
+      "openclaw",
+      "skills"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "intellectronica/ruler",
+    "stars": 2942,
+    "forks": 164,
+    "pushedAt": "2026-09-30T17:05:26Z",
+    "license": "MIT",
+    "topics": [
+      "agents",
+      "ai",
+      "aider",
+      "claude-code",
+      "codex",
+      "cursor",
+      "github-copilot",
+      "vibe-coding",
+      "windsurf"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "ciembor/agent-rules-books",
+    "stars": 2923,
+    "forks": 514,
+    "pushedAt": "2026-09-10T11:21:47Z",
+    "license": "MIT",
+    "topics": [
+      "agents-md",
+      "agent-rules",
+      "agent-skills",
+      "code-quality",
+      "refactoring",
+      "domain-driven-design",
+      "programming-books",
+      "ai-agent",
+      "ai-skills",
+      "claude-code",
+      "claude-code-skills",
+      "codex",
+      "codex-skills",
+      "cursor-rules",
+      "cursor-skills",
+      "agentsmd",
+      "agents-rules",
+      "agent-skills-manager",
+      "agents-skills"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "MARKTECHPOST-AI-MEDIA-INC/AI-Agents-Projects-Tutorials",
+    "stars": 2920,
+    "forks": 617,
+    "pushedAt": "2026-10-05T19:47:43Z",
+    "license": null,
+    "topics": [
+      "aiagents",
+      "agent-skills",
+      "agentic-ai",
+      "agentic-ai-development",
+      "agentic-coding",
+      "agentic-engineering",
+      "agentic-framework",
+      "agentic-rag",
+      "agentic-workflow",
+      "ai",
+      "aiagent"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "rohitg00/pro-workflow",
+    "stars": 2907,
+    "forks": 295,
+    "pushedAt": "2026-09-29T10:12:13Z",
+    "license": null,
+    "topics": [
+      "claude",
+      "claude-code",
+      "cursor",
+      "workflow",
+      "agent-orchestration",
+      "ai-agents",
+      "ai-coding",
+      "ai-workflow",
+      "claude-code-plugin",
+      "claude-code-skills",
+      "claude-skills",
+      "codex",
+      "context-engineering",
+      "developer-tools",
+      "gemini-cli",
+      "hooks",
+      "productivity",
+      "self-correction",
+      "worktrees"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "makecindy/cindy",
+    "stars": 2906,
+    "forks": 441,
+    "pushedAt": "2026-10-07T12:43:39Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agent",
+      "ai-agent",
+      "ai-assistant",
+      "android",
+      "claude-code",
+      "codex",
+      "electron",
+      "ios",
+      "llm",
+      "macos",
+      "react-native",
+      "typescript",
+      "windows"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "addyosmani/web-quality-skills",
+    "stars": 2898,
+    "forks": 254,
+    "pushedAt": "2026-08-24T21:07:36Z",
+    "license": "MIT",
+    "topics": [
+      "accessibility",
+      "agent-skills",
+      "claude-skills",
+      "core-web-vitals",
+      "lighthouse",
+      "skills",
+      "testing",
+      "web-performance"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "op7418/Claude-to-IM-skill",
+    "stars": 2884,
+    "forks": 317,
+    "pushedAt": "2026-03-23T17:03:44Z",
+    "license": "MIT",
+    "topics": [
+      "chatbot",
+      "claude",
+      "claude-code",
+      "discord",
+      "feishu",
+      "lark",
+      "skill",
+      "telegram"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "aaron-he-zhu/aaron-marketing-skills",
+    "stars": 2881,
+    "forks": 370,
+    "pushedAt": "2026-10-07T12:30:50Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "geo",
+      "seo",
+      "agent-skills",
+      "content-optimization",
+      "generative-engine-optimization",
+      "marketing",
+      "influencer-marketing",
+      "paid-advertising",
+      "roas",
+      "email-marketing",
+      "marketing-automation",
+      "product-launch",
+      "brand-messaging",
+      "social-media-marketing",
+      "brand-narrative",
+      "organic-social",
+      "ai-staff",
+      "grok",
+      "hermes",
+      "aaron-marketing"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "kaitranntt/ccs",
+    "stars": 2874,
+    "forks": 267,
+    "pushedAt": "2026-10-01T02:43:13Z",
+    "license": "MIT",
+    "topics": [
+      "claude",
+      "claude-code",
+      "cli-tool",
+      "multi-account",
+      "developer-productivity",
+      "ai-gateway",
+      "anthropic-api",
+      "gemini",
+      "github-copilot",
+      "nodejs",
+      "oauth",
+      "openrouter",
+      "react-dashboard",
+      "typescript",
+      "websearch",
+      "cliproxyapi",
+      "profile-switching"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "huangwb8/ChineseResearchLaTeX",
+    "stars": 2868,
+    "forks": 269,
+    "pushedAt": "2026-10-04T08:38:22Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "claude-code",
+      "codex-cli",
+      "funding",
+      "graduate",
+      "latex-template",
+      "research",
+      "researchpapers",
+      "vibe-codng"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Vexa-ai/vexa",
+    "stars": 2857,
+    "forks": 498,
+    "pushedAt": "2026-10-06T21:12:47Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "google-meet",
+      "meeting-assistant",
+      "meeting-minutes",
+      "meeting-notes",
+      "ms-teams",
+      "notetaker",
+      "zoom",
+      "api",
+      "mcp",
+      "self-hosted",
+      "speech-to-text",
+      "transcription",
+      "claude-code",
+      "codex",
+      "mcp-server",
+      "model-context-protocol"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "Owl-Listener/designer-skills",
+    "stars": 2851,
+    "forks": 403,
+    "pushedAt": "2026-09-05T15:32:50Z",
+    "license": "MIT",
+    "topics": [
+      "agentic",
+      "agentic-ai",
+      "ai",
+      "ai-tools",
+      "claude-code",
+      "design-system",
+      "design-systems",
+      "prompt-engineering",
+      "skills",
+      "ux-design"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "QwenAudio/qwen-audio-agent",
+    "stars": 2849,
+    "forks": 286,
+    "pushedAt": "2026-09-28T11:03:03Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agent",
+      "agentic-ai",
+      "voice-agent",
+      "voice-ai",
+      "voice-chat",
+      "acp",
+      "ai-coding",
+      "claude-code",
+      "codex",
+      "developer-tools",
+      "opencode",
+      "speech-recognition",
+      "text-to-speech"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "openlit/openlit",
+    "stars": 2827,
+    "forks": 422,
+    "pushedAt": "2026-10-05T10:33:54Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "observability",
+      "llmops",
+      "ai-observability",
+      "openai",
+      "clickhouse",
+      "genai",
+      "opentelemetry",
+      "open-source",
+      "gpu-monitoring",
+      "amd-gpu",
+      "nvidia-smi",
+      "ai-engineering",
+      "claude-code",
+      "codex",
+      "coding-agent",
+      "coding-agents",
+      "cursor",
+      "llm-observability",
+      "agent-harness",
+      "agent-harness-engineering"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "datachain-ai/datachain",
+    "stars": 2822,
+    "forks": 164,
+    "pushedAt": "2026-10-07T04:06:01Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "claude-code",
+      "codex",
+      "data-processing",
+      "harness-engineering",
+      "mlops",
+      "unstructured-data",
+      "data-context-layer",
+      "ai-agents",
+      "knowledge-base",
+      "multimodal",
+      "pydantic"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "jeremylongshore/tons-of-skills-marketplace",
+    "stars": 2820,
+    "forks": 413,
+    "pushedAt": "2026-10-07T10:26:32Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "automation",
+      "claude-code",
+      "devops",
+      "mcp",
+      "ai-agents",
+      "anthropic",
+      "claude-code-plugins",
+      "developer-tools",
+      "llm",
+      "plugin-marketplace",
+      "skills",
+      "agent-skills",
+      "marketplace",
+      "plugin-system",
+      "saas"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "glincker/thesvg",
+    "stars": 2809,
+    "forks": 222,
+    "pushedAt": "2026-10-06T23:52:40Z",
+    "license": "MIT",
+    "topics": [
+      "icons",
+      "logos",
+      "react",
+      "svg",
+      "svg-icons",
+      "brands",
+      "hacktoberfest",
+      "icon-pack",
+      "svelte",
+      "vue",
+      "aws",
+      "cloud-icons",
+      "design-resources",
+      "nextjs",
+      "npm-package",
+      "open-source",
+      "tailwindcss",
+      "typescript",
+      "agent-skills",
+      "skills"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "Natively-AI-assistant/natively-cluely-ai-assistant",
+    "stars": 2790,
+    "forks": 608,
+    "pushedAt": "2026-10-07T05:49:23Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "ai",
+      "ai-assistant",
+      "claude-code",
+      "cluely-alternative",
+      "cluely-clone",
+      "interview",
+      "interviewcoder",
+      "llm",
+      "meeting-assistant",
+      "open-source",
+      "trending-repositories",
+      "cluely",
+      "cheating",
+      "final-round-ai",
+      "claude-skills",
+      "ai-agent",
+      "ai-agents",
+      "ai-tools",
+      "note-taking",
+      "notes"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "folke/sidekick.nvim",
+    "stars": 2784,
+    "forks": 169,
+    "pushedAt": "2026-09-08T14:07:25Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "copilot",
+      "neovim",
+      "neovim-plugin",
+      "nvim",
+      "nvim-plugin",
+      "claude-code",
+      "codex-cli",
+      "copilot-cli",
+      "gemini-cli"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "brennercruvinel/CCPlugins",
+    "stars": 2774,
+    "forks": 168,
+    "pushedAt": "2026-09-11T03:12:01Z",
+    "license": "MIT",
+    "topics": [
+      "automated",
+      "claude",
+      "claude-ai",
+      "claude-code",
+      "cli",
+      "collection",
+      "commands",
+      "plugins",
+      "extensions"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "codeany-ai/open-agent-sdk-typescript",
+    "stars": 2744,
+    "forks": 938,
+    "pushedAt": "2026-07-26T03:22:14Z",
+    "license": "MIT",
+    "topics": [
+      "agent-sdk",
+      "claude-agent-sdk",
+      "claude-code",
+      "open-agent-sdk"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "BytePioneer-AI/codex-host",
+    "stars": 2740,
+    "forks": 241,
+    "pushedAt": "2026-10-07T13:44:13Z",
+    "license": "LGPL-3.0",
+    "topics": [
+      "claude-code",
+      "codex",
+      "codex-desktop",
+      "pi-agent",
+      "codex-host",
+      "codexhost"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "cocoindex-io/cocoindex-code",
+    "stars": 2740,
+    "forks": 224,
+    "pushedAt": "2026-10-06T23:03:34Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agents",
+      "code-search",
+      "coding-agent",
+      "indexing",
+      "python",
+      "context-engineering",
+      "mcp",
+      "tree-sitter",
+      "cocoindex",
+      "ast",
+      "claude-code",
+      "codex",
+      "context-window",
+      "context-window-optimization",
+      "open-code",
+      "rust"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "jgravelle/jcodemunch-mcp",
+    "stars": 2739,
+    "forks": 371,
+    "pushedAt": "2026-10-07T13:36:17Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "claude",
+      "claude-code",
+      "ai-coding",
+      "ast",
+      "code-intelligence",
+      "context-window",
+      "cursor",
+      "developer-tools",
+      "llm",
+      "mcp",
+      "mcp-server",
+      "model-context-protocol",
+      "token-optimization",
+      "tree-sitter",
+      "cline",
+      "codex",
+      "copilot",
+      "gemini-cli",
+      "opencode",
+      "windsurf"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Windy3f3f3f3f/claude-code-from-scratch",
+    "stars": 2735,
+    "forks": 548,
+    "pushedAt": "2026-07-09T09:34:10Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "ai-agent",
+      "anthropic",
+      "build-from-scratch",
+      "claude",
+      "claude-code",
+      "coding-agent",
+      "llm",
+      "tutorial",
+      "typescript"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "runkids/skillshare",
+    "stars": 2728,
+    "forks": 173,
+    "pushedAt": "2026-10-07T13:51:44Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "cli",
+      "codex",
+      "skills",
+      "skillshare",
+      "cross-machine-sync",
+      "claude-code",
+      "openclaw",
+      "skills-audit",
+      "skills-manager",
+      "go",
+      "ai-agents",
+      "desktop-app",
+      "hooks",
+      "mcp",
+      "opencode",
+      "team-collaboration",
+      "agent-plugins",
+      "pi",
+      "pi-package"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "zilliztech/memsearch",
+    "stars": 2725,
+    "forks": 265,
+    "pushedAt": "2026-09-24T08:08:09Z",
+    "license": "MIT",
+    "topics": [
+      "agent-memory",
+      "claude-code",
+      "claude-code-plugin",
+      "memory",
+      "openclaw",
+      "rag",
+      "agent",
+      "embeddings",
+      "milvus",
+      "semantic-search",
+      "hybrid-search",
+      "long-term-memory",
+      "opencode",
+      "skills",
+      "codex",
+      "deepseek",
+      "deepseek-harness",
+      "dsh",
+      "dsh-plugin",
+      "jev"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "heshengtao/super-agent-party",
+    "stars": 2721,
+    "forks": 293,
+    "pushedAt": "2026-08-23T09:28:52Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "mcp",
+      "comfyui",
+      "vrm",
+      "livestream",
+      "home-assistant",
+      "sillytavern",
+      "claude-code",
+      "neuro-sama",
+      "sap",
+      "super-agent-party",
+      "discord-bot",
+      "im-bot",
+      "openclaw",
+      "cowork",
+      "ai-companion",
+      "ai-vtuber",
+      "agent-skills"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "zubair-trabzada/ai-marketing-claude",
+    "stars": 2718,
+    "forks": 713,
+    "pushedAt": "2026-03-02T01:18:40Z",
+    "license": "MIT",
+    "topics": [
+      "ai-marketing",
+      "claude",
+      "claude-code",
+      "competitive-analysis",
+      "content-strategy",
+      "copywriting",
+      "email-marketing",
+      "marketing",
+      "marketing-automation",
+      "seo"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "yaojingang/yao-meta-skill",
+    "stars": 2690,
+    "forks": 253,
+    "pushedAt": "2026-08-17T09:19:43Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-agents",
+      "meta-skill",
+      "skill-engineering",
+      "workflow-automation",
+      "evaluation",
+      "governance",
+      "portability"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "rohitg00/awesome-claude-code-toolkit",
+    "stars": 2684,
+    "forks": 1002,
+    "pushedAt": "2026-05-12T07:18:34Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "claude",
+      "claude-code",
+      "claudecode",
+      "claudecode-hooks",
+      "plugins",
+      "skills"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "bestruirui/octopus",
+    "stars": 2681,
+    "forks": 439,
+    "pushedAt": "2026-10-07T08:38:09Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "ai",
+      "ai-gateway",
+      "anthropic",
+      "claude",
+      "claude-code",
+      "codex",
+      "openai",
+      "self-hosted",
+      "llm-gateway",
+      "codex-app",
+      "codex-cli",
+      "codex-desktop",
+      "opencode",
+      "pi",
+      "golang",
+      "llm-router"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "LearnPrompt/LearnPrompt",
+    "stars": 2680,
+    "forks": 223,
+    "pushedAt": "2026-10-05T12:53:30Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "prompt-learning",
+      "agent",
+      "aimusic",
+      "aivoice",
+      "chatgpt-app",
+      "llms-book",
+      "midjourney-app",
+      "prompt",
+      "prompt-enginering",
+      "stable-diffusion",
+      "claude-code",
+      "cli",
+      "codex",
+      "hermes-agent",
+      "openclaw"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "centminmod/my-claude-code-setup",
+    "stars": 2656,
+    "forks": 252,
+    "pushedAt": "2026-09-28T00:06:28Z",
+    "license": "MIT",
+    "topics": [
+      "claude",
+      "claude-ai",
+      "claude-code",
+      "subagents",
+      "claudecode-config",
+      "claudecode-hooks",
+      "claudecode-subagents"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Javis603/token-monitor",
+    "stars": 2652,
+    "forks": 268,
+    "pushedAt": "2026-10-07T11:33:36Z",
+    "license": "MIT",
+    "topics": [
+      "ai-tools",
+      "claude-code",
+      "codex",
+      "llm",
+      "local-first",
+      "self-hosted",
+      "token-tracker",
+      "token-usage",
+      "cursor",
+      "openclaw",
+      "opencode",
+      "ai",
+      "linux",
+      "macos",
+      "windows",
+      "hermes-agent",
+      "antigravity",
+      "deepseek",
+      "deepseek-harness",
+      "dsh"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "wshobson/commands",
+    "stars": 2644,
+    "forks": 293,
+    "pushedAt": "2026-09-30T13:31:11Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "ai-agents",
+      "anthropic",
+      "automation",
+      "claude",
+      "claude-code",
+      "slash-commands",
+      "claude-commands",
+      "claudecode",
+      "claudecode-config",
+      "orchestration",
+      "productivity",
+      "slash-command",
+      "slashcommands",
+      "workflows"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "cisco-ai-defense/skill-scanner",
+    "stars": 2581,
+    "forks": 329,
+    "pushedAt": "2026-10-05T18:47:20Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "agent",
+      "agent-skills",
+      "security"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "CoderLuii/HolyClaude",
+    "stars": 2579,
+    "forks": 271,
+    "pushedAt": "2026-10-06T08:43:35Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "ai-coding",
+      "anthropic",
+      "claude",
+      "claude-code",
+      "coding-agent",
+      "container",
+      "developer-tools",
+      "devtools",
+      "docker",
+      "docker-compose",
+      "gemini",
+      "headless-browser",
+      "openai",
+      "playwright"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "aldegad/sprite-gen",
+    "stars": 2577,
+    "forks": 271,
+    "pushedAt": "2026-10-07T08:55:19Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "2d-game",
+      "ai-tools",
+      "claude-code",
+      "codex",
+      "game-dev",
+      "gamedev",
+      "pixel-art",
+      "sprite-generation",
+      "sprite-sheet"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "zenstory-ai/drama-skills",
+    "stars": 2572,
+    "forks": 556,
+    "pushedAt": "2026-10-03T08:56:29Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "aigc",
+      "claude-code",
+      "codex",
+      "prompt-engineering",
+      "screenwriting",
+      "short-drama",
+      "storyboard",
+      "ai-video",
+      "claude-skills",
+      "zenstory",
+      "ai-short-drama",
+      "claude-code-skills",
+      "comic-drama",
+      "micro-drama",
+      "script-generation",
+      "storyboarding",
+      "video-prompts"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "webfuse-com/awesome-autoresearch",
+    "stars": 2558,
+    "forks": 195,
+    "pushedAt": "2026-09-21T07:52:13Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "agentic-systems",
+      "ai-agents",
+      "ai-research",
+      "ai-tools",
+      "autonomous-agents",
+      "autoresearch",
+      "awesome-list",
+      "claude-code",
+      "llm-agents",
+      "research-agents",
+      "scientific-discovery",
+      "self-improving-systems",
+      "experiment-loops",
+      "karpathy",
+      "karpathy-inspired"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "softaworks/agent-toolkit",
+    "stars": 2537,
+    "forks": 233,
+    "pushedAt": "2026-03-05T16:46:24Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai",
+      "automation",
+      "claude",
+      "claude-code",
+      "coding-agent",
+      "development"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "Piebald-AI/tweakcc",
+    "stars": 2536,
+    "forks": 208,
+    "pushedAt": "2026-10-06T22:56:54Z",
+    "license": "MIT",
+    "topics": [
+      "agentic",
+      "anthropic",
+      "claude-code",
+      "command-line",
+      "configuration",
+      "customization",
+      "styling",
+      "tweak",
+      "claude-code-ui",
+      "themes",
+      "claude-code-themes",
+      "personalization",
+      "token-counter",
+      "claude-code-system-prompts",
+      "system-prompts",
+      "refined-claude-code",
+      "bun",
+      "claude-code-native",
+      "developer-tools",
+      "terminal"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "youssofal/MTPLX",
+    "stars": 2528,
+    "forks": 198,
+    "pushedAt": "2026-10-03T10:33:12Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "apple-silicon",
+      "local-ai",
+      "mlx",
+      "mtp",
+      "openai-compatible",
+      "qwen",
+      "speculative-decoding",
+      "anthropic-compatible",
+      "inference-engine",
+      "metal",
+      "qwen3-next",
+      "mtplx",
+      "native-mtp",
+      "claude-code",
+      "llm-inference",
+      "local-llm",
+      "macos",
+      "qwen3-8",
+      "qwen3-8-flash-next",
+      "flash-next"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "alexgreensh/token-optimizer",
+    "stars": 2510,
+    "forks": 193,
+    "pushedAt": "2026-10-05T14:09:38Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "agentskills",
+      "claude-code",
+      "token-optimization",
+      "claude-code-skill",
+      "context-window",
+      "token-usage",
+      "ghost-tokens",
+      "context-engineering",
+      "token-optimizer",
+      "claude-plugin",
+      "codex",
+      "cost-management",
+      "cost-optimization",
+      "cost-tracking",
+      "hermes-plugin",
+      "tokenomics",
+      "tokenoptimization",
+      "pi-coding-agent",
+      "claude-code-mod"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "romainsimon/paperasse",
+    "stars": 2508,
+    "forks": 195,
+    "pushedAt": "2026-08-10T20:58:28Z",
+    "license": "MIT",
+    "topics": [
+      "comptable",
+      "skills",
+      "claude",
+      "claude-code",
+      "claude-skills",
+      "agent-skills",
+      "agentic-workflow",
+      "comptabilite",
+      "france",
+      "notaire",
+      "paperasse",
+      "bureaucratie"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "lennney/stop-that-shit",
+    "stars": 2502,
+    "forks": 54,
+    "pushedAt": "2026-10-05T06:36:53Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-agents",
+      "codex",
+      "codex-cli",
+      "codex-plugin",
+      "developer-tools",
+      "guardrails",
+      "local-first",
+      "overengineering",
+      "scope-control",
+      "yagni",
+      "ai-coding",
+      "claude-code",
+      "hermes-agent",
+      "opencode"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "wxtsky/CodeIsland",
+    "stars": 2467,
+    "forks": 298,
+    "pushedAt": "2026-09-24T14:17:39Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "claude-code",
+      "developer-tools",
+      "dynamic-island",
+      "macos",
+      "notch",
+      "swift"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Prism-Shadow/penguin-harness",
+    "stars": 2451,
+    "forks": 267,
+    "pushedAt": "2026-10-07T00:09:56Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agent",
+      "agentic-ai",
+      "ai",
+      "claude-code",
+      "llm",
+      "harness",
+      "build-tool",
+      "desktop",
+      "deepseek",
+      "rsi",
+      "self-evolving",
+      "deepseek-harness"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "FullAgent/fulling",
+    "stars": 2446,
+    "forks": 235,
+    "pushedAt": "2026-08-17T01:11:41Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "docker",
+      "kubernetes",
+      "nextjs",
+      "pgsql",
+      "shadcn-ui",
+      "vibe-coding",
+      "ai-agent",
+      "claude",
+      "llm",
+      "postgresql",
+      "prisma",
+      "react",
+      "typescript"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "RAIT-09/obsidian-agent-client",
+    "stars": 2443,
+    "forks": 222,
+    "pushedAt": "2026-10-02T15:40:02Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "obsidian-md",
+      "obsidian-plugin",
+      "claude-code",
+      "codex",
+      "gemini-cli",
+      "agent-client-protocol",
+      "opencode"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Appllama/appllama-skills",
+    "stars": 2431,
+    "forks": 119,
+    "pushedAt": "2026-09-06T09:01:39Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-agents",
+      "claude",
+      "claude-code",
+      "claude-code-skill",
+      "claude-skills",
+      "codex",
+      "codex-skill",
+      "cursor",
+      "design-system",
+      "expo",
+      "mcp",
+      "mobile-app-development",
+      "mobile-design",
+      "mobile-ui",
+      "model-context-protocol",
+      "react-native",
+      "skills",
+      "ui-design"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "Astro-Han/karpathy-llm-wiki",
+    "stars": 2426,
+    "forks": 287,
+    "pushedAt": "2026-07-23T16:57:44Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skill",
+      "claude-code",
+      "codex",
+      "cursor",
+      "knowledge-base",
+      "llm",
+      "karpathy",
+      "knowledge-management",
+      "llm-wiki",
+      "personal-knowledge-base",
+      "productivity",
+      "markdown",
+      "rag-alternative"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "redhat-et/ripwire",
+    "stars": 2417,
+    "forks": 150,
+    "pushedAt": "2026-10-07T13:49:05Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "ai-agents",
+      "claude",
+      "cli",
+      "coding-agents",
+      "context-engineering",
+      "cpp",
+      "developer-tools",
+      "llm",
+      "mcp",
+      "mcp-server",
+      "static-analysis",
+      "tree-sitter",
+      "codex",
+      "claude-code",
+      "python",
+      "rust",
+      "swift",
+      "typescript",
+      "call-graph",
+      "code-navigation"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "apify/agent-skills",
+    "stars": 2409,
+    "forks": 260,
+    "pushedAt": "2026-10-06T18:28:32Z",
+    "license": null,
+    "topics": [
+      "actor",
+      "agent-skills",
+      "ai-agents",
+      "apify",
+      "mcp"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "FrancyJGLisboa/agent-skills-platform",
+    "stars": 2403,
+    "forks": 265,
+    "pushedAt": "2026-09-15T17:31:46Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-agents",
+      "claude-code",
+      "codex",
+      "cursor",
+      "developer-tools",
+      "evals",
+      "github-copilot",
+      "governance",
+      "skill-marketplace"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "antonbabenko/terraform-skill",
+    "stars": 2400,
+    "forks": 219,
+    "pushedAt": "2026-07-03T05:56:41Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "best-practices",
+      "claude-skills",
+      "devops",
+      "infrastructure-as-code",
+      "modules",
+      "opentofu",
+      "terraform",
+      "testing",
+      "claude-code",
+      "agent-skills"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "dzhng/jevgrep",
+    "stars": 2382,
+    "forks": 171,
+    "pushedAt": "2026-10-02T19:02:26Z",
+    "license": "MIT",
+    "topics": [
+      "ai-sdk",
+      "claude-code",
+      "cli",
+      "code-search",
+      "codex",
+      "coding-agents",
+      "context-retrieval",
+      "developer-tools",
+      "jev",
+      "semantic-search",
+      "typescript",
+      "vercel-ai-gateway"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "tigerless-labs/agent-memory",
+    "stars": 2379,
+    "forks": 141,
+    "pushedAt": "2026-10-07T08:09:04Z",
+    "license": "MIT",
+    "topics": [
+      "agent-memory",
+      "ai-agents",
+      "claude-code",
+      "codex",
+      "llm",
+      "local-first",
+      "long-term-memory",
+      "markdown",
+      "mcp",
+      "python",
+      "retrieval",
+      "sqlite"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "cytostack/openwolf",
+    "stars": 2372,
+    "forks": 215,
+    "pushedAt": "2026-09-15T16:00:54Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "anthropic",
+      "claude-ai",
+      "claude-code",
+      "cli",
+      "developer-tools",
+      "middleware",
+      "open-source",
+      "token-optimization",
+      "codex",
+      "openai",
+      "opencode",
+      "agent-memory",
+      "context-engineering",
+      "observability"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "DenisSergeevitch/agents-best-practices",
+    "stars": 2369,
+    "forks": 214,
+    "pushedAt": "2026-10-05T00:16:42Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "agentic-workflows",
+      "ai-agents",
+      "codex",
+      "mcp",
+      "prompt-engineering",
+      "agents",
+      "codex-skill",
+      "agent-skill",
+      "anthropic",
+      "claude",
+      "claude-code"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "duty1g/x64dbg-mcp-server",
+    "stars": 2369,
+    "forks": 253,
+    "pushedAt": "2026-09-30T07:13:53Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "ai-debugging",
+      "binary-analysis",
+      "claude",
+      "claude-code",
+      "malware-analysis",
+      "malware-research",
+      "malware-scanner",
+      "mcp",
+      "mcp-server",
+      "mcp-servers",
+      "x64dbg",
+      "x64dbg-mcp",
+      "x64dbg-plugin",
+      "x64dbg-tools",
+      "xdbg",
+      "zig",
+      "zig-lang",
+      "ziglang"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "QoderAI/better-harness",
+    "stars": 2363,
+    "forks": 189,
+    "pushedAt": "2026-09-28T09:20:58Z",
+    "license": "MIT",
+    "topics": [
+      "agent-plugin",
+      "claude-code",
+      "codex",
+      "cursor",
+      "harness-design",
+      "harness-engineering",
+      "loop-engineering",
+      "qoder",
+      "skill"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "AgentsMesh/AgentsMesh",
+    "stars": 2362,
+    "forks": 246,
+    "pushedAt": "2026-09-23T13:36:59Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "agent-orchestration",
+      "ai-agent",
+      "ai-coding",
+      "aider",
+      "claude-code",
+      "codex-cli",
+      "gemini-cli",
+      "multi-agent",
+      "self-hosted",
+      "agentsmesh",
+      "ai-agent-workforce-platform"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "nizos/tdd-guard",
+    "stars": 2358,
+    "forks": 188,
+    "pushedAt": "2026-10-05T09:29:32Z",
+    "license": "MIT",
+    "topics": [
+      "agentic-coding",
+      "automation",
+      "claude-code",
+      "code-quality",
+      "hooks",
+      "llm-tools",
+      "tdd"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "datopian/portaljs",
+    "stars": 2357,
+    "forks": 335,
+    "pushedAt": "2026-09-07T15:41:27Z",
+    "license": "MIT",
+    "topics": [
+      "data-portal",
+      "ckan",
+      "nextjs",
+      "open-data-portal",
+      "data-mesh",
+      "datahub",
+      "open-data",
+      "openmetadata",
+      "dataverse",
+      "dkan",
+      "opendatasoft",
+      "socrata",
+      "ai",
+      "ai-agents",
+      "agent-skills",
+      "claude-code",
+      "mcp",
+      "skills"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "wondelai/skills",
+    "stars": 2354,
+    "forks": 237,
+    "pushedAt": "2026-09-10T21:48:01Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-skills",
+      "claude-code",
+      "claude-code-marketplace",
+      "claude-code-plugin",
+      "claude-code-skills",
+      "claude-plugins",
+      "claude-skills",
+      "skill-md",
+      "skillsmp",
+      "business",
+      "code-quality",
+      "frameworks",
+      "marketing",
+      "product-strategy",
+      "ux"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "iFurySt/open-codex-computer-use",
+    "stars": 2346,
+    "forks": 204,
+    "pushedAt": "2026-10-07T02:26:04Z",
+    "license": "MIT",
+    "topics": [
+      "computer-use",
+      "codex-computer-use",
+      "open-computer-use",
+      "open-computer-use-mcp",
+      "accessibility",
+      "ai-agent",
+      "ai-agents",
+      "claude-code",
+      "codex",
+      "computer-use-agent",
+      "cross-platform",
+      "cua",
+      "desktop-automation",
+      "gemini-cli",
+      "gui-automation",
+      "macos",
+      "mcp",
+      "model-context-protocol",
+      "openai-codex",
+      "opencode"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "AgriciDaniel/claude-blog",
+    "stars": 2340,
+    "forks": 397,
+    "pushedAt": "2026-10-02T04:23:57Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "seo",
+      "claude-code-skill",
+      "ai",
+      "ai-content",
+      "content-creation",
+      "open-source",
+      "agent-skills",
+      "ai-citations",
+      "ai-marketing",
+      "ai-marketing-hub",
+      "blog",
+      "blog-writing",
+      "claude-plugin",
+      "claude-skill",
+      "content-optimization",
+      "content-strategy",
+      "eeat",
+      "geo",
+      "multilingual"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "amElnagdy/delegate-skills",
+    "stars": 2324,
+    "forks": 194,
+    "pushedAt": "2026-09-20T19:29:41Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "claude-code",
+      "coding-agent",
+      "openai-codex",
+      "ai-coding-agent",
+      "antigravity",
+      "claude-code-skills",
+      "codex",
+      "cursor",
+      "grok",
+      "kimi",
+      "mistral",
+      "opencode",
+      "qoder",
+      "skills-sh"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "0xSteph/pentest-ai-agents",
+    "stars": 2312,
+    "forks": 437,
+    "pushedAt": "2026-10-06T13:13:01Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "ai-security",
+      "bug-bounty",
+      "claude-code",
+      "ctf",
+      "cybersecurity",
+      "ethical-hacking",
+      "infosec",
+      "kali-linux",
+      "mitre-attack",
+      "offensive-security",
+      "oscp",
+      "penetration-testing",
+      "pentest",
+      "pentesting",
+      "red-team",
+      "security-automation",
+      "security-tools"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "romgX/openrelay",
+    "stars": 2309,
+    "forks": 323,
+    "pushedAt": "2026-10-03T08:15:24Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "ai-proxy",
+      "claude",
+      "claude-code",
+      "cursor",
+      "developer-tools",
+      "kiro",
+      "openai",
+      "proxy",
+      "windsurf",
+      "openclaw",
+      "aider",
+      "cerebras",
+      "copilot",
+      "free-ai",
+      "free-api",
+      "groq",
+      "llm-proxy",
+      "model-router"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Weizhena/Deep-Research-skills",
+    "stars": 2309,
+    "forks": 189,
+    "pushedAt": "2026-08-23T03:25:28Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "claude-code-skills",
+      "deep-research-agent",
+      "llm-agent",
+      "research",
+      "gpt-skills",
+      "opencode",
+      "opencode-skills"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "tanbiralam/claude-code",
+    "stars": 2302,
+    "forks": 2796,
+    "pushedAt": "2026-05-06T19:36:40Z",
+    "license": null,
+    "topics": [
+      "claude-code",
+      "claude-code-source-code"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Vincentwei1021/anything2explainer",
+    "stars": 2300,
+    "forks": 317,
+    "pushedAt": "2026-09-18T11:52:13Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "agent-skills",
+      "ai-agents",
+      "ai-video",
+      "claude-code",
+      "claude-code-skill",
+      "codex",
+      "edge-tts",
+      "educational-video",
+      "explainer-video",
+      "kokoro",
+      "motion-graphics",
+      "multi-agent",
+      "react",
+      "remotion",
+      "text-to-video",
+      "tts",
+      "typescript",
+      "video-generation"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Sahir619/fable-method",
+    "stars": 2296,
+    "forks": 330,
+    "pushedAt": "2026-10-03T00:38:29Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "ai-agents",
+      "claude",
+      "claude-code",
+      "claude-md",
+      "coding-agent",
+      "evaluation",
+      "llm",
+      "fable"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "oh-my-mermaid/oh-my-mermaid",
+    "stars": 2277,
+    "forks": 196,
+    "pushedAt": "2026-04-07T05:23:24Z",
+    "license": "MIT",
+    "topics": [
+      "ai",
+      "architecture",
+      "claude-code",
+      "claude-code-skill",
+      "cli",
+      "codebase-visualization",
+      "developer-tools",
+      "diagrams",
+      "documentation",
+      "mermaid"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "dstackai/dstack",
+    "stars": 2271,
+    "forks": 267,
+    "pushedAt": "2026-10-07T12:31:02Z",
+    "license": "MPL-2.0",
+    "topics": [
+      "machine-learning",
+      "python",
+      "gpu",
+      "llms",
+      "cloud",
+      "orchestration",
+      "fine-tuning",
+      "training",
+      "kubernetes",
+      "k8s",
+      "amd",
+      "docker",
+      "inference",
+      "nvidia",
+      "slurm",
+      "containers",
+      "agent-skills",
+      "agentic-orchestration"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "phuryn/claude-usage",
+    "stars": 2254,
+    "forks": 411,
+    "pushedAt": "2026-07-10T10:08:48Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "GammaLabTechnologies/harmonist",
+    "stars": 2252,
+    "forks": 208,
+    "pushedAt": "2026-06-09T23:15:07Z",
+    "license": "MIT",
+    "topics": [
+      "agent-framework",
+      "agent-system",
+      "ai-agents",
+      "claude-code",
+      "cursor-ide",
+      "llm",
+      "multi-agent-framework",
+      "orchestration",
+      "prompt-engineering",
+      "python"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "tractorjuice/arc-kit",
+    "stars": 2252,
+    "forks": 282,
+    "pushedAt": "2026-10-06T12:35:03Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "ai-agents",
+      "ai-governance",
+      "architecture-decision-records",
+      "architecture-governance",
+      "arckit",
+      "claude-code",
+      "codex-cli",
+      "compliance",
+      "enterprise-architecture",
+      "gemini-cli",
+      "github-copilot",
+      "govtech",
+      "mcp",
+      "model-context-protocol",
+      "opencode",
+      "procurement",
+      "public-sector",
+      "requirements-engineering",
+      "software-architecture",
+      "traceability"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "kaankiziltug/logo-design-skill",
+    "stars": 2238,
+    "forks": 147,
+    "pushedAt": "2026-09-30T18:16:50Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "branding",
+      "claude",
+      "claude-skills",
+      "logo-design",
+      "svg",
+      "codex",
+      "gemini-cli"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "kevinluosl/deepbot",
+    "stars": 2238,
+    "forks": 166,
+    "pushedAt": "2026-05-23T05:49:13Z",
+    "license": "MIT",
+    "topics": [
+      "agent-skills",
+      "agentic-workflow",
+      "ai-agents",
+      "openclaw",
+      "agent-tools",
+      "agentos",
+      "harness",
+      "harness-engineering"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "777genius/agent-teams-ai",
+    "stars": 2234,
+    "forks": 369,
+    "pushedAt": "2026-10-07T13:52:33Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "agent-teams",
+      "claude",
+      "claude-code",
+      "ai-agents",
+      "developer-tools",
+      "electron",
+      "llm",
+      "typescript",
+      "multi-agent",
+      "codex",
+      "openai",
+      "opencode",
+      "mcp-server",
+      "agent-to-agent",
+      "agent-orchestration",
+      "coding-agent",
+      "cursor",
+      "github-copilot",
+      "kiro",
+      "multi-agent-systems"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "jhlee0409/claude-code-history-viewer",
+    "stars": 2225,
+    "forks": 235,
+    "pushedAt": "2026-10-05T06:43:39Z",
+    "license": "MIT",
+    "topics": [
+      "claude",
+      "conversation-history",
+      "desktop-app",
+      "developer-tools",
+      "react",
+      "rust",
+      "tauri",
+      "codex",
+      "opencode",
+      "claude-code"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Stack-Cairn/LiveAgent",
+    "stars": 2216,
+    "forks": 250,
+    "pushedAt": "2026-10-07T13:07:21Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "ai-tools",
+      "claude-code",
+      "claude-desktop",
+      "codex",
+      "codex-app",
+      "desktop-app",
+      "hermes",
+      "hermes-agent",
+      "mcp",
+      "oepnclaw",
+      "open-source",
+      "skills",
+      "tauri",
+      "typescript",
+      "webui",
+      "fable"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "HUANGCHIHHUNGLeo/claude-real-video",
+    "stars": 2204,
+    "forks": 196,
+    "pushedAt": "2026-10-01T12:06:49Z",
+    "license": "MIT",
+    "topics": [
+      "claude",
+      "claude-code",
+      "cli",
+      "ffmpeg",
+      "keyframe-extraction",
+      "llm",
+      "multimodal",
+      "python",
+      "scene-detection",
+      "transcription",
+      "video-analysis",
+      "whisper",
+      "codex",
+      "codex-cli",
+      "ocr",
+      "openai-codex"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "OpenCoworkAI/open-cowork",
+    "stars": 2190,
+    "forks": 310,
+    "pushedAt": "2026-10-06T08:33:52Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agent",
+      "claude-code",
+      "desktop-app",
+      "anthropic",
+      "open-cowork",
+      "ai-coding",
+      "ai-tools",
+      "coding-agent",
+      "computer-use",
+      "electron",
+      "mcp",
+      "multi-model",
+      "sandbox",
+      "skills"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "yyjeqhc/webcodex",
+    "stars": 2183,
+    "forks": 285,
+    "pushedAt": "2026-10-07T13:47:33Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agent",
+      "chatgpt",
+      "codex",
+      "developer-tools",
+      "gpt-actions",
+      "mcp",
+      "rust",
+      "self-hosted",
+      "claude",
+      "claude-code",
+      "gemini",
+      "grok"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "digitalsamba/claude-code-video-toolkit",
+    "stars": 2174,
+    "forks": 372,
+    "pushedAt": "2026-10-05T18:10:02Z",
+    "license": "MIT",
+    "topics": [
+      "ai-video-generator",
+      "claude-code",
+      "developer-tools",
+      "elevenlabs",
+      "playwright",
+      "programmatic-video",
+      "remotion",
+      "text-to-speech",
+      "video-editing",
+      "video-production",
+      "open-source",
+      "qwen-tts",
+      "openclaw"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "atomicstrata/llm-wiki-compiler",
+    "stars": 2167,
+    "forks": 233,
+    "pushedAt": "2026-10-07T05:07:06Z",
+    "license": "MIT",
+    "topics": [
+      "cli",
+      "knowledge-base",
+      "llm",
+      "markdown",
+      "obsidian",
+      "wiki",
+      "compiler",
+      "context-engineering",
+      "karpathy",
+      "knowledge-compilation",
+      "agent-skills",
+      "ai-agents",
+      "mcp",
+      "mcp-server"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "0xsline/OpenChatCut",
+    "stars": 2165,
+    "forks": 327,
+    "pushedAt": "2026-10-07T06:36:29Z",
+    "license": "AGPL-3.0",
+    "topics": [
+      "agent-skills",
+      "agentic-ai",
+      "ai-agent",
+      "ai-video-editor",
+      "claude-code",
+      "codex",
+      "electron",
+      "ffmpeg",
+      "local-first",
+      "mcp",
+      "remotion",
+      "timeline-editor",
+      "video-editing",
+      "video-editor",
+      "chatcut",
+      "desktop-app",
+      "open-source",
+      "text-based-video-editing",
+      "capcut",
+      "openchatcut"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "Alisa0808/vox-director",
+    "stars": 2157,
+    "forks": 324,
+    "pushedAt": "2026-10-05T16:15:11Z",
+    "license": "MIT",
+    "topics": [
+      "ai-video",
+      "claude-code",
+      "claude-skill",
+      "explainer-video",
+      "motion-graphics",
+      "text-to-video",
+      "vox",
+      "collage-video",
+      "ai",
+      "ffmpeg",
+      "generative-ai",
+      "llm",
+      "python",
+      "tts",
+      "video",
+      "video-generation",
+      "dsh-plugin"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "JuneYaooo/nihaisha-nishi-tcm",
+    "stars": 2156,
+    "forks": 468,
+    "pushedAt": "2026-09-16T12:37:32Z",
+    "license": null,
+    "topics": [
+      "acupuncture",
+      "agent-skills",
+      "claude-code-skills",
+      "codex-skill",
+      "nihaixia",
+      "shennong",
+      "tcm",
+      "tcmcp",
+      "traditional-chinese-medicine",
+      "traditional-chinese-medicine-healthcare",
+      "nihaisha",
+      "nishi"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "VILA-Lab/Dive-into-Claude-Code",
+    "stars": 2151,
+    "forks": 323,
+    "pushedAt": "2026-10-06T17:25:59Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "claude",
+      "claude-code"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "alpic-ai/skybridge",
+    "stars": 2146,
+    "forks": 141,
+    "pushedAt": "2026-10-06T13:27:08Z",
+    "license": "MIT",
+    "topics": [
+      "agent",
+      "ai",
+      "apps-sdk",
+      "chatgpt",
+      "claude",
+      "claude-code",
+      "devtools",
+      "ext-apps",
+      "llms",
+      "mcp",
+      "mcp-apps",
+      "mcp-server",
+      "mcp-ui",
+      "modelcontextprotocol",
+      "openai",
+      "react",
+      "skills",
+      "tooling",
+      "typescript"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "catlog22/Claude-Code-Workflow",
+    "stars": 2130,
+    "forks": 165,
+    "pushedAt": "2026-06-18T07:03:47Z",
+    "license": "MIT",
+    "topics": [
+      "claude",
+      "claude-code",
+      "cli-tools",
+      "codex",
+      "context-management",
+      "gemini-cli",
+      "json-driven",
+      "qwen-code",
+      "task-orchestration",
+      "workflow-automation"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "trailofbits/claude-code-config",
+    "stars": 2124,
+    "forks": 162,
+    "pushedAt": "2026-08-24T19:47:25Z",
+    "license": null,
+    "topics": [
+      "claude",
+      "claude-code",
+      "claude-code-cli",
+      "developer-tool"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "0Chencc/clawgod",
+    "stars": 2115,
+    "forks": 335,
+    "pushedAt": "2026-10-06T14:14:48Z",
+    "license": "GPL-3.0",
+    "topics": [
+      "claw",
+      "clawcode",
+      "ai",
+      "claude-ai",
+      "claude-code",
+      "limit",
+      "linux",
+      "macos",
+      "patch",
+      "skill",
+      "vibe-coded",
+      "vibe-coding",
+      "windows",
+      "assistant"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "andyrewlee/awesome-agent-orchestrators",
+    "stars": 2115,
+    "forks": 271,
+    "pushedAt": "2026-10-07T12:14:31Z",
+    "license": "CC0-1.0",
+    "topics": [
+      "agent-orchestration",
+      "claude-code",
+      "codex",
+      "gemini-cli",
+      "opencode",
+      "agentic-ai",
+      "ai-agents",
+      "ai-coding",
+      "awesome",
+      "awesome-list",
+      "coding-agents",
+      "git-worktree",
+      "multi-agent-systems",
+      "parallel-agents",
+      "agent-coordination",
+      "agent-swarm",
+      "ai-orchestration",
+      "ralph-loop",
+      "ralph-wiggum",
+      "vibe-coding"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "greggh/claude-code.nvim",
+    "stars": 2098,
+    "forks": 72,
+    "pushedAt": "2026-02-04T14:44:51Z",
+    "license": "MIT",
+    "topics": [
+      "ai-assistant",
+      "neovim",
+      "nvim",
+      "plugin",
+      "terminal",
+      "claude-code",
+      "anthropic",
+      "claude"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "eugene1g/agent-safehouse",
+    "stars": 2093,
+    "forks": 99,
+    "pushedAt": "2026-09-30T01:58:09Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "ai-agents",
+      "claude-code",
+      "llm",
+      "macos",
+      "sandbox",
+      "security"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "maxritter/pilot-shell",
+    "stars": 2083,
+    "forks": 178,
+    "pushedAt": "2026-10-07T10:20:28Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "anthropic",
+      "claude-code",
+      "spec-driven-development",
+      "ai-coding",
+      "codex",
+      "codex-cli",
+      "openai",
+      "agent-skills",
+      "agentic-engineering",
+      "code-quality",
+      "code-review",
+      "coding-agents",
+      "context-engineering",
+      "developer-tools",
+      "harness-engineering",
+      "mcp",
+      "persistent-memory",
+      "software-engineering",
+      "tdd",
+      "test-driven-development"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "memorax-ai/memorax-code",
+    "stars": 2075,
+    "forks": 68,
+    "pushedAt": "2026-10-07T04:43:01Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "claude-code",
+      "codex",
+      "coding-memory",
+      "developer-tools",
+      "memorax",
+      "typescript"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "MemTensor/memmy-agent",
+    "stars": 2066,
+    "forks": 199,
+    "pushedAt": "2026-09-30T12:23:27Z",
+    "license": "MIT",
+    "topics": [
+      "agent",
+      "ai-agents",
+      "memory",
+      "agentic-ai",
+      "llm",
+      "long-term-memory",
+      "personal-ai",
+      "chatgpt",
+      "claude-code",
+      "cli",
+      "codex",
+      "cursor",
+      "desktop-app",
+      "desktop-pet",
+      "hermes-agent",
+      "mcp",
+      "openai-api",
+      "openclaw",
+      "tui",
+      "dsh-plugin"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "bergside/typeui",
+    "stars": 2019,
+    "forks": 143,
+    "pushedAt": "2026-07-04T10:11:58Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "agent-skills",
+      "cli",
+      "design",
+      "skills",
+      "terminal",
+      "ui",
+      "ai",
+      "ai-tools",
+      "design-system",
+      "design-tools",
+      "design-md",
+      "claude-design",
+      "codex",
+      "gemini",
+      "google-stitch",
+      "gemini-cli-extension"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "pchalasani/claude-code-tools",
+    "stars": 2009,
+    "forks": 134,
+    "pushedAt": "2026-10-05T14:02:20Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "cli",
+      "cli-agent",
+      "llm",
+      "tmux",
+      "code-agent",
+      "codex",
+      "codex-cli",
+      "context"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "cbrock84/headcount",
+    "stars": 2004,
+    "forks": 316,
+    "pushedAt": "2026-09-17T19:13:19Z",
+    "license": "MIT",
+    "topics": [
+      "agent-marketplace",
+      "claude-code",
+      "claude-code-plugin",
+      "claude-plugin",
+      "claude-skills",
+      "mcp",
+      "chatgpt-plugin",
+      "chatgpt-skills",
+      "organization"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "MrGeDiao/shuorenhua",
+    "stars": 1999,
+    "forks": 82,
+    "pushedAt": "2026-10-07T07:42:35Z",
+    "license": "MIT",
+    "topics": [
+      "ai-writing",
+      "anti-slop",
+      "chatgpt",
+      "chinese",
+      "claude-code",
+      "cursor",
+      "prompt",
+      "prompt-engineering",
+      "skill",
+      "writing",
+      "openclaw",
+      "agent-skill",
+      "codex",
+      "developer-tools",
+      "rewriting",
+      "text-quality"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "tsingyuai/growth-lab",
+    "stars": 1994,
+    "forks": 172,
+    "pushedAt": "2026-09-28T13:39:38Z",
+    "license": "Apache-2.0",
+    "topics": [
+      "agentic-marketing",
+      "ai-agent",
+      "claude-code",
+      "codex",
+      "growth",
+      "growth-hacking",
+      "marketing-automation",
+      "open-source",
+      "seo",
+      "skills",
+      "xiaohongshu"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "RedPlanetHQ/core",
+    "stars": 1987,
+    "forks": 196,
+    "pushedAt": "2026-09-07T10:52:17Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "ai-agent",
+      "ai-memory",
+      "automation",
+      "automations",
+      "claude-code",
+      "codex",
+      "developer-tools",
+      "mcp",
+      "ollama",
+      "personal-assistant"
+    ],
+    "isOrg": true,
+    "curated": false
+  },
+  {
+    "repo": "xiufengsun/TokenTracker",
+    "stars": 1984,
+    "forks": 200,
+    "pushedAt": "2026-10-07T12:23:41Z",
+    "license": "MIT",
+    "topics": [
+      "claude-code",
+      "cli",
+      "codex-cli",
+      "cost-tracker",
+      "cursor",
+      "gemini-cli",
+      "local-first",
+      "privacy-first",
+      "token-tracker",
+      "antigravity",
+      "ai-tools",
+      "dashboard",
+      "developer-tools",
+      "observability",
+      "ai-coding-tools",
+      "desktop-pet",
+      "desktop-widget",
+      "macos-app",
+      "usage-tracker",
+      "windows-app"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "eneskirca/nodeterm",
+    "stars": 1975,
+    "forks": 218,
+    "pushedAt": "2026-10-07T12:53:36Z",
+    "license": "NOASSERTION",
+    "topics": [
+      "adhd",
+      "ai-agents",
+      "canvas",
+      "claude-code",
+      "codex",
+      "developer-tools",
+      "electron",
+      "linux",
+      "macos",
+      "terminal",
+      "terminal-emulator",
+      "tmux",
+      "agent-orchestration",
+      "coding-agents",
+      "gemini",
+      "multiplexer",
+      "opencode",
+      "parallel-agents",
+      "terminal-multiplexer",
+      "workspace-manager"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
+    "repo": "xu-xiang/everything-claude-code-zh",
+    "stars": 1971,
+    "forks": 327,
+    "pushedAt": "2026-03-05T01:45:41Z",
+    "license": "MIT",
+    "topics": [
+      "ai-agents",
+      "anthropic",
+      "claude",
+      "claude-code",
+      "developer-tools",
+      "llm",
+      "mcp",
+      "productivity",
+      "everything-claude-code",
+      "oneskill"
+    ],
+    "isOrg": false,
+    "curated": false
+  },
+  {
     "repo": "21st-dev/magic-mcp",
     "stars": 5975,
-    "forks": 473,
+    "forks": 475,
     "pushedAt": "2026-09-09T20:38:22Z",
     "license": "ISC",
     "topics": [
