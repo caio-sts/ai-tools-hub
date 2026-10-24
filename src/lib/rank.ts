@@ -38,7 +38,7 @@ export function capPerRepo(skills: Skill[], cap: number, exempt: (skill: Skill) 
 
   const kept = new Set<Skill>();
   for (const group of byRepo.values()) {
-    for (const skill of [...group].sort(compareForRank).slice(0, cap)) kept.add(skill);
+    for (const skill of group.sort(compareForRank).slice(0, cap)) kept.add(skill);
   }
 
   return skills.filter((skill) => exempt(skill) || kept.has(skill));

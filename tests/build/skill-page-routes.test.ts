@@ -9,7 +9,8 @@ import {
   cardOf, classesOf, elementWith, mainOf, pageFor, ranked, summaryOf, tagWith, text,
 } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills().filter((skill) => skill.listed);
+const ALL = loadSkills();
+const SKILLS = ALL.filter((skill) => skill.listed);
 const ORDER = ranked(SKILLS);
 const LOCALES = ['en', 'pt'] as const;
 
@@ -33,7 +34,7 @@ describe('the per-skill static page', () => {
   });
 
   it('builds no page for an evicted entry, in either locale (spec 2026-10-24 D2)', () => {
-    const evicted = loadSkills().filter((skill) => !skill.listed);
+    const evicted = ALL.filter((skill) => !skill.listed);
     expect(evicted.length, 'the corpus has no evicted entry to test with').toBeGreaterThan(0);
     for (const lang of LOCALES) {
       for (const skill of evicted) {

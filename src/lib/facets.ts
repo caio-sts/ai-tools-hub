@@ -57,9 +57,9 @@ export function indexValues(skill: Skill): Record<IndexFilterKey, string[]> {
 
 /**
  * §5.1: eviction by the per-subdomain cap sets `listed` false and leaves the row in
- * data/skills.json — it keeps being re-scored and it keeps its page (B4). Every catalog surface
- * is built from this filtered array, so an evicted entry disappears from the grid, the facet
- * counts and the search index at once, and returns whole if its score recovers.
+ * data/skills.json — it keeps being re-scored but has no page. Every catalog surface, skill pages
+ * included, is built from this filtered array, so an evicted entry disappears from all of them at
+ * once, and returns whole if its score recovers.
  */
 export function listedSkills(skills: Skill[]): Skill[] {
   return skills.filter((skill) => skill.listed);
@@ -123,8 +123,8 @@ export interface PagefindIndexAttrs {
 /**
  * The attribute payload one skill page's Pagefind index block must carry. Kept here, beside
  * indexValues and sortValues, so the rail can never offer a value the index does not carry. B4's
- * per-skill route emits the block — and emits it only for a listed skill, since an evicted row
- * keeps its page but leaves the index (§5.1). This is the definition its built output is
+ * per-skill route emits the block, and only listed skills have a route (§5.1). This is the
+ * definition its built output is
  * asserted against.
  */
 export function pagefindIndexAttrs(skill: Skill, collection: Collection | null): PagefindIndexAttrs {

@@ -58,7 +58,7 @@ export function buildRescueDocs(skills: Skill[], taxonomy: Taxonomy, lang: Lang)
     });
   }
 
-  // §5.1: an entry evicted by the per-subdomain cap keeps its page but leaves every search surface.
+  // §5.1: an entry evicted by the per-subdomain cap has no page and leaves every search surface.
   for (const skill of skills.filter((entry) => entry.listed)) {
     docs.push({
       id: skill.id,

@@ -8,14 +8,15 @@ import { skillSlug } from './slug.ts';
  */
 export const SKILL_URL_PATTERN = /\/(en|pt)\/skills\/(.+?)\/?$/;
 
-/** Slugs of entries evicted by the per-subdomain cap (§5.1). Their pages still build. */
+/** Slugs of entries evicted by the per-subdomain cap (§5.1). */
 export function unlistedSkillSlugs(skills: Skill[]): string[] {
   return skills.filter((skill) => !skill.listed).map((skill) => skillSlug(skill));
 }
 
 /**
- * @astrojs/sitemap filter: return false to drop a URL. An evicted entry keeps its page and the
- * noindex meta B4 puts on it, but the catalog must not advertise an entry it does not list.
+ * @astrojs/sitemap filter: return false to drop a URL. Evicted entries no longer build a page
+ * (spec 2026-10-24 D2); this stays as a guard so the catalog never advertises an entry it does
+ * not list.
  */
 export function makeSitemapFilter(unlistedSlugs: Iterable<string>): (url: string) => boolean {
   const unlisted = new Set(unlistedSlugs);
