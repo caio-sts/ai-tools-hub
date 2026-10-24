@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Collection, RawSkill, Safety, Skill, TreeFile } from '../../src/types.ts';
 import { loadSkills } from '../../src/lib/data.ts';
+import { REPO_CAP } from '../../src/lib/rank.ts';
 import { RateLimitedError, type Budget } from '../../scripts/harvest/budget.ts';
 import type { RepoSnapshot } from '../../scripts/harvest/enumerate.ts';
 import { StuckCrawlError, main, runHarvest, type HarvestDeps } from '../../scripts/harvest/run.ts';
@@ -281,6 +282,37 @@ describe('runHarvest', () => {
     const fresh = skills.find((k) => k.repo === 'fresh/repo');
     expect(fresh?.primary).toBe('security/containers-kubernetes');
     expect(fresh?.tags).toEqual(['trivy']);
+  });
+
+  it('stores at most REPO_CAP unclassified rows per repo and never cuts a classified one (spec 2026-10-24 D1)', async () => {
+    const dir = await seededDataDir();
+    const rows = Array.from({ length: REPO_CAP + 2 }, (_unused, i) => ({
+      ...cachedSkill(),
+      id: `cached/repo@old:skills/${i}/SKILL.md`,
+      name: `cached-${i}`,
+      path: `skills/${i}/SKILL.md`,
+      score: 100 - i,
+    }));
+    await writeFile(join(dir, 'skills.json'), `${JSON.stringify(rows, null, 2)}\n`, 'utf8');
+    const classified = rows[REPO_CAP + 1]!.id;
+    await writeFile(
+      join(dir, 'assignments.json'),
+      JSON.stringify({ [classified]: { primary: 'security/containers-kubernetes', also: [], tags: [] } }),
+      'utf8',
+    );
+
+    const { skills } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['cached/repo'],
+      deps: deps(spy(), { fresh: [collection('cached/repo', '2026-08-01T00:00:00Z', 500)] }),
+    });
+
+    const ids = skills.map((k) => k.id);
+    expect(ids).toHaveLength(REPO_CAP + 1);
+    expect(ids).toContain(classified);
+    expect(ids).not.toContain(rows[REPO_CAP]!.id);
+    expect(loadSkills(dir)).toHaveLength(REPO_CAP + 1);
   });
 
   it('stops cleanly on the budget, keeps what it read, and leaves never-read repos out', async () => {
