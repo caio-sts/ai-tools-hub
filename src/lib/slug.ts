@@ -6,7 +6,7 @@ const SKILL_FILE = /(^|\/)SKILL\.md$/i;
 function slugSegment(raw: string): string {
   return raw
     .toLowerCase()
-    .replace(/[^a-z0-9._-]+/g, '-')
+    .replace(/[^\p{L}\p{N}._-]+/gu, '-')
     .replace(/^-+|-+$/g, '');
 }
 
