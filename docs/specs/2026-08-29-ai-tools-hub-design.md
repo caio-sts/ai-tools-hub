@@ -314,11 +314,12 @@ Three rules keep it from misbehaving:
 - **The cap never breaches minimum mass.** It is a ceiling, never a floor: eviction may not take a
   subdomain below the 5 entries §10.1 requires for it to be navigable.
 - **Eviction is a flag, not a deletion.** `Skill.listed` goes false. The entry stays in
-  `data/skills.json`, keeps being re-scored and re-dated every run, and its page keeps building —
-  removing it from the data would leave nothing to build the page from. It disappears from listings,
-  facet counts, the search index and the sitemap, and its page carries `noindex` so search engines
-  do not surface an entry the catalog does not list. If its score recovers past rank 60 it returns,
-  with its original `indexedAt` intact — that date is provenance, not a listing timestamp.
+  `data/skills.json` (subject to the per-repo cap of the
+  [catalog volume spec](2026-10-24-catalog-volume-design.md), D1) and keeps being re-scored and
+  re-dated every run, but its page is not built while it is unlisted (D2). It disappears from
+  listings, facet counts, the search index and the sitemap. If its score recovers past rank 60 it
+  returns, page included, with its original `indexedAt` intact — that date is provenance, not a
+  listing timestamp.
 
 Scores are recomputed for every entry on every run. Only maintenance decays with time, so ranks
 drift on their own without any input changing.

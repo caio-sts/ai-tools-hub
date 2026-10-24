@@ -1,7 +1,7 @@
 # Catalog volume — Design Specification
 
 **Date:** 2026-10-24
-**Status:** Awaiting review
+**Status:** Approved 2026-10-24
 **Path:** architectural (changes what the harvest stores and which pages the build emits)
 **Amends:** [2026-08-29 design](2026-08-29-ai-tools-hub-design.md) §5.1;
 [budgeted crawl](2026-09-27-budgeted-crawl-design.md) risk "Output volume"
@@ -62,6 +62,7 @@ corpus: 0 collisions (1 before). URLs change only for paths with non-ASCII chara
 - **Read throughput is unchanged.** A repo still downloads every `SKILL.md` before the cut
   (accepted 2026-10-05).
 - **Sitemap filter** of unlisted slugs becomes a no-op; it stays as is.
+- **Page rank.** The `#N` on a skill page counts listed entries only, since no other page exists.
 - **First crawl after merge** rewrites `skills.json` at ~20 MB and pushes; its dispatched deploy
   builds ~330 skill pages.
 

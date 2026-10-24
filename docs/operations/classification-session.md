@@ -23,7 +23,7 @@ reports them as two separate rows for exactly that reason.
 
 | File | Role |
 |---|---|
-| `data/skills.json` | a bare `Skill[]` of every harvested skill, written by the harvest (`scripts/harvest/run.ts` locally, `crawl.yml` weekly) |
+| `data/skills.json` | a bare `Skill[]` of the stored skills (at most 50 unclassified per repo), written by the harvest (`scripts/harvest/run.ts` locally, `crawl.yml` weekly) |
 | `data/taxonomy.json` | the closed vocabulary: 13 domains, the 15 security leaves, `protected`, `aliases`, `minimumMass` |
 | `data/assignments.json` | what previous sessions already decided; the cache |
 | `data/meta.json` | `crawledAt`, `classifiedAt`, `skillCount`, `sourceCount` |
