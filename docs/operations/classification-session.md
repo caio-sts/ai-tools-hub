@@ -58,8 +58,8 @@ Rules the session must hold to:
 - A skill with no entry here is not lost: it renders in its domain's named `general` leaf and is
   counted in the banner's "queued unclassified" row.
 - `Skill.listed` is **never** hand-edited. The harvest recomputes it from the per-subdomain cap on
-  every run (§5.1). An entry evicted from its listing still needs a classification, still keeps its
-  page, and still counts in the queued-unclassified row.
+  every run (§5.1). An entry evicted from its listing still needs a classification and still
+  counts in the queued-unclassified row, but has no page while evicted.
 
 ### Translation rules
 

@@ -33,6 +33,14 @@ describe('the per-skill static page', () => {
     }
   });
 
+  it('leaves every built page indexable', () => {
+    for (const lang of LOCALES) {
+      for (const skill of SKILLS) {
+        expect(/<meta[^>]+name="robots"[^>]+content="noindex"/.test(pageFor(lang, skill)), skill.id).toBe(false);
+      }
+    }
+  });
+
   it('builds no page for an evicted entry, in either locale (spec 2026-10-24 D2)', () => {
     const evicted = ALL.filter((skill) => !skill.listed);
     expect(evicted.length, 'the corpus has no evicted entry to test with').toBeGreaterThan(0);

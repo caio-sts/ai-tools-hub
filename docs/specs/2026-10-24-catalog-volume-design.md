@@ -48,8 +48,9 @@ holds for the row, which D2 keeps; it never required the page to exist.
 
 ### D3 — Slugs keep letters of any script
 
-`slugSegment` keeps `\p{L}\p{N}` (Unicode letters and digits) instead of `[a-z0-9]`. On the current
-corpus: 0 collisions (1 before). URLs change only for paths with non-ASCII characters.
+`slugSegment` keeps `\p{L}\p{M}\p{N}` (Unicode letters, combining marks and digits) instead of
+`[a-z0-9]`. Marks matter: without them Indic vowel signs drop and `कि`/`की` both become `क`. On the
+current corpus: 0 collisions (1 before). URLs change only for paths with non-ASCII characters.
 
 ## 3. Consequences
 
@@ -61,7 +62,9 @@ corpus: 0 collisions (1 before). URLs change only for paths with non-ASCII chara
 - **Stored count drops.** `meta.skillCount` counts stored rows, so it goes from ~74K to ~14.5K.
 - **Read throughput is unchanged.** A repo still downloads every `SKILL.md` before the cut
   (accepted 2026-10-05).
-- **Sitemap filter** of unlisted slugs becomes a no-op; it stays as is.
+- **Sitemap filter removed.** With no unlisted page built it filtered nothing, and it was wrong
+  twice over: it matched raw slugs against percent-encoded sitemap URLs, and it would have dropped a
+  listed page whose slug an unlisted row shared.
 - **Page rank.** The `#N` on a skill page counts listed entries only, since no other page exists.
 - **First crawl after merge** rewrites `skills.json` at ~20 MB and pushes; its dispatched deploy
   builds ~330 skill pages.

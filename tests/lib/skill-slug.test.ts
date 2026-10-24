@@ -68,6 +68,13 @@ describe('skillSlug', () => {
     expect(skillSlug(makeSkill({ repo: 'a/b', path: 'skills/数据分析/SKILL.md' }))).toBe('a/b/skills/数据分析');
   });
 
+  it('keeps combining marks, so Indic vowel signs do not collapse two names into one', () => {
+    const short = makeSkill({ repo: 'a/b', path: 'skills/कि/SKILL.md' });
+    const long = makeSkill({ repo: 'a/b', path: 'skills/की/SKILL.md' });
+    expect(skillSlug(short)).toBe('a/b/skills/कि');
+    expect(skillSlug(long)).not.toBe(skillSlug(short));
+  });
+
   it('matches the SKILL.md filename case-insensitively', () => {
     expect(skillSlug(makeSkill({ repo: 'a/b', path: 'x/skill.md' }))).toBe('a/b/x');
   });

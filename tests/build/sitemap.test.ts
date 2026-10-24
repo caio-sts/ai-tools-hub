@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import type { Skill } from '../../src/types.ts';
 import { loadSkills } from '../../src/lib/data.ts';
 import { skillSlug } from '../../src/lib/slug.ts';
 
@@ -16,30 +17,20 @@ function sitemapXml(): string {
 
 describe('the sitemap advertises only listed entries', () => {
   const skills = loadSkills();
-
-  it('wires the filter through astro.config.mjs, reading data only through the A6 loader', () => {
-    const config = readFileSync('astro.config.mjs', 'utf8');
-    expect(
-      config.includes("from './src/lib/sitemap.ts'"),
-      'astro.config.mjs does not import src/lib/sitemap.ts: the sitemap still advertises unlisted entries',
-    ).toBe(true);
-    expect(config).toContain("import { loadSkills } from './src/lib/data.ts';");
-    expect(config).toContain('filter: makeSitemapFilter(unlistedSkillSlugs(loadSkills()))');
-  });
+  // @astrojs/sitemap writes `new URL(...).href`, which percent-encodes non-ASCII slugs.
+  const urlOf = (skill: Skill): string => `/en/skills/${encodeURI(skillSlug(skill))}/`;
 
   it('lists every listed skill page', () => {
     const xml = sitemapXml();
     for (const skill of skills.filter((entry) => entry.listed)) {
-      expect(xml, `${skill.id} is listed but missing from the sitemap`)
-        .toContain(`/en/skills/${skillSlug(skill)}/`);
+      expect(xml, `${skill.id} is listed but missing from the sitemap`).toContain(urlOf(skill));
     }
   });
 
   it('advertises no entry evicted by the per-subdomain cap', () => {
     const xml = sitemapXml();
     for (const skill of skills.filter((entry) => !entry.listed)) {
-      expect(xml, `${skill.id} is unlisted but still in the sitemap`)
-        .not.toContain(`/en/skills/${skillSlug(skill)}/`);
+      expect(xml, `${skill.id} is unlisted but still in the sitemap`).not.toContain(urlOf(skill));
     }
   });
 });
