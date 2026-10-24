@@ -30,11 +30,16 @@ renders, so the daily crawl can push and the deploy can finish.
 ### D1 — At most 50 unclassified rows per repo
 
 After the pool is assembled (rows read this run plus rows carried forward) and before
-`applyListing`, each repo keeps its top 50 unclassified rows by `compareForRank`. A row with an
-assignment in `data/assignments.json` is always kept and does not count toward the 50. Rows past
-the cap are not written to `skills.json`.
+`applyListing`, each repo keeps its top 50 rows by `compareForRank`. Two kinds of row are always
+kept and do not count toward the 50:
 
-On the current corpus: 73,940 → ~14,500 rows, ~102 MB → ~20 MB.
+- a row with an assignment in `data/assignments.json` (classified);
+- a `securityRelevant` row, so the security backlog still reaches classification (security-first).
+  Without this, the cap dropped 5,005 of the 6,976 unclassified security-relevant rows.
+
+Rows past the cap are not written to `skills.json`.
+
+Simulated on master's data (10-21): 73,940 → 20,304 rows, ~97 MiB → 27.3 MiB.
 
 ### D2 — Only listed entries get a page
 
@@ -54,25 +59,25 @@ current corpus: 0 collisions (1 before). URLs change only for paths with non-ASC
 
 ## 3. Consequences
 
-- **Catalog contents.** `K-Dense-AI/scientific-agent-skills` holds 59 of the 64 listed `general`
-  slots; D1 cuts it to 50 and the 9 freed slots go to the next-ranked entries. Classified entries
-  (`trailofbits/skills` 81, `anthropics/skills` 20) are untouched.
+- **Catalog contents.** Simulated on master's data: 161 listed (165 before).
+  `K-Dense-AI/scientific-agent-skills` goes from 59 to 55 listed `general` entries. Classified
+  entries (`trailofbits/skills` 81, `anthropics/skills` 20) are untouched.
 - **A cut row returns** only when its repo is re-read (new `pushedAt`) and it ranks in that repo's
   top 50 again.
-- **Stored count drops.** `meta.skillCount` counts stored rows, so it goes from ~74K to ~14.5K.
+- **Stored count drops.** `meta.skillCount` counts stored rows, so it goes from ~74K to ~20K.
 - **Read throughput is unchanged.** A repo still downloads every `SKILL.md` before the cut
   (accepted 2026-10-05).
 - **Sitemap filter removed.** With no unlisted page built it filtered nothing, and it was wrong
   twice over: it matched raw slugs against percent-encoded sitemap URLs, and it would have dropped a
   listed page whose slug an unlisted row shared.
 - **Page rank.** The `#N` on a skill page counts listed entries only, since no other page exists.
-- **First crawl after merge** rewrites `skills.json` at ~20 MB and pushes; its dispatched deploy
+- **First crawl after merge** rewrites `skills.json` at ~27 MiB and pushes; its dispatched deploy
   builds ~330 skill pages.
 
 ## 4. Verification
 
-- Unit: cap keeps the top 50 per repo by rank; classified rows survive and do not count; repos at
-  or under 50 are untouched.
+- Unit: cap keeps the top 50 per repo by rank; classified and security-relevant rows survive and
+  do not count; repos at or under 50 are untouched.
 - Unit: skill routes are emitted for listed rows only; a Cyrillic path gets a distinct slug.
 - Full test suite and a local `astro build` against the real `data/` pass.
 - After merge: a `workflow_dispatch` crawl pushes, and the deploy it dispatches succeeds.

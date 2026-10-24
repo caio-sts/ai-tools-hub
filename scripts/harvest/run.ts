@@ -495,8 +495,13 @@ export async function runHarvest(
 
   skills.sort(compareForRank);
 
-  // Spec 2026-10-24 D1: past REPO_CAP an unclassified row is not stored at all.
-  const stored = capPerRepo(skills, REPO_CAP, (skill) => assignments.has(identityKey(skill.repo, skill.path)));
+  // Spec 2026-10-24 D1: past REPO_CAP an unclassified row is not stored at all. Security-relevant
+  // rows are exempt so they can still reach classification.
+  const stored = capPerRepo(
+    skills,
+    REPO_CAP,
+    (skill) => skill.securityRelevant || assignments.has(identityKey(skill.repo, skill.path)),
+  );
 
   // Survival (spec §5.1). The subdomain cap decides what is LISTED among stored rows: every
   // stored row stays in skills.json and keeps being re-scored. `previous` is what the last
