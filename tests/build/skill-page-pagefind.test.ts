@@ -5,7 +5,6 @@ import { pageFor } from '../helpers/skill-card.ts';
 
 const SKILLS = loadSkills();
 const LISTED = SKILLS.filter((skill) => skill.listed);
-const UNLISTED = SKILLS.filter((skill) => !skill.listed);
 const BY_REPO = new Map(loadCollections().map((collection) => [collection.repo, collection]));
 const FILTER_KEYS = ['domain', 'subdomain', 'runtime', 'risk', 'license'];
 const SORT_KEYS = ['score', 'stars', 'forks', 'newest', 'updated'];
@@ -32,14 +31,6 @@ describe('the Pagefind index block', () => {
     for (const lang of ['en', 'pt'] as const) {
       for (const skill of LISTED) {
         expect((pageFor(lang, skill).match(/data-pagefind-body/g) ?? []).length, skill.id).toBe(1);
-      }
-    }
-  });
-
-  it('leaves an evicted skill out of the index while still building its page', () => {
-    for (const lang of ['en', 'pt'] as const) {
-      for (const skill of UNLISTED) {
-        expect(pageFor(lang, skill), skill.id).not.toContain('data-pagefind-body');
       }
     }
   });

@@ -4,7 +4,7 @@ import strings from '../../src/lib/i18n/skill.ts';
 import { officialFileUrl } from '../../src/lib/slug.ts';
 import { allCss, bundles, cardOf, elementWith, pageFor, panelOf, tagWith, text } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 
 describe('provenance and install', () => {
   it('prints the full owner/repo@sha:path identifier with the sha unshortened', () => {

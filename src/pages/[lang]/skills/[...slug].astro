@@ -13,7 +13,10 @@ type PageProps = { skill: Skill; rank: number; collection: Collection | null };
 
 export function getStaticPaths() {
   const byRepo = new Map(loadCollections().map((collection) => [collection.repo, collection]));
-  const ranked = [...loadSkills()].sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+  // Spec 2026-10-24 D2: an evicted entry has no page, so rank counts listed entries only.
+  const ranked = loadSkills()
+    .filter((skill) => skill.listed)
+    .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
   const claimed = new Map<string, string>();
   const routes: Array<{ params: { lang: Lang; slug: string }; props: PageProps }> = [];
 
@@ -58,9 +61,6 @@ const index = pagefindIndexAttrs(skill, collection);
   description={skill.description}
   path={`/skills/${skillSlug(skill)}/`}
 >
-  {/* §5.1: an evicted row keeps this page, with its current score and dates, and leaves every
-      index. Head only — nothing visible changes, and there is no tombstone. */}
-  {!skill.listed && <meta slot="head" name="robots" content="noindex" />}
   <nav class="crumbs" data-field="crumbs" aria-label={s['skill.breadcrumb']}>
     <a class="crumbs__home" href={withBase(`/${lang}/`)}>{s['skill.home']}</a>
     <span class="crumbs__domain" data-field="crumb-domain">{nodeName(domainSlug, lang)}</span>

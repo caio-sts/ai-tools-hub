@@ -4,7 +4,7 @@ import strings from '../../src/lib/i18n/skill.ts';
 import { allCss, cardOf, classesOf, distFiles, elementWith, pageFor, tagWith, text } from '../helpers/skill-card.ts';
 import { readFileSync } from 'node:fs';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 const SIGNALS = ['executes', 'network', 'env', 'tools'];
 
 function row(card: string, signal: string): { classes: string[]; value: string } {

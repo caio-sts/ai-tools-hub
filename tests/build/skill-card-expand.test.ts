@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ROOT, bundles, cardOf, pageFor, tagWith } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 const JS = bundles().map((bundle) => bundle.js).join('\n');
 const CARD_SOURCE = readFileSync(join(ROOT, 'src/components/SkillCard.astro'), 'utf8');
 

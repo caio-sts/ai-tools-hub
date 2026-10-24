@@ -42,13 +42,4 @@ describe('the sitemap advertises only listed entries', () => {
         .not.toContain(`/en/skills/${skillSlug(skill)}/`);
     }
   });
-
-  it('still builds the page for an evicted entry', () => {
-    for (const skill of skills.filter((entry) => !entry.listed)) {
-      expect(
-        existsSync(`dist/en/skills/${skillSlug(skill)}/index.html`),
-        `${skill.id} lost its page: §5.1 drops the listing, never the page`,
-      ).toBe(true);
-    }
-  });
 });

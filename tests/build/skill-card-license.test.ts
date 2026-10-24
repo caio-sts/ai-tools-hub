@@ -3,7 +3,7 @@ import { loadSkills } from '../../src/lib/data.ts';
 import strings from '../../src/lib/i18n/skill.ts';
 import { cardOf, classesOf, elementWith, pageFor, panelOf, summaryOf, tagWith, text } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 
 describe('license display', () => {
   it('shows the resolved license, or Not declared, in the expanded panel', () => {

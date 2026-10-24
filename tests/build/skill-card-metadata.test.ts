@@ -4,7 +4,7 @@ import { STALE_DAYS, compactNumber, relativeDays } from '../../src/lib/format.ts
 import strings from '../../src/lib/i18n/skill.ts';
 import { cardOf, classesOf, elementWith, pageFor, tagWith, text } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 const BY_REPO = new Map(loadCollections().map((collection) => [collection.repo, collection]));
 
 function field(card: string, name: string): string {

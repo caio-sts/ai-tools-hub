@@ -1,13 +1,15 @@
+import { existsSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import strings from '../../src/lib/i18n/skill.ts';
 import { withBase } from '../../src/lib/link.ts';
+import { skillSlug } from '../../src/lib/slug.ts';
 import { nodeName } from '../../src/lib/taxonomy.ts';
 import {
   cardOf, classesOf, elementWith, mainOf, pageFor, ranked, summaryOf, tagWith, text,
 } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 const ORDER = ranked(SKILLS);
 const LOCALES = ['en', 'pt'] as const;
 
@@ -30,11 +32,12 @@ describe('the per-skill static page', () => {
     }
   });
 
-  it('noindexes an evicted entry and leaves a listed one indexable', () => {
+  it('builds no page for an evicted entry, in either locale (spec 2026-10-24 D2)', () => {
+    const evicted = loadSkills().filter((skill) => !skill.listed);
+    expect(evicted.length, 'the corpus has no evicted entry to test with').toBeGreaterThan(0);
     for (const lang of LOCALES) {
-      for (const skill of SKILLS) {
-        const noindexed = /<meta[^>]+name="robots"[^>]+content="noindex"/.test(pageFor(lang, skill));
-        expect(noindexed, skill.id).toBe(!skill.listed);
+      for (const skill of evicted) {
+        expect(existsSync(`dist/${lang}/skills/${skillSlug(skill)}/index.html`), skill.id).toBe(false);
       }
     }
   });
