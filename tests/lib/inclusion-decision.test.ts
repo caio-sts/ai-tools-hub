@@ -11,13 +11,24 @@ function candidate(over: Partial<SkillCandidate> = {}): SkillCandidate {
     path: 'skills/alpha/SKILL.md',
     hasReadme: true,
     description: 'Scans lockfiles for malicious packages.',
+    supportedLanguage: true,
     ...over,
   };
 }
 
 describe('includeSkill', () => {
   it('publishes the rule order so /methodology can render it', () => {
-    expect([...INCLUSION_RULE_ORDER]).toEqual(['repo-internal', 'no-readme', 'weak-description']);
+    expect([...INCLUSION_RULE_ORDER]).toEqual([
+      'repo-internal',
+      'no-readme',
+      'weak-description',
+      'unsupported-language',
+    ]);
+  });
+
+  it('rejects a skill written in neither English nor Portuguese, after the description rule', () => {
+    expect(includeSkill(candidate({ supportedLanguage: false }))).toBe('unsupported-language');
+    expect(includeSkill(candidate({ description: 'no', supportedLanguage: false }))).toBe('weak-description');
   });
 
   it('includes a candidate that clears every rule', () => {

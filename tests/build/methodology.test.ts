@@ -91,6 +91,8 @@ describe('the methodology page discharges spec §10.6', () => {
     expect(html).toContain('.claude/skills/');
     expect(html).toContain('at least 10 stars');
     expect(html).toContain('One entry per publisher per concept');
+    expect(html).toContain('written in English or Portuguese');
+    expect(page('pt')).toContain('escrita em inglês ou português');
   });
 
   it('publishes the counting rules', () => {

@@ -9,6 +9,7 @@ import {
 } from '../../src/lib/inclusion.ts';
 import type { FetchLike } from './discover.ts';
 import { RateLimitedError, isRateLimited } from './budget.ts';
+import { isSupportedLanguage } from './language.ts';
 import { fetchPathCommits, type PathHistoryDeps } from './path-history.ts';
 
 const API = 'https://api.github.com';
@@ -316,6 +317,7 @@ export async function enumerateSkills(
       path: file.path,
       hasReadme: true,
       description: parsed.frontmatter.description,
+      supportedLanguage: isSupportedLanguage(parsed.frontmatter.name, parsed.frontmatter.description, parsed.body),
     });
     if (verdict !== 'included') {
       log(`${repo.repo}:${file.path} excluded: ${verdict}`);
