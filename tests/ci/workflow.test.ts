@@ -27,25 +27,34 @@ describe('.github/workflows/ci.yml', () => {
     expect(WORKFLOW).toContain('run: npm run validate');
   });
 
-  it('asks for read-only repository permissions', () => {
-    expect(WORKFLOW).toContain('permissions:');
-    expect(WORKFLOW).toContain('contents: read');
+  it('is read-only by default; only the report job may write, and only issues', () => {
+    const workflow = parse(WORKFLOW);
+    expect(workflow.permissions).toEqual({ contents: 'read' });
+    expect(workflow.jobs.report.permissions).toEqual({ issues: 'write' });
   });
 });
 
 describe('ci.yml fails loudly on master (spec §13)', () => {
-  const { jobs } = parse(WORKFLOW);
+  const { concurrency, jobs } = parse(WORKFLOW);
+  const step = jobs.report.steps[0];
 
-  it('gives up on a hung run long before the 6 h default', () => {
+  it('gives up on a hung run, and on a hung report, long before the 6 h default', () => {
     expect(jobs.test['timeout-minutes']).toBe(30);
+    expect(jobs.report['timeout-minutes']).toBe(5);
   });
 
-  it('reports failures and cancellations on master; the step drops cancellations that were superseded', () => {
-    expect(jobs.report.needs).toBe('test');
+  it('queues master runs instead of cancelling them, so a cancelled master run is a hang or a manual cancel', () => {
+    expect(concurrency['cancel-in-progress']).toBe("${{ github.event_name == 'pull_request' }}");
     expect(jobs.report.if).toBe(
       "${{ always() && github.ref_name == github.event.repository.default_branch && (needs.test.result == 'failure' || needs.test.result == 'cancelled') }}",
     );
-    expect(jobs.report.permissions).toEqual({ issues: 'write', actions: 'read' });
-    expect(jobs.report.steps[0].env.TEST_RESULT).toBe('${{ needs.test.result }}');
+  });
+
+  it('files through gh without a checkout, mentions the owner and never assigns', () => {
+    expect(step.env).toEqual({ GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}', GH_REPO: '${{ github.repository }}' });
+    expect(step.run).toMatch(/OPEN=\$\(gh issue list --state open[^\n]*\|\| true\)/);
+    expect(step.run).toMatch(/gh issue comment "\$OPEN" --body "@\$GITHUB_REPOSITORY_OWNER /);
+    expect(step.run).not.toContain('assignee');
+    expect(step.run).not.toContain('run list');
   });
 });

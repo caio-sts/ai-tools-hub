@@ -8,7 +8,8 @@ on:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  # Master runs queue, so a cancelled one there is a hang or a manual cancel, never a newer push.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -31,28 +32,19 @@ jobs:
         run: npm run validate
 
   report:
-    # Bot-dispatched runs email nobody. A timeout and a superseded run both conclude cancelled.
+    # Bot-dispatched runs email nobody. A timeout concludes cancelled, not failure.
     needs: test
     if: ${{ always() && github.ref_name == github.event.repository.default_branch && (needs.test.result == 'failure' || needs.test.result == 'cancelled') }}
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     permissions:
       issues: write
-      actions: read
     steps:
       - name: Report the failure on the open P1 issue, or open one
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
-          TEST_RESULT: ${{ needs.test.result }}
         run: |
-          # cancel-in-progress cancels a run once a newer one starts; only a cancelled newest run hung.
-          if [ "$TEST_RESULT" = cancelled ]; then
-            NEWEST=$(gh run list --workflow ci.yml --branch "$GITHUB_REF_NAME" --limit 1 --json databaseId --jq '.[0].databaseId' || true)
-            if [ -n "$NEWEST" ] && [ "$NEWEST" != "$GITHUB_RUN_ID" ]; then
-              echo "Superseded by run $NEWEST, not an outage."
-              exit 0
-            fi
-          fi
           RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           OPEN=$(gh issue list --state open --search 'in:title "P1: CI failed on master"' --json number --jq '.[0].number // empty' || true)
           if [ -n "$OPEN" ]; then
@@ -60,5 +52,5 @@ jobs:
           else
             gh issue create \
               --title "P1: CI failed on master" \
-              --body "@$GITHUB_REPOSITORY_OWNER tests or taxonomy checks fail on master, often on data the crawl just committed. Run: $RUN_URL"
+              --body "@$GITHUB_REPOSITORY_OWNER tests or taxonomy checks failed, or the run timed out, on master (often on data the crawl just committed). Run: $RUN_URL"
           fi
