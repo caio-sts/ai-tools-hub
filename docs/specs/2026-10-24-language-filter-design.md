@@ -38,20 +38,28 @@ of those two languages, judged per skill from the full `SKILL.md`.
 ### D1 — Rule `unsupported-language`, per skill
 
 A new inclusion reason, checked after `weak-description` in `includeSkill`, on the prose of the
-`SKILL.md`: the frontmatter `name` and `description` plus the body, with fenced and inline code,
-URLs, HTML tags and Markdown markup removed.
+`SKILL.md`: the frontmatter `name` and `description` plus the body, with fenced code (backtick or
+tilde, closed only by a matching fence), inline code, URLs and autolinks, HTML tags and Markdown
+markup removed. The harvest logs which step excluded a skill.
 
-1. Fewer than **100** characters of prose → excluded (too little to judge; the user chose to cut
-   rather than keep when unsure).
-2. More than **half** of the description's letters are outside the Latin script → excluded. The
-   description is the catalog card; the user chose to drop a skill whose card they cannot read,
-   even over English instructions. A script count is reliable on short text, where `eld` is not.
-3. More than **30 %** of the prose's words are outside the Latin script → excluded, counting two
-   CJK characters as one word so dense scripts are not undercounted. This catches Chinese bodies
-   peppered with English terms. On the sample, every kept skill is at or under 8 %, every dropped
-   one at or over 40 %.
-4. Otherwise `eld` decides on the Latin-script text alone: `en` or `pt` → included; anything else
-   → excluded.
+1. `too-short` — fewer than **100** characters of prose (the user chose to cut rather than keep
+   when unsure).
+2. `description-script` — more than **half** of the description's letters are outside the Latin
+   script. The description is the catalog card; the user chose to drop a skill whose card they
+   cannot read, even over English instructions.
+3. `description-language` — a Latin-script description that `eld` reliably places in another
+   language. On master's 21,777 descriptions this flags 501 (453 German); 30 sampled were all
+   foreign.
+4. `body-script` — more than **30 %** of the prose's words are outside the Latin script, counting
+   two CJK characters as one word. On the sample, every kept skill is at or under 8 %, every
+   dropped one at or over 40 %.
+5. `body-language` — `eld` reads only the first 1,000 characters of its input, so the Latin-script
+   prose is judged in 1,000-character windows; under half of it in `en` or `pt` → excluded. An
+   English intro over a German body does not pass.
+
+`eld` only ever sees Latin-script text: it answers `ja` for English with one Japanese phrase.
+Sample result: 313 / 314 agree with the hand labels (the miss: Vietnamese written without
+diacritics, kept).
 
 Per skill, not per repo: a mixed repo keeps its English skills and loses the rest.
 
@@ -70,13 +78,19 @@ filter nobody can inspect is indistinguishable from taste).
 The rule runs only when a repo is read, and ~875 repos are skipped as unchanged on each run. A
 script, `scripts/backfill-language.ts`, applies it once to every stored row:
 
+- is a **dry run unless `--write`** is given, and refuses any other argument; the dry run reports
+  drops by rule and by repo;
 - fetches each row's `SKILL.md` at its pinned commit through GraphQL
-  (`object(expression: "<sha>:<path>") { ... on Blob { text } }`), 50 per query (~440 queries,
-  1 point each; measured ~4 s per query, so ~30 min);
-- drops the rows the rule excludes, re-runs `applyListing`, and rewrites `skills.json` and
-  `meta.skillCount`; `node scripts/build-rescue-index.ts` then rebuilds the rescue index, as in
-  the classification runbook;
-- a row whose blob cannot be fetched is kept and counted in the log, never silently dropped.
+  (`object(expression: "<sha>:<path>") { ... on Blob { text } }`), 25 per query with up to three
+  attempts (measured ~2.3 s per query: ~35 min for the catalog), judging batch by batch;
+- **aborts before writing** if any batch stays unreadable; only a blob GitHub no longer has is
+  kept and counted;
+- drops the excluded rows and rewrites the catalog through `rewriteCatalog` (shared with
+  `apply-assignments`: listing recomputed, `meta.skillCount` updated);
+- sets `pushedAt` to the epoch on every repo that lost a row, so the next crawls re-read it and a
+  sibling the dropped row had displaced (concept cap, `REPO_CAP`) can return;
+- `node scripts/build-rescue-index.ts` then rebuilds the rescue index, as in the classification
+  runbook.
 
 It runs locally on a fresh master outside the crawl window (06:37 UTC), and its output lands as
 its own data PR.
