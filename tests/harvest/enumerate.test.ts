@@ -175,10 +175,16 @@ describe('enumerateSkills', () => {
         ),
     });
 
-    const skills = await enumerateSkills(snapshot(), 'tok', { ...BASE, fetchImpl, log: (m) => logs.push(m) });
+    let pauses = 0;
+    const sleepImpl = async (): Promise<void> => {
+      pauses += 1;
+    };
+    const skills = await enumerateSkills(snapshot(), 'tok', { ...BASE, sleepImpl, fetchImpl, log: (m) => logs.push(m) });
 
     expect(skills).toEqual([]);
     expect(logs.join('\n')).toContain('excluded: unsupported-language');
+    // An excluded skill was still fetched: the raw pause applies, or a non-EN/PT monorepo bursts.
+    expect(pauses).toBe(1);
   });
 
   it('caps one entry per publisher per concept', async () => {

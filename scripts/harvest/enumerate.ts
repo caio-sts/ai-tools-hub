@@ -306,6 +306,8 @@ export async function enumerateSkills(
     const ref = commit?.sha ?? oid;
 
     const text = await fetchRawFile(repo.repo, ref, file.path, deps);
+    // Every fetch pauses, kept or not: excluded monorepos would otherwise hit raw back to back.
+    await wait(RAW_PAUSE_MS);
     if (text === null) {
       log(`${repo.repo}:${file.path} vanished between tree and raw fetch`);
       continue;
@@ -333,7 +335,6 @@ export async function enumerateSkills(
       body: parsed.body,
       updatedDays: commit?.updatedDays ?? UNKNOWN_UPDATED_DAYS,
     });
-    await wait(RAW_PAUSE_MS);
   }
 
   // Spec 6.3 trap 4: one 846-path monorepo must not ship the same concept a dozen times.

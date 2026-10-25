@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MIN_PROSE_CHARS, isSupportedLanguage, proseOf } from '../../scripts/harvest/language.ts';
+import { MIN_PROSE_CHARS, isSupportedLanguage, languageVerdict, proseOf } from '../../scripts/harvest/language.ts';
 
 const ENGLISH =
   'Scan a repository for leaked credentials before every release. The skill walks the git history, ' +
@@ -48,6 +48,37 @@ describe('isSupportedLanguage (spec 2026-10-24 D1)', () => {
     expect(proseOf('scan', SHORT, '').length).toBeLessThan(MIN_PROSE_CHARS);
     expect(isSupportedLanguage('scan', SHORT, '')).toBe(false);
   });
+
+  it('rejects a Latin-script description in another language over English instructions', () => {
+    expect(isSupportedLanguage('secret-scan', 'Prüft das Repository vor jeder Veröffentlichung auf geleakte Zugangsdaten.', ENGLISH)).toBe(false);
+    expect(isSupportedLanguage('secret-scan', 'Analiza el repositorio en busca de credenciales filtradas antes de cada versión.', ENGLISH)).toBe(false);
+  });
+
+  it('judges the whole body, not the first 1,000 characters eld reads', () => {
+    const intro = `${ENGLISH} `.repeat(4);
+    expect(isSupportedLanguage('secret-scan', SHORT, `${intro}\n\n${`${GERMAN} `.repeat(10)}`)).toBe(false);
+    expect(isSupportedLanguage('secret-scan', SHORT, `${`${ENGLISH} `.repeat(10)}\n\nBeispiel: ${GERMAN}`)).toBe(true);
+  });
+
+  it('keeps English whose Markdown used to erase it: nested fences, autolinks, bare angle brackets', () => {
+    const nested = `\`\`\`\`markdown\n\`\`\`bash\necho hi\n\`\`\`\n\`\`\`\`\n\n${ENGLISH}\n\n${ENGLISH}\n\nThen run \`scan --all\`.`;
+    expect(isSupportedLanguage('secret-scan', SHORT, nested)).toBe(true);
+    const autolink = `Docs live at <https://example.com/docs>.\n\n${ENGLISH}\n\n${ENGLISH}\n\n> **Note:** run it on a clean checkout.`;
+    expect(isSupportedLanguage('secret-scan', SHORT, autolink)).toBe(true);
+    const angles = `${ENGLISH}\n\n${ENGLISH}\n\nWhen done -> open a pull request.`;
+    expect(isSupportedLanguage('secret-scan', 'Splits any function longer than <50 lines into helpers.', angles)).toBe(true);
+  });
+});
+
+describe('languageVerdict', () => {
+  it('names the rule that excluded a skill', () => {
+    expect(languageVerdict('scan', SHORT, '')).toBe('too-short');
+    expect(languageVerdict('secret-scan', '漏洩した認証情報をリポジトリから探すスキル。', ENGLISH)).toBe('description-script');
+    expect(languageVerdict('secret-scan', 'Prüft das Repository vor jeder Veröffentlichung auf geleakte Zugangsdaten.', ENGLISH)).toBe('description-language');
+    expect(languageVerdict('secret-scan', SHORT, CHINESE_WITH_ENGLISH_TERMS)).toBe('body-script');
+    expect(languageVerdict('secret-scan', SHORT, `${GERMAN} ${GERMAN}`)).toBe('body-language');
+    expect(languageVerdict('secret-scan', SHORT, ENGLISH)).toBe('supported');
+  });
 });
 
 describe('proseOf', () => {
@@ -56,6 +87,10 @@ describe('proseOf', () => {
     expect(proseOf('secret-scan', 'Finds leaked keys.', body)).toBe(
       'secret scan Finds leaked keys. Usage Run first. See docs at',
     );
+  });
+
+  it('drops tilde fences too', () => {
+    expect(proseOf(undefined, undefined, 'Before.\n\n~~~bash\nexport AWS_SECRET_ACCESS_KEY=abc\n~~~\n\nAfter.')).toBe('Before. After.');
   });
 
   it('ignores a name or description that is not a string', () => {
