@@ -66,6 +66,27 @@ jobs:
       - name: Rebuild the rescue index from the refreshed catalog
         run: node scripts/build-rescue-index.ts
 
+      - name: Warn when skills.json nears GitHub's 100 MiB file limit
+        # GitHub refuses a push with a file over 100 MiB (2026-10-17). Warn at 80 % while there is
+        # room to act, before the commit so it fires even when the push is refused.
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          SIZE=$(stat -c %s data/skills.json)
+          if [ "$SIZE" -gt $((80 * 1024 * 1024)) ]; then
+            MIB=$((SIZE / 1024 / 1024))
+            RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo "::warning::data/skills.json is $MIB MiB; GitHub refuses files over 100 MiB."
+            OPEN=$(gh issue list --state open --search 'in:title "P2: skills.json near the 100 MiB file limit"' --json number --jq '.[0].number // empty' || true)
+            if [ -n "$OPEN" ]; then
+              gh issue comment "$OPEN" --body "$MIB MiB on $(date -u +%Y-%m-%d): $RUN_URL"
+            else
+              gh issue create \
+                --title "P2: skills.json near the 100 MiB file limit" \
+                --body "data/skills.json is $MIB MiB. Over 100 MiB GitHub refuses the push and the crawl stops (it did on 2026-10-17). Lower REPO_CAP or split the file first. Run: $RUN_URL"
+            fi
+          fi
+
       - name: Commit the refreshed catalog
         run: |
           git config user.name "github-actions[bot]"

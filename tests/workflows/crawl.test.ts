@@ -108,6 +108,29 @@ describe('crawl.yml publishes what it commits', () => {
   });
 });
 
+describe("crawl.yml warns before skills.json reaches GitHub's 100 MiB file limit (spec §13)", () => {
+  // 10-17: the push was refused at 100.42 MiB with no warning beforehand.
+  const warnIndex = () =>
+    stepIndex((step) => step.run?.includes('P2: skills.json near the 100 MiB file limit') ?? false, 'warns on size');
+
+  it('checks the size at 80 MiB and reports it on one open issue', () => {
+    const run = steps[warnIndex()]!.run!;
+    expect(run).toContain('stat -c %s data/skills.json');
+    expect(run).toContain('80 * 1024 * 1024');
+    expect(run).toMatch(/OPEN=\$\(gh issue list --state open[^\n]*\|\| true\)/);
+    expect(run).toContain('gh issue comment');
+    expect(run).toContain('gh issue create');
+    expect(steps[warnIndex()]!.env?.['GH_TOKEN']).toBe('${{ secrets.GITHUB_TOKEN }}');
+  });
+
+  it('warns before the commit, so it fires even when the push is refused, and never fails the job', () => {
+    const commit = stepIndex((step) => step.run?.includes('git push') ?? false, 'pushes');
+    expect(warnIndex()).toBeLessThan(commit);
+    expect(steps[warnIndex()]!.if).toBeUndefined();
+    expect(steps[warnIndex()]!.run).not.toMatch(/exit 1/);
+  });
+});
+
 describe('crawl.yml commits what a failing harvest wrote, then fails (budgeted-crawl spec §7)', () => {
   const harvestIndex = () => stepIndex((step) => step.id === 'harvest', 'has id: harvest');
 

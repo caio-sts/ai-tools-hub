@@ -18,6 +18,8 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    # Builds take minutes; GitHub's 6 h default hid a hang for two days (2026-10-11).
+    timeout-minutes: 30
     steps:
       - name: Checkout
         uses: actions/checkout@v5
@@ -41,6 +43,7 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -48,3 +51,27 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v5.0.0
+
+  report:
+    # A broken deploy freezes the site with no signal (2026-10-10..10-24); fail as loudly as the crawl.
+    needs: [build, deploy]
+    # A timeout cancels the job: always() plus the results catches it where failure() would not.
+    if: ${{ always() && (needs.build.result != 'success' || needs.deploy.result != 'success') }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Report the failure on the open P1 issue, or open one
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          OPEN=$(gh issue list --state open --search 'in:title "P1: deploy failed"' --json number --jq '.[0].number // empty' || true)
+          if [ -n "$OPEN" ]; then
+            gh issue comment "$OPEN" --body "Failed again on $(date -u +%Y-%m-%d): $RUN_URL"
+          else
+            gh issue create \
+              --title "P1: deploy failed" \
+              --body "The Pages deploy failed, so the live site is frozen at its last good build. Run: $RUN_URL"
+          fi
