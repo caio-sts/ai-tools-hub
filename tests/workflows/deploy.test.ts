@@ -104,7 +104,6 @@ describe('deploy.yml fails loudly (spec §13)', () => {
   it('reports a failed, timed-out or skipped deploy on one open issue', () => {
     const report = workflow.jobs.report;
     expect(report.needs).toEqual(['build', 'deploy']);
-    // A timeout cancels the job; always() plus the results catches it where failure() would not.
     expect(report.if).toBe("${{ always() && (needs.build.result != 'success' || needs.deploy.result != 'success') }}");
     expect(report.permissions).toEqual({ issues: 'write' });
     const step = (report.steps ?? [])[0]!;

@@ -110,24 +110,23 @@ describe('crawl.yml publishes what it commits', () => {
 
 describe("crawl.yml warns before skills.json reaches GitHub's 100 MiB file limit (spec §13)", () => {
   // 10-17: the push was refused at 100.42 MiB with no warning beforehand.
-  const warnIndex = () =>
-    stepIndex((step) => step.run?.includes('P2: skills.json near the 100 MiB file limit') ?? false, 'warns on size');
+  const warn = stepIndex((step) => step.run?.includes('P2: skills.json near the 100 MiB file limit') ?? false, 'warns on size');
+  const step = steps[warn]!;
 
   it('checks the size at 80 MiB and reports it on one open issue', () => {
-    const run = steps[warnIndex()]!.run!;
-    expect(run).toContain('stat -c %s data/skills.json');
-    expect(run).toContain('80 * 1024 * 1024');
-    expect(run).toMatch(/OPEN=\$\(gh issue list --state open[^\n]*\|\| true\)/);
-    expect(run).toContain('gh issue comment');
-    expect(run).toContain('gh issue create');
-    expect(steps[warnIndex()]!.env?.['GH_TOKEN']).toBe('${{ secrets.GITHUB_TOKEN }}');
+    expect(step.run).toContain('stat -c %s data/skills.json');
+    expect(step.run).toContain('80 * 1024 * 1024');
+    expect(step.run).toMatch(/OPEN=\$\(gh issue list --state open[^\n]*\|\| true\)/);
+    expect(step.run).toContain('gh issue comment');
+    expect(step.run).toContain('gh issue create');
+    expect(step.env?.['GH_TOKEN']).toBe('${{ secrets.GITHUB_TOKEN }}');
   });
 
   it('warns before the commit, so it fires even when the push is refused, and never fails the job', () => {
-    const commit = stepIndex((step) => step.run?.includes('git push') ?? false, 'pushes');
-    expect(warnIndex()).toBeLessThan(commit);
-    expect(steps[warnIndex()]!.if).toBeUndefined();
-    expect(steps[warnIndex()]!.run).not.toMatch(/exit 1/);
+    const commit = stepIndex((candidate) => candidate.run?.includes('git push') ?? false, 'pushes');
+    expect(warn).toBeLessThan(commit);
+    expect(step.if).toBeUndefined();
+    expect(step.run).not.toMatch(/exit 1/);
   });
 });
 
