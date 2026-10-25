@@ -26,7 +26,10 @@ export function compareForRank(a: Skill, b: Skill): number {
   return b.score - a.score || a.updatedDays - b.updatedDays || a.name.localeCompare(b.name);
 }
 
-/** Each repo's top `cap` rows by catalog order; `exempt` rows are always kept and never counted. */
+/**
+ * Each repo's top `cap` rows by catalog order; `exempt` rows are always kept and never counted.
+ * Returns the input objects themselves, in input order (readRepo keys on them).
+ */
 export function capPerRepo(skills: Skill[], cap: number, exempt: (skill: Skill) => boolean): Skill[] {
   const byRepo = new Map<string, Skill[]>();
   for (const skill of skills) {

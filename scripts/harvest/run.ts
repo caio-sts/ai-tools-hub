@@ -414,6 +414,21 @@ interface ReadContext {
   indexedAt: string;
 }
 
+/** Stand-in while a repo is capped; replaced before a row is returned. */
+const UNREAD_SAFETY: Safety = {
+  executesCode: false,
+  scriptCount: 0,
+  languages: [],
+  network: false,
+  readsEnv: false,
+  declaredTools: null,
+};
+
+/** Rows REPO_CAP never cuts: classified ones, and security-relevant ones so they reach classification. */
+function exemptFromRepoCap(assignments: Map<string, Assignment>): (skill: Skill) => boolean {
+  return (skill) => skill.securityRelevant || assignments.has(identityKey(skill.repo, skill.path));
+}
+
 /** One repo at its pinned oid. A throw means nothing of this repo is kept. */
 async function readRepo(collection: Collection, oid: string | null, context: ReadContext): Promise<Skill[]> {
   if (oid === null) return [];
@@ -424,27 +439,34 @@ async function readRepo(collection: Collection, oid: string | null, context: Rea
   const raws = await deps.enumerateSkills({ repo: { repo: collection.repo, stars: collection.stars }, oid, tree }, token);
   const treePaths = tree.filter((file) => file.type === 'blob').map((file) => file.path);
 
+  const build = (raw: RawSkill, safety: Safety, siblingLicenseText: string | null): Skill => {
+    const key = identityKey(raw.repo, raw.path);
+    return buildSkill({
+      raw,
+      collection,
+      safety,
+      treePaths,
+      siblingLicenseText,
+      assignment: context.assignments.get(key),
+      previousTranslation: context.translations.get(key),
+      indexedAt: context.indexedAt,
+    });
+  };
+
+  // Cap before fetching: the score reads neither the scripts (up to 25 requests a skill) nor the
+  // sibling LICENSE text (only whether the file exists, which the tree already says).
+  const drafts = new Map<Skill, RawSkill>();
+  for (const raw of raws) drafts.set(build(raw, UNREAD_SAFETY, null), raw);
+
   const built: Skill[] = [];
-  for (const raw of raws) {
+  for (const draft of capPerRepo([...drafts.keys()], REPO_CAP, exemptFromRepoCap(context.assignments))) {
+    const raw = drafts.get(draft)!;
     const scriptFiles = scriptFilesFor(tree, raw.path);
     const contents = await deps.fetchScriptContents(collection.repo, oid, scriptFiles);
-    const safety = deps.deriveSafety(scriptFiles, contents, raw.frontmatter);
-
-    const licensePath = siblingLicensePath(raw.path, treePaths);
+    // A frontmatter license wins over the sibling file, which is then never read.
+    const licensePath = draft.licenseSource === 'sibling' ? siblingLicensePath(raw.path, treePaths) : null;
     const siblingLicenseText = licensePath === null ? null : await deps.fetchRawFile(collection.repo, oid, licensePath);
-
-    built.push(
-      buildSkill({
-        raw,
-        collection,
-        safety,
-        treePaths,
-        siblingLicenseText,
-        assignment: context.assignments.get(identityKey(raw.repo, raw.path)),
-        previousTranslation: context.translations.get(identityKey(raw.repo, raw.path)),
-        indexedAt: context.indexedAt,
-      }),
-    );
+    built.push(build(raw, deps.deriveSafety(scriptFiles, contents, raw.frontmatter), siblingLicenseText));
   }
 
   // Sizes the margin between the time budget and timeout-minutes (budgeted-crawl spec §3.4).
@@ -517,13 +539,9 @@ export async function runHarvest(
 
   skills.sort(compareForRank);
 
-  // Spec 2026-10-24 D1: past REPO_CAP an unclassified row is not stored at all. Security-relevant
-  // rows are exempt so they can still reach classification.
-  const stored = capPerRepo(
-    skills,
-    REPO_CAP,
-    (skill) => skill.securityRelevant || assignments.has(identityKey(skill.repo, skill.path)),
-  );
+  // Spec 2026-10-24 D1. readRepo already capped what it read, so in effect this caps the rows carried
+  // forward.
+  const stored = capPerRepo(skills, REPO_CAP, exemptFromRepoCap(assignments));
 
   // Survival (spec §5.1). The subdomain cap decides what is LISTED among stored rows: every
   // stored row stays in skills.json and keeps being re-scored. `previous` is what the last

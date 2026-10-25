@@ -295,6 +295,61 @@ describe('runHarvest', () => {
     expect(fresh?.tags).toEqual(['trivy']);
   });
 
+  it('fetches scripts and sibling licenses only for the skills a read repo keeps under REPO_CAP', async () => {
+    const dir = await seededDataDir();
+    const s = spy();
+    const SECURITY = REPO_CAP + 1;
+    const CLASSIFIED = REPO_CAP + 2;
+    await writeFile(
+      join(dir, 'assignments.json'),
+      JSON.stringify({
+        [`fresh/repo@${PATH_SHA}:skills/s${CLASSIFIED}/SKILL.md`]: { primary: 'security/containers-kubernetes', also: [], tags: [] },
+      }),
+      'utf8',
+    );
+    // Past the cap only the two exempt rows survive, and they still need their scripts and license.
+    const raws: RawSkill[] = Array.from({ length: REPO_CAP + 3 }, (_unused, i) => ({
+      ...raw,
+      path: `skills/s${i}/SKILL.md`,
+      frontmatter: {
+        name: `s${i}`,
+        description:
+          i === SECURITY
+            ? 'Scan container images and report vulnerabilities by severity.'
+            : `Formats the release notes of project ${i} consistently.`,
+        // A declared license wins, so this skill's sibling LICENSE is never read.
+        ...(i === 0 ? { license: 'MIT' } : {}),
+      },
+      updatedDays: i,
+    }));
+
+    const { skills } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['fresh/repo'],
+      deps: deps(s, {
+        rawsFor: (repo) => (repo === 'fresh/repo' ? raws : []),
+        // Every skill has a sibling LICENSE, so each kept one costs one license fetch.
+        fetchTree: async () =>
+          raws.flatMap((r) => [
+            { path: r.path, mode: '100644', sha: BLOB_SHA, type: 'blob' as const },
+            { path: r.path.replace('SKILL.md', 'LICENSE'), mode: '100644', sha: 'lic', type: 'blob' as const },
+          ]),
+      }),
+    });
+
+    const fresh = skills.filter((k) => k.repo === 'fresh/repo');
+    const paths = fresh.map((k) => k.path);
+    expect(paths).toHaveLength(REPO_CAP + 2);
+    expect(paths).not.toContain(`skills/s${REPO_CAP}/SKILL.md`);
+    expect(paths).toContain(`skills/s${SECURITY}/SKILL.md`);
+    expect(paths).toContain(`skills/s${CLASSIFIED}/SKILL.md`);
+    expect(s.contentRefs).toHaveLength(REPO_CAP + 2);
+    expect(s.licenseRefs).toHaveLength(REPO_CAP + 1);
+    // Every returned row carries its derived safety, never the stand-in used while capping.
+    expect(fresh.every((k) => k.safety.executesCode)).toBe(true);
+  });
+
   it('stores at most REPO_CAP unclassified rows per repo and never cuts a classified one (spec 2026-10-24 D1)', async () => {
     const dir = await seededDataDir();
     const rows = cachedRows(REPO_CAP + 2);

@@ -148,6 +148,25 @@ describe('buildSkill', () => {
     expect(skill.licenseSource).toBe('sibling');
   });
 
+  it('scores the same without scripts or LICENSE text, so readRepo can cap before fetching them', () => {
+    const input = {
+      raw,
+      collection: { ...collection, license: null },
+      treePaths: [...bareTree, 'skills/semgrep-triage/LICENSE'],
+      assignment: undefined,
+      indexedAt: '2026-08-29T00:00:00.000Z',
+    };
+    const draft = buildSkill({ ...input, safety: { ...safety, executesCode: false, scriptCount: 0 }, siblingLicenseText: null });
+    const final = buildSkill({
+      ...input,
+      safety: { ...safety, executesCode: true, scriptCount: 4, network: true },
+      siblingLicenseText: 'MIT License\n\nPermission is hereby granted, free of charge',
+    });
+
+    expect(final.license).not.toBe(draft.license);
+    expect(final.breakdown).toEqual(draft.breakdown);
+  });
+
   it('honours the frontmatter compatibility field in RUNTIME_ORDER, never alphabetically', () => {
     const skill = buildSkill({
       raw: { ...raw, frontmatter: { ...raw.frontmatter, compatibility: ['cursor', 'openclaw'] } },
