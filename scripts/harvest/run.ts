@@ -463,7 +463,8 @@ async function readRepo(collection: Collection, oid: string | null, context: Rea
     const raw = drafts.get(draft)!;
     const scriptFiles = scriptFilesFor(tree, raw.path);
     const contents = await deps.fetchScriptContents(collection.repo, oid, scriptFiles);
-    const licensePath = siblingLicensePath(raw.path, treePaths);
+    // A frontmatter license wins over the sibling file, which is then never read.
+    const licensePath = draft.licenseSource === 'sibling' ? siblingLicensePath(raw.path, treePaths) : null;
     const siblingLicenseText = licensePath === null ? null : await deps.fetchRawFile(collection.repo, oid, licensePath);
     built.push(build(raw, deps.deriveSafety(scriptFiles, contents, raw.frontmatter), siblingLicenseText));
   }
@@ -538,7 +539,8 @@ export async function runHarvest(
 
   skills.sort(compareForRank);
 
-  // Spec 2026-10-24 D1. readRepo caps what it read; this caps the rows carried forward.
+  // Spec 2026-10-24 D1. readRepo already capped what it read, so in effect this caps the rows carried
+  // forward.
   const stored = capPerRepo(skills, REPO_CAP, exemptFromRepoCap(assignments));
 
   // Survival (spec §5.1). The subdomain cap decides what is LISTED among stored rows: every

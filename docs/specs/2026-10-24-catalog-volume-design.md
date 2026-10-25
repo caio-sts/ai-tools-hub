@@ -39,6 +39,12 @@ kept and do not count toward the 50:
 
 Rows past the cap are not written to `skills.json`.
 
+Amended 2026-10-25: a repo the crawl reads is capped inside `readRepo`, **before** its rows' scripts
+(up to 25 raw requests each) and sibling LICENSE text are fetched — the score reads neither, only
+whether a license resolves, which the tree alone decides. Only kept rows pay for those fetches; the
+pool-wide pass then caps the rows carried forward. The last crawl before this had 5,840 candidates
+past the cap in 15 repos. A test pins that the score is the same without scripts or LICENSE text.
+
 Simulated on master's data (10-21): 73,940 → 20,304 rows, ~97 MiB → 27.3 MiB.
 
 ### D2 — Only listed entries get a page
