@@ -124,7 +124,6 @@ jobs:
         run: |
           RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           OPEN=$(gh issue list --state open --search 'in:title "P1: crawl failed"' --json number --jq '.[0].number // empty' || true)
-          # Assigned, not just opened: a new issue notifies only watchers, an assignment always notifies.
           if [ -n "$OPEN" ]; then
             gh issue edit "$OPEN" --add-assignee "$GITHUB_REPOSITORY_OWNER"
             gh issue comment "$OPEN" --body "Failed again on $(date -u +%Y-%m-%d): $RUN_URL"

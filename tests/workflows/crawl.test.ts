@@ -111,7 +111,7 @@ describe('crawl.yml publishes what it commits', () => {
 
 describe('crawl.yml alarms reach the owner (spec §13)', () => {
   // A new issue only notifies watchers, and the owner does not watch the repo; assignment always notifies.
-  it('assigns every alarm issue to the repository owner, on open and on each recurrence', () => {
+  it('assigns every alarm issue to the repository owner', () => {
     const alarms = steps.filter((step) => step.run?.includes('gh issue create') ?? false);
     expect(alarms.length).toBe(2);
     for (const step of alarms) {
