@@ -115,5 +115,8 @@ describe('deploy.yml fails loudly (spec §13)', () => {
     expect(step.run).toMatch(/OPEN=\$\(gh issue list --state open[^\n]*\|\| true\)/);
     expect(step.run).toContain('gh issue comment');
     expect(step.run).toContain('gh issue create');
+    expect(step.run).toMatch(/gh issue comment "\$OPEN" --body "@\$GITHUB_REPOSITORY_OWNER /);
+    expect(step.run).toMatch(/--body "@\$GITHUB_REPOSITORY_OWNER [^"]*Run: \$RUN_URL"/);
+    expect(step.run).not.toContain('assignee');
   });
 });
