@@ -4910,11 +4910,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "research-knowledge/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "dicom",
+      "medical-imaging",
+      "datasets"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 84,
     "breakdown": {
       "adoption": 22,
@@ -5294,11 +5298,18 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/threat-modeling"
+    ],
+    "tags": [
+      "audit-quality",
+      "sast",
+      "sca",
+      "evidence"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 84,
     "breakdown": {
       "adoption": 22,
@@ -11308,11 +11319,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "ai-agents",
+      "memory-poisoning",
+      "tool-hijacking"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -11348,11 +11365,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "bug-bounty",
+      "idor",
+      "ssrf",
+      "xss"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -11388,11 +11410,19 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "cloud-pentest",
+      "aws",
+      "gcp",
+      "azure",
+      "iam"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -11468,11 +11498,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "prompt-injection",
+      "jailbreak",
+      "red-team"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -11508,11 +11544,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "mcp",
+      "tool-poisoning"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -11588,11 +11629,18 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "web-vulnerabilities",
+      "idor",
+      "xss",
+      "ssrf"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -13917,11 +13965,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "security/containers-kubernetes"
+    ],
+    "tags": [
+      "kubernetes",
+      "rbac",
+      "probes"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -14118,11 +14172,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "perl",
+      "taint-mode",
+      "input-validation"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -15093,11 +15151,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "agent-ops",
+      "observability"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -15213,11 +15274,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/data-protection",
+    "also": [
+      "security/compliance-grc"
+    ],
+    "tags": [
+      "hipaa",
+      "phi",
+      "pii"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -15538,11 +15605,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "cli"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -16762,11 +16831,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "testing",
+      "coverage"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 22,
@@ -19136,11 +19208,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "sast",
+      "pentest",
+      "mcp"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 15,
@@ -20394,11 +20472,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "api-keys",
+      "cli"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 16,
@@ -20636,11 +20717,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "azure",
+      "azqr",
+      "key-vault"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 16,
@@ -20876,11 +20963,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "security/iac-config"
+    ],
+    "tags": [
+      "azure",
+      "bicep",
+      "terraform"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 16,
@@ -24653,11 +24746,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "data-analytics/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "aurora",
+      "sql"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 14,
@@ -28728,11 +28824,13 @@
         "Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "data-analytics/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "mlops"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 25,
@@ -28768,11 +28866,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "auth",
+      "input-validation",
+      "secrets"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 25,
@@ -28848,11 +28950,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "twitter",
+      "oauth",
+      "api"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 25,
@@ -30172,11 +30278,13 @@
       "readsEnv": true,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "productivity/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "integrations"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 13,
@@ -31615,11 +31723,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -31656,11 +31766,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "kubernetes",
+      "edge"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -31697,11 +31811,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "ray"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -31820,11 +31937,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "networking"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -31943,11 +32063,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/supply-chain",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "code-signing"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -32025,11 +32148,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "batch"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -32394,11 +32520,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "data-analytics/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "kusto"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -32476,11 +32605,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "data-analytics/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "postgresql"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -32681,11 +32813,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -32804,11 +32938,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "firmware",
+      "iot"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -33050,11 +33188,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "aks"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -33255,11 +33396,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "research-knowledge/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "science"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -33501,11 +33645,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "ci-cd"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -33583,11 +33730,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "azure",
+      "policy-as-code"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -33788,11 +33940,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "git"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -33829,11 +33984,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "resiliency"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -33993,11 +34151,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "disaster-recovery"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 14,
@@ -34900,11 +35061,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "writing-docs/general"
+    ],
+    "tags": [
+      "postmortem",
+      "incident"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 22,
@@ -35022,11 +35188,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "sast",
+      "semgrep"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 22,
@@ -35064,11 +35235,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/secrets-credentials",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "vault",
+      "aws-secrets-manager"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 22,
@@ -38371,11 +38547,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "hardening",
+      "input-validation"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 24,
@@ -38412,11 +38591,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/secrets-credentials",
     "also": [],
-    "tags": [],
+    "tags": [
+      "1password",
+      "op-cli"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 25,
@@ -38910,11 +39092,16 @@
       "readsEnv": true,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/identity-access",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "oauth",
+      "mcp"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 25,
@@ -39447,11 +39634,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "code-review",
+      "quality-gates"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 25,
@@ -42308,11 +42500,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "design-creative/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "figma"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 12,
@@ -46415,11 +46609,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/ai-agent-security",
     "also": [],
-    "tags": [],
+    "tags": [
+      "cedar",
+      "policy",
+      "signed-receipts"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 22,
@@ -47268,11 +47466,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/detection-forensics"
+    ],
+    "tags": [
+      "audit-trail",
+      "signatures"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 22,
@@ -47468,11 +47671,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "vertical-domain/general"
+    ],
+    "tags": [
+      "prompt-injection",
+      "legal"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 14,
@@ -48755,11 +48963,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "vulnerability-research",
+      "poc"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 23,
@@ -51579,11 +51792,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "business-product/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "dynamics-365"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 22,
@@ -52842,11 +53057,15 @@
         "Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "code-review"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -53042,11 +53261,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "docker",
+      "ci-cd",
+      "terraform"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -53572,11 +53795,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "java",
+      "spring-boot"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -53692,11 +53918,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "security/containers-kubernetes"
+    ],
+    "tags": [
+      "kubernetes"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -54841,11 +55071,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/identity-access"
+    ],
+    "tags": [
+      "owasp",
+      "auth"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -54885,11 +55120,14 @@
         "Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "security-audit",
+      "remediation"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -54925,11 +55163,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "shopify"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -55129,11 +55369,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "sre",
+      "slo"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -55249,11 +55492,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "testing"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -55289,11 +55534,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "research-knowledge/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "critical-thinking"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -55544,11 +55791,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "wordpress"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -60352,11 +60601,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/secrets-credentials",
+    "also": [
+      "devops-infra/general"
+    ],
+    "tags": [
+      "azure",
+      "key-vault"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 14,
@@ -60557,11 +60811,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 14,
@@ -60639,11 +60895,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/cloud-permissions",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 14,
@@ -62777,11 +63035,17 @@
         "Read"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/supply-chain"
+    ],
+    "tags": [
+      "skill-vetting",
+      "mcp",
+      "prompt-injection"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 16,
@@ -64054,11 +64318,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/secrets-credentials",
     "also": [],
-    "tags": [],
+    "tags": [
+      "dotenv"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 17,
@@ -65546,11 +65812,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "sql",
+      "code-review"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 22,
@@ -65706,11 +65977,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "azd"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 22,
@@ -65828,11 +66102,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/ai-agent-security",
     "also": [],
-    "tags": [],
+    "tags": [
+      "human-in-the-loop",
+      "approvals"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 22,
@@ -68495,11 +68772,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "nestjs"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 12,
@@ -68536,11 +68815,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "nestjs",
+      "git"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 12,
@@ -69079,11 +69361,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/supply-chain",
+    "also": [
+      "security/ai-agent-security"
+    ],
+    "tags": [
+      "plugin-vetting",
+      "dependencies"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 12,
@@ -69120,11 +69407,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/identity-access"
+    ],
+    "tags": [
+      "credentials",
+      "authorization"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 12,
@@ -70356,11 +70648,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "storage"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 14,
@@ -70438,11 +70733,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "sustainability"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 14,
@@ -70479,11 +70777,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "cloud-shell"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 14,
@@ -70643,11 +70944,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "dev-box"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 14,
@@ -70766,11 +71070,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "security/general"
+    ],
+    "tags": [
+      "azure",
+      "firewall"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 14,
@@ -70807,11 +71116,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "cdn"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 14,
@@ -72703,11 +73015,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "telegram"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 15,
@@ -73857,11 +74171,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "gpu"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 25,
@@ -74098,11 +74414,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "mcp",
+      "dotnet"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 22,
@@ -74302,11 +74623,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "agent-authoring/general",
+    "also": [
+      "security/supply-chain"
+    ],
+    "tags": [
+      "skills",
+      "github"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 23,
@@ -77859,11 +78185,13 @@
         "Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "debugging"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 19,
@@ -80399,11 +80727,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "mcp"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 11,
@@ -80566,11 +80896,17 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/identity-access",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "active-directory",
+      "adcs",
+      "pki"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -80816,11 +81152,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/threat-modeling",
+    "also": [
+      "security/ai-agent-security"
+    ],
+    "tags": [
+      "ai",
+      "threat-model"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -81559,11 +81900,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "aws",
+      "serverless",
+      "cdk"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -81766,11 +82111,14 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "crash-triage",
+      "sanitizers"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -82429,11 +82777,18 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/cloud-permissions",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "aws",
+      "azure",
+      "gcp",
+      "attack-paths"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -82722,11 +83077,13 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/secrets-credentials",
     "also": [],
-    "tags": [],
+    "tags": [
+      "leaked-credentials"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -82968,11 +83325,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "data-poisoning",
+      "ml"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -84058,11 +84420,16 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "writing-docs/general"
+    ],
+    "tags": [
+      "reporting",
+      "severity"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -84101,11 +84468,15 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "firmware",
+      "embedded",
+      "hardware"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -84612,11 +84983,13 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/detection-forensics",
     "also": [],
-    "tags": [],
+    "tags": [
+      "memory-forensics"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -84696,11 +85069,17 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "android",
+      "ios",
+      "mobile"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -84737,11 +85116,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/supply-chain"
+    ],
+    "tags": [
+      "model-registry",
+      "ml"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -84868,11 +85252,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "model-serving",
+      "vector-store"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -85035,11 +85424,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/identity-access",
     "also": [],
-    "tags": [],
+    "tags": [
+      "oauth",
+      "pkce"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -85208,11 +85600,14 @@
         "Read Grep Glob Bash"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "osint",
+      "recon"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -85251,11 +85646,16 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/secrets-credentials"
+    ],
+    "tags": [
+      "password-audit",
+      "hashes"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -85891,11 +86291,15 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/detection-forensics",
     "also": [],
-    "tags": [],
+    "tags": [
+      "rootkit",
+      "ebpf",
+      "incident-response"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -85973,11 +86377,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "devsecops",
+      "ssdlc"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -86143,11 +86552,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "data-analytics/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "snowflake"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -86186,11 +86597,14 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "phishing-simulation",
+      "social-engineering"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -86270,11 +86684,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "solidity",
+      "smart-contracts"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -86565,11 +86984,14 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "web",
+      "coverage"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -86608,11 +87030,16 @@
         "Read Grep Glob"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "wifi",
+      "bluetooth",
+      "rfid",
+      "sdr"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -87859,11 +88286,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "bug-bounty",
+      "waf-bypass"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -88410,11 +88840,16 @@
         "Glob"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/secrets-credentials"
+    ],
+    "tags": [
+      "env-vars",
+      "credentials"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 12,
@@ -89681,7 +90116,10 @@
     },
     "primary": "vertical-domain/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "patents",
+      "legal"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 72,
@@ -90130,11 +90568,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "research-knowledge/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "critical-thinking"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 13,
@@ -91240,11 +91680,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "research-knowledge/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "critical-thinking"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 13,
@@ -91407,11 +91849,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "research-knowledge/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "evaluation",
+      "metrics"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 13,
@@ -94377,11 +94822,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/supply-chain",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "dependencies",
+      "advisories"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 14,
@@ -94657,11 +95107,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "business-product/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "spf",
+      "dkim",
+      "dmarc",
+      "email"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 14,
@@ -95097,11 +95552,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "security/detection-forensics"
+    ],
+    "tags": [
+      "incident-management",
+      "on-call"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 14,
@@ -95897,11 +96357,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/code-application",
     "also": [],
-    "tags": [],
+    "tags": [
+      "tls",
+      "security-headers"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 14,
@@ -97685,11 +98148,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "security/iac-config"
+    ],
+    "tags": [
+      "terraform"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 15,
@@ -99902,11 +100369,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "ssh",
+      "remote"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 16,
@@ -101283,11 +101753,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "dependencies",
+      "installer"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 16,
@@ -102097,11 +102570,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "research-knowledge/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "adversarial-review"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 17,
@@ -102425,11 +102900,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/threat-modeling",
     "also": [],
-    "tags": [],
+    "tags": [
+      "attack-paths",
+      "trust-boundaries"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 17,
@@ -104024,11 +104502,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/ai-agent-security",
     "also": [],
-    "tags": [],
+    "tags": [
+      "guardrails",
+      "risky-commands"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 17,
@@ -104106,11 +104587,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "devops-infra/general",
+    "also": [
+      "security/detection-forensics"
+    ],
+    "tags": [
+      "incident-command"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 17,
@@ -104188,11 +104673,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/secrets-credentials",
     "also": [],
-    "tags": [],
+    "tags": [
+      "credentials"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 17,
@@ -104229,11 +104716,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/detection-forensics",
+    "also": [
+      "security/supply-chain"
+    ],
+    "tags": [
+      "cve",
+      "secret-leak",
+      "response"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 17,
@@ -104270,11 +104763,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/ai-agent-security",
     "also": [],
-    "tags": [],
+    "tags": [
+      "agent-safety"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 17,
@@ -104352,11 +104847,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "ai-agent-eng/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "tooling"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 17,
@@ -104757,11 +105254,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/secrets-credentials",
     "also": [],
-    "tags": [],
+    "tags": [
+      "hashicorp-vault"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 18,
@@ -106981,11 +107480,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/secrets-credentials",
     "also": [],
-    "tags": [],
+    "tags": [
+      "dotenv",
+      "railway",
+      "rotation"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 12,
@@ -109400,11 +109903,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/identity-access",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "azure",
+      "rbac"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 14,
@@ -109441,11 +109949,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "arm"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 14,
@@ -109482,11 +109993,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "devops-infra/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "azure",
+      "vm"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 14,
@@ -112013,11 +112527,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "design-creative/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "ux"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 16,
@@ -113052,7 +113568,10 @@
     },
     "primary": "vertical-domain/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "crypto",
+      "wallet"
+    ],
     "securityRelevant": true,
     "listed": false,
     "score": 71,
@@ -114198,11 +114717,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/threat-modeling",
     "also": [],
-    "tags": [],
+    "tags": [
+      "microsoft-threat-modeling-tool"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 71,
     "breakdown": {
       "adoption": 22,
@@ -115687,11 +116208,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fastapi",
+      "rag"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 17,
@@ -118379,11 +118903,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "code-review",
+      "owasp"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 12,
@@ -119039,11 +119568,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "defi",
+      "smart-contracts"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 20,
@@ -119123,11 +119657,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contract-audit",
+      "echidna"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 20,
@@ -119165,11 +119702,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "foundry",
+      "poc"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 20,
@@ -119207,11 +119747,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/code-application",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "slither",
+      "aderyn",
+      "solidity"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 20,
@@ -119249,11 +119795,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "smart-contract-security"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 20,
@@ -119291,11 +119839,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "immunefi",
+      "triage"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 20,
@@ -123196,11 +123747,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/general",
+    "also": [
+      "devops-infra/general"
+    ],
+    "tags": [
+      "dotnet",
+      "analyzers"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 13,
@@ -124989,11 +125545,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "hipaa",
+      "phi"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 25,
@@ -125029,11 +125590,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/ai-agent-security",
     "also": [],
-    "tags": [],
+    "tags": [
+      "trading",
+      "wallets",
+      "prompt-injection"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 25,
@@ -125150,11 +125715,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "bug-bounty"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 25,
@@ -125311,11 +125878,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "payloads",
+      "wordlists"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 18,
@@ -125351,11 +125921,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "security/offensive-testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "recon",
+      "subdomain-enumeration"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 18,
@@ -125679,11 +126252,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "mcp"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 22,
@@ -127189,11 +127766,13 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "productivity/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "meeting-notes"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 69,
     "breakdown": {
       "adoption": 23,

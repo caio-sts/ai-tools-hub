@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import { nodeName } from '../../src/lib/taxonomy.ts';
-import { allCss, cardOf, mainOf, occurrences, pageFor, text } from '../helpers/skill-card.ts';
+import { allCss, cardOf, mainOf, occurrences, pageFor, text, withoutAuthorText } from '../helpers/skill-card.ts';
 
 const SKILLS = loadSkills().filter((skill) => skill.listed);
 
@@ -17,7 +17,7 @@ describe('the category chip', () => {
   it('leaves the primary node named exactly once inside main', () => {
     for (const skill of SKILLS) {
       const label = nodeName(skill.primary, 'en');
-      expect(occurrences(text(mainOf(pageFor('en', skill))), label), skill.id).toBe(1);
+      expect(occurrences(text(withoutAuthorText(mainOf(pageFor('en', skill)))), label), skill.id).toBe(1);
     }
   });
 

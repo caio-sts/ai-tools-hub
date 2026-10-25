@@ -1041,5 +1041,1364 @@
       "scaffold",
       "skills"
     ]
+  },
+  "K-Dense-AI/scientific-agent-skills@a92663a0214b3b9fa1ba6b958284ffd919c00a0c:skills/imaging-data-commons/SKILL.md": {
+    "primary": "research-knowledge/general",
+    "also": [],
+    "tags": [
+      "dicom",
+      "medical-imaging",
+      "datasets"
+    ]
+  },
+  "github/awesome-copilot@c5a2d812f923f5db497628c90f8a310234458ad3:skills/audit-integrity/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/threat-modeling"
+    ],
+    "tags": [
+      "audit-quality",
+      "sast",
+      "sca",
+      "evidence"
+    ]
+  },
+  "awarexone/Agentic-Bug-Hunter@647a9eab234a2c6ed58b32c32cfabc2c2e967f71:skills/agentic-app-audit/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "ai-agents",
+      "memory-poisoning",
+      "tool-hijacking"
+    ]
+  },
+  "awarexone/Agentic-Bug-Hunter@647a9eab234a2c6ed58b32c32cfabc2c2e967f71:skills/bug-bounty/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "bug-bounty",
+      "idor",
+      "ssrf",
+      "xss"
+    ]
+  },
+  "awarexone/Agentic-Bug-Hunter@647a9eab234a2c6ed58b32c32cfabc2c2e967f71:skills/cloud-pentest/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "cloud-pentest",
+      "aws",
+      "gcp",
+      "azure",
+      "iam"
+    ]
+  },
+  "awarexone/Agentic-Bug-Hunter@647a9eab234a2c6ed58b32c32cfabc2c2e967f71:skills/llm-redteam/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "prompt-injection",
+      "jailbreak",
+      "red-team"
+    ]
+  },
+  "awarexone/Agentic-Bug-Hunter@647a9eab234a2c6ed58b32c32cfabc2c2e967f71:skills/mcp-server-audit/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "mcp",
+      "tool-poisoning"
+    ]
+  },
+  "awarexone/Agentic-Bug-Hunter@647a9eab234a2c6ed58b32c32cfabc2c2e967f71:skills/web2-vuln-classes/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "web-vulnerabilities",
+      "idor",
+      "xss",
+      "ssrf"
+    ]
+  },
+  "affaan-m/ECC@c70874fae9eb0e5ad0365beb7e2955899fd1d30f:pi/core/skills/kubernetes-patterns/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "security/containers-kubernetes"
+    ],
+    "tags": [
+      "kubernetes",
+      "rbac",
+      "probes"
+    ]
+  },
+  "affaan-m/ECC@c70874fae9eb0e5ad0365beb7e2955899fd1d30f:pi/core/skills/perl-security/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "perl",
+      "taint-mode",
+      "input-validation"
+    ]
+  },
+  "affaan-m/ECC@0765f7a2ca2bd5df214d3aa7ba7e7ac19db8b189:skills/enterprise-agent-ops/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "agent-ops",
+      "observability"
+    ]
+  },
+  "affaan-m/ECC@0765f7a2ca2bd5df214d3aa7ba7e7ac19db8b189:skills/healthcare-phi-compliance/SKILL.md": {
+    "primary": "security/data-protection",
+    "also": [
+      "security/compliance-grc"
+    ],
+    "tags": [
+      "hipaa",
+      "phi",
+      "pii"
+    ]
+  },
+  "affaan-m/ECC@0765f7a2ca2bd5df214d3aa7ba7e7ac19db8b189:skills/nasiko-control-plane/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "cli"
+    ]
+  },
+  "github/awesome-copilot@f32d7c320dea21594952931b67841b596dece208:skills/test-gap-audit/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "testing",
+      "coverage"
+    ]
+  },
+  "first-fluke/oh-my-agent@43200a28e580055422070d4ca62bfb0d8d0a2299:.agents/skills/oma-security/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "sast",
+      "pentest",
+      "mcp"
+    ]
+  },
+  "Prism-Shadow/penguin-harness@14aab70c40609bcc028970c9300060e96095d189:plugins/agent-development/skills/penguin-config/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "api-keys",
+      "cli"
+    ]
+  },
+  "microsoft/skills@8ad897cf4d54ca6316f01594f1a44e605a44f5c0:.github/plugins/azure-skills/skills/azure-compliance/SKILL.md": {
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "azure",
+      "azqr",
+      "key-vault"
+    ]
+  },
+  "microsoft/skills@8ad897cf4d54ca6316f01594f1a44e605a44f5c0:.github/plugins/azure-skills/skills/azure-validate/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "security/iac-config"
+    ],
+    "tags": [
+      "azure",
+      "bicep",
+      "terraform"
+    ]
+  },
+  "awslabs/agent-plugins@fbefb3764e67558fe10ac834dd85db49734aa9b6:plugins/databases-on-aws/skills/dsql/SKILL.md": {
+    "primary": "data-analytics/general",
+    "also": [],
+    "tags": [
+      "aurora",
+      "sql"
+    ]
+  },
+  "affaan-m/ECC@c752aac18616e26bf146f034a86947d8f6fc207e:.agents/skills/mle-workflow/SKILL.md": {
+    "primary": "data-analytics/general",
+    "also": [],
+    "tags": [
+      "mlops"
+    ]
+  },
+  "affaan-m/ECC@c752aac18616e26bf146f034a86947d8f6fc207e:.agents/skills/security-review/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "auth",
+      "input-validation",
+      "secrets"
+    ]
+  },
+  "affaan-m/ECC@c752aac18616e26bf146f034a86947d8f6fc207e:.agents/skills/x-api/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "twitter",
+      "oauth",
+      "api"
+    ]
+  },
+  "autonomous-ai/lampOS@d3d508e6c8f026c1a9f2cff665495ac23fe781b3:skills/connectors/SKILL.md": {
+    "primary": "productivity/general",
+    "also": [],
+    "tags": [
+      "integrations"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-advisor/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-aks-edge-essentials/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "kubernetes",
+      "edge"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-anyscale-on-azure/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "ray"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-application-gateway/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "networking"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-artifact-signing/SKILL.md": {
+    "primary": "security/supply-chain",
+    "also": [],
+    "tags": [
+      "azure",
+      "code-signing"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-batch/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "batch"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-data-explorer/SKILL.md": {
+    "primary": "data-analytics/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "kusto"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-database-postgresql/SKILL.md": {
+    "primary": "data-analytics/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "postgresql"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-enclave/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-firmware-analysis/SKILL.md": {
+    "primary": "security/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "firmware",
+      "iot"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-kubernetes-service/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "aks"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-microsoft-discovery/SKILL.md": {
+    "primary": "research-knowledge/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "science"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-pipelines/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "ci-cd"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-policy/SKILL.md": {
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "azure",
+      "policy-as-code"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-repos/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "git"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-resiliency/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "resiliency"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@ba74e8fcc5cf4864798beaf95e53d7c4840bac5e:skills/azure-site-recovery/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "disaster-recovery"
+    ]
+  },
+  "wshobson/agents@51b6e0b507aa7942e36c6d33a94fc63aefc53d07:plugins/incident-response/skills/postmortem-writing/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "writing-docs/general"
+    ],
+    "tags": [
+      "postmortem",
+      "incident"
+    ]
+  },
+  "wshobson/agents@51b6e0b507aa7942e36c6d33a94fc63aefc53d07:plugins/security-scanning/skills/sast-configuration/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "sast",
+      "semgrep"
+    ]
+  },
+  "wshobson/agents@156b7a5e7a8b93642628a339ee4039c925b34c7f:plugins/cicd-automation/skills/secrets-management/SKILL.md": {
+    "primary": "security/secrets-credentials",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "vault",
+      "aws-secrets-manager"
+    ]
+  },
+  "addyosmani/agent-skills@d1463fd0d6675c6e145d9c57802d70faf84d1f51:skills/security-and-hardening/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "hardening",
+      "input-validation"
+    ]
+  },
+  "NousResearch/hermes-agent@626bc82f13d975dc88fbeda5076f0bf442856b20:optional-skills/security/1password/SKILL.md": {
+    "primary": "security/secrets-credentials",
+    "also": [],
+    "tags": [
+      "1password",
+      "op-cli"
+    ]
+  },
+  "NousResearch/hermes-agent@626bc82f13d975dc88fbeda5076f0bf442856b20:optional-skills/mcp/mcp-oauth-remote-gateway/SKILL.md": {
+    "primary": "security/identity-access",
+    "also": [
+      "ai-agent-eng/general"
+    ],
+    "tags": [
+      "oauth",
+      "mcp"
+    ]
+  },
+  "NousResearch/hermes-agent@a79d1d3a71f40e62b58e811d4fe955104f33c0be:skills/software-development/requesting-code-review/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "code-review",
+      "quality-gates"
+    ]
+  },
+  "pixiv/charcoal@9b36b3b51b50bd7691a9c1c1f2c3efc57f35820e:skills/prepare-figma-design/SKILL.md": {
+    "primary": "design-creative/general",
+    "also": [],
+    "tags": [
+      "figma"
+    ]
+  },
+  "wshobson/agents@8b957cde5caa16dad5549c568e0016296bb8de94:plugins/protect-mcp/skills/protect-mcp-setup/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [],
+    "tags": [
+      "cedar",
+      "policy",
+      "signed-receipts"
+    ]
+  },
+  "wshobson/agents@8b957cde5caa16dad5549c568e0016296bb8de94:plugins/signed-audit-trails/skills/signed-audit-trails-recipe/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/detection-forensics"
+    ],
+    "tags": [
+      "audit-trail",
+      "signatures"
+    ]
+  },
+  "lawve-ai/awesome-legal-skills@0d225fae7d47e6804299c4062180fe1dc7f50f27:skills/pleading-injection-guard-matei-clej/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "vertical-domain/general"
+    ],
+    "tags": [
+      "prompt-injection",
+      "legal"
+    ]
+  },
+  "code-yeongyu/oh-my-openagent@2a3e8609a60ab1a35992f4b6078adaab9f6e56d2:.agents/skills/security-research/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "vulnerability-research",
+      "poc"
+    ]
+  },
+  "github/awesome-copilot@19c37b829a2500c624f9abcd582ac0e4b39229c9:skills/d365-solution-blueprint/SKILL.md": {
+    "primary": "business-product/general",
+    "also": [],
+    "tags": [
+      "dynamics-365"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/code-reviewer/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "code-review"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/devops-engineer/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "docker",
+      "ci-cd",
+      "terraform"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/java-architect/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "java",
+      "spring-boot"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/kubernetes-specialist/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "security/containers-kubernetes"
+    ],
+    "tags": [
+      "kubernetes"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/secure-code-guardian/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/identity-access"
+    ],
+    "tags": [
+      "owasp",
+      "auth"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/security-reviewer/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "security-audit",
+      "remediation"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/shopify-expert/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "shopify"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/sre-engineer/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "sre",
+      "slo"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/test-master/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "testing"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/the-fool/SKILL.md": {
+    "primary": "research-knowledge/general",
+    "also": [],
+    "tags": [
+      "critical-thinking"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/wordpress-pro/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "wordpress"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@326540fbb5cc3c629ba90ad2afd24bff06ed759a:skills/azure-key-vault/SKILL.md": {
+    "primary": "security/secrets-credentials",
+    "also": [
+      "devops-infra/general"
+    ],
+    "tags": [
+      "azure",
+      "key-vault"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@326540fbb5cc3c629ba90ad2afd24bff06ed759a:skills/azure-operator-nexus/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@326540fbb5cc3c629ba90ad2afd24bff06ed759a:skills/azure-security/SKILL.md": {
+    "primary": "security/cloud-permissions",
+    "also": [],
+    "tags": [
+      "azure"
+    ]
+  },
+  "redhat-et/ripwire@d09bb1b5fa7226b91d7789e5f01beab460ecd0d5:skills/ripwire-security-scan/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/supply-chain"
+    ],
+    "tags": [
+      "skill-vetting",
+      "mcp",
+      "prompt-injection"
+    ]
+  },
+  "get-bb/bb@23bf98656e7952a28351ad8dfb997d86ca9963a5:plugins/secrets/skills/secrets/SKILL.md": {
+    "primary": "security/secrets-credentials",
+    "also": [],
+    "tags": [
+      "dotenv"
+    ]
+  },
+  "github/awesome-copilot@421418928715158da3610571cb9e9cbb18d4747d:skills/sql-code-review/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "sql",
+      "code-review"
+    ]
+  },
+  "github/awesome-copilot@6c7fe1b15f1be7e29d3aaf04fb3423ee5a226353:skills/azure-developer-cli/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "azd"
+    ]
+  },
+  "github/awesome-copilot@f83a8a942cfeaec67a6159d10e92bcfcc2d7f683:skills/verify-agent-action/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [],
+    "tags": [
+      "human-in-the-loop",
+      "approvals"
+    ]
+  },
+  "aiskillstore/marketplace@c97a1862d1bc82763903ee068cd15acab35d638c:skills/amirtaherkhani/nestjs-features-performance/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "nestjs"
+    ]
+  },
+  "aiskillstore/marketplace@c97a1862d1bc82763903ee068cd15acab35d638c:skills/amirtaherkhani/nestjs-git-commit-pr-message/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "nestjs",
+      "git"
+    ]
+  },
+  "myICOR/myPKA@8ced1a2e0bb1176ccbc9e4ac2be43b04e223e99d:06 AI Team/AI Team Knowledge/Skills/vex-review-before-it-runs/SKILL.md": {
+    "primary": "security/supply-chain",
+    "also": [
+      "security/ai-agent-security"
+    ],
+    "tags": [
+      "plugin-vetting",
+      "dependencies"
+    ]
+  },
+  "myICOR/myPKA@8ced1a2e0bb1176ccbc9e4ac2be43b04e223e99d:06 AI Team/AI Team Knowledge/Skills/vex-security-audit/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/identity-access"
+    ],
+    "tags": [
+      "credentials",
+      "authorization"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@1e593dd0d55091fb66568c9194b29d8155453977:skills/azure-blob-storage/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "storage"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@1e593dd0d55091fb66568c9194b29d8155453977:skills/azure-carbon-optimization/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "sustainability"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@1e593dd0d55091fb66568c9194b29d8155453977:skills/azure-cloud-shell/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "cloud-shell"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@1e593dd0d55091fb66568c9194b29d8155453977:skills/azure-dev-box/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "dev-box"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@1e593dd0d55091fb66568c9194b29d8155453977:skills/azure-firewall/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "security/general"
+    ],
+    "tags": [
+      "azure",
+      "firewall"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@1e593dd0d55091fb66568c9194b29d8155453977:skills/azure-front-door/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "cdn"
+    ]
+  },
+  "vellum-ai/vellum-assistant@a0ab2f9eed8a4f54c76710c5918d2fcef448fbdd:skills/telegram-setup/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "telegram"
+    ]
+  },
+  "affaan-m/ECC@a104765bf20fd1480a3dd30f514f18f73ca80b8a:skills/ito-compute/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "gpu"
+    ]
+  },
+  "github/awesome-copilot@aa01464ccb6884372c4396e52cfa7840a18651fd:skills/dotnet-mcp-builder/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "mcp",
+      "dotnet"
+    ]
+  },
+  "cheaper-inference/OmniRoute@ecc89eef146fbbc43d35dd0d2efaa3f468cdeabc:skills/omni-github-skills/SKILL.md": {
+    "primary": "agent-authoring/general",
+    "also": [
+      "security/supply-chain"
+    ],
+    "tags": [
+      "skills",
+      "github"
+    ]
+  },
+  "open-gsd/gsd-core@f4be7edc4c2b222dee919a652cbc011bbadccd58:skills/gsd-forensics/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "debugging"
+    ]
+  },
+  "Xquik-dev/x-twitter-scraper@0fae3588968a6fe11074744c4432618a3841c9d0:skills/xquik-mcp/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "mcp"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/identity-security/skills/adcs-exposure-audit/SKILL.md": {
+    "primary": "security/identity-access",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "active-directory",
+      "adcs",
+      "pki"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/engagement-operations/skills/ai-threat-model/SKILL.md": {
+    "primary": "security/threat-modeling",
+    "also": [
+      "security/ai-agent-security"
+    ],
+    "tags": [
+      "ai",
+      "threat-model"
+    ]
+  },
+  "Mindrally/skills@7682ca77710e0971eab4e0ae5dddfa281aea0ba5:aws-development/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "aws",
+      "serverless",
+      "cdk"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/binary-forensics/skills/binary-fault-triage/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "crash-triage",
+      "sanitizers"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/application-endpoint-security/skills/cloud-attack-path/SKILL.md": {
+    "primary": "security/cloud-permissions",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "aws",
+      "azure",
+      "gcp",
+      "attack-paths"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/identity-security/skills/credential-exposure-audit/SKILL.md": {
+    "primary": "security/secrets-credentials",
+    "also": [],
+    "tags": [
+      "leaked-credentials"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/ml-system-security/skills/dataset-integrity-assessment/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "data-poisoning",
+      "ml"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/engagement-operations/skills/findings-report/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "writing-docs/general"
+    ],
+    "tags": [
+      "reporting",
+      "severity"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/application-endpoint-security/skills/firmware-hardware-assessment/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "firmware",
+      "embedded",
+      "hardware"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/binary-forensics/skills/memory-forensics-triage/SKILL.md": {
+    "primary": "security/detection-forensics",
+    "also": [],
+    "tags": [
+      "memory-forensics"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/application-endpoint-security/skills/mobile-application-assessment/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "android",
+      "ios",
+      "mobile"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/ml-system-security/skills/model-artifact-lifecycle-audit/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/supply-chain"
+    ],
+    "tags": [
+      "model-registry",
+      "ml"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/ml-system-security/skills/model-serving-exposure-audit/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "model-serving",
+      "vector-store"
+    ]
+  },
+  "Mindrally/skills@7682ca77710e0971eab4e0ae5dddfa281aea0ba5:oauth-implementation/SKILL.md": {
+    "primary": "security/identity-access",
+    "also": [],
+    "tags": [
+      "oauth",
+      "pkce"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/recon-operations/skills/osint-scanner/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "osint",
+      "recon"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/application-endpoint-security/skills/password-audit-plan/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/secrets-credentials"
+    ],
+    "tags": [
+      "password-audit",
+      "hashes"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/binary-forensics/skills/rootkit-triage/SKILL.md": {
+    "primary": "security/detection-forensics",
+    "also": [],
+    "tags": [
+      "rootkit",
+      "ebpf",
+      "incident-response"
+    ]
+  },
+  "Mindrally/skills@7682ca77710e0971eab4e0ae5dddfa281aea0ba5:security-devsecops/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/cicd-pipeline"
+    ],
+    "tags": [
+      "devsecops",
+      "ssdlc"
+    ]
+  },
+  "Mindrally/skills@7682ca77710e0971eab4e0ae5dddfa281aea0ba5:snowflake-data-engineering/SKILL.md": {
+    "primary": "data-analytics/general",
+    "also": [],
+    "tags": [
+      "snowflake"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/engagement-operations/skills/social-engineering-engagement-plan/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "phishing-simulation",
+      "social-engineering"
+    ]
+  },
+  "Mindrally/skills@7682ca77710e0971eab4e0ae5dddfa281aea0ba5:solidity/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "solidity",
+      "smart-contracts"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/application-endpoint-security/skills/web-assessment-coverage/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "web",
+      "coverage"
+    ]
+  },
+  "zero-lab-ai/skills@e17d2bbcd100705551e6361d1f4d5f5df41f0f68:plugins/network-protocol-security/skills/wireless-assessment-plan/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "wifi",
+      "bluetooth",
+      "rfid",
+      "sdr"
+    ]
+  },
+  "aiskillstore/marketplace@17b0f9e7dfb8d6b7e872e1dc85cb0ff365cf2980:skills/yangtech-gh/awesome-bug-bounty/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "bug-bounty",
+      "waf-bypass"
+    ]
+  },
+  "growthxai/output@51e8690e28ad477e427086151e09c7f79227b41d:coding_assistants/claude/plugins/outputai/skills/output-credentials-env-vars/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/secrets-credentials"
+    ],
+    "tags": [
+      "env-vars",
+      "credentials"
+    ]
+  },
+  "yogsoth-ai/de-anthropocentric-research-engine@cbc38aa2466d209a592710b0e09304bbdef98696:skills/assess-patent-claim-scope/SKILL.md": {
+    "primary": "vertical-domain/general",
+    "also": [],
+    "tags": [
+      "patents",
+      "legal"
+    ]
+  },
+  "yogsoth-ai/de-anthropocentric-research-engine@cbc38aa2466d209a592710b0e09304bbdef98696:skills/assumption-stress-test/SKILL.md": {
+    "primary": "research-knowledge/general",
+    "also": [],
+    "tags": [
+      "critical-thinking"
+    ]
+  },
+  "yogsoth-ai/de-anthropocentric-research-engine@cbc38aa2466d209a592710b0e09304bbdef98696:skills/classify-assumption-vulnerability/SKILL.md": {
+    "primary": "research-knowledge/general",
+    "also": [],
+    "tags": [
+      "critical-thinking"
+    ]
+  },
+  "yogsoth-ai/de-anthropocentric-research-engine@cbc38aa2466d209a592710b0e09304bbdef98696:skills/decompose-evaluation-metric/SKILL.md": {
+    "primary": "research-knowledge/general",
+    "also": [],
+    "tags": [
+      "evaluation",
+      "metrics"
+    ]
+  },
+  "rampstackco/claude-skills@6a546cbfc2417b65ab066e7231f4b26d3a190b44:dist/codex/.agents/skills/dependency-management/SKILL.md": {
+    "primary": "security/supply-chain",
+    "also": [
+      "coding-software/general"
+    ],
+    "tags": [
+      "dependencies",
+      "advisories"
+    ]
+  },
+  "rampstackco/claude-skills@6a546cbfc2417b65ab066e7231f4b26d3a190b44:dist/codex/.agents/skills/email-deliverability/SKILL.md": {
+    "primary": "business-product/general",
+    "also": [],
+    "tags": [
+      "spf",
+      "dkim",
+      "dmarc",
+      "email"
+    ]
+  },
+  "rampstackco/claude-skills@6a546cbfc2417b65ab066e7231f4b26d3a190b44:dist/codex/.agents/skills/incident-response/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "security/detection-forensics"
+    ],
+    "tags": [
+      "incident-management",
+      "on-call"
+    ]
+  },
+  "rampstackco/claude-skills@6a546cbfc2417b65ab066e7231f4b26d3a190b44:dist/codex/.agents/skills/security-baseline/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [],
+    "tags": [
+      "tls",
+      "security-headers"
+    ]
+  },
+  "first-fluke/oh-my-agent@7e4c0d1960c5b050ea239e0dc342ba40a219fcd6:.agents/skills/oma-tf-infra/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "security/iac-config"
+    ],
+    "tags": [
+      "terraform"
+    ]
+  },
+  "Prism-Shadow/penguin-harness@d9b4c2030daa02be73d34be9ba20a3c3a2539173:plugins/use-claude-code/skills/remote-claude-code/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "ssh",
+      "remote"
+    ]
+  },
+  "maxritter/qualitylayer@c3d3454e7c268e077345c30a0fdc446b392cab63:.agents/skills/upstream-audit/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "dependencies",
+      "installer"
+    ]
+  },
+  "rlaope/oh-my-hermes@fb0d9b40b2fbebcecd92866227dbd7dae02cc2a5:agent-skills/omh-adversarial-consensus/SKILL.md": {
+    "primary": "research-knowledge/general",
+    "also": [],
+    "tags": [
+      "adversarial-review"
+    ]
+  },
+  "rlaope/oh-my-hermes@fb0d9b40b2fbebcecd92866227dbd7dae02cc2a5:agent-skills/omh-application-threat-model/SKILL.md": {
+    "primary": "security/threat-modeling",
+    "also": [],
+    "tags": [
+      "attack-paths",
+      "trust-boundaries"
+    ]
+  },
+  "rlaope/oh-my-hermes@fb0d9b40b2fbebcecd92866227dbd7dae02cc2a5:skills/omh-jev-action-check/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [],
+    "tags": [
+      "guardrails",
+      "risky-commands"
+    ]
+  },
+  "rlaope/oh-my-hermes@fb0d9b40b2fbebcecd92866227dbd7dae02cc2a5:agent-skills/omh-live-incident-response/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [
+      "security/detection-forensics"
+    ],
+    "tags": [
+      "incident-command"
+    ]
+  },
+  "rlaope/oh-my-hermes@fb0d9b40b2fbebcecd92866227dbd7dae02cc2a5:agent-skills/omh-provider-profile-posture/SKILL.md": {
+    "primary": "security/secrets-credentials",
+    "also": [],
+    "tags": [
+      "credentials"
+    ]
+  },
+  "rlaope/oh-my-hermes@fb0d9b40b2fbebcecd92866227dbd7dae02cc2a5:agent-skills/omh-security-event-response/SKILL.md": {
+    "primary": "security/detection-forensics",
+    "also": [
+      "security/supply-chain"
+    ],
+    "tags": [
+      "cve",
+      "secret-leak",
+      "response"
+    ]
+  },
+  "rlaope/oh-my-hermes@fb0d9b40b2fbebcecd92866227dbd7dae02cc2a5:agent-skills/omh-security-safety-review/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [],
+    "tags": [
+      "agent-safety"
+    ]
+  },
+  "rlaope/oh-my-hermes@fb0d9b40b2fbebcecd92866227dbd7dae02cc2a5:agent-skills/omh-toolbelt-readiness/SKILL.md": {
+    "primary": "ai-agent-eng/general",
+    "also": [],
+    "tags": [
+      "tooling"
+    ]
+  },
+  "mvschwarz/openrig@ea52fa8f832d9fc28046eb0e251f4c4c2d44ee07:packages/daemon/specs/agents/apps/vault-specialist/skills/vault-user/SKILL.md": {
+    "primary": "security/secrets-credentials",
+    "also": [],
+    "tags": [
+      "hashicorp-vault"
+    ]
+  },
+  "egregore-labs/egregore@05b867200779406fdc75a57a5c52ba052b204b4f:.codex/skills/env/SKILL.md": {
+    "primary": "security/secrets-credentials",
+    "also": [],
+    "tags": [
+      "dotenv",
+      "railway",
+      "rotation"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@d5ad46424db3892ebaa27e39fb62a54f4b22cb6e:skills/azure-rbac/SKILL.md": {
+    "primary": "security/identity-access",
+    "also": [
+      "security/cloud-permissions"
+    ],
+    "tags": [
+      "azure",
+      "rbac"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@d5ad46424db3892ebaa27e39fb62a54f4b22cb6e:skills/azure-resource-manager/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "arm"
+    ]
+  },
+  "MicrosoftDocs/Agent-Skills@d5ad46424db3892ebaa27e39fb62a54f4b22cb6e:skills/azure-vm-scalesets/SKILL.md": {
+    "primary": "devops-infra/general",
+    "also": [],
+    "tags": [
+      "azure",
+      "vm"
+    ]
+  },
+  "wondelai/skills@eee89d866704e36935b507a0f23feb4bff1bc4d3:improve-app/SKILL.md": {
+    "primary": "design-creative/general",
+    "also": [],
+    "tags": [
+      "ux"
+    ]
+  },
+  "internet-court/internet-court-skill@251d269e9e17a4554616b34fc78f5858ee9eef1d:vendored/okx/okx-agentic-wallet/SKILL.md": {
+    "primary": "vertical-domain/general",
+    "also": [],
+    "tags": [
+      "crypto",
+      "wallet"
+    ]
+  },
+  "github/awesome-copilot@36b30eb1130591095fab9a26a83f248ae135f67e:skills/tm7-threat-model/SKILL.md": {
+    "primary": "security/threat-modeling",
+    "also": [],
+    "tags": [
+      "microsoft-threat-modeling-tool"
+    ]
+  },
+  "davepoon/buildwithclaude@41e15af977a78b640f1a98ef6259187eb52046dc:plugins/production-fast-api-template/skills/production-fast-api-template/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "fastapi",
+      "rag"
+    ]
+  },
+  "OneWave-AI/claude-skills@537406a59f48a05b1a662b8fedf3293e818b752b:code-review-pro/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "code-review",
+      "owasp"
+    ]
+  },
+  "tradecatlabs/vibe-coding-cn@259ac32a8c9d6317a67e99b4faf43a639916df97:research/vibe-cybersecurity-cn/skills/web3-bug-bounty-hunting/web3-bug-classes/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "defi",
+      "smart-contracts"
+    ]
+  },
+  "tradecatlabs/vibe-coding-cn@259ac32a8c9d6317a67e99b4faf43a639916df97:research/vibe-cybersecurity-cn/skills/web3-bug-bounty-hunting/web3-methodology-research/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "smart-contract-audit",
+      "echidna"
+    ]
+  },
+  "tradecatlabs/vibe-coding-cn@259ac32a8c9d6317a67e99b4faf43a639916df97:research/vibe-cybersecurity-cn/skills/web3-bug-bounty-hunting/web3-poc-foundry/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "foundry",
+      "poc"
+    ]
+  },
+  "tradecatlabs/vibe-coding-cn@259ac32a8c9d6317a67e99b4faf43a639916df97:research/vibe-cybersecurity-cn/skills/web3-bug-bounty-hunting/web3-solidity-audit-mcp/SKILL.md": {
+    "primary": "security/code-application",
+    "also": [
+      "security/offensive-testing"
+    ],
+    "tags": [
+      "slither",
+      "aderyn",
+      "solidity"
+    ]
+  },
+  "tradecatlabs/vibe-coding-cn@259ac32a8c9d6317a67e99b4faf43a639916df97:research/vibe-cybersecurity-cn/skills/web3-bug-bounty-hunting/web3-start-here/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "smart-contract-security"
+    ]
+  },
+  "tradecatlabs/vibe-coding-cn@259ac32a8c9d6317a67e99b4faf43a639916df97:research/vibe-cybersecurity-cn/skills/web3-bug-bounty-hunting/web3-triage-report/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "immunefi",
+      "triage"
+    ]
+  },
+  "managedcode/dotnet-skills@004209ea32f056ad58e2f10b31db7af871995c89:catalog/Tools/Quality-CI/skills/quality-ci/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [
+      "devops-infra/general"
+    ],
+    "tags": [
+      "dotnet",
+      "analyzers"
+    ]
+  },
+  "affaan-m/ECC@d29cf651c795869f733669c33e3d33dfd8307d10:skills/hipaa-compliance/SKILL.md": {
+    "primary": "security/compliance-grc",
+    "also": [
+      "security/data-protection"
+    ],
+    "tags": [
+      "hipaa",
+      "phi"
+    ]
+  },
+  "affaan-m/ECC@d29cf651c795869f733669c33e3d33dfd8307d10:skills/llm-trading-agent-security/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [],
+    "tags": [
+      "trading",
+      "wallets",
+      "prompt-injection"
+    ]
+  },
+  "affaan-m/ECC@d29cf651c795869f733669c33e3d33dfd8307d10:skills/security-bounty-hunter/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "bug-bounty"
+    ]
+  },
+  "awarexone/Agentic-Bug-Hunter@8eeb1803d7877a05b9f209870bbbea0aa3a2181f:skills/security-arsenal/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "payloads",
+      "wordlists"
+    ]
+  },
+  "awarexone/Agentic-Bug-Hunter@8eeb1803d7877a05b9f209870bbbea0aa3a2181f:skills/web2-recon/SKILL.md": {
+    "primary": "security/offensive-testing",
+    "also": [],
+    "tags": [
+      "recon",
+      "subdomain-enumeration"
+    ]
+  },
+  "github/awesome-copilot@d203b6ee69e48f3b9b804e364ab35e72d49c51a0:skills/mcp-implementation-security-review/SKILL.md": {
+    "primary": "security/ai-agent-security",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "mcp"
+    ]
+  },
+  "asgeirtj/system_prompts_leaks@18705301a169f3d7c5e4a7f42da40dd53d2ec0eb:Meta/muse-agent/skills/granola/SKILL.md": {
+    "primary": "productivity/general",
+    "also": [],
+    "tags": [
+      "meeting-notes"
+    ]
   }
 }

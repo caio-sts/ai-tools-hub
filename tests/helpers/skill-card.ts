@@ -84,6 +84,17 @@ export function summaryOf(card: string): string {
   return card.slice(0, at);
 }
 
+/**
+ * Markup minus the author's description, which may repeat any UI label ("Threat Modeling Tool"):
+ * the card's clipped and full text, and the hidden Pagefind block that indexes it.
+ */
+export function withoutAuthorText(html: string): string {
+  return html
+    .replace(/<p class="skill-card__description"[^>]*>[\s\S]*?<\/p>/g, '')
+    .replace(/<p class="skill-body__text"[^>]*>[\s\S]*?<\/p>/g, '')
+    .replace(/<div[^>]*data-pagefind-body[^>]*>[\s\S]*?<\/div>/g, '');
+}
+
 export function panelOf(card: string): string {
   const at = card.indexOf('</summary>');
   if (at === -1) throw new Error('the skill card has no <summary>');
