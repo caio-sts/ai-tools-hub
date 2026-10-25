@@ -18,14 +18,17 @@ of those two languages, judged per skill from the full `SKILL.md`.
 - **The description alone cannot decide.** `tinyld` on name + description labelled thousands of
   rows Berber, Esperanto, Tagalog or Latin; in a 314-skill sample, ~90 % of rows it called Spanish,
   French or Portuguese had English bodies.
-- **The full text can.** On the same stratified sample (oversampling the hard cases), checked by
-  hand where detectors disagreed:
+- **The full text can, with care.** On the same stratified sample (oversampling the hard cases),
+  checked by hand wherever methods disagreed. A first pass that skipped the frontmatter and read
+  only 4,000 characters reported ~99.7 % for `eld`; on the real input it does worse, because `eld`
+  answers `ja` or `ru` for an English body with a Japanese or Russian description. Measured on the
+  full `SKILL.md` (frontmatter included) with the rule in D1:
 
-  | method on the full `SKILL.md` prose | agreement with hand labels |
+  | method | agreement with hand labels |
   |---|---|
-  | `tinyld` | ~94 % |
-  | `franc` | ~97 % |
-  | **script check, then `eld`** | **~99.7 %** (1 miss: Vietnamese written without diacritics) |
+  | `tinyld` on the prose | ~94 % |
+  | `franc` on the prose | ~97 % |
+  | **D1: script shares, then `eld` on Latin text only** | **312 / 314** (both misses: Vietnamese written without diacritics, kept) |
 
 - Estimated effect: ~2,000 of 21,777 rows dropped (~9 %), mostly German, Chinese and Korean.
   Portuguese bodies are almost absent from the corpus.
@@ -40,9 +43,15 @@ URLs, HTML tags and Markdown markup removed.
 
 1. Fewer than **100** characters of prose → excluded (too little to judge; the user chose to cut
    rather than keep when unsure).
-2. More than **half** of the letters (`\p{L}`) are outside the Latin script → excluded. This
-   catches Chinese, Japanese, Korean, Cyrillic and others even when an English header leads.
-3. Otherwise `eld` decides: `en` or `pt` → included; anything else → excluded.
+2. More than **half** of the description's letters are outside the Latin script → excluded. The
+   description is the catalog card; the user chose to drop a skill whose card they cannot read,
+   even over English instructions. A script count is reliable on short text, where `eld` is not.
+3. More than **30 %** of the prose's words are outside the Latin script → excluded, counting two
+   CJK characters as one word so dense scripts are not undercounted. This catches Chinese bodies
+   peppered with English terms. On the sample, every kept skill is at or under 8 %, every dropped
+   one at or over 40 %.
+4. Otherwise `eld` decides on the Latin-script text alone: `en` or `pt` → included; anything else
+   → excluded.
 
 Per skill, not per repo: a mixed repo keeps its English skills and loses the rest.
 
