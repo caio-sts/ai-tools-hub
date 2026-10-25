@@ -1,4 +1,16 @@
-import { eld } from 'eld/large';
+type Detector = (typeof import('eld/large'))['eld'];
+
+let detector: Detector | null = null;
+
+/** The large model costs ~0.8 s and ~135 MB, so only processes that judge a skill load it. */
+export async function loadLanguageDetector(): Promise<void> {
+  detector ??= (await import('eld/large')).eld;
+}
+
+function detect(text: string): ReturnType<Detector['detect']> {
+  if (detector === null) throw new Error('loadLanguageDetector() must run before languageVerdict()');
+  return detector.detect(text);
+}
 
 /** Less prose than this is too little to judge; the skill is dropped (spec 2026-10-24 D1). */
 export const MIN_PROSE_CHARS = 100;
@@ -26,8 +38,10 @@ export function proseOf(name: unknown, description: unknown, body: string): stri
     .filter((part): part is string => typeof part === 'string')
     .join('\n')
     // A closing fence repeats the opening one, so a ``` inside a ```` block does not close it.
-    .replace(/^ {0,3}(`{3,})[^\n]*\n[\s\S]*?^ {0,3}\1`*[ \t]*$/gm, ' ')
-    .replace(/^ {0,3}(~{3,})[^\n]*\n[\s\S]*?^ {0,3}\1~*[ \t]*$/gm, ' ')
+    // Fences may sit in list items or blockquotes; an unclosed one runs to the end (CommonMark).
+    .replace(/^[ \t>]*(`{3,})[^`\n]*\n[\s\S]*?^[ \t>]*\1`*[ \t]*$/gm, ' ')
+    .replace(/^[ \t>]*(~{3,})[^\n]*\n[\s\S]*?^[ \t>]*\1~*[ \t]*$/gm, ' ')
+    .replace(/^[ \t>]*(`{3,}[^`\n]*|~{3,}[^\n]*)(\n[\s\S]*)?$/m, ' ')
     .replace(/`[^`\n]*`/g, ' ')
     .replace(/<https?:\/\/[^>\s]*>/g, ' ')
     .replace(/https?:\/\/[^\s<>()]+/g, ' ')
@@ -61,7 +75,7 @@ function supportedShare(text: string): number {
   let supported = 0;
   for (let start = 0; start < text.length; start += ELD_WINDOW) {
     const window = text.slice(start, start + ELD_WINDOW);
-    if (SUPPORTED.has(eld.detect(window).language)) supported += window.length;
+    if (SUPPORTED.has(detect(window).language)) supported += window.length;
   }
   return text.length === 0 ? 0 : supported / text.length;
 }
@@ -75,14 +89,13 @@ export function languageVerdict(name: unknown, description: unknown, body: strin
   if (prose.length < MIN_PROSE_CHARS) return 'too-short';
   if (typeof description === 'string') {
     if (nonLatinLetterShare(description) > 0.5) return 'description-script';
-    const card = eld.detect(latinOnly(description));
-    if (card.language && !SUPPORTED.has(card.language) && card.isReliable()) return 'description-language';
+    // eld is confidently wrong on short cards ("Svelte stores and runes" → Danish).
+    if (description.length >= MIN_PROSE_CHARS) {
+      const card = detect(latinOnly(description));
+      if (card.language && !SUPPORTED.has(card.language) && card.isReliable()) return 'description-language';
+    }
   }
   if (nonLatinWordShare(prose) > MAX_NON_LATIN_WORD_SHARE) return 'body-script';
   if (supportedShare(latinOnly(prose)) < 0.5) return 'body-language';
   return 'supported';
-}
-
-export function isSupportedLanguage(name: unknown, description: unknown, body: string): boolean {
-  return languageVerdict(name, description, body) === 'supported';
 }

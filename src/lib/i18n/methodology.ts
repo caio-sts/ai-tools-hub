@@ -36,7 +36,7 @@ const en = {
   'methodology.inclusion.r6':
     'One entry per publisher per concept, so a single monorepo with hundreds of paths cannot swamp a category.',
   'methodology.inclusion.r7':
-    'It is written in English or Portuguese — its description and its instructions both, judged from the whole SKILL.md.',
+    'It is written in English or Portuguese — its description and its instructions both, judged from the whole SKILL.md. Under 100 characters of prose is too little to judge, and the skill is left out.',
 
   'methodology.safety.heading': 'Safety surface',
   'methodology.safety.body':
@@ -121,7 +121,7 @@ const pt: Record<keyof typeof en, string> = {
   'methodology.inclusion.r6':
     'Uma entrada por publicador por conceito, para que um único monorepo com centenas de caminhos não domine uma categoria.',
   'methodology.inclusion.r7':
-    'Está escrita em inglês ou português — a descrição e as instruções, julgadas pelo SKILL.md inteiro.',
+    'Está escrita em inglês ou português — a descrição e as instruções, julgadas pelo SKILL.md inteiro. Menos de 100 caracteres de texto é pouco para julgar, e a skill fica de fora.',
 
   'methodology.safety.heading': 'Superfície de risco',
   'methodology.safety.body':

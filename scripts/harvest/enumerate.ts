@@ -9,7 +9,7 @@ import {
 } from '../../src/lib/inclusion.ts';
 import type { FetchLike } from './discover.ts';
 import { RateLimitedError, isRateLimited } from './budget.ts';
-import { languageVerdict } from './language.ts';
+import { languageVerdict, loadLanguageDetector } from './language.ts';
 import { fetchPathCommits, type PathHistoryDeps } from './path-history.ts';
 
 const API = 'https://api.github.com';
@@ -291,6 +291,7 @@ export async function enumerateSkills(
   const files: TreeFile[] = filterSkillFiles(tree);
   log(`${repo.repo}: ${files.length} candidate skills from ${tree.length} tree entries`);
   if (files.length === 0) return [];
+  await loadLanguageDetector();
 
   const commits = await fetchPathCommits(
     repo.repo,
