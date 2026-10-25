@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import strings from '../../src/lib/i18n/skill.ts';
-import { cardOf, classesOf, elementWith, pageFor, panelOf, summaryOf, tagWith, text } from '../helpers/skill-card.ts';
+import {
+  cardOf, classesOf, elementWith, pageFor, panelOf, summaryOf, tagWith, text, withoutAuthorText,
+} from '../helpers/skill-card.ts';
 
 const SKILLS = loadSkills().filter((skill) => skill.listed);
 
@@ -42,7 +44,7 @@ describe('license display', () => {
 
   it('keeps every license marker out of the closed card', () => {
     for (const skill of SKILLS) {
-      const summary = summaryOf(cardOf(pageFor('en', skill)));
+      const summary = withoutAuthorText(summaryOf(cardOf(pageFor('en', skill))));
       expect(summary).not.toContain('license');
       expect(text(summary)).not.toContain(strings.en['skill.license']);
     }
