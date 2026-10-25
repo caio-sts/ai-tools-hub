@@ -17,6 +17,7 @@ jobs:
   test:
     name: unit tests + taxonomy governance
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -28,3 +29,28 @@ jobs:
         run: npm test
       - name: Taxonomy governance checks
         run: npm run validate
+
+  report:
+    # A crawl-dispatched run is started by the bot, so GitHub emails nobody when it fails.
+    needs: test
+    # Failure only: cancel-in-progress cancels superseded runs, and a hang also breaks the deploy's
+    # own build, which reports it.
+    if: ${{ always() && github.ref_name == github.event.repository.default_branch && needs.test.result == 'failure' }}
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - name: Report the failure on the open P1 issue, or open one
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          OPEN=$(gh issue list --state open --search 'in:title "P1: CI failed on master"' --json number --jq '.[0].number // empty' || true)
+          if [ -n "$OPEN" ]; then
+            gh issue comment "$OPEN" --body "@$GITHUB_REPOSITORY_OWNER failed again on $(date -u +%Y-%m-%d). Run: $RUN_URL"
+          else
+            gh issue create \
+              --title "P1: CI failed on master" \
+              --body "@$GITHUB_REPOSITORY_OWNER tests or taxonomy checks fail on master, often on data the crawl just committed. Run: $RUN_URL"
+          fi

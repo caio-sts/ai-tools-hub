@@ -13,12 +13,14 @@ interface Step {
 
 const crawl = parse(readFileSync('.github/workflows/crawl.yml', 'utf8')).jobs.harvest.steps as Step[];
 const deploy = parse(readFileSync('.github/workflows/deploy.yml', 'utf8')).jobs.report.steps as Step[];
+const ci = parse(readFileSync('.github/workflows/ci.yml', 'utf8')).jobs.report.steps as Step[];
 const runOf = (steps: Step[], marker: string): string => steps.find((step) => step.run?.includes(marker))!.run!;
 
 const ALARMS = {
   'P1: crawl failed': runOf(crawl, 'P1: crawl failed'),
   'P2: skills.json near the 100 MiB file limit': runOf(crawl, 'P2: skills.json'),
   'P1: deploy failed': runOf(deploy, 'P1: deploy failed'),
+  'P1: CI failed on master': runOf(ci, 'P1: CI failed on master'),
 };
 
 function runAlarm(script: string, openIssue: string): string[] {
