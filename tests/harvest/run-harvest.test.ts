@@ -295,7 +295,7 @@ describe('runHarvest', () => {
     expect(fresh?.tags).toEqual(['trivy']);
   });
 
-  it('fetches scripts only for the skills a read repo keeps under REPO_CAP', async () => {
+  it('fetches scripts and sibling licenses only for the skills a read repo keeps under REPO_CAP', async () => {
     const dir = await seededDataDir();
     const s = spy();
     const raws: RawSkill[] = Array.from({ length: REPO_CAP + 2 }, (_unused, i) => ({
@@ -305,7 +305,9 @@ describe('runHarvest', () => {
         name: `s${i}`,
         // The last one is security-relevant, so it is kept past the cap and still needs its scripts.
         description:
-          i === REPO_CAP + 1 ? 'Scan container images and report vulnerabilities by severity.' : `Formats the release notes of project ${i} consistently.`,
+          i === REPO_CAP + 1
+            ? 'Scan container images and report vulnerabilities by severity.'
+            : `Formats the release notes of project ${i} consistently.`,
       },
       updatedDays: i,
     }));
@@ -314,7 +316,15 @@ describe('runHarvest', () => {
       token: 'tok',
       dataDir: dir,
       allowlist: ['fresh/repo'],
-      deps: deps(s, { rawsFor: (repo) => (repo === 'fresh/repo' ? raws : []) }),
+      deps: deps(s, {
+        rawsFor: (repo) => (repo === 'fresh/repo' ? raws : []),
+        // Every skill has a sibling LICENSE, so each kept one costs one license fetch.
+        fetchTree: async () =>
+          raws.flatMap((r) => [
+            { path: r.path, mode: '100644', sha: BLOB_SHA, type: 'blob' as const },
+            { path: r.path.replace('SKILL.md', 'LICENSE'), mode: '100644', sha: 'lic', type: 'blob' as const },
+          ]),
+      }),
     });
 
     const paths = skills.filter((k) => k.repo === 'fresh/repo').map((k) => k.path);
@@ -322,6 +332,7 @@ describe('runHarvest', () => {
     expect(paths).not.toContain(`skills/s${REPO_CAP}/SKILL.md`);
     expect(paths).toContain(`skills/s${REPO_CAP + 1}/SKILL.md`);
     expect(s.contentRefs).toHaveLength(REPO_CAP + 1);
+    expect(s.licenseRefs).toHaveLength(REPO_CAP + 1);
   });
 
   it('stores at most REPO_CAP unclassified rows per repo and never cuts a classified one (spec 2026-10-24 D1)', async () => {
