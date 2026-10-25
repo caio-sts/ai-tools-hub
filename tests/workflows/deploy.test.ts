@@ -115,5 +115,8 @@ describe('deploy.yml fails loudly (spec §13)', () => {
     expect(step.run).toMatch(/OPEN=\$\(gh issue list --state open[^\n]*\|\| true\)/);
     expect(step.run).toContain('gh issue comment');
     expect(step.run).toContain('gh issue create');
+    // A new issue only notifies watchers; assignment always notifies the owner.
+    expect(step.run).toContain('--assignee "$GITHUB_REPOSITORY_OWNER"');
+    expect(step.run).toContain('gh issue edit "$OPEN" --add-assignee "$GITHUB_REPOSITORY_OWNER"');
   });
 });

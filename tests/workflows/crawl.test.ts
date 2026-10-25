@@ -109,6 +109,18 @@ describe('crawl.yml publishes what it commits', () => {
   });
 });
 
+describe('crawl.yml alarms reach the owner (spec §13)', () => {
+  // A new issue only notifies watchers, and the owner does not watch the repo; assignment always notifies.
+  it('assigns every alarm issue to the repository owner, on open and on each recurrence', () => {
+    const alarms = steps.filter((step) => step.run?.includes('gh issue create') ?? false);
+    expect(alarms.length).toBe(2);
+    for (const step of alarms) {
+      expect(step.run).toContain('--assignee "$GITHUB_REPOSITORY_OWNER"');
+      expect(step.run).toContain('gh issue edit "$OPEN" --add-assignee "$GITHUB_REPOSITORY_OWNER"');
+    }
+  });
+});
+
 describe("crawl.yml warns before skills.json reaches GitHub's 100 MiB file limit (spec §13)", () => {
   // 10-17: the push was refused at 100.42 MiB with no warning beforehand.
   const warn = stepIndex((step) => step.run?.includes('P2: skills.json near the 100 MiB file limit') ?? false, 'warns on size');
