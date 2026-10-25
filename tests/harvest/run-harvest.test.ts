@@ -295,6 +295,35 @@ describe('runHarvest', () => {
     expect(fresh?.tags).toEqual(['trivy']);
   });
 
+  it('fetches scripts only for the skills a read repo keeps under REPO_CAP', async () => {
+    const dir = await seededDataDir();
+    const s = spy();
+    const raws: RawSkill[] = Array.from({ length: REPO_CAP + 2 }, (_unused, i) => ({
+      ...raw,
+      path: `skills/s${i}/SKILL.md`,
+      frontmatter: {
+        name: `s${i}`,
+        // The last one is security-relevant, so it is kept past the cap and still needs its scripts.
+        description:
+          i === REPO_CAP + 1 ? 'Scan container images and report vulnerabilities by severity.' : `Formats the release notes of project ${i} consistently.`,
+      },
+      updatedDays: i,
+    }));
+
+    const { skills } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['fresh/repo'],
+      deps: deps(s, { rawsFor: (repo) => (repo === 'fresh/repo' ? raws : []) }),
+    });
+
+    const paths = skills.filter((k) => k.repo === 'fresh/repo').map((k) => k.path);
+    expect(paths).toHaveLength(REPO_CAP + 1);
+    expect(paths).not.toContain(`skills/s${REPO_CAP}/SKILL.md`);
+    expect(paths).toContain(`skills/s${REPO_CAP + 1}/SKILL.md`);
+    expect(s.contentRefs).toHaveLength(REPO_CAP + 1);
+  });
+
   it('stores at most REPO_CAP unclassified rows per repo and never cuts a classified one (spec 2026-10-24 D1)', async () => {
     const dir = await seededDataDir();
     const rows = cachedRows(REPO_CAP + 2);
