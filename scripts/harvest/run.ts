@@ -253,6 +253,28 @@ export async function writeMeta(dataDir: string, meta: Meta): Promise<void> {
   await writeJson(join(dataDir, 'meta.json'), meta);
 }
 
+/**
+ * Writes rows changed offline (apply-assignments, backfill-language). Listing is derived from the
+ * rows, so it is recomputed here; `stored` is what was listed before, for the hysteresis.
+ */
+export async function rewriteCatalog(
+  dataDir: string,
+  stored: Skill[],
+  rows: Skill[],
+  collections: Collection[],
+  meta: Partial<Meta> = {},
+): Promise<Skill[]> {
+  const previouslyListed = new Set(stored.filter((skill) => skill.listed).map((skill) => skill.id));
+  // Same order the harvest writes, so the committed file is deterministic and its diffs are
+  // reviewable. It does NOT decide what the browser shows for entries sharing a score AND a
+  // freshness: measured in a browser, Pagefind's residual tie order is its own, not index order.
+  const skills = applyListing([...rows].sort(compareForRank), previouslyListed, loadTaxonomy().minimumMass);
+  await writeCatalog(dataDir, { skills, collections });
+  // skillCount is the number of rows STORED, matching runHarvest.
+  await writeMeta(dataDir, { ...loadMeta(dataDir), ...meta, skillCount: skills.length });
+  return skills;
+}
+
 export function pushedAtIndex(previous: CatalogSnapshot): Map<string, string> {
   const index = new Map<string, string>();
   for (const collection of previous.collections) {

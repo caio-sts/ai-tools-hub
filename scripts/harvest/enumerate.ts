@@ -9,6 +9,7 @@ import {
 } from '../../src/lib/inclusion.ts';
 import type { FetchLike } from './discover.ts';
 import { RateLimitedError, isRateLimited } from './budget.ts';
+import { languageVerdict, loadLanguageDetector } from './language.ts';
 import { fetchPathCommits, type PathHistoryDeps } from './path-history.ts';
 
 const API = 'https://api.github.com';
@@ -290,6 +291,7 @@ export async function enumerateSkills(
   const files: TreeFile[] = filterSkillFiles(tree);
   log(`${repo.repo}: ${files.length} candidate skills from ${tree.length} tree entries`);
   if (files.length === 0) return [];
+  await loadLanguageDetector();
 
   const commits = await fetchPathCommits(
     repo.repo,
@@ -305,20 +307,25 @@ export async function enumerateSkills(
     const ref = commit?.sha ?? oid;
 
     const text = await fetchRawFile(repo.repo, ref, file.path, deps);
+    // Every fetch pauses, kept or not: excluded monorepos would otherwise hit raw back to back.
+    await wait(RAW_PAUSE_MS);
     if (text === null) {
       log(`${repo.repo}:${file.path} vanished between tree and raw fetch`);
       continue;
     }
 
     const parsed = parseFrontmatter(text);
+    const language = languageVerdict(parsed.frontmatter.name, parsed.frontmatter.description, parsed.body);
     const verdict = includeSkill({
       repo: repo.repo,
       path: file.path,
       hasReadme: true,
       description: parsed.frontmatter.description,
+      supportedLanguage: language === 'supported',
     });
     if (verdict !== 'included') {
-      log(`${repo.repo}:${file.path} excluded: ${verdict}`);
+      const step = verdict === 'unsupported-language' ? ` (${language})` : '';
+      log(`${repo.repo}:${file.path} excluded: ${verdict}${step}`);
       continue;
     }
 
@@ -331,7 +338,6 @@ export async function enumerateSkills(
       body: parsed.body,
       updatedDays: commit?.updatedDays ?? UNKNOWN_UPDATED_DAYS,
     });
-    await wait(RAW_PAUSE_MS);
   }
 
   // Spec 6.3 trap 4: one 846-path monorepo must not ship the same concept a dozen times.

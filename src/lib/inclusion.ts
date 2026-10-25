@@ -130,7 +130,12 @@ export function capPerPublisherPerConcept<T>(
   return out;
 }
 
-export type InclusionReason = 'included' | 'repo-internal' | 'no-readme' | 'weak-description';
+export type InclusionReason =
+  | 'included'
+  | 'repo-internal'
+  | 'no-readme'
+  | 'weak-description'
+  | 'unsupported-language';
 
 /**
  * Spec 6.4: "these rules are published at /methodology". This array is the machine-readable
@@ -142,6 +147,7 @@ export const INCLUSION_RULE_ORDER: readonly InclusionReason[] = [
   'repo-internal',
   'no-readme',
   'weak-description',
+  'unsupported-language',
 ];
 
 export interface SkillCandidate {
@@ -149,6 +155,8 @@ export interface SkillCandidate {
   path: string;
   hasReadme: boolean;
   description: unknown;
+  /** English or Portuguese, decided by the harvest from the whole SKILL.md (spec 2026-10-24). */
+  supportedLanguage: boolean;
 }
 
 /**
@@ -160,5 +168,6 @@ export function includeSkill(candidate: SkillCandidate): InclusionReason {
   if (isRepoInternal(candidate.path)) return 'repo-internal';
   if (!candidate.hasReadme) return 'no-readme';
   if (!isMeaningfulDescription(candidate.description, candidate.repo)) return 'weak-description';
+  if (!candidate.supportedLanguage) return 'unsupported-language';
   return 'included';
 }

@@ -21,9 +21,12 @@ const SKILL_MD = [
   'description: Scans lockfiles for malicious packages.',
   '---',
   '',
-  'Run it on every PR.',
+  'Run it on every pull request. It reads each lockfile, checks every package against known malicious releases and explains how to pin a safe version.',
   '',
 ].join('\n');
+
+const ENGLISH_BODY =
+  'Use it before every release. It walks the repository, reports what it finds by severity and explains each fix step by step.';
 
 const OID = '9892f18037231b42bdbdb6cc6ecdb2f5d58eff0e';
 const ALIAS_RE = /^ +(p\d+): history\(first: 1, path: "([^"]+)"\)/gm;
@@ -83,7 +86,8 @@ describe('enumerateSkills', () => {
           name: 'alpha',
           description: 'Scans lockfiles for malicious packages.',
         },
-        body: 'Run it on every PR.',
+        body:
+          'Run it on every pull request. It reads each lockfile, checks every package against known malicious releases and explains how to pin a safe version.',
         updatedDays: 45,
       },
     ]);
@@ -158,6 +162,31 @@ describe('enumerateSkills', () => {
     expect(logs.join('\n')).toContain('weak-description');
   });
 
+  it('excludes a skill written in neither English nor Portuguese (spec 2026-10-24 D1)', async () => {
+    const logs: string[] = [];
+    const { fetchImpl } = router({
+      history: { 'skills/alpha/SKILL.md': ['c0ffee1', '2026-07-15T00:00:00Z'] },
+      raw: () =>
+        new Response(
+          '---\nname: alpha\ndescription: Prüft Lockfiles auf bösartige Pakete.\n---\n' +
+            'Vor jeder Veröffentlichung ausführen. Der Skill liest jede Lockdatei, prüft alle Pakete gegen ' +
+            'bekannte bösartige Versionen und erklärt, wie man eine sichere Version festlegt.',
+          { status: 200 },
+        ),
+    });
+
+    let pauses = 0;
+    const sleepImpl = async (): Promise<void> => {
+      pauses += 1;
+    };
+    const skills = await enumerateSkills(snapshot(), 'tok', { ...BASE, sleepImpl, fetchImpl, log: (m) => logs.push(m) });
+
+    expect(skills).toEqual([]);
+    expect(logs.join('\n')).toMatch(/excluded: unsupported-language \((description|body)-language\)/);
+    // An excluded skill was still fetched: the raw pause applies, or a non-EN/PT monorepo bursts.
+    expect(pauses).toBe(1);
+  });
+
   it('caps one entry per publisher per concept', async () => {
     const tree = {
       truncated: false,
@@ -172,8 +201,8 @@ describe('enumerateSkills', () => {
       raw: (url) =>
         new Response(
           url.includes('/omega/')
-            ? '---\nname: Omega\ndescription: Renders build provenance attestations.\n---\nBody.'
-            : '---\nname: Alpha\ndescription: Scans lockfiles for malicious packages.\n---\nBody.',
+            ? `---\nname: Omega\ndescription: Renders build provenance attestations.\n---\n${ENGLISH_BODY}`
+            : `---\nname: Alpha\ndescription: Scans lockfiles for malicious packages.\n---\n${ENGLISH_BODY}`,
           { status: 200 },
         ),
     });
