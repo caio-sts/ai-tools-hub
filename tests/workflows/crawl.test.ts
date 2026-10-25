@@ -8,6 +8,7 @@ interface Step {
   if?: string;
   run?: string;
   env?: Record<string, string>;
+  'continue-on-error'?: boolean;
 }
 
 const yml = readFileSync('.github/workflows/crawl.yml', 'utf8');
@@ -105,6 +106,29 @@ describe('crawl.yml publishes what it commits', () => {
     const publish = stepIndex((step) => step.run?.includes('gh workflow run deploy.yml') ?? false, 'dispatches deploy');
     expect(publish).toBeGreaterThan(push);
     expect(steps[publish]!.env?.['GH_TOKEN']).toBe('${{ secrets.GITHUB_TOKEN }}');
+  });
+});
+
+describe("crawl.yml warns before skills.json reaches GitHub's 100 MiB file limit (spec §13)", () => {
+  // 10-17: the push was refused at 100.42 MiB with no warning beforehand.
+  const warn = stepIndex((step) => step.run?.includes('P2: skills.json near the 100 MiB file limit') ?? false, 'warns on size');
+  const step = steps[warn]!;
+
+  it('checks the size at 80 MiB and reports it on one open issue', () => {
+    expect(step.run).toContain('stat -c %s data/skills.json');
+    expect(step.run).toContain('80 * 1024 * 1024');
+    expect(step.run).toMatch(/OPEN=\$\(gh issue list --state open[^\n]*\|\| true\)/);
+    expect(step.run).toContain('gh issue comment');
+    expect(step.run).toContain('gh issue create');
+    expect(step.env?.['GH_TOKEN']).toBe('${{ secrets.GITHUB_TOKEN }}');
+  });
+
+  it('warns before the commit, so it fires even when the push is refused, and never fails the job', () => {
+    const commit = stepIndex((candidate) => candidate.run?.includes('git push') ?? false, 'pushes');
+    expect(warn).toBeLessThan(commit);
+    expect(step.if).toBeUndefined();
+    // Under bash -e any failing gh call fails the step; only this keeps the commit running.
+    expect(step['continue-on-error']).toBe(true);
   });
 });
 

@@ -9,11 +9,15 @@ interface Step {
   uses?: string;
   run?: string;
   with?: Record<string, unknown>;
+  env?: Record<string, string>;
 }
 
 interface Job {
   'runs-on': string;
-  needs?: string;
+  needs?: string | string[];
+  if?: string;
+  permissions?: Record<string, string>;
+  'timeout-minutes'?: number;
   steps?: Step[];
 }
 
@@ -87,5 +91,29 @@ describe('deploy.yml', () => {
     const deploy = workflow.jobs.deploy;
     expect(deploy.needs).toBe('build');
     expect((deploy.steps ?? [])[0]?.uses).toBe('actions/deploy-pages@v5.0.0');
+  });
+});
+
+describe('deploy.yml fails loudly (spec §13)', () => {
+  // 10-11 and 10-12 hung for the 6 h default; 10-13..10-21 failed in ~30 s. Nothing said so.
+  it('gives up on a hung build or deploy long before the 6 h default', () => {
+    expect(workflow.jobs.build['timeout-minutes']).toBe(30);
+    // Above Pages' own 10-minute deploy timeout.
+    expect(workflow.jobs.deploy['timeout-minutes']).toBe(15);
+  });
+
+  it('reports a failed, timed-out or skipped deploy on one open issue', () => {
+    const report = workflow.jobs.report;
+    expect(report.needs).toEqual(['build', 'deploy']);
+    expect(report.if).toBe(
+      "${{ always() && github.ref_name == github.event.repository.default_branch && (needs.build.result != 'success' || needs.deploy.result != 'success') }}",
+    );
+    expect(report.permissions).toEqual({ issues: 'write' });
+    const step = (report.steps ?? [])[0]!;
+    expect(step.env).toEqual({ GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}', GH_REPO: '${{ github.repository }}' });
+    expect(step.run).toContain('P1: deploy failed');
+    expect(step.run).toMatch(/OPEN=\$\(gh issue list --state open[^\n]*\|\| true\)/);
+    expect(step.run).toContain('gh issue comment');
+    expect(step.run).toContain('gh issue create');
   });
 });
