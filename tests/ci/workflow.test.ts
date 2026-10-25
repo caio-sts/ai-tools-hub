@@ -34,20 +34,18 @@ describe('.github/workflows/ci.yml', () => {
 });
 
 describe('ci.yml fails loudly on master (spec §13)', () => {
-  // A crawl-dispatched run is started by the bot, so GitHub emails nobody when it fails.
-  const jobs = parse(WORKFLOW).jobs as Record<string, { needs?: string; if?: string; permissions?: Record<string, string>; 'timeout-minutes'?: number; steps?: Array<{ env?: Record<string, string> }> }>;
+  const { jobs } = parse(WORKFLOW);
 
   it('gives up on a hung run long before the 6 h default', () => {
     expect(jobs.test['timeout-minutes']).toBe(30);
   });
 
-  it('reports a failure on master only: cancel-in-progress cancels superseded runs, which are not outages', () => {
-    const report = jobs.report;
-    expect(report.needs).toBe('test');
-    expect(report.if).toBe(
-      "${{ always() && github.ref_name == github.event.repository.default_branch && needs.test.result == 'failure' }}",
+  it('reports failures and cancellations on master; the step drops cancellations that were superseded', () => {
+    expect(jobs.report.needs).toBe('test');
+    expect(jobs.report.if).toBe(
+      "${{ always() && github.ref_name == github.event.repository.default_branch && (needs.test.result == 'failure' || needs.test.result == 'cancelled') }}",
     );
-    expect(report.permissions).toEqual({ issues: 'write' });
-    expect(report.steps?.[0]?.env).toEqual({ GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}', GH_REPO: '${{ github.repository }}' });
+    expect(jobs.report.permissions).toEqual({ issues: 'write', actions: 'read' });
+    expect(jobs.report.steps[0].env.TEST_RESULT).toBe('${{ needs.test.result }}');
   });
 });

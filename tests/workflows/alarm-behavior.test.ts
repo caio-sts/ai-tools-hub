@@ -23,14 +23,18 @@ const ALARMS = {
   'P1: CI failed on master': runOf(ci, 'P1: CI failed on master'),
 };
 
-function runAlarm(script: string, openIssue: string): string[] {
+function runAlarm(script: string, openIssue: string, extraEnv: Record<string, string> = {}): string[] {
   const dir = mkdtempSync(join(tmpdir(), 'alarm-'));
   mkdirSync(join(dir, 'bin'));
   mkdirSync(join(dir, 'data'));
   writeFileSync(join(dir, 'data', 'skills.json'), '');
   truncateSync(join(dir, 'data', 'skills.json'), 85 * 1024 * 1024);
   const gh = join(dir, 'bin', 'gh');
-  writeFileSync(gh, '#!/bin/bash\necho "$*" >> "$GH_LOG"\n[ "$1 $2" = "issue list" ] && [ -n "$FAKE_OPEN" ] && echo "$FAKE_OPEN"\nexit 0\n');
+  writeFileSync(
+    gh,
+    '#!/bin/bash\necho "$*" >> "$GH_LOG"\n[ "$1 $2" = "issue list" ] && [ -n "$FAKE_OPEN" ] && echo "$FAKE_OPEN"\n' +
+      '[ "$1 $2" = "run list" ] && echo "$FAKE_NEWEST_RUN"\nexit 0\n',
+  );
   chmodSync(gh, 0o755);
   const log = join(dir, 'gh.log');
   writeFileSync(log, '');
@@ -44,9 +48,10 @@ function runAlarm(script: string, openIssue: string): string[] {
       GITHUB_REPOSITORY: 'owner/repo',
       GITHUB_REPOSITORY_OWNER: 'owner',
       GITHUB_RUN_ID: '1',
+      ...extraEnv,
     },
   });
-  return readFileSync(log, 'utf8').trim().split('\n').filter((call) => !call.startsWith('issue list'));
+  return readFileSync(log, 'utf8').trim().split('\n').filter((call) => call.startsWith('issue create') || call.startsWith('issue comment'));
 }
 
 describe('alarm shells, run against a stub gh (spec §13)', () => {
@@ -63,4 +68,18 @@ describe('alarm shells, run against a stub gh (spec §13)', () => {
       expect(calls[0]).toMatch(/^issue comment 7 --body @owner .*Run: https:\/\/github.com\/owner\/repo\/actions\/runs\/1$/);
     });
   }
+});
+
+describe('the CI alarm tells a timeout from a superseded run (both conclude cancelled)', () => {
+  const script = ALARMS['P1: CI failed on master'];
+
+  it('files when the cancelled run is still the newest on master: a timeout', () => {
+    const calls = runAlarm(script, '', { TEST_RESULT: 'cancelled', FAKE_NEWEST_RUN: '1' });
+    expect(calls).toHaveLength(1);
+    expect(calls[0]).toMatch(/^issue create --title P1: CI failed on master --body @owner /);
+  });
+
+  it('stays quiet when a newer run superseded it', () => {
+    expect(runAlarm(script, '', { TEST_RESULT: 'cancelled', FAKE_NEWEST_RUN: '2' })).toEqual([]);
+  });
 });
