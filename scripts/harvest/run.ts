@@ -15,7 +15,7 @@ import type {
 } from '../../src/types.ts';
 import { loadAssignments, loadCollections, loadMeta, loadSkills } from '../../src/lib/data.ts';
 import { resolveLicense, siblingLicensePath } from '../../src/lib/license.ts';
-import { EVICT_RANK, applyListing, compareForRank } from '../../src/lib/rank.ts';
+import { EVICT_RANK, REPO_CAP, applyListing, capPerRepo, compareForRank } from '../../src/lib/rank.ts';
 import { deriveSafety, isPortable, scriptFilesFor } from '../../src/lib/safety.ts';
 import { scoreSkill } from '../../src/lib/score.ts';
 import { loadTaxonomy } from '../../src/lib/taxonomy.ts';
@@ -495,12 +495,20 @@ export async function runHarvest(
 
   skills.sort(compareForRank);
 
-  // Survival (spec §5.1). The cap decides what is LISTED, never what is stored: every row stays
-  // in skills.json and keeps being re-scored. `previous` is what the last committed run listed,
-  // which is what makes eviction hysteretic instead of a rank-60 knife edge. applyListing
-  // preserves the order it was given, so the sort above survives.
+  // Spec 2026-10-24 D1: past REPO_CAP an unclassified row is not stored at all. Security-relevant
+  // rows are exempt so they can still reach classification.
+  const stored = capPerRepo(
+    skills,
+    REPO_CAP,
+    (skill) => skill.securityRelevant || assignments.has(identityKey(skill.repo, skill.path)),
+  );
+
+  // Survival (spec §5.1). The subdomain cap decides what is LISTED among stored rows: every
+  // stored row stays in skills.json and keeps being re-scored. `previous` is what the last
+  // committed run listed, which is what makes eviction hysteretic instead of a rank-60 knife
+  // edge. Both caps preserve the order they were given, so the sort above survives.
   const previouslyListed = new Set(previous.skills.filter((entry) => entry.listed).map((entry) => entry.id));
-  const listed = applyListing(skills, previouslyListed, loadTaxonomy().minimumMass);
+  const listed = applyListing(stored, previouslyListed, loadTaxonomy().minimumMass);
 
   const meta: Meta = {
     crawledAt: indexedAt,

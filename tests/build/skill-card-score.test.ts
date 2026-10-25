@@ -3,7 +3,7 @@ import { loadSkills } from '../../src/lib/data.ts';
 import strings from '../../src/lib/i18n/skill.ts';
 import { cardOf, elementWith, pageFor, panelOf, text } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 const MAX = { adoption: 25, maintenance: 30, provenance: 25, completeness: 20 } as const;
 const TERMS = Object.keys(MAX) as Array<keyof typeof MAX>;
 

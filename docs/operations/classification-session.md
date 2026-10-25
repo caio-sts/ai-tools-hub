@@ -23,7 +23,7 @@ reports them as two separate rows for exactly that reason.
 
 | File | Role |
 |---|---|
-| `data/skills.json` | a bare `Skill[]` of every harvested skill, written by the harvest (`scripts/harvest/run.ts` locally, `crawl.yml` weekly) |
+| `data/skills.json` | a bare `Skill[]` of the stored skills (per repo, at most 50 that are neither classified nor security-relevant), written by the harvest (`scripts/harvest/run.ts` locally, `crawl.yml` weekly) |
 | `data/taxonomy.json` | the closed vocabulary: 13 domains, the 15 security leaves, `protected`, `aliases`, `minimumMass` |
 | `data/assignments.json` | what previous sessions already decided; the cache |
 | `data/meta.json` | `crawledAt`, `classifiedAt`, `skillCount`, `sourceCount` |
@@ -58,8 +58,8 @@ Rules the session must hold to:
 - A skill with no entry here is not lost: it renders in its domain's named `general` leaf and is
   counted in the banner's "queued unclassified" row.
 - `Skill.listed` is **never** hand-edited. The harvest recomputes it from the per-subdomain cap on
-  every run (§5.1). An entry evicted from its listing still needs a classification, still keeps its
-  page, and still counts in the queued-unclassified row.
+  every run (§5.1). An entry evicted from its listing still needs a classification and still
+  counts in the queued-unclassified row, but has no page while evicted.
 
 ### Translation rules
 

@@ -3,7 +3,7 @@ import { loadSkills } from '../../src/lib/data.ts';
 import { nodeName } from '../../src/lib/taxonomy.ts';
 import { allCss, cardOf, mainOf, occurrences, pageFor, text } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 
 describe('the category chip', () => {
   it('is suppressed on the skill page, where the breadcrumb already names the category', () => {

@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import type { Collection, RawSkill, Safety, Skill, TreeFile } from '../../src/types.ts';
 import { loadSkills } from '../../src/lib/data.ts';
+import { REPO_CAP } from '../../src/lib/rank.ts';
 import { RateLimitedError, type Budget } from '../../scripts/harvest/budget.ts';
 import type { RepoSnapshot } from '../../scripts/harvest/enumerate.ts';
 import { StuckCrawlError, main, runHarvest, type HarvestDeps } from '../../scripts/harvest/run.ts';
@@ -53,6 +54,17 @@ function cachedSkill(): Skill {
     score: 100,
     breakdown: { adoption: 25, maintenance: 30, provenance: 25, completeness: 20, total: 100 },
   };
+}
+
+/** `count` rows of cached/repo scored 100, 99, 98 …, so row i ranks i + 1 in its repo. */
+function cachedRows(count: number): Skill[] {
+  return Array.from({ length: count }, (_unused, i) => ({
+    ...cachedSkill(),
+    id: `cached/repo@old:skills/${i}/SKILL.md`,
+    name: `cached-${i}`,
+    path: `skills/${i}/SKILL.md`,
+    score: 100 - i,
+  }));
 }
 
 async function seededDataDir(): Promise<string> {
@@ -281,6 +293,48 @@ describe('runHarvest', () => {
     const fresh = skills.find((k) => k.repo === 'fresh/repo');
     expect(fresh?.primary).toBe('security/containers-kubernetes');
     expect(fresh?.tags).toEqual(['trivy']);
+  });
+
+  it('stores at most REPO_CAP unclassified rows per repo and never cuts a classified one (spec 2026-10-24 D1)', async () => {
+    const dir = await seededDataDir();
+    const rows = cachedRows(REPO_CAP + 2);
+    await writeFile(join(dir, 'skills.json'), `${JSON.stringify(rows, null, 2)}\n`, 'utf8');
+    const classified = rows[REPO_CAP + 1]!.id;
+    await writeFile(
+      join(dir, 'assignments.json'),
+      JSON.stringify({ [classified]: { primary: 'security/containers-kubernetes', also: [], tags: [] } }),
+      'utf8',
+    );
+
+    const { skills } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['cached/repo'],
+      deps: deps(spy(), { fresh: [collection('cached/repo', '2026-08-01T00:00:00Z', 500)] }),
+    });
+
+    const ids = skills.map((k) => k.id);
+    expect(ids).toHaveLength(REPO_CAP + 1);
+    expect(ids).toContain(classified);
+    expect(ids).not.toContain(rows[REPO_CAP]!.id);
+    expect(loadSkills(dir)).toHaveLength(REPO_CAP + 1);
+  });
+
+  it('never cuts a security-relevant row either, so it can still reach classification (spec 2026-10-24 D1)', async () => {
+    const dir = await seededDataDir();
+    const rows = cachedRows(REPO_CAP + 1);
+    const security = { ...rows[REPO_CAP]!, securityRelevant: true };
+    await writeFile(join(dir, 'skills.json'), `${JSON.stringify([...rows.slice(0, REPO_CAP), security], null, 2)}\n`, 'utf8');
+
+    const { skills } = await runHarvest({
+      token: 'tok',
+      dataDir: dir,
+      allowlist: ['cached/repo'],
+      deps: deps(spy(), { fresh: [collection('cached/repo', '2026-08-01T00:00:00Z', 500)] }),
+    });
+
+    expect(skills.map((k) => k.id)).toContain(security.id);
+    expect(skills).toHaveLength(REPO_CAP + 1);
   });
 
   it('stops cleanly on the budget, keeps what it read, and leaves never-read repos out', async () => {

@@ -3,7 +3,7 @@ import { loadSkills } from '../../src/lib/data.ts';
 import strings from '../../src/lib/i18n/skill.ts';
 import { cardOf, classesOf, elementWith, pageFor, tagWith, text } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 const ORDER = ['claude', 'openclaw', 'codex', 'cursor', 'generic'];
 
 function leds(card: string): string[] {

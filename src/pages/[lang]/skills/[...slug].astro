@@ -6,14 +6,15 @@ import strings from '../../../lib/i18n/skill.ts';
 import { loadCollections, loadSkills } from '../../../lib/data.ts';
 import { nodeName } from '../../../lib/taxonomy.ts';
 import { skillSlug } from '../../../lib/slug.ts';
-import { pagefindIndexAttrs } from '../../../lib/facets.ts';
+import { listedSkills, pagefindIndexAttrs } from '../../../lib/facets.ts';
 import { withBase } from '../../../lib/link.ts';
 
 type PageProps = { skill: Skill; rank: number; collection: Collection | null };
 
 export function getStaticPaths() {
   const byRepo = new Map(loadCollections().map((collection) => [collection.repo, collection]));
-  const ranked = [...loadSkills()].sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
+  // Spec 2026-10-24 D2: an evicted entry has no page, so rank counts listed entries only.
+  const ranked = listedSkills(loadSkills()).sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
   const claimed = new Map<string, string>();
   const routes: Array<{ params: { lang: Lang; slug: string }; props: PageProps }> = [];
 
@@ -58,9 +59,6 @@ const index = pagefindIndexAttrs(skill, collection);
   description={skill.description}
   path={`/skills/${skillSlug(skill)}/`}
 >
-  {/* §5.1: an evicted row keeps this page, with its current score and dates, and leaves every
-      index. Head only — nothing visible changes, and there is no tombstone. */}
-  {!skill.listed && <meta slot="head" name="robots" content="noindex" />}
   <nav class="crumbs" data-field="crumbs" aria-label={s['skill.breadcrumb']}>
     <a class="crumbs__home" href={withBase(`/${lang}/`)}>{s['skill.home']}</a>
     <span class="crumbs__domain" data-field="crumb-domain">{nodeName(domainSlug, lang)}</span>
@@ -76,22 +74,20 @@ const index = pagefindIndexAttrs(skill, collection);
       filteredCategory={skill.primary}
     />
   </div>
-  {skill.listed && (
-    <div
-      data-pagefind-body
-      aria-hidden="true"
-      style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"
-    >
-      {/* Attribute form (`key[attr]`), never `key[value]` or `key:value`. Pagefind splits a literal
-          on the first `:`, and a skill id is `owner/repo@sha:path` — inlining it produced the key
-          `id[owner/repo@sha` and left every card unmatched, so the grid rendered empty. Reading the
-          value out of a real attribute has no parsing to get wrong. */}
-      <span data-skill-id={skill.id} data-pagefind-meta="id[data-skill-id]"></span>
-      {index.filters.map(({ key, value }) => <span data-value={value} data-pagefind-filter={`${key}[data-value]`}></span>)}
-      {index.sorts.map(({ key, value }) => <span data-value={value} data-pagefind-sort={`${key}[data-value]`}></span>)}
-      {index.text.map((line) => <p>{line}</p>)}
-    </div>
-  )}
+  <div
+    data-pagefind-body
+    aria-hidden="true"
+    style="position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap"
+  >
+    {/* Attribute form (`key[attr]`), never `key[value]` or `key:value`. Pagefind splits a literal
+        on the first `:`, and a skill id is `owner/repo@sha:path` — inlining it produced the key
+        `id[owner/repo@sha` and left every card unmatched, so the grid rendered empty. Reading the
+        value out of a real attribute has no parsing to get wrong. */}
+    <span data-skill-id={skill.id} data-pagefind-meta="id[data-skill-id]"></span>
+    {index.filters.map(({ key, value }) => <span data-value={value} data-pagefind-filter={`${key}[data-value]`}></span>)}
+    {index.sorts.map(({ key, value }) => <span data-value={value} data-pagefind-sort={`${key}[data-value]`}></span>)}
+    {index.text.map((line) => <p>{line}</p>)}
+  </div>
 </Layout>
 
 <style>

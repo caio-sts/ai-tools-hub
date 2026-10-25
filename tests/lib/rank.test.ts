@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { ScoreBreakdown, Skill } from '../../src/types.ts';
-import { EVICT_RANK, SUBDOMAIN_CAP, applyListing } from '../../src/lib/rank.ts';
+import { EVICT_RANK, REPO_CAP, SUBDOMAIN_CAP, applyListing, capPerRepo } from '../../src/lib/rank.ts';
 
 /** Any total in 0..100 split into components that respect the 25/30/25/20 caps. */
 function breakdownFor(total: number): ScoreBreakdown {
@@ -149,5 +149,37 @@ describe('the cap is a ceiling, never a floor (spec §5.1, §10.1)', () => {
     expect(listedCount(result, 'security/supply-chain')).toBe(70);
     expect(isListed(result, 'security/supply-chain', 70)).toBe(true);
     expect(isListed(result, 'security/supply-chain', 71)).toBe(false);
+  });
+});
+
+describe('capPerRepo stores at most REPO_CAP unclassified rows per repo (spec 2026-10-24 D1)', () => {
+  function row(repo: string, n: number, score: number): Skill {
+    return { ...entry('vertical-domain/general', n, score), repo, id: `${repo}@abc1234:${n}/SKILL.md`, path: `${n}/SKILL.md` };
+  }
+  const ids = (skills: Skill[]): string[] => skills.map((skill) => skill.id);
+  const none = (): boolean => false;
+
+  it('pins the cap', () => {
+    expect(REPO_CAP).toBe(50);
+  });
+
+  it('keeps the top rows of a repo by catalog order, in input order', () => {
+    const input = [row('a/one', 1, 70), row('a/one', 2, 90), row('a/one', 3, 80)];
+    expect(ids(capPerRepo(input, 2, none))).toEqual(['a/one@abc1234:2/SKILL.md', 'a/one@abc1234:3/SKILL.md']);
+  });
+
+  it('caps each repo on its own and leaves a small repo untouched', () => {
+    const input = [row('a/one', 1, 99), row('a/one', 2, 98), row('a/one', 3, 97), row('b/two', 1, 10)];
+    expect(ids(capPerRepo(input, 2, none))).toEqual([
+      'a/one@abc1234:1/SKILL.md',
+      'a/one@abc1234:2/SKILL.md',
+      'b/two@abc1234:1/SKILL.md',
+    ]);
+  });
+
+  it('never cuts an exempt row and does not count it toward the cap', () => {
+    const input = [row('a/one', 1, 100), row('a/one', 2, 90), row('a/one', 3, 80)];
+    const exempt = (skill: Skill): boolean => skill.id === 'a/one@abc1234:1/SKILL.md';
+    expect(ids(capPerRepo(input, 1, exempt))).toEqual(['a/one@abc1234:1/SKILL.md', 'a/one@abc1234:2/SKILL.md']);
   });
 });

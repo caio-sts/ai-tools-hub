@@ -6,6 +6,9 @@ export const SUBDOMAIN_CAP = 60;
 /** … and is only dropped once it falls past rank 72. Applied in Step 6. */
 export const EVICT_RANK = 72;
 
+/** At most this many unclassified rows per repo are stored (spec 2026-10-24 D1). */
+export const REPO_CAP = 50;
+
 /**
  * The catalog's own order: score descending, then freshness, then name.
  *
@@ -21,6 +24,24 @@ export const EVICT_RANK = 72;
  */
 export function compareForRank(a: Skill, b: Skill): number {
   return b.score - a.score || a.updatedDays - b.updatedDays || a.name.localeCompare(b.name);
+}
+
+/** Each repo's top `cap` rows by catalog order; `exempt` rows are always kept and never counted. */
+export function capPerRepo(skills: Skill[], cap: number, exempt: (skill: Skill) => boolean): Skill[] {
+  const byRepo = new Map<string, Skill[]>();
+  for (const skill of skills) {
+    if (exempt(skill)) continue;
+    const group = byRepo.get(skill.repo);
+    if (group === undefined) byRepo.set(skill.repo, [skill]);
+    else group.push(skill);
+  }
+
+  const kept = new Set<Skill>();
+  for (const group of byRepo.values()) {
+    for (const skill of group.sort(compareForRank).slice(0, cap)) kept.add(skill);
+  }
+
+  return skills.filter((skill) => exempt(skill) || kept.has(skill));
 }
 
 function countIn(listed: Set<string>, ranked: Skill[]): number {

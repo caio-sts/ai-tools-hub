@@ -6,7 +6,7 @@ import strings from '../../src/lib/i18n/skill.ts';
 import { officialFileUrl, rawFileUrl } from '../../src/lib/slug.ts';
 import { ROOT, bundles, cardOf, elementWith, pageFor, panelOf, tagWith, text } from '../helpers/skill-card.ts';
 
-const SKILLS = loadSkills();
+const SKILLS = loadSkills().filter((skill) => skill.listed);
 const JS = bundles().map((bundle) => bundle.js).join('\n');
 const SOURCE = readFileSync(join(ROOT, 'src/components/SkillCard.astro'), 'utf8');
 

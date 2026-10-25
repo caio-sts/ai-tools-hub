@@ -239,7 +239,8 @@ lever if bootstrap proves too slow; not in scope.
   and deferred rows keep their old score and `updatedDays`, contrary to §5 ("recomputed for every
   entry on every run"). Pre-existing; this design carries more rows forward, so the gap grows.
 - **Output volume.** `skills.json` is ~2 KB per row: ~25k rows passes GitHub's 50 MB warning and
-  ~50k hits the 100 MB push limit. Choose a storage plan before that.
+  ~50k hits the 100 MB push limit. Hit on 2026-10-17; bounded by the
+  [catalog volume spec](2026-10-24-catalog-volume-design.md).
 - **A repo refused mid-read on every run.** It stays at the head of the queue, so an oversized repo
   that trips a rate limit every time keeps the crawler stuck — loudly (§7), but stuck.
 - **A repo needing more than 55 minutes** (90 − 35) would still cancel the job.
