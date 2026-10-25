@@ -110,14 +110,21 @@ describe('crawl.yml publishes what it commits', () => {
 });
 
 describe('crawl.yml alarms reach the owner (spec §13)', () => {
-  // A new issue only notifies watchers, and the owner does not watch the repo; assignment always notifies.
-  it('assigns every alarm issue to the repository owner', () => {
-    const alarms = steps.filter((step) => step.run?.includes('gh issue create') ?? false);
+  // A new issue notifies only watchers, and the owner does not watch the repo. A mention notifies on
+  // every recurrence and, unlike an assignment, can never make filing the alarm fail.
+  const alarms = steps.filter((step) => step.run?.includes('gh issue create') ?? false);
+
+  it('mentions the owner when it opens an alarm and on every recurrence, and never assigns', () => {
     expect(alarms.length).toBe(2);
     for (const step of alarms) {
-      expect(step.run).toContain('--assignee "$GITHUB_REPOSITORY_OWNER"');
-      expect(step.run).toContain('gh issue edit "$OPEN" --add-assignee "$GITHUB_REPOSITORY_OWNER"');
+      expect(step.run).toMatch(/gh issue comment "\$OPEN" --body "@\$GITHUB_REPOSITORY_OWNER /);
+      expect(step.run).toMatch(/--body "@\$GITHUB_REPOSITORY_OWNER [^"]*Run: \$RUN_URL"/);
+      expect(step.run).not.toContain('assignee');
     }
+  });
+
+  it('names the repo for gh, so an alarm still files when the checkout failed', () => {
+    for (const step of alarms) expect(step.env?.['GH_REPO']).toBe('${{ github.repository }}');
   });
 });
 

@@ -70,12 +70,12 @@ jobs:
         run: |
           RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           OPEN=$(gh issue list --state open --search 'in:title "P1: deploy failed"' --json number --jq '.[0].number // empty' || true)
-          # Assigned, not just opened: a new issue notifies only watchers, an assignment always notifies.
+          # A new issue notifies only watchers; the @mention reaches the owner every time and, unlike
+          # an assignment, cannot make filing fail.
           if [ -n "$OPEN" ]; then
-            gh issue edit "$OPEN" --add-assignee "$GITHUB_REPOSITORY_OWNER"
-            gh issue comment "$OPEN" --body "Failed again on $(date -u +%Y-%m-%d): $RUN_URL"
+            gh issue comment "$OPEN" --body "@$GITHUB_REPOSITORY_OWNER failed again on $(date -u +%Y-%m-%d). Run: $RUN_URL"
           else
-            gh issue create --assignee "$GITHUB_REPOSITORY_OWNER" \
+            gh issue create \
               --title "P1: deploy failed" \
-              --body "The Pages deploy failed, so the live site is frozen at its last good build. Run: $RUN_URL"
+              --body "@$GITHUB_REPOSITORY_OWNER the Pages deploy failed, so the live site is frozen at its last good build. Run: $RUN_URL"
           fi

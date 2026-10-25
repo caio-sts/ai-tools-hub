@@ -73,6 +73,7 @@ jobs:
         continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
         run: |
           SIZE=$(stat -c %s data/skills.json)
           if [ "$SIZE" -gt $((80 * 1024 * 1024)) ]; then
@@ -80,14 +81,14 @@ jobs:
             RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo "::warning::data/skills.json is $MIB MiB; GitHub refuses files over 100 MiB."
             OPEN=$(gh issue list --state open --search 'in:title "P2: skills.json near the 100 MiB file limit"' --json number --jq '.[0].number // empty' || true)
-            # Assigned, not just opened: a new issue notifies only watchers, an assignment always notifies.
+            # A new issue notifies only watchers; the @mention reaches the owner every time and, unlike
+            # an assignment, cannot make filing fail.
             if [ -n "$OPEN" ]; then
-              gh issue edit "$OPEN" --add-assignee "$GITHUB_REPOSITORY_OWNER"
-              gh issue comment "$OPEN" --body "$MIB MiB on $(date -u +%Y-%m-%d): $RUN_URL"
+              gh issue comment "$OPEN" --body "@$GITHUB_REPOSITORY_OWNER $MIB MiB on $(date -u +%Y-%m-%d). Run: $RUN_URL"
             else
-              gh issue create --assignee "$GITHUB_REPOSITORY_OWNER" \
+              gh issue create \
                 --title "P2: skills.json near the 100 MiB file limit" \
-                --body "data/skills.json is $MIB MiB. Over 100 MiB GitHub refuses the push and the crawl stops (it did on 2026-10-17). Lower REPO_CAP or split the file first. Run: $RUN_URL"
+                --body "@$GITHUB_REPOSITORY_OWNER data/skills.json is $MIB MiB. Over 100 MiB GitHub refuses the push and the crawl stops (it did on 2026-10-17). Lower REPO_CAP or split the file first. Run: $RUN_URL"
             fi
           fi
 
@@ -121,14 +122,15 @@ jobs:
         if: failure() || cancelled()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # gh would otherwise read the repo from the checkout, which may be what failed.
+          GH_REPO: ${{ github.repository }}
         run: |
           RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           OPEN=$(gh issue list --state open --search 'in:title "P1: crawl failed"' --json number --jq '.[0].number // empty' || true)
           if [ -n "$OPEN" ]; then
-            gh issue edit "$OPEN" --add-assignee "$GITHUB_REPOSITORY_OWNER"
-            gh issue comment "$OPEN" --body "Failed again on $(date -u +%Y-%m-%d): $RUN_URL"
+            gh issue comment "$OPEN" --body "@$GITHUB_REPOSITORY_OWNER failed again on $(date -u +%Y-%m-%d). Run: $RUN_URL"
           else
-            gh issue create --assignee "$GITHUB_REPOSITORY_OWNER" \
+            gh issue create \
               --title "P1: crawl failed" \
-              --body "The daily harvest failed, so the catalog is going stale. A silent crawler is a P1 bug, not a maintenance chore (spec §13). Run: $RUN_URL"
+              --body "@$GITHUB_REPOSITORY_OWNER the daily harvest failed, so the catalog is going stale. A silent crawler is a P1 bug, not a maintenance chore (spec §13). Run: $RUN_URL"
           fi
