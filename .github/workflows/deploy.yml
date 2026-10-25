@@ -43,7 +43,8 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    # Above Pages' own 10-minute deploy timeout, so the action reports first.
+    timeout-minutes: 15
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -56,7 +57,8 @@ jobs:
     # A broken deploy freezes the site with no signal (2026-10-10..10-24); fail as loudly as the crawl.
     needs: [build, deploy]
     # A timeout cancels the job: always() plus the results catches it where failure() would not.
-    if: ${{ always() && (needs.build.result != 'success' || needs.deploy.result != 'success') }}
+    # Only the default branch may deploy to Pages, so a branch run's refusal is not an outage.
+    if: ${{ always() && github.ref_name == github.event.repository.default_branch && (needs.build.result != 'success' || needs.deploy.result != 'success') }}
     runs-on: ubuntu-latest
     permissions:
       issues: write

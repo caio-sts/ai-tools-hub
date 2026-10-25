@@ -95,16 +95,19 @@ describe('deploy.yml', () => {
 });
 
 describe('deploy.yml fails loudly (spec §13)', () => {
-  // 10-11..10-24: builds hung for GitHub's default 6 h, then failed, and nothing said so.
+  // 10-11 and 10-12 hung for the 6 h default; 10-13..10-21 failed in ~30 s. Nothing said so.
   it('gives up on a hung build or deploy long before the 6 h default', () => {
     expect(workflow.jobs.build['timeout-minutes']).toBe(30);
-    expect(workflow.jobs.deploy['timeout-minutes']).toBe(10);
+    // Above Pages' own 10-minute deploy timeout.
+    expect(workflow.jobs.deploy['timeout-minutes']).toBe(15);
   });
 
   it('reports a failed, timed-out or skipped deploy on one open issue', () => {
     const report = workflow.jobs.report;
     expect(report.needs).toEqual(['build', 'deploy']);
-    expect(report.if).toBe("${{ always() && (needs.build.result != 'success' || needs.deploy.result != 'success') }}");
+    expect(report.if).toBe(
+      "${{ always() && github.ref_name == github.event.repository.default_branch && (needs.build.result != 'success' || needs.deploy.result != 'success') }}",
+    );
     expect(report.permissions).toEqual({ issues: 'write' });
     const step = (report.steps ?? [])[0]!;
     expect(step.env).toEqual({ GH_TOKEN: '${{ secrets.GITHUB_TOKEN }}', GH_REPO: '${{ github.repository }}' });

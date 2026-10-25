@@ -68,13 +68,15 @@ jobs:
 
       - name: Warn when skills.json nears GitHub's 100 MiB file limit
         # GitHub refuses a push with a file over 100 MiB (2026-10-17). Warn at 80 % while there is
-        # room to act, before the commit so it fires even when the push is refused.
+        # room to act, before the commit so it fires even when the push is refused. Advisory: an
+        # issue-API error must never cost the day's commit.
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           SIZE=$(stat -c %s data/skills.json)
           if [ "$SIZE" -gt $((80 * 1024 * 1024)) ]; then
-            MIB=$((SIZE / 1024 / 1024))
+            MIB=$(awk "BEGIN { printf \"%.1f\", $SIZE / 1048576 }")
             RUN_URL="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
             echo "::warning::data/skills.json is $MIB MiB; GitHub refuses files over 100 MiB."
             OPEN=$(gh issue list --state open --search 'in:title "P2: skills.json near the 100 MiB file limit"' --json number --jq '.[0].number // empty' || true)

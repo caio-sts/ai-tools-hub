@@ -8,6 +8,7 @@ interface Step {
   if?: string;
   run?: string;
   env?: Record<string, string>;
+  'continue-on-error'?: boolean;
 }
 
 const yml = readFileSync('.github/workflows/crawl.yml', 'utf8');
@@ -126,7 +127,8 @@ describe("crawl.yml warns before skills.json reaches GitHub's 100 MiB file limit
     const commit = stepIndex((candidate) => candidate.run?.includes('git push') ?? false, 'pushes');
     expect(warn).toBeLessThan(commit);
     expect(step.if).toBeUndefined();
-    expect(step.run).not.toMatch(/exit 1/);
+    // Under bash -e any failing gh call fails the step; only this keeps the commit running.
+    expect(step['continue-on-error']).toBe(true);
   });
 });
 
