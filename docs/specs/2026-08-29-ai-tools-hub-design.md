@@ -421,7 +421,8 @@ kills the refresh cron. Use a 1-year PAT with a calendar reminder, or a GitHub A
 Recall is solved and worthless; precision is unsolved. The filter answers *"is this meant to be
 reused by strangers?"* — lives in a skills-dedicated repo or is referenced by a
 `.claude-plugin/marketplace.json`; has a README; non-trivial, non-repo-specific description;
-not under `.claude/skills/`; ≥N stars or an org account. **These rules are published at
+not under `.claude/skills/`; ≥N stars or an org account; written in English or Portuguese
+([language filter](2026-10-24-language-filter-design.md), amended 2026-10-24). **These rules are published at
 `/methodology` (§10.6)** — a filter nobody can inspect is indistinguishable from taste.
 
 ### 6.5 Cron hygiene

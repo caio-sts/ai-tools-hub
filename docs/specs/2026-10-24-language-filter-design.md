@@ -1,7 +1,7 @@
 # Language filter — Design Specification
 
 **Date:** 2026-10-24
-**Status:** Awaiting review
+**Status:** Approved 2026-10-24
 **Path:** architectural (new inclusion rule, new dependency, one-off data migration)
 **Amends:** [2026-08-29 design](2026-08-29-ai-tools-hub-design.md) §6.4
 
@@ -72,7 +72,7 @@ script, `scripts/backfill-language.ts`, applies it once to every stored row:
 
 - fetches each row's `SKILL.md` at its pinned commit through GraphQL
   (`object(expression: "<sha>:<path>") { ... on Blob { text } }`), 50 per query (~440 queries,
-  1 point each);
+  1 point each; measured ~4 s per query, so ~30 min);
 - drops the rows the rule excludes, re-runs `applyListing`, rewrites `skills.json` and
   `meta.skillCount`, and rebuilds the rescue index;
 - a row whose blob cannot be fetched is kept and counted in the log, never silently dropped.
