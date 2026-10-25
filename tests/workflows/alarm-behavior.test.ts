@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { chmodSync, mkdirSync, mkdtempSync, readFileSync, truncateSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdirSync, mkdtempSync, readFileSync, rmSync, truncateSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -13,12 +13,14 @@ interface Step {
 
 const crawl = parse(readFileSync('.github/workflows/crawl.yml', 'utf8')).jobs.harvest.steps as Step[];
 const deploy = parse(readFileSync('.github/workflows/deploy.yml', 'utf8')).jobs.report.steps as Step[];
+const ci = parse(readFileSync('.github/workflows/ci.yml', 'utf8')).jobs.report.steps as Step[];
 const runOf = (steps: Step[], marker: string): string => steps.find((step) => step.run?.includes(marker))!.run!;
 
 const ALARMS = {
   'P1: crawl failed': runOf(crawl, 'P1: crawl failed'),
   'P2: skills.json near the 100 MiB file limit': runOf(crawl, 'P2: skills.json'),
   'P1: deploy failed': runOf(deploy, 'P1: deploy failed'),
+  'P1: CI failed on master': runOf(ci, 'P1: CI failed on master'),
 };
 
 function runAlarm(script: string, openIssue: string): string[] {
@@ -44,7 +46,11 @@ function runAlarm(script: string, openIssue: string): string[] {
       GITHUB_RUN_ID: '1',
     },
   });
-  return readFileSync(log, 'utf8').trim().split('\n').filter((call) => !call.startsWith('issue list'));
+  try {
+    return readFileSync(log, 'utf8').trim().split('\n').filter((call) => !call.startsWith('issue list'));
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
 }
 
 describe('alarm shells, run against a stub gh (spec §13)', () => {
