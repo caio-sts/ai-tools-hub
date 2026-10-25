@@ -73,8 +73,9 @@ script, `scripts/backfill-language.ts`, applies it once to every stored row:
 - fetches each row's `SKILL.md` at its pinned commit through GraphQL
   (`object(expression: "<sha>:<path>") { ... on Blob { text } }`), 50 per query (~440 queries,
   1 point each; measured ~4 s per query, so ~30 min);
-- drops the rows the rule excludes, re-runs `applyListing`, rewrites `skills.json` and
-  `meta.skillCount`, and rebuilds the rescue index;
+- drops the rows the rule excludes, re-runs `applyListing`, and rewrites `skills.json` and
+  `meta.skillCount`; `node scripts/build-rescue-index.ts` then rebuilds the rescue index, as in
+  the classification runbook;
 - a row whose blob cannot be fetched is kept and counted in the log, never silently dropped.
 
 It runs locally on a fresh master outside the crawl window (06:37 UTC), and its output lands as

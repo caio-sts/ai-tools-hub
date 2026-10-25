@@ -56,18 +56,20 @@ export interface BackfillResult {
 export async function backfillLanguage(dataDir: string, fetchBlobs: FetchBlobs, write: boolean): Promise<BackfillResult> {
   const stored = loadSkills(dataDir);
   const texts = await fetchBlobs(stored);
+  const kept: Skill[] = [];
+  const dropped: string[] = [];
   let unreadable = 0;
-  const kept = stored.filter((skill) => {
+  for (const skill of stored) {
     const text = texts.get(skill.id) ?? null;
-    if (text === null) {
-      unreadable += 1;
-      return true;
+    if (text === null) unreadable += 1;
+    const parsed = text === null ? null : parseFrontmatter(text);
+    if (parsed === null || isSupportedLanguage(parsed.frontmatter.name, parsed.frontmatter.description, parsed.body)) {
+      kept.push(skill);
+    } else {
+      dropped.push(skill.id);
     }
-    const { frontmatter, body } = parseFrontmatter(text);
-    return isSupportedLanguage(frontmatter.name, frontmatter.description, body);
-  });
-  const keptIds = new Set(kept.map((skill) => skill.id));
-  const result = { kept: kept.length, dropped: stored.filter((s) => !keptIds.has(s.id)).map((s) => s.id), unreadable };
+  }
+  const result = { kept: kept.length, dropped, unreadable };
   if (!write) return result;
 
   // Same steps as apply-assignments: listing is derived, so it is recomputed over what remains.
@@ -84,7 +86,10 @@ async function main(): Promise<void> {
   const write = !process.argv.includes('--dry-run');
   const { kept, dropped, unreadable } = await backfillLanguage('data', graphqlBlobs(token), write);
   const byRepo = new Map<string, number>();
-  for (const id of dropped) byRepo.set(id.split('@')[0]!, (byRepo.get(id.split('@')[0]!) ?? 0) + 1);
+  for (const id of dropped) {
+    const repo = id.split('@')[0]!;
+    byRepo.set(repo, (byRepo.get(repo) ?? 0) + 1);
+  }
   console.log(`backfill: kept ${kept} (${unreadable} unreadable, kept), dropped ${dropped.length}${write ? '' : ' — dry run, nothing written'}`);
   for (const [repo, count] of [...byRepo].sort((a, b) => b[1] - a[1]).slice(0, 15)) console.log(`  ${count}\t${repo}`);
 }
