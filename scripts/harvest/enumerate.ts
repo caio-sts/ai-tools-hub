@@ -9,7 +9,7 @@ import {
 } from '../../src/lib/inclusion.ts';
 import type { FetchLike } from './discover.ts';
 import { RateLimitedError, isRateLimited } from './budget.ts';
-import { isSupportedLanguage } from './language.ts';
+import { languageVerdict } from './language.ts';
 import { fetchPathCommits, type PathHistoryDeps } from './path-history.ts';
 
 const API = 'https://api.github.com';
@@ -314,15 +314,17 @@ export async function enumerateSkills(
     }
 
     const parsed = parseFrontmatter(text);
+    const language = languageVerdict(parsed.frontmatter.name, parsed.frontmatter.description, parsed.body);
     const verdict = includeSkill({
       repo: repo.repo,
       path: file.path,
       hasReadme: true,
       description: parsed.frontmatter.description,
-      supportedLanguage: isSupportedLanguage(parsed.frontmatter.name, parsed.frontmatter.description, parsed.body),
+      supportedLanguage: language === 'supported',
     });
     if (verdict !== 'included') {
-      log(`${repo.repo}:${file.path} excluded: ${verdict}`);
+      const step = verdict === 'unsupported-language' ? ` (${language})` : '';
+      log(`${repo.repo}:${file.path} excluded: ${verdict}${step}`);
       continue;
     }
 

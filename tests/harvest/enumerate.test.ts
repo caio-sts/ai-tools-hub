@@ -182,7 +182,7 @@ describe('enumerateSkills', () => {
     const skills = await enumerateSkills(snapshot(), 'tok', { ...BASE, sleepImpl, fetchImpl, log: (m) => logs.push(m) });
 
     expect(skills).toEqual([]);
-    expect(logs.join('\n')).toContain('excluded: unsupported-language');
+    expect(logs.join('\n')).toMatch(/excluded: unsupported-language \((description|body)-language\)/);
     // An excluded skill was still fetched: the raw pause applies, or a non-EN/PT monorepo bursts.
     expect(pauses).toBe(1);
   });
