@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import { t } from '../../src/lib/i18n/index.ts';
-import { countBySlug, homeDomains, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
+import { countBySlug, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -58,6 +58,16 @@ const taxonomy = loadTaxonomy();
 const skills = loadSkills();
 const counts = countBySlug(skills);
 const securityChildren = taxonomy.domains.find((d) => d.slug === 'security')?.children ?? [];
+// The expansion rule restated, not read from homeDomains, so a misclassified domain fails here.
+const withLeaves = taxonomy.domains.filter(
+  (domain) => (domain.children ?? []).some((child) => child.slug !== `${domain.slug}/general`),
+);
+const expanded = [
+  ...withLeaves.filter((domain) => domain.slug === 'security'),
+  ...withLeaves.filter((domain) => domain.slug !== 'security'),
+];
+const heading = (html: string, slug: string): string | undefined =>
+  html.match(new RegExp(`<h2[^>]*id="${slug}-heading"[^>]*>([^<]*)</h2>`))?.[1]?.replaceAll('&amp;', '&');
 
 describe('the expanded security grid', () => {
   it('renders every security subdomain the taxonomy declares, in taxonomy order', () => {
@@ -165,7 +175,7 @@ describe('the expanded security grid', () => {
   });
 
   it('heads and anchors the section with the taxonomy own label for security', () => {
-    const sections = homeDomains(taxonomy).expanded.length;
+    const sections = expanded.length;
     const leads = (html: string, lang: 'en' | 'pt') => html.split(t('home.domainLead', lang)).length - 1;
     expect(en.includes('id="taxonomy"'), 'no #taxonomy anchor on the home page').toBe(true);
     expect(leads(en, 'en'), 'not one en lead per expanded section').toBe(sections);
@@ -175,8 +185,6 @@ describe('the expanded security grid', () => {
 });
 
 describe('every domain with real subdomains', () => {
-  const { expanded } = homeDomains(taxonomy);
-
   it('gets its own grid of every leaf, in taxonomy order, in both locales', () => {
     for (const domain of expanded) {
       const leaves = (domain.children ?? []).map((child) => child.slug);
@@ -195,8 +203,20 @@ describe('every domain with real subdomains', () => {
 
   it('heads each section with the domain label, in the page locale', () => {
     for (const domain of expanded) {
-      expect(showsLabel(en, nodeName(domain.slug, 'en')), `${domain.slug} en heading`).toBe(true);
-      expect(showsLabel(pt, nodeName(domain.slug, 'pt')), `${domain.slug} pt heading`).toBe(true);
+      expect(heading(en, domain.slug), `${domain.slug} en heading`).toBe(nodeName(domain.slug, 'en'));
+      expect(heading(pt, domain.slug), `${domain.slug} pt heading`).toBe(nodeName(domain.slug, 'pt'));
+    }
+  });
+
+  it('lets the group filter find every leaf by its domain name, in both locales', () => {
+    const fold = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    for (const domain of expanded) {
+      for (const [html, lang] of [[en, 'en'], [pt, 'pt']] as const) {
+        for (const node of nodes(html, domain.slug)) {
+          const search = (/data-search="([^"]*)"/.exec(node.html)?.[1] ?? '').replaceAll('&amp;', '&');
+          expect(search, `${node.slug} (${lang})`).toContain(fold(nodeName(domain.slug, lang)));
+        }
+      }
     }
   });
 

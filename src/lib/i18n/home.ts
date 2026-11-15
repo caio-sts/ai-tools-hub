@@ -34,7 +34,7 @@ const en = {
 /** The annotation makes a missing or extra pt-BR key a compile error, not a silent English leak. */
 const pt: Record<keyof typeof en, string> = {
   'home.description':
-    'Um catálogo pequeno, profundo e auditável de skills de agentes: os domínios com subdomínios reais totalmente expandidos, os demais presentes e honestamente rasos.',
+    'Um catálogo pequeno, profundo e auditável de skills de agentes: domínios com subdomínios reais expandidos, os demais presentes e honestamente rasos.',
   'home.domainLead':
     'Todos os subdomínios, expandidos — inclusive aqueles onde nada foi classificado ainda.',
   'home.otherHeading': 'Outros domínios',

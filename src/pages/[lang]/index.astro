@@ -19,7 +19,7 @@ const skills = loadSkills();
 const counts = countBySlug(skills);
 const { expanded, tiles: otherDomains } = homeDomains(taxonomy);
 if (expanded[0]?.slug !== 'security') {
-  throw new Error('data/taxonomy.json has no "security" subdomains: the home page cannot expand it');
+  throw new Error('the home page expands security first: data/taxonomy.json needs a security leaf besides security/general');
 }
 
 // A6 always writes an ISO crawledAt; an unparsable one reads as 0 days rather than NaN.
@@ -142,7 +142,7 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
                 count={counts.get(child.slug) ?? 0}
                 minimumMass={taxonomy.minimumMass}
                 lang={lang}
-                aliases={aliasesFor(child.slug)}
+                aliases={[...aliasesFor(child.slug), nodeName(domain.slug, lang)]}
               />
             ))
           }
@@ -151,6 +151,7 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
     ))
   }
 
+  {otherDomains.length > 0 && (
   <section id="other-domains" class="domain" aria-labelledby="other-heading">
     <h2 class="domain__title" id="other-heading">{t('home.otherHeading', lang)}</h2>
     <p class="domain__lead">{t('home.otherLead', lang)}</p>
@@ -169,6 +170,7 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
       }
     </ul>
   </section>
+  )}
 </Layout>
 
 <script>

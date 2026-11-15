@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import { t } from '../../src/lib/i18n/index.ts';
-import { countDomain, homeDomains, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
+import { countDomain, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -49,7 +49,10 @@ const en = built('en/index.html');
 const pt = built('pt/index.html');
 const taxonomy = loadTaxonomy();
 const skills = loadSkills();
-const others = homeDomains(taxonomy).tiles;
+// The expansion rule restated, not read from homeDomains, so a misclassified domain fails here.
+const others = taxonomy.domains.filter(
+  (domain) => !(domain.children ?? []).some((child) => child.slug !== `${domain.slug}/general`),
+);
 
 describe('the other top-level domains', () => {
   it('renders every domain that does not expand, once each, in taxonomy order', () => {
