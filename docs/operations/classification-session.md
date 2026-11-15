@@ -88,8 +88,8 @@ Rules the session must hold to:
    records in `data/skills.json`.
 4. Set `classifiedAt` in `data/meta.json` to the ISO timestamp of this run. The banner's
    classification lag is computed from it, so a PR that forgets this step lies to the reader.
-5. If any skill *name* or taxonomy node changed, regenerate the typo-rescue index so search still
-   finds it (also after rebasing onto a crawl commit, which rewrites the same files):
+5. Regenerate the typo-rescue index on every pass: skill names, taxonomy nodes and listing counts
+   all feed it. Do it again after rebasing onto a crawl commit, which rewrites the same files:
    ```bash
    node scripts/build-rescue-index.ts
    ```
