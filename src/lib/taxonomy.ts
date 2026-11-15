@@ -43,10 +43,14 @@ export function flattenTaxonomy(tax: Taxonomy): TaxonomyNode[] {
 export function homeDomains(tax: Taxonomy): { expanded: TaxonomyNode[]; tiles: TaxonomyNode[] } {
   const expands = (domain: TaxonomyNode) =>
     (domain.children ?? []).some((child) => child.slug !== `${domain.slug}/general`);
-  const expanded = tax.domains
-    .filter(expands)
-    .sort((a, b) => Number(b.slug === 'security') - Number(a.slug === 'security'));
-  return { expanded, tiles: tax.domains.filter((domain) => !expands(domain)) };
+  const expanding = tax.domains.filter(expands);
+  return {
+    expanded: [
+      ...expanding.filter((domain) => domain.slug === 'security'),
+      ...expanding.filter((domain) => domain.slug !== 'security'),
+    ],
+    tiles: tax.domains.filter((domain) => !expands(domain)),
+  };
 }
 
 export function nodeName(slug: string, lang: Lang): string {

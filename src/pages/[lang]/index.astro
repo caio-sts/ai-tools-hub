@@ -133,7 +133,7 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
         aria-labelledby={`${domain.slug}-heading`}
       >
         <h2 class="domain__title" id={`${domain.slug}-heading`}>{nodeName(domain.slug, lang)}</h2>
-        {domain.slug === 'security' && <p class="domain__lead">{t('home.securityLead', lang)}</p>}
+        <p class="domain__lead">{t('home.domainLead', lang)}</p>
         <ul class="grid" data-grid={domain.slug}>
           {
             (domain.children ?? []).map((child) => (

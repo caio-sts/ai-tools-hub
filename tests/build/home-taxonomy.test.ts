@@ -165,10 +165,12 @@ describe('the expanded security grid', () => {
   });
 
   it('heads and anchors the section with the taxonomy own label for security', () => {
+    const sections = homeDomains(taxonomy).expanded.length;
+    const leads = (html: string, lang: 'en' | 'pt') => html.split(t('home.domainLead', lang)).length - 1;
     expect(en.includes('id="taxonomy"'), 'no #taxonomy anchor on the home page').toBe(true);
-    expect(en.includes(t('home.securityLead', 'en')), 'no en security lead').toBe(true);
+    expect(leads(en, 'en'), 'not one en lead per expanded section').toBe(sections);
     expect(showsLabel(pt, nodeName('security', 'pt')), 'no pt security heading').toBe(true);
-    expect(pt.includes(t('home.securityLead', 'pt')), 'no pt security lead').toBe(true);
+    expect(leads(pt, 'pt'), 'not one pt lead per expanded section').toBe(sections);
   });
 });
 
