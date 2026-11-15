@@ -97,9 +97,9 @@ describe('buildRescueDocs', () => {
     expect(doc?.path).toBe(`/en/skills/${skillSlug(skill)}/`);
   });
 
-  it('sends nodes to the catalog, the only list surface this plan builds', () => {
+  it('sends nodes to the catalog, domains through its domain filter as the home grid does', () => {
     const pt = buildRescueDocs(skills, taxonomy, 'pt');
-    expect(pt.find((d) => d.id === 'node:security')?.path).toBe('/pt/catalog/?subdomain=security');
+    expect(pt.find((d) => d.id === 'node:security')?.path).toBe('/pt/catalog/?domain=security');
     const en = buildRescueDocs(skills, taxonomy, 'en');
     expect(en.find((d) => d.id === 'node:security/containers-kubernetes')?.path)
       .toBe('/en/catalog/?subdomain=security/containers-kubernetes');

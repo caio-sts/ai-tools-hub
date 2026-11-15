@@ -4,7 +4,7 @@ import { argv } from 'node:process';
 import { loadSkills } from '../src/lib/data.ts';
 import { activeTaxonomy, loadTaxonomy } from '../src/lib/taxonomy.ts';
 import { buildRescueDocs, createRescueIndex, serializeRescueIndex } from '../src/lib/rescue.ts';
-import type { Lang } from '../src/types.ts';
+import type { Lang, Skill } from '../src/types.ts';
 
 export const RESCUE_LANGS: readonly Lang[] = ['en', 'pt'];
 
@@ -12,8 +12,7 @@ export const RESCUE_LANGS: readonly Lang[] = ['en', 'pt'];
 export const RESCUE_OUT_DIR = 'public/rescue-index';
 
 /** Active nodes only (§10.1); pruned here because src/lib/rescue.ts ships to the browser. */
-export function rescueIndexJson(lang: Lang): string {
-  const skills = loadSkills();
+export function rescueIndexJson(lang: Lang, skills: Skill[] = loadSkills()): string {
   const taxonomy = activeTaxonomy(loadTaxonomy(), skills);
   return serializeRescueIndex(createRescueIndex(buildRescueDocs(skills, taxonomy, lang)));
 }
@@ -21,9 +20,10 @@ export function rescueIndexJson(lang: Lang): string {
 export function writeRescueIndexes(outDir: string = RESCUE_OUT_DIR): string[] {
   const dir = resolve(process.cwd(), outDir);
   mkdirSync(dir, { recursive: true });
+  const skills = loadSkills();
   return RESCUE_LANGS.map((lang) => {
     const file = resolve(dir, `${lang}.json`);
-    writeFileSync(file, `${rescueIndexJson(lang)}\n`, 'utf8');
+    writeFileSync(file, `${rescueIndexJson(lang, skills)}\n`, 'utf8');
     return file;
   });
 }

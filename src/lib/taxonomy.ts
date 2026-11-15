@@ -79,7 +79,10 @@ export function nodeState(count: number, minimumMass: number): NodeState {
   return count >= minimumMass ? 'active' : 'thin';
 }
 
-/** `tax` reduced to its Active nodes, counted as the home grid counts them (spec §10.1). */
+/**
+ * `tax` reduced to its Active nodes, counted as the home grid counts them (spec §10.1). An alias of
+ * a pruned leaf falls back to its domain, so `k8s` still rescues while its leaf is thin.
+ */
 export function activeTaxonomy(tax: Taxonomy, skills: Skill[]): Taxonomy {
   const counts = countBySlug(skills);
   const isActive = (count: number): boolean => nodeState(count, tax.minimumMass) === 'active';
@@ -89,5 +92,14 @@ export function activeTaxonomy(tax: Taxonomy, skills: Skill[]): Taxonomy {
       ...domain,
       children: domain.children.filter((child) => isActive(counts.get(child.slug) ?? 0)),
     });
-  return { ...tax, domains };
+  const kept = new Set(flattenTaxonomy({ ...tax, domains }).map((node) => node.slug));
+  const aliases: Record<string, string> = {};
+  for (const [alias, target] of Object.entries(tax.aliases)) {
+    const node = flattenTaxonomy(tax).find((n) => n.slug === target || n.slug.endsWith(`/${target}`));
+    if (node === undefined) continue;
+    const domain = node.slug.split('/')[0]!;
+    if (kept.has(node.slug)) aliases[alias] = target;
+    else if (kept.has(domain)) aliases[alias] = domain;
+  }
+  return { ...tax, domains, aliases };
 }

@@ -186,21 +186,27 @@ describe('activeTaxonomy', () => {
   };
   const slugsOf = (t: Taxonomy): string[] => flattenTaxonomy(t).map((n) => n.slug);
 
+  const skills = [
+    makeSkill('a', 'security/supply-chain'),
+    makeSkill('b', 'security/supply-chain'),
+    makeSkill('c', 'security/supply-chain', ['security/threat-modeling']),
+    makeSkill('d', 'security/threat-modeling'),
+    makeSkill('e', 'security/threat-modeling', [], false),
+    makeSkill('f', 'productivity/general'),
+    makeSkill('g', 'productivity/general'),
+  ];
+
   it('keeps only the nodes the home grid would link: Active, counted as listed entries', () => {
-    const skills = [
-      makeSkill('a', 'security/supply-chain'),
-      makeSkill('b', 'security/supply-chain'),
-      makeSkill('c', 'security/supply-chain', ['security/threat-modeling']),
-      makeSkill('d', 'security/threat-modeling'),
-      makeSkill('e', 'security/threat-modeling', [], false),
-      makeSkill('f', 'productivity/general'),
-      makeSkill('g', 'productivity/general'),
-    ];
     // threat-modeling is thin (2 listed), iac-config empty, productivity thin along with its leaf.
     expect(slugsOf(activeTaxonomy(tax, skills))).toEqual(['security', 'security/supply-chain']);
   });
 
-  it('leaves aliases, protected terms and minimum mass untouched', () => {
-    expect(activeTaxonomy(tax, [])).toEqual({ ...tax, domains: [] });
+  it('keeps every other field, and points an alias of a pruned leaf at its surviving domain', () => {
+    const full: Taxonomy = { ...tax, protected: ['IaC'], aliases: { sca: 'supply-chain', iac: 'iac-config', prod: 'productivity' } };
+    const pruned = activeTaxonomy(full, skills);
+    expect(pruned.aliases).toEqual({ sca: 'supply-chain', iac: 'security' });
+    expect(pruned.protected).toEqual(['IaC']);
+    expect(pruned.minimumMass).toBe(3);
+    expect(pruned.domains).toEqual([{ ...tax.domains[0], children: [tax.domains[0].children![0]] }]);
   });
 });

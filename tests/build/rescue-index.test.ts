@@ -15,6 +15,9 @@ function read(file: string): string {
 }
 
 describe('the committed rescue index', () => {
+  const skills = loadSkills();
+  const taxonomy = loadTaxonomy();
+
   for (const lang of RESCUE_LANGS) {
     it(`ships public/rescue-index/${lang}.json`, () => {
       const raw = read(`public/rescue-index/${lang}.json`);
@@ -29,24 +32,28 @@ describe('the committed rescue index', () => {
       expect(
         JSON.parse(read(`public/rescue-index/${lang}.json`)),
         `public/rescue-index/${lang}.json is stale — regenerate with "node scripts/build-rescue-index.ts"`,
-      ).toEqual(JSON.parse(rescueIndexJson(lang)));
+      ).toEqual(JSON.parse(rescueIndexJson(lang, skills)));
     });
 
     it(`is copied into dist/rescue-index/${lang}.json by the build`, () => {
       expect(existsSync(`dist/rescue-index/${lang}.json`)).toBe(true);
     });
 
-    it(`suggests only nodes the home grid links, never a dead end, for ${lang} (§10.1)`, () => {
-      const skills = loadSkills();
-      const taxonomy = loadTaxonomy();
-      const domains = new Set(taxonomy.domains.map((domain) => domain.slug));
+    it(`suggests exactly the Active nodes, each through the filter the home grid uses, for ${lang} (§10.1)`, () => {
+      // Recounted here, not through activeTaxonomy, so a bug there cannot pass its own check.
+      const active = (count: number) => nodeState(count, taxonomy.minimumMass) === 'active';
       const counts = countBySlug(skills);
-      const ids: string[] = Object.values(JSON.parse(read(`public/rescue-index/${lang}.json`)).documentIds);
-      const nodes = ids.filter((id) => id.startsWith('node:')).map((id) => id.slice('node:'.length));
-      expect(nodes.length).toBeGreaterThan(0);
-      for (const slug of nodes) {
-        const count = domains.has(slug) ? countDomain(skills, slug) : counts.get(slug) ?? 0;
-        expect(nodeState(count, taxonomy.minimumMass), `${slug} holds ${count} listed entries`).toBe('active');
+      const expected = taxonomy.domains
+        .filter((domain) => active(countDomain(skills, domain.slug)))
+        .flatMap((domain) => [domain.slug, ...(domain.children ?? [])
+          .filter((child) => active(counts.get(child.slug) ?? 0)).map((child) => child.slug)]);
+      const index = JSON.parse(read(`public/rescue-index/${lang}.json`));
+      const nodes = Object.entries(index.documentIds as Record<string, string>)
+        .filter(([, id]) => id.startsWith('node:'))
+        .map(([short, id]) => ({ slug: id.slice('node:'.length), path: index.storedFields[short].path as string }));
+      expect(nodes.map((node) => node.slug).sort()).toEqual([...expected].sort());
+      for (const { slug, path } of nodes) {
+        expect(path).toBe(`/${lang}/catalog/?${slug.includes('/') ? 'subdomain' : 'domain'}=${slug}`);
       }
     });
   }
