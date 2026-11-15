@@ -771,7 +771,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
     "tags": [
       "cpp",
@@ -1176,7 +1176,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [
       "security/offensive-testing"
     ],
@@ -1937,10 +1937,8 @@
         "Workflow Task Read Grep Glob"
       ]
     },
-    "primary": "coding-software/general",
-    "also": [
-      "security/compliance-grc"
-    ],
+    "primary": "coding-software/code-review",
+    "also": [],
     "tags": [
       "specifications",
       "traceability",
@@ -7465,7 +7463,7 @@
     },
     "primary": "security/offensive-testing",
     "also": [
-      "coding-software/general"
+      "coding-software/testing"
     ],
     "tags": [
       "fuzzing",
@@ -7947,7 +7945,7 @@
         "Bash Glob Read TaskOutput TaskStop Workflow"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -8044,7 +8042,7 @@
         "Bash Glob Read TaskOutput TaskStop Workflow"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -12056,7 +12054,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing",
@@ -23437,7 +23435,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing",
@@ -23604,7 +23602,7 @@
         "Bash Read Glob Grep AskUserQuestion"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -50278,7 +50276,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -67719,7 +67717,9 @@
       ]
     },
     "primary": "coding-software/general",
-    "also": [],
+    "also": [
+      "security/code-application"
+    ],
     "tags": [
       "units",
       "dimensions",
@@ -67812,7 +67812,7 @@
         "Read Write Bash Grep"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "mutation-testing",
@@ -68314,7 +68314,7 @@
         "Glob"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -70432,7 +70432,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing"
@@ -91730,9 +91730,9 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "security/code-application",
     "also": [
-      "security/code-application"
+      "coding-software/code-review"
     ],
     "tags": [
       "sql",
@@ -92478,7 +92478,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "playwright",
@@ -173795,7 +173795,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -178788,7 +178788,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [
       "devops-infra/general"
     ],
@@ -210941,7 +210941,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
     "tags": [
       "python",

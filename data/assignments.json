@@ -238,7 +238,7 @@
     ]
   },
   "trailofbits/skills@293fb74c3151cceda32a85a545fe8acd67f8f5c6:plugins/modern-cpp/skills/modern-cpp/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
     "tags": [
       "cpp",
@@ -346,7 +346,7 @@
     ]
   },
   "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/trailmark/skills/genotoxic/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [
       "security/offensive-testing"
     ],
@@ -423,10 +423,8 @@
     ]
   },
   "trailofbits/skills@798b591aa498100f7744a948c0e3cbfc40e7eded:plugins/spec-to-code-compliance/skills/spec-to-code-compliance/SKILL.md": {
-    "primary": "coding-software/general",
-    "also": [
-      "security/compliance-grc"
-    ],
+    "primary": "coding-software/code-review",
+    "also": [],
     "tags": [
       "specifications",
       "traceability",
@@ -515,7 +513,7 @@
     ]
   },
   "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/skills/code-improver/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -526,7 +524,7 @@
     ]
   },
   "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/skills/pr-improver/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -600,7 +598,7 @@
   "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/coverage-analysis/SKILL.md": {
     "primary": "security/offensive-testing",
     "also": [
-      "coding-software/general"
+      "coding-software/testing"
     ],
     "tags": [
       "fuzzing",
@@ -695,7 +693,7 @@
     ]
   },
   "trailofbits/skills@04b241176fd9c10738a61df53d2c677c53e42990:plugins/property-based-testing/skills/property-based-testing/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing",
@@ -723,7 +721,7 @@
     ]
   },
   "trailofbits/skills@64a8c3f00ba4a2962ff23c4823c48e3da6604be8:plugins/second-opinion/skills/second-opinion/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -847,7 +845,9 @@
   },
   "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/dimensional-analysis/skills/dimensional-analysis/SKILL.md": {
     "primary": "coding-software/general",
-    "also": [],
+    "also": [
+      "security/code-application"
+    ],
     "tags": [
       "units",
       "dimensions",
@@ -866,7 +866,7 @@
     ]
   },
   "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/mutation-testing/skills/mutation-testing/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "mutation-testing",
@@ -963,7 +963,7 @@
     ]
   },
   "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/webapp-testing/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "playwright",
@@ -1015,7 +1015,7 @@
     ]
   },
   "trailofbits/skills@bb5c353abc393865238f5518a38b687c1f206e40:plugins/modern-python/skills/modern-python/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
     "tags": [
       "python",
@@ -1177,7 +1177,7 @@
     ]
   },
   "github/awesome-copilot@f32d7c320dea21594952931b67841b596dece208:skills/test-gap-audit/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing",
@@ -1460,7 +1460,7 @@
     ]
   },
   "NousResearch/hermes-agent@a79d1d3a71f40e62b58e811d4fe955104f33c0be:skills/software-development/requesting-code-review/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -1523,7 +1523,7 @@
     ]
   },
   "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/code-reviewer/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -1591,7 +1591,7 @@
     ]
   },
   "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/test-master/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing"
@@ -1654,9 +1654,9 @@
     ]
   },
   "github/awesome-copilot@421418928715158da3610571cb9e9cbb18d4747d:skills/sql-code-review/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "security/code-application",
     "also": [
-      "security/code-application"
+      "coding-software/code-review"
     ],
     "tags": [
       "sql",
@@ -2272,7 +2272,7 @@
     ]
   },
   "OneWave-AI/claude-skills@537406a59f48a05b1a662b8fedf3293e818b752b:code-review-pro/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -2334,7 +2334,7 @@
     ]
   },
   "managedcode/dotnet-skills@004209ea32f056ad58e2f10b31db7af871995c89:catalog/Tools/Quality-CI/skills/quality-ci/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [
       "devops-infra/general"
     ],
