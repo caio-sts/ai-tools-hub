@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { activeTaxonomy, countBySlug, countDomain, nodeState } from '../../src/lib/taxonomy.ts';
+import { activeTaxonomy, countBySlug, countDomain, flattenTaxonomy, nodeState } from '../../src/lib/taxonomy.ts';
 import type { Skill, Taxonomy } from '../../src/types.ts';
 
 /**
@@ -184,8 +184,7 @@ describe('activeTaxonomy', () => {
     aliases: {},
     minimumMass: 3,
   };
-  const slugsOf = (t: Taxonomy): string[] =>
-    t.domains.flatMap((d) => [d.slug, ...(d.children ?? []).map((c) => c.slug)]);
+  const slugsOf = (t: Taxonomy): string[] => flattenTaxonomy(t).map((n) => n.slug);
 
   it('keeps only the nodes the home grid would link: Active, counted as listed entries', () => {
     const skills = [
@@ -202,8 +201,6 @@ describe('activeTaxonomy', () => {
   });
 
   it('leaves aliases, protected terms and minimum mass untouched', () => {
-    const pruned = activeTaxonomy(tax, []);
-    expect(pruned.domains).toEqual([]);
-    expect({ ...pruned, domains: tax.domains }).toEqual(tax);
+    expect(activeTaxonomy(tax, [])).toEqual({ ...tax, domains: [] });
   });
 });
