@@ -552,6 +552,9 @@ No marketing page. Structure:
 **Minimum mass = 5** in production. This is governance, not decoration: without it, clicking a
 category lands you in an empty dead end — which is what every awesome-list feels like inside.
 
+> **Amended 2026-11-15:** the typo-rescue index (§11) follows the same rule: it suggests a node
+> only while it is Active, counted exactly as the home grid counts it.
+
 ### 10.2 Catalog
 
 - Persistent left facet rail ordered by decision frequency: **Risk → Subdomain → Runtime → License**.

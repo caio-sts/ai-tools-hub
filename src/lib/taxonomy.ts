@@ -78,3 +78,16 @@ export function nodeState(count: number, minimumMass: number): NodeState {
   if (count <= 0) return 'empty';
   return count >= minimumMass ? 'active' : 'thin';
 }
+
+/** `tax` reduced to its Active nodes, counted as the home grid counts them (spec §10.1). */
+export function activeTaxonomy(tax: Taxonomy, skills: Skill[]): Taxonomy {
+  const counts = countBySlug(skills);
+  const isActive = (count: number): boolean => nodeState(count, tax.minimumMass) === 'active';
+  const domains = tax.domains
+    .filter((domain) => isActive(countDomain(skills, domain.slug)))
+    .map((domain) => domain.children === undefined ? domain : {
+      ...domain,
+      children: domain.children.filter((child) => isActive(counts.get(child.slug) ?? 0)),
+    });
+  return { ...tax, domains };
+}

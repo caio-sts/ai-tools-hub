@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { existsSync, readFileSync } from 'node:fs';
 import { loadRescueIndex } from '../../src/lib/rescue.ts';
+import { loadSkills } from '../../src/lib/data.ts';
+import { countBySlug, countDomain, loadTaxonomy, nodeState } from '../../src/lib/taxonomy.ts';
 import { RESCUE_LANGS, rescueIndexJson } from '../../scripts/build-rescue-index.ts';
 
 const MAX_BYTES = 512 * 1024;
@@ -32,6 +34,20 @@ describe('the committed rescue index', () => {
 
     it(`is copied into dist/rescue-index/${lang}.json by the build`, () => {
       expect(existsSync(`dist/rescue-index/${lang}.json`)).toBe(true);
+    });
+
+    it(`suggests only nodes the home grid links, never a dead end, for ${lang} (§10.1)`, () => {
+      const skills = loadSkills();
+      const taxonomy = loadTaxonomy();
+      const domains = new Set(taxonomy.domains.map((domain) => domain.slug));
+      const counts = countBySlug(skills);
+      const ids: string[] = Object.values(JSON.parse(read(`public/rescue-index/${lang}.json`)).documentIds);
+      const nodes = ids.filter((id) => id.startsWith('node:')).map((id) => id.slice('node:'.length));
+      expect(nodes.length).toBeGreaterThan(0);
+      for (const slug of nodes) {
+        const count = domains.has(slug) ? countDomain(skills, slug) : counts.get(slug) ?? 0;
+        expect(nodeState(count, taxonomy.minimumMass), `${slug} holds ${count} listed entries`).toBe('active');
+      }
     });
   }
 

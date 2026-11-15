@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { countBySlug, countDomain, nodeState } from '../../src/lib/taxonomy.ts';
-import type { Skill } from '../../src/types.ts';
+import { activeTaxonomy, countBySlug, countDomain, nodeState } from '../../src/lib/taxonomy.ts';
+import type { Skill, Taxonomy } from '../../src/types.ts';
 
 /**
  * A fixture Skill the score contract accepts: score === breakdown.total and every
@@ -159,5 +159,51 @@ describe('eviction and minimum mass', () => {
       ]).get(slug) ?? 0;
     expect(count).toBe(3);
     expect(nodeState(count, 5)).toBe('thin');
+  });
+});
+
+describe('activeTaxonomy', () => {
+  const tax: Taxonomy = {
+    domains: [
+      {
+        slug: 'security',
+        name: { en: 'Security', pt: 'Segurança' },
+        children: [
+          { slug: 'security/supply-chain', name: { en: 'Supply Chain', pt: 'Supply Chain' } },
+          { slug: 'security/threat-modeling', name: { en: 'Threat Modeling', pt: 'Modelagem de Ameaças' } },
+          { slug: 'security/iac-config', name: { en: 'IaC', pt: 'IaC' } },
+        ],
+      },
+      {
+        slug: 'productivity',
+        name: { en: 'Productivity', pt: 'Produtividade' },
+        children: [{ slug: 'productivity/general', name: { en: 'General', pt: 'Geral' } }],
+      },
+    ],
+    protected: [],
+    aliases: {},
+    minimumMass: 3,
+  };
+  const slugsOf = (t: Taxonomy): string[] =>
+    t.domains.flatMap((d) => [d.slug, ...(d.children ?? []).map((c) => c.slug)]);
+
+  it('keeps only the nodes the home grid would link: Active, counted as listed entries', () => {
+    const skills = [
+      makeSkill('a', 'security/supply-chain'),
+      makeSkill('b', 'security/supply-chain'),
+      makeSkill('c', 'security/supply-chain', ['security/threat-modeling']),
+      makeSkill('d', 'security/threat-modeling'),
+      makeSkill('e', 'security/threat-modeling', [], false),
+      makeSkill('f', 'productivity/general'),
+      makeSkill('g', 'productivity/general'),
+    ];
+    // threat-modeling is thin (2 listed), iac-config empty, productivity thin along with its leaf.
+    expect(slugsOf(activeTaxonomy(tax, skills))).toEqual(['security', 'security/supply-chain']);
+  });
+
+  it('leaves aliases, protected terms and minimum mass untouched', () => {
+    const pruned = activeTaxonomy(tax, []);
+    expect(pruned.domains).toEqual([]);
+    expect({ ...pruned, domains: tax.domains }).toEqual(tax);
   });
 });
