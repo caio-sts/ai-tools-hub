@@ -24,14 +24,16 @@ reports them as two separate rows for exactly that reason.
 | File | Role |
 |---|---|
 | `data/skills.json` | a bare `Skill[]` of the stored skills (per repo, at most 50 that are neither classified nor security-relevant), written by the harvest (`scripts/harvest/run.ts` locally, `crawl.yml` weekly) |
-| `data/taxonomy.json` | the closed vocabulary: 13 domains, the 15 security leaves, `protected`, `aliases`, `minimumMass` |
+| `data/taxonomy.json` | the closed vocabulary: 13 domains, the 15 security leaves, the 5 coding-software leaves (spec §3.3), `protected`, `aliases`, `minimumMass` |
 | `data/assignments.json` | what previous sessions already decided; the cache |
 | `data/meta.json` | `crawledAt`, `classifiedAt`, `skillCount`, `sourceCount` |
 
 Skill ids embed the commit the content was read at — `owner/repo@sha:path` — so a re-crawl of an
 active repository produces new ids for unchanged skills. Carry a previous decision forward by
 matching on `repo` + `path`, and re-judge only when the skill's name or description text actually
-changed. That is what keeps a weekly run cheap.
+changed. That is what keeps a weekly run cheap. One exception: when the taxonomy gains a leaf,
+re-judge every entry whose `primary` or `also` is that domain's `general`, or the new leaf stays
+empty while its skills sit in overflow.
 
 ## What the session produces
 
@@ -86,7 +88,8 @@ Rules the session must hold to:
    records in `data/skills.json`.
 4. Set `classifiedAt` in `data/meta.json` to the ISO timestamp of this run. The banner's
    classification lag is computed from it, so a PR that forgets this step lies to the reader.
-5. If any skill *name* changed, regenerate the typo-rescue index so search still finds it:
+5. If any skill *name* or taxonomy node changed, regenerate the typo-rescue index so search still
+   finds it (also after rebasing onto a crawl commit, which rewrites the same files):
    ```bash
    node scripts/build-rescue-index.ts
    ```

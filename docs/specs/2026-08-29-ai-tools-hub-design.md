@@ -203,6 +203,25 @@ nothing is published yet; after launch each one costs a redirect.
 
 `vertical-domain` is a pressure valve so long-tail verticals never force a new top-level node.
 
+> **Amended 2026-11-15:** `coding-software` is the second domain with real subdomains. The crawl
+> of 2026-11-15 held ~1,000 code-review and ~2,400 quality skills (keyword match on name,
+> description and tags), nearly all still unclassified; classified into one `general` leaf, at
+> most 60 of them could ever be listed (§5.1).
+
+| Slug | Contains |
+|---|---|
+| `code-review` | reviewing diffs and PRs, multi-axis review, responding to review feedback |
+| `quality-refactoring` | best practices, style and static-analysis lint, code smells, refactoring, tech debt |
+| `testing` | writing and running tests, TDD, coverage, end-to-end and regression suites |
+| `ai-readable-code` | making a codebase easier for agents to understand and work in: context files (`CLAUDE.md`, `AGENTS.md`), architecture maps, structure and naming for agents, agent-readiness audits of a repo |
+| `general` | named overflow (mandatory) |
+
+Boundaries: a review, lint or test whose goal is finding vulnerabilities is `security/*` primary
+(`code-application`, `offensive-testing`), with a `coding-software` leaf in `also` when it is
+also a general workflow. A skill that writes or maintains a repository's own `CLAUDE.md` /
+`AGENTS.md` describing that codebase is `ai-readable-code`; writing skills (`SKILL.md`),
+subagents, or prompts as the artifact itself is `agent-authoring`.
+
 ### 3.4 Facets (4)
 
 1. **Runtime compatibility** — from GitHub topics (accurate for runtime) plus the spec's
