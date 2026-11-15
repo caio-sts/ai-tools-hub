@@ -6,7 +6,7 @@ import { loadMeta, loadSkills } from '../../lib/data.ts';
 import { STALE_DAYS, compactNumber, coverage, relativeDays } from '../../lib/format.ts';
 import { DEFAULT_LANG, LANGS, isLang, t } from '../../lib/i18n/index.ts';
 import { withBase } from '../../lib/link.ts';
-import { countBySlug, countDomain, loadTaxonomy, nodeName } from '../../lib/taxonomy.ts';
+import { countBySlug, countDomain, homeDomains, loadTaxonomy, nodeName } from '../../lib/taxonomy.ts';
 
 export function getStaticPaths() {
   return LANGS.map((value) => ({ params: { lang: value } }));
@@ -17,12 +17,10 @@ const meta = loadMeta();
 const taxonomy = loadTaxonomy();
 const skills = loadSkills();
 const counts = countBySlug(skills);
-const security = taxonomy.domains.find((domain) => domain.slug === 'security');
-if (security === undefined) {
-  throw new Error('data/taxonomy.json has no "security" domain: the home page cannot expand it');
+const { expanded, tiles: otherDomains } = homeDomains(taxonomy);
+if (expanded[0]?.slug !== 'security') {
+  throw new Error('data/taxonomy.json has no "security" subdomains: the home page cannot expand it');
 }
-const securityChildren = security.children ?? [];
-const otherDomains = taxonomy.domains.filter((domain) => domain.slug !== 'security');
 
 // A6 always writes an ISO crawledAt; an unparsable one reads as 0 days rather than NaN.
 const crawledAtMs = Date.parse(meta.crawledAt);
@@ -127,23 +125,31 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
     ></p>
   </form>
 
-  <section id="taxonomy" class="domain" aria-labelledby="security-heading">
-    <h2 class="domain__title" id="security-heading">{nodeName('security', lang)}</h2>
-    <p class="domain__lead">{t('home.securityLead', lang)}</p>
-    <ul class="grid" data-grid="security">
-      {
-        securityChildren.map((child) => (
-          <TaxonomyNode
-            slug={child.slug}
-            count={counts.get(child.slug) ?? 0}
-            minimumMass={taxonomy.minimumMass}
-            lang={lang}
-            aliases={aliasesFor(child.slug)}
-          />
-        ))
-      }
-    </ul>
-  </section>
+  {
+    expanded.map((domain, index) => (
+      <section
+        id={index === 0 ? 'taxonomy' : undefined}
+        class="domain"
+        aria-labelledby={`${domain.slug}-heading`}
+      >
+        <h2 class="domain__title" id={`${domain.slug}-heading`}>{nodeName(domain.slug, lang)}</h2>
+        {domain.slug === 'security' && <p class="domain__lead">{t('home.securityLead', lang)}</p>}
+        <ul class="grid" data-grid={domain.slug}>
+          {
+            (domain.children ?? []).map((child) => (
+              <TaxonomyNode
+                slug={child.slug}
+                count={counts.get(child.slug) ?? 0}
+                minimumMass={taxonomy.minimumMass}
+                lang={lang}
+                aliases={aliasesFor(child.slug)}
+              />
+            ))
+          }
+        </ul>
+      </section>
+    ))
+  }
 
   <section id="other-domains" class="domain" aria-labelledby="other-heading">
     <h2 class="domain__title" id="other-heading">{t('home.otherHeading', lang)}</h2>

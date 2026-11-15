@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import { t } from '../../src/lib/i18n/index.ts';
-import { countDomain, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
+import { countDomain, homeDomains, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -49,10 +49,10 @@ const en = built('en/index.html');
 const pt = built('pt/index.html');
 const taxonomy = loadTaxonomy();
 const skills = loadSkills();
-const others = taxonomy.domains.filter((domain) => domain.slug !== 'security');
+const others = homeDomains(taxonomy).tiles;
 
 describe('the other top-level domains', () => {
-  it('renders every domain except security, once each, in taxonomy order', () => {
+  it('renders every domain that does not expand, once each, in taxonomy order', () => {
     const slugs = nodes(en, 'domains').map((node) => node.slug);
     expect(slugs).toEqual(others.map((domain) => domain.slug));
     expect(slugs).not.toContain('security');

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import { t } from '../../src/lib/i18n/index.ts';
-import { countBySlug, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
+import { countBySlug, homeDomains, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -169,5 +169,45 @@ describe('the expanded security grid', () => {
     expect(en.includes(t('home.securityLead', 'en')), 'no en security lead').toBe(true);
     expect(showsLabel(pt, nodeName('security', 'pt')), 'no pt security heading').toBe(true);
     expect(pt.includes(t('home.securityLead', 'pt')), 'no pt security lead').toBe(true);
+  });
+});
+
+describe('every domain with real subdomains', () => {
+  const { expanded } = homeDomains(taxonomy);
+
+  it('gets its own grid of every leaf, in taxonomy order, in both locales', () => {
+    for (const domain of expanded) {
+      const leaves = (domain.children ?? []).map((child) => child.slug);
+      expect(nodes(en, domain.slug).map((node) => node.slug), `${domain.slug} en`).toEqual(leaves);
+      expect(nodes(pt, domain.slug).map((node) => node.slug), `${domain.slug} pt`).toEqual(leaves);
+    }
+  });
+
+  it('renders security first and the thin domains last', () => {
+    const order = [...expanded.map((domain) => domain.slug), 'domains'].map((key) =>
+      en.indexOf(`data-grid="${key}"`),
+    );
+    expect(order[0], 'security is not the first grid').toBe(en.indexOf('data-grid='));
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+  });
+
+  it('heads each section with the domain label, in the page locale', () => {
+    for (const domain of expanded) {
+      expect(showsLabel(en, nodeName(domain.slug, 'en')), `${domain.slug} en heading`).toBe(true);
+      expect(showsLabel(pt, nodeName(domain.slug, 'pt')), `${domain.slug} pt heading`).toBe(true);
+    }
+  });
+
+  it('counts, states and links each leaf exactly as the security grid does', () => {
+    const mass = taxonomy.minimumMass;
+    for (const domain of expanded) {
+      for (const node of nodes(en, domain.slug)) {
+        expect(node.count, `${node.slug} count`).toBe(counts.get(node.slug) ?? 0);
+        const state = node.count === 0 ? 'empty' : node.count < mass ? 'thin' : 'active';
+        expect(node.state, `${node.slug} state`).toBe(state);
+        const href = `href="/ai-tools-hub/en/catalog/?subdomain=${encodeURIComponent(node.slug)}"`;
+        expect(node.html.includes(href), `${node.slug} link`).toBe(state === 'active');
+      }
+    }
   });
 });

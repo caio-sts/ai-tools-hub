@@ -534,6 +534,11 @@ Chosen from three candidates (Terminal Ledger, Field Guide, Industrial Console).
 
 ### 10.1 Home — goes straight to the taxonomy
 
+> **Amended 2026-11-15:** items 3–4 generalise. Every domain with a leaf besides its `general`
+> overflow renders expanded, its leaves as a grid in their own section, security first; only
+> domains holding nothing but `general` stay as tiles below. The rule is derived from the taxonomy
+> (`homeDomains` in `src/lib/taxonomy.ts`), so a new subdomain needs no home-page change.
+
 No marketing page. Structure:
 
 1. One-line thesis + one supporting sentence.
