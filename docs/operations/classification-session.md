@@ -24,14 +24,16 @@ reports them as two separate rows for exactly that reason.
 | File | Role |
 |---|---|
 | `data/skills.json` | a bare `Skill[]` of the stored skills (per repo, at most 50 that are neither classified nor security-relevant), written by the harvest (`scripts/harvest/run.ts` locally, `crawl.yml` weekly) |
-| `data/taxonomy.json` | the closed vocabulary: 13 domains, the 15 security leaves, `protected`, `aliases`, `minimumMass` |
+| `data/taxonomy.json` | the closed vocabulary: 13 domains, the 15 security leaves, the 5 coding-software leaves (spec §3.3), `protected`, `aliases`, `minimumMass` |
 | `data/assignments.json` | what previous sessions already decided; the cache |
 | `data/meta.json` | `crawledAt`, `classifiedAt`, `skillCount`, `sourceCount` |
 
 Skill ids embed the commit the content was read at — `owner/repo@sha:path` — so a re-crawl of an
 active repository produces new ids for unchanged skills. Carry a previous decision forward by
 matching on `repo` + `path`, and re-judge only when the skill's name or description text actually
-changed. That is what keeps a weekly run cheap.
+changed. That is what keeps a weekly run cheap. One exception: when the taxonomy gains a leaf,
+re-judge every entry whose `primary` or `also` is that domain's `general`, or the new leaf stays
+empty while its skills sit in overflow.
 
 ## What the session produces
 
@@ -61,6 +63,25 @@ Rules the session must hold to:
   every run (§5.1). An entry evicted from its listing still needs a classification and still
   counts in the queued-unclassified row, but has no page while evicted.
 
+### Judgement rules
+
+Leaf scopes and boundaries live in spec §3.3. These rules came out of reviewing the 2026-11-15
+pass, where each one was broken at least once:
+
+- **Original over copy.** Compare the description with the other stored rows before assigning. A
+  mirror (`managedcode/dotnet-skills` copies `dotnet/skills`) or a copy bundled inside an app loses
+  to the author's repo. De-duplicating by name misses a renamed mirror.
+- **Usable outside its home.** A workflow bound to one project, or one that only runs under a
+  specific tool's install, stays unclassified.
+- **No republished leaks.** Skip repositories that republish vendors' leaked prompts.
+- **No fixtures.** Paths under `tests/`, `fixtures/`, `evals/` or `examples/` are not promoted.
+- **Language guides.** A guide that makes code idiomatic or lint-clean is
+  `coding-software/quality-refactoring`; a guide to building with a stack stays in `general`.
+- **Security as an axis.** A general code reviewer that names security among its axes carries
+  `security/code-application` in `also`; a review led by vulnerabilities is that leaf's primary.
+- **Rule before batch.** Write a new rule here before the batch that needs it, or two batches
+  will apply it two ways.
+
 ### Translation rules
 
 - Translate only skill descriptions, written onto the skill record's `descriptionPt` and `longPt`
@@ -86,7 +107,8 @@ Rules the session must hold to:
    records in `data/skills.json`.
 4. Set `classifiedAt` in `data/meta.json` to the ISO timestamp of this run. The banner's
    classification lag is computed from it, so a PR that forgets this step lies to the reader.
-5. If any skill *name* changed, regenerate the typo-rescue index so search still finds it:
+5. Regenerate the typo-rescue index on every pass: skill names, taxonomy nodes and listing counts
+   all feed it. Do it again after rebasing onto a crawl commit, which rewrites the same files:
    ```bash
    node scripts/build-rescue-index.ts
    ```

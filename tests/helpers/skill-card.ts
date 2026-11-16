@@ -84,13 +84,16 @@ export function summaryOf(card: string): string {
   return card.slice(0, at);
 }
 
+/** Card fields that render author text: name, description, repo, and the id and command built from the path. */
+const AUTHOR_FIELDS = /<(\w+)[^>]*data-field="(?:name|description|repo|provenance|install)"[^>]*>[\s\S]*?<\/\1>/g;
+
 /**
- * Markup minus the author's description, which may repeat any UI label ("Threat Modeling Tool"):
- * the card's clipped and full text, and the hidden Pagefind block that indexes it.
+ * Markup minus every author-controlled text, which may repeat any UI label ("Threat Modeling Tool",
+ * "catalog/Testing/..."): the card's fields, the full body text, and the hidden Pagefind block.
  */
 export function withoutAuthorText(html: string): string {
   return html
-    .replace(/<p class="skill-card__description"[^>]*>[\s\S]*?<\/p>/g, '')
+    .replace(AUTHOR_FIELDS, '')
     .replace(/<p class="skill-body__text"[^>]*>[\s\S]*?<\/p>/g, '')
     .replace(/<div[^>]*data-pagefind-body[^>]*>[\s\S]*?<\/div>/g, '');
 }

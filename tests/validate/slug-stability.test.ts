@@ -18,7 +18,7 @@ describe('check 5 - versioned slugs and redirects', () => {
     expect(checkSlugStability(loadTaxonomy())).toEqual({ name: '5 slug stability', ok: true, errors: [] });
   });
 
-  it('freezes all 40 slugs in KNOWN_SLUGS', () => {
+  it('freezes all 44 slugs in KNOWN_SLUGS', () => {
     expect([...KNOWN_SLUGS].sort()).toEqual(flattenTaxonomy(loadTaxonomy()).map((n) => n.slug).sort());
   });
 

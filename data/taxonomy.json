@@ -84,6 +84,10 @@
       "slug": "coding-software",
       "name": { "en": "Coding & Software", "pt": "Programação e Software" },
       "children": [
+        { "slug": "coding-software/code-review", "name": { "en": "Code Review", "pt": "Revisão de Código" } },
+        { "slug": "coding-software/quality-refactoring", "name": { "en": "Code Quality & Refactoring", "pt": "Qualidade e Refatoração" } },
+        { "slug": "coding-software/testing", "name": { "en": "Testing", "pt": "Testes" } },
+        { "slug": "coding-software/ai-readable-code", "name": { "en": "AI-Readable Code", "pt": "Código Legível por IA" } },
         { "slug": "coding-software/general", "name": { "en": "General / Other", "pt": "Geral / Outros" } }
       ]
     },

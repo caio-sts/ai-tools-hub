@@ -167,7 +167,7 @@ const title = `${t('site.name', lang)} — ${t('site.thesis', lang)}`;
 
 <script>
   /* The taxonomy is a closed set of a few dozen nodes already in the DOM, so this filters what is
-     rendered rather than reaching for Pagefind. No debounce: matching 40 strings is free, and a
+     rendered rather than reaching for Pagefind. No debounce: matching a few dozen strings is free, and a
      delay on a list this small only makes the page feel broken. */
   const form = document.querySelector<HTMLFormElement>('[data-group-filter]');
   const input = document.querySelector<HTMLInputElement>('[data-group-input]');

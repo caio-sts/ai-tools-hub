@@ -15,6 +15,11 @@ const SECURITY_CHILDREN = [
   'security/ai-agent-security', 'security/threat-modeling', 'security/general',
 ];
 
+const CODING_CHILDREN = [
+  'coding-software/code-review', 'coding-software/quality-refactoring', 'coding-software/testing',
+  'coding-software/ai-readable-code', 'coding-software/general',
+];
+
 const OTHER_DOMAINS = [
   'coding-software', 'devops-infra', 'data-analytics', 'ai-agent-eng', 'docs-formats',
   'writing-docs', 'research-knowledge', 'design-creative', 'business-product',
@@ -29,6 +34,11 @@ describe('data/taxonomy.json', () => {
   it('expands security into exactly the 15 subdomains', () => {
     const security = tax.domains.find((d) => d.slug === 'security');
     expect(security?.children?.map((c) => c.slug)).toEqual(SECURITY_CHILDREN);
+  });
+
+  it('expands coding-software into exactly its 5 subdomains, overflow last', () => {
+    const coding = tax.domains.find((d) => d.slug === 'coding-software');
+    expect(coding?.children?.map((c) => c.slug)).toEqual(CODING_CHILDREN);
   });
 
   it('names every node in both locales', () => {

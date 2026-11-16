@@ -771,7 +771,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
     "tags": [
       "cpp",
@@ -1176,7 +1176,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [
       "security/offensive-testing"
     ],
@@ -1937,10 +1937,8 @@
         "Workflow Task Read Grep Glob"
       ]
     },
-    "primary": "coding-software/general",
-    "also": [
-      "security/compliance-grc"
-    ],
+    "primary": "coding-software/code-review",
+    "also": [],
     "tags": [
       "specifications",
       "traceability",
@@ -6149,11 +6147,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "roslyn",
+      "static-analysis",
+      "dotnet"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 84,
     "breakdown": {
       "adoption": 22,
@@ -7465,7 +7467,7 @@
     },
     "primary": "security/offensive-testing",
     "also": [
-      "coding-software/general"
+      "coding-software/testing"
     ],
     "tags": [
       "fuzzing",
@@ -7947,7 +7949,7 @@
         "Bash Glob Read TaskOutput TaskStop Workflow"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -8044,7 +8046,7 @@
         "Bash Glob Read TaskOutput TaskStop Workflow"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -11037,11 +11039,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/code-review",
     "also": [],
-    "tags": [],
+    "tags": [
+      "protobuf",
+      "grpc",
+      "api-compatibility",
+      "schema-evolution"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 82,
     "breakdown": {
       "adoption": 22,
@@ -11281,11 +11288,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "test-quality",
+      "dotnet"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 81,
     "breakdown": {
       "adoption": 18,
@@ -12056,7 +12066,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing",
@@ -13670,11 +13680,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "javascript",
+      "modules",
+      "large-files"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -14061,11 +14075,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "msbuild",
+      "dotnet",
+      "anti-patterns"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -14683,11 +14701,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "mstest",
+      "dotnet"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 18,
@@ -16154,11 +16175,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/code-review",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "gsd",
+      "bugs",
+      "code-quality"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 80,
     "breakdown": {
       "adoption": 19,
@@ -19267,11 +19294,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/ai-readable-code",
     "also": [],
-    "tags": [],
+    "tags": [
+      "onboarding",
+      "architecture-map",
+      "claude-md"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -19548,11 +19579,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "csharp",
+      "dotnet",
+      "idioms"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -19668,11 +19703,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/code-review",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "flutter",
+      "dart",
+      "checklist"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -19788,11 +19829,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "fsharp",
+      "xunit",
+      "fscheck"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -19958,11 +20003,17 @@
         "AskUserQuestion"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/ai-readable-code",
+    "also": [
+      "coding-software/quality-refactoring"
+    ],
+    "tags": [
+      "conventions",
+      "style-drift",
+      "legacy"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -20289,11 +20340,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "perl",
+      "test2",
+      "tdd"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -21893,11 +21948,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "linting",
+      "formatting",
+      "hooks"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 25,
@@ -22299,11 +22358,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "unit-tests",
+      "xunit",
+      "pytest",
+      "jest"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 18,
@@ -22339,11 +22403,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/quality-refactoring",
+    "also": [
+      "coding-software/testing"
+    ],
+    "tags": [
+      "crap",
+      "complexity",
+      "coverage"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 18,
@@ -22419,11 +22489,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "anti-patterns",
+      "test-audit"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 18,
@@ -23195,11 +23268,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "writing-docs/general",
+    "also": [
+      "coding-software/code-review"
+    ],
+    "tags": [
+      "docs-drift",
+      "audit"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 79,
     "breakdown": {
       "adoption": 22,
@@ -23437,7 +23515,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing",
@@ -23604,7 +23682,7 @@
         "Bash Read Glob Grep AskUserQuestion"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -27149,11 +27227,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "dart",
+      "pattern-matching",
+      "idioms"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 78,
     "breakdown": {
       "adoption": 16,
@@ -31751,11 +31833,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "tdd",
+      "running-app"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 15,
@@ -32722,11 +32807,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "regression",
+      "user-flows"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 15,
@@ -33656,11 +33744,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/quality-refactoring",
+    "also": [
+      "coding-software/testing"
+    ],
+    "tags": [
+      "behavior-preserving",
+      "characterization-tests"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 15,
@@ -33780,11 +33873,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "simulink",
+      "metrics",
+      "complexity"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 15,
@@ -36048,11 +36145,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/code-review",
+    "also": [
+      "coding-software/quality-refactoring"
+    ],
+    "tags": [
+      "multi-axis-review",
+      "merge-gate"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 77,
     "breakdown": {
       "adoption": 24,
@@ -50278,7 +50380,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -50328,11 +50430,16 @@
         "Read"
       ]
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/code-review",
+    "also": [
+      "coding-software/testing"
+    ],
+    "tags": [
+      "blast-radius",
+      "merge-safety"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 16,
@@ -51438,11 +51545,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/code-review",
     "also": [],
-    "tags": [],
+    "tags": [
+      "review-feedback",
+      "copilot",
+      "pull-request"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 76,
     "breakdown": {
       "adoption": 18,
@@ -55658,11 +55769,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/code-review",
     "also": [],
-    "tags": [],
+    "tags": [
+      "code-health",
+      "design-review"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 13,
@@ -55818,11 +55932,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/general",
     "also": [],
-    "tags": [],
+    "tags": [
+      "small-prs",
+      "stacked-changes"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 13,
@@ -58499,11 +58616,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/code-review",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "correctness",
+      "edge-cases",
+      "pull-request"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 13,
@@ -61234,11 +61357,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/ai-readable-code",
     "also": [],
-    "tags": [],
+    "tags": [
+      "claude-md",
+      "agent-onboarding"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 22,
@@ -63997,11 +64123,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "godot",
+      "gdscript",
+      "headless",
+      "ci"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 15,
@@ -65555,11 +65686,14 @@
         "Read"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "quality-delta",
+      "pre-commit"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 16,
@@ -66603,11 +66737,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "coverage",
+      "dotnet"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 75,
     "breakdown": {
       "adoption": 18,
@@ -67719,7 +67856,9 @@
       ]
     },
     "primary": "coding-software/general",
-    "also": [],
+    "also": [
+      "security/code-application"
+    ],
     "tags": [
       "units",
       "dimensions",
@@ -67812,7 +67951,7 @@
         "Read Write Bash Grep"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "mutation-testing",
@@ -68314,7 +68453,7 @@
         "Glob"
       ]
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -69209,11 +69348,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
-    "tags": [],
+    "tags": [
+      "legacy",
+      "migration",
+      "strangler-fig"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -69569,11 +69712,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "playwright",
+      "e2e",
+      "flaky-tests"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 19,
@@ -70432,7 +70579,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing"
@@ -72156,11 +72303,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "playwright",
+      "browser-automation"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 12,
@@ -72197,11 +72347,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "playwright",
+      "e2e",
+      "api-tests"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 12,
@@ -72238,11 +72392,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "playwright",
+      "locators",
+      "testability"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 12,
@@ -72279,11 +72437,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "playwright",
+      "qa",
+      "test-design"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 12,
@@ -90442,11 +90604,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "assertions",
+      "test-quality"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 18,
@@ -90602,11 +90767,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "test-smells",
+      "test-audit"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 74,
     "breakdown": {
       "adoption": 18,
@@ -91730,9 +91898,9 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "security/code-application",
     "also": [
-      "security/code-application"
+      "coding-software/code-review"
     ],
     "tags": [
       "sql",
@@ -92478,7 +92646,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "playwright",
@@ -95492,11 +95660,15 @@
         "WebFetch"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/testing",
     "also": [],
-    "tags": [],
+    "tags": [
+      "clerk",
+      "auth",
+      "e2e"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 12,
@@ -95533,11 +95705,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/code-review",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "checklist",
+      "five-axis"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 73,
     "breakdown": {
       "adoption": 12,
@@ -106512,11 +106689,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/ai-readable-code",
     "also": [],
-    "tags": [],
+    "tags": [
+      "agents-md",
+      "audit"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 9,
@@ -106682,11 +106862,16 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "writing-docs/general",
+    "also": [
+      "coding-software/ai-readable-code"
+    ],
+    "tags": [
+      "docs-drift",
+      "dead-links"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 9,
@@ -121462,11 +121647,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/ai-readable-code",
     "also": [],
-    "tags": [],
+    "tags": [
+      "legibility",
+      "docs-as-checks"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 72,
     "breakdown": {
       "adoption": 21,
@@ -166134,11 +166322,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/ai-readable-code",
     "also": [],
-    "tags": [],
+    "tags": [
+      "agents-md",
+      "claude-md",
+      "cursor-rules"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 17,
@@ -173795,7 +173987,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -178788,7 +178980,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [
       "devops-infra/general"
     ],
@@ -183773,11 +183965,17 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
-    "also": [],
-    "tags": [],
+    "primary": "coding-software/ai-readable-code",
+    "also": [
+      "agent-authoring/general"
+    ],
+    "tags": [
+      "agents-md",
+      "harness",
+      "audit"
+    ],
     "securityRelevant": true,
-    "listed": false,
+    "listed": true,
     "score": 70,
     "breakdown": {
       "adoption": 18,
@@ -196318,11 +196516,14 @@
         "Bash(${CLAUDE_SKILL_DIR}/scripts/*) Bash(bash ${CLAUDE_SKILL_DIR}/scripts/*) Bash(git:*) Bash(jq:*) Bash(grep:*) Bash(find:*) Read Glob Grep"
       ]
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/ai-readable-code",
     "also": [],
-    "tags": [],
+    "tags": [
+      "agents-md",
+      "copilot-instructions"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 69,
     "breakdown": {
       "adoption": 9,
@@ -210941,7 +211142,7 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
     "tags": [
       "python",
@@ -214756,11 +214957,15 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/ai-readable-code",
     "also": [],
-    "tags": [],
+    "tags": [
+      "agents-md",
+      "claude-md",
+      "rules"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 68,
     "breakdown": {
       "adoption": 13,
@@ -218655,11 +218860,14 @@
       "readsEnv": false,
       "declaredTools": null
     },
-    "primary": "vertical-domain/general",
+    "primary": "coding-software/ai-readable-code",
     "also": [],
-    "tags": [],
+    "tags": [
+      "agents-md",
+      "knowledge-base"
+    ],
     "securityRelevant": false,
-    "listed": false,
+    "listed": true,
     "score": 68,
     "breakdown": {
       "adoption": 23,

@@ -238,7 +238,7 @@
     ]
   },
   "trailofbits/skills@293fb74c3151cceda32a85a545fe8acd67f8f5c6:plugins/modern-cpp/skills/modern-cpp/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
     "tags": [
       "cpp",
@@ -346,7 +346,7 @@
     ]
   },
   "trailofbits/skills@9e06dc67a31fc291e76ad28b690abfd350a8fd6d:plugins/trailmark/skills/genotoxic/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [
       "security/offensive-testing"
     ],
@@ -423,10 +423,8 @@
     ]
   },
   "trailofbits/skills@798b591aa498100f7744a948c0e3cbfc40e7eded:plugins/spec-to-code-compliance/skills/spec-to-code-compliance/SKILL.md": {
-    "primary": "coding-software/general",
-    "also": [
-      "security/compliance-grc"
-    ],
+    "primary": "coding-software/code-review",
+    "also": [],
     "tags": [
       "specifications",
       "traceability",
@@ -515,7 +513,7 @@
     ]
   },
   "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/skills/code-improver/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -526,7 +524,7 @@
     ]
   },
   "trailofbits/skills@1004934abf6b43f614af6f79720373e1d581e6e8:plugins/code-improver/skills/pr-improver/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -600,7 +598,7 @@
   "trailofbits/skills@3deb39e7b346e0ac213f77db6f04fc6ee2275f33:plugins/testing-handbook-skills/skills/coverage-analysis/SKILL.md": {
     "primary": "security/offensive-testing",
     "also": [
-      "coding-software/general"
+      "coding-software/testing"
     ],
     "tags": [
       "fuzzing",
@@ -695,7 +693,7 @@
     ]
   },
   "trailofbits/skills@04b241176fd9c10738a61df53d2c677c53e42990:plugins/property-based-testing/skills/property-based-testing/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing",
@@ -723,7 +721,7 @@
     ]
   },
   "trailofbits/skills@64a8c3f00ba4a2962ff23c4823c48e3da6604be8:plugins/second-opinion/skills/second-opinion/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "ai-agent-eng/general"
     ],
@@ -847,7 +845,9 @@
   },
   "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/dimensional-analysis/skills/dimensional-analysis/SKILL.md": {
     "primary": "coding-software/general",
-    "also": [],
+    "also": [
+      "security/code-application"
+    ],
     "tags": [
       "units",
       "dimensions",
@@ -866,7 +866,7 @@
     ]
   },
   "trailofbits/skills@debfb29c8e992894f86f8263a6ffbc28c5bc45ad:plugins/mutation-testing/skills/mutation-testing/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "mutation-testing",
@@ -963,7 +963,7 @@
     ]
   },
   "anthropics/skills@ef740771ac901e03fbca3ce4e1c453a96010f30a:skills/webapp-testing/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "playwright",
@@ -1015,7 +1015,7 @@
     ]
   },
   "trailofbits/skills@bb5c353abc393865238f5518a38b687c1f206e40:plugins/modern-python/skills/modern-python/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [],
     "tags": [
       "python",
@@ -1177,7 +1177,7 @@
     ]
   },
   "github/awesome-copilot@f32d7c320dea21594952931b67841b596dece208:skills/test-gap-audit/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing",
@@ -1460,7 +1460,7 @@
     ]
   },
   "NousResearch/hermes-agent@a79d1d3a71f40e62b58e811d4fe955104f33c0be:skills/software-development/requesting-code-review/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -1523,7 +1523,7 @@
     ]
   },
   "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/code-reviewer/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -1591,7 +1591,7 @@
     ]
   },
   "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/test-master/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/testing",
     "also": [],
     "tags": [
       "testing"
@@ -1654,9 +1654,9 @@
     ]
   },
   "github/awesome-copilot@421418928715158da3610571cb9e9cbb18d4747d:skills/sql-code-review/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "security/code-application",
     "also": [
-      "security/code-application"
+      "coding-software/code-review"
     ],
     "tags": [
       "sql",
@@ -2272,7 +2272,7 @@
     ]
   },
   "OneWave-AI/claude-skills@537406a59f48a05b1a662b8fedf3293e818b752b:code-review-pro/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/code-review",
     "also": [
       "security/code-application"
     ],
@@ -2334,7 +2334,7 @@
     ]
   },
   "managedcode/dotnet-skills@004209ea32f056ad58e2f10b31db7af871995c89:catalog/Tools/Quality-CI/skills/quality-ci/SKILL.md": {
-    "primary": "coding-software/general",
+    "primary": "coding-software/quality-refactoring",
     "also": [
       "devops-infra/general"
     ],
@@ -2399,6 +2399,469 @@
     "also": [],
     "tags": [
       "meeting-notes"
+    ]
+  },
+  "github/awesome-copilot@5ffd821817791c7972eccafc8c31c53ac1ebbedf:skills/protobuf-grpc-api-review/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [],
+    "tags": [
+      "protobuf",
+      "grpc",
+      "api-compatibility",
+      "schema-evolution"
+    ]
+  },
+  "open-gsd/gsd-core@265295e3ae4ac7e50aacb8bf3e0b1e5499efa49b:pi/package-skills/gsd-code-review/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "gsd",
+      "bugs",
+      "code-quality"
+    ]
+  },
+  "affaan-m/ECC@c70874fae9eb0e5ad0365beb7e2955899fd1d30f:pi/core/skills/flutter-dart-code-review/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "flutter",
+      "dart",
+      "checklist"
+    ]
+  },
+  "addyosmani/agent-skills@28f435ea69a78531ec00779c7f3b78c64ce95896:skills/code-review-and-quality/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [
+      "coding-software/quality-refactoring"
+    ],
+    "tags": [
+      "multi-axis-review",
+      "merge-gate"
+    ]
+  },
+  "github/gh-aw@424516b755977b966110e21e2b70729282161959:.github/skills/copilot-review/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [],
+    "tags": [
+      "review-feedback",
+      "copilot",
+      "pull-request"
+    ]
+  },
+  "posit-dev/skills@4d770f9af82a6c6387b01dca059df237ecf9e216:posit-dev/critical-code-reviewer/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "correctness",
+      "edge-cases",
+      "pull-request"
+    ]
+  },
+  "MiniMax-AI/mcode-stack@c6ee606ada3ac55ee361d437eddaccef79feeda0:stacks/ronny/skills/engineering-code-review/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [],
+    "tags": [
+      "code-health",
+      "design-review"
+    ]
+  },
+  "MiniMax-AI/mcode-stack@c6ee606ada3ac55ee361d437eddaccef79feeda0:stacks/ronny/skills/engineering-small-prs/SKILL.md": {
+    "primary": "coding-software/general",
+    "also": [],
+    "tags": [
+      "small-prs",
+      "stacked-changes"
+    ]
+  },
+  "redhat-et/ripwire@fde5074723f03f99561f5280fad4de92c678288b:skills/ripwire-change-check/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [
+      "coding-software/testing"
+    ],
+    "tags": [
+      "blast-radius",
+      "merge-safety"
+    ]
+  },
+  "aiskillstore/marketplace@9bbb9af75d2f5ea5acb8fac5aec75713670a067f:skills/alapha888/code-review-checklist/SKILL.md": {
+    "primary": "coding-software/code-review",
+    "also": [
+      "security/code-application"
+    ],
+    "tags": [
+      "checklist",
+      "five-axis"
+    ]
+  },
+  "github/awesome-copilot@f32d7c320dea21594952931b67841b596dece208:skills/docs-sync-audit/SKILL.md": {
+    "primary": "writing-docs/general",
+    "also": [
+      "coding-software/code-review"
+    ],
+    "tags": [
+      "docs-drift",
+      "audit"
+    ]
+  },
+  "github/gh-aw@72331b46f9df5f76dd13de0ff1a87b1b2f329e94:.github/skills/javascript-refactoring/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "javascript",
+      "modules",
+      "large-files"
+    ]
+  },
+  "dotnet/skills@c75e1650154604da4715ef344a5a5d1cc7b767e2:plugins/dotnet-msbuild/skills/msbuild-antipatterns/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "msbuild",
+      "dotnet",
+      "anti-patterns"
+    ]
+  },
+  "affaan-m/ECC@c70874fae9eb0e5ad0365beb7e2955899fd1d30f:pi/core/skills/dotnet-patterns/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "csharp",
+      "dotnet",
+      "idioms"
+    ]
+  },
+  "affaan-m/ECC@533f5ff20ad837420b36d3677f0d873b6b4469a6:skills/plankton-code-quality/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "linting",
+      "formatting",
+      "hooks"
+    ]
+  },
+  "flutter/agent-plugins@6e590650bb4bab87f33187423dc10113d04d4836:skills/dart-use-pattern-matching/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "dart",
+      "pattern-matching",
+      "idioms"
+    ]
+  },
+  "first-fluke/oh-my-agent@91794601fe389923cc3db70c238b58c88fac7256:.agents/skills/oma-refactor/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [
+      "coding-software/testing"
+    ],
+    "tags": [
+      "behavior-preserving",
+      "characterization-tests"
+    ]
+  },
+  "redhat-et/ripwire@90d73a7182279e0d0e1be47193938f2a49aa9d59:skills/ripwire-quality-bar/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "quality-delta",
+      "pre-commit"
+    ]
+  },
+  "matlab/simulink-agentic-toolkit@c58e6aec7b904769ae43536e169d747feda95416:skills-catalog/verification-validation-and-test/simulink-collect-metrics/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "simulink",
+      "metrics",
+      "complexity"
+    ]
+  },
+  "Jeffallan/claude-skills@eae31de65bd82d46b6d08bd2acbf661e01bd3bb6:skills/legacy-modernizer/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "legacy",
+      "migration",
+      "strangler-fig"
+    ]
+  },
+  "github/awesome-copilot@6f4410b5adadb131db7d425d4ad4d0b2445842a1:skills/roslyn-analyzers/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [],
+    "tags": [
+      "roslyn",
+      "static-analysis",
+      "dotnet"
+    ]
+  },
+  "dotnet/skills@a824bbb8a24ec295e1e581a8c23cd3bcdab128c3:plugins/dotnet-test/skills/crap-score/SKILL.md": {
+    "primary": "coding-software/quality-refactoring",
+    "also": [
+      "coding-software/testing"
+    ],
+    "tags": [
+      "crap",
+      "complexity",
+      "coverage"
+    ]
+  },
+  "dotnet/skills@a824bbb8a24ec295e1e581a8c23cd3bcdab128c3:plugins/dotnet-test/skills/code-testing-agent/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "unit-tests",
+      "xunit",
+      "pytest",
+      "jest"
+    ]
+  },
+  "dotnet/skills@0c7d74080ed509e793e7293556c528dcc9941d65:plugins/dotnet-test/skills/writing-mstest-tests/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "mstest",
+      "dotnet"
+    ]
+  },
+  "dotnet/skills@a824bbb8a24ec295e1e581a8c23cd3bcdab128c3:plugins/dotnet-test/skills/test-anti-patterns/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "anti-patterns",
+      "test-audit"
+    ]
+  },
+  "dotnet/skills@00b3bac07df10603cd1c6a129e16edda350ab0aa:plugins/dotnet-test/skills/test-smell-detection/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "test-smells",
+      "test-audit"
+    ]
+  },
+  "dotnet/skills@30b30efe043cd40b43a0f6795a4927644a625f8f:plugins/dotnet-test/skills/assertion-quality/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "assertions",
+      "test-quality"
+    ]
+  },
+  "dotnet/skills@e8ed8473d94ac2f8d15f7663430852faa9c11219:plugins/dotnet-test/skills/coverage-analysis/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "coverage",
+      "dotnet"
+    ]
+  },
+  "affaan-m/ECC@c70874fae9eb0e5ad0365beb7e2955899fd1d30f:pi/core/skills/fsharp-testing/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "fsharp",
+      "xunit",
+      "fscheck"
+    ]
+  },
+  "affaan-m/ECC@c70874fae9eb0e5ad0365beb7e2955899fd1d30f:pi/core/skills/perl-testing/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "perl",
+      "test2",
+      "tdd"
+    ]
+  },
+  "reticlehq/reticle@40192040a8ba20abfe7590ae82fc1f17cdef0ceb:skills/agentic-tdd/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "tdd",
+      "running-app"
+    ]
+  },
+  "gamedev-skills/awesome-gamedev-agent-skills@a57de6dfe58ff1d891b4c5632c62b72ba6445817:skills/godot/godot-gdscript-headless-testing/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "godot",
+      "gdscript",
+      "headless",
+      "ci"
+    ]
+  },
+  "testdino-hq/playwright-skill@178d1cb537604279d7b54500c4823a6db42b9de6:core/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "playwright",
+      "e2e",
+      "api-tests"
+    ]
+  },
+  "testdino-hq/playwright-skill@178d1cb537604279d7b54500c4823a6db42b9de6:qa/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "playwright",
+      "qa",
+      "test-design"
+    ]
+  },
+  "testdino-hq/playwright-skill@d4f1e335825825da6a524fd29e172304947afaf9:frontend/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "playwright",
+      "locators",
+      "testability"
+    ]
+  },
+  "testdino-hq/playwright-skill@178d1cb537604279d7b54500c4823a6db42b9de6:playwright-cli/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "playwright",
+      "browser-automation"
+    ]
+  },
+  "Jeffallan/claude-skills@958e60fb998e008507c978b7943211f337def6a6:skills/playwright-expert/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "playwright",
+      "e2e",
+      "flaky-tests"
+    ]
+  },
+  "aiskillstore/marketplace@4676f9b94082a87e58987510071598b362f5d9db:skills/clerk/clerk-testing/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "clerk",
+      "auth",
+      "e2e"
+    ]
+  },
+  "dotnet/skills@4bd1c818d971c6282026433f70f3fed1ad0bdf62:plugins/dotnet-test/skills/grade-tests/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "test-quality",
+      "dotnet"
+    ]
+  },
+  "reticlehq/reticle@40192040a8ba20abfe7590ae82fc1f17cdef0ceb:skills/replay-user-flows/SKILL.md": {
+    "primary": "coding-software/testing",
+    "also": [],
+    "tags": [
+      "regression",
+      "user-flows"
+    ]
+  },
+  "affaan-m/ECC@c70874fae9eb0e5ad0365beb7e2955899fd1d30f:pi/core/skills/codebase-onboarding/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [],
+    "tags": [
+      "onboarding",
+      "architecture-map",
+      "claude-md"
+    ]
+  },
+  "affaan-m/ECC@c70874fae9eb0e5ad0365beb7e2955899fd1d30f:pi/core/skills/inherit-legacy-style/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [
+      "coding-software/quality-refactoring"
+    ],
+    "tags": [
+      "conventions",
+      "style-drift",
+      "legacy"
+    ]
+  },
+  "luongnv89/claude-howto@c777d43e5a595479644129b9eea0f3110666b231:03-skills/claude-md/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [],
+    "tags": [
+      "claude-md",
+      "agent-onboarding"
+    ]
+  },
+  "arcasilesgroup/ai-engineering@9932b2494b62c6ccb6be47a7686cedf17cbc23c0:skills/ai-agents-md/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [],
+    "tags": [
+      "agents-md",
+      "audit"
+    ]
+  },
+  "davila7/claude-code-templates@5635195f1ffeeb68b19e8010267900e2eea5d7dd:cli-tool/components/skills/development/context-architecture/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [],
+    "tags": [
+      "legibility",
+      "docs-as-checks"
+    ]
+  },
+  "tech-leads-club/agent-skills@abf281ea4a06cb79cc1c367838a31ba9ee25bbf8:packages/skills-catalog/skills/(development)/harness-eval/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [
+      "agent-authoring/general"
+    ],
+    "tags": [
+      "agents-md",
+      "harness",
+      "audit"
+    ]
+  },
+  "rlaope/oh-my-hermes@0f0615b58d58f6a7deec9850a1ba52a7f159290f:agent-skills/omh-agent-instructions/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [],
+    "tags": [
+      "agents-md",
+      "claude-md",
+      "cursor-rules"
+    ]
+  },
+  "netresearch/agent-rules-skill@ed4195a7d9127d9c414331a95ccddfe520c8cce8:skills/agent-rules/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [],
+    "tags": [
+      "agents-md",
+      "copilot-instructions"
+    ]
+  },
+  "phuryn/product-engineering@4d8bb2b4572da666fbe2d7fac03633433167bbcf:agent-harness/skills/agent-instructions/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [],
+    "tags": [
+      "agents-md",
+      "claude-md",
+      "rules"
+    ]
+  },
+  "code-yeongyu/oh-my-openagent@cf82395851bc4ad69cb67323b39d3dbfe85b1c16:packages/omo-senpi/skills/init-deep/SKILL.md": {
+    "primary": "coding-software/ai-readable-code",
+    "also": [],
+    "tags": [
+      "agents-md",
+      "knowledge-base"
+    ]
+  },
+  "arcasilesgroup/ai-engineering@9932b2494b62c6ccb6be47a7686cedf17cbc23c0:skills/ai-audit-docs/SKILL.md": {
+    "primary": "writing-docs/general",
+    "also": [
+      "coding-software/ai-readable-code"
+    ],
+    "tags": [
+      "docs-drift",
+      "dead-links"
     ]
   }
 }

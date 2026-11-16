@@ -14,9 +14,9 @@ describe('loadTaxonomy', () => {
 });
 
 describe('flattenTaxonomy', () => {
-  it('returns all 40 nodes, each domain immediately followed by its children', () => {
+  it('returns all 44 nodes, each domain immediately followed by its children', () => {
     const flat = flattenTaxonomy(loadTaxonomy());
-    expect(flat).toHaveLength(40);
+    expect(flat).toHaveLength(44);
     expect(flat[0]?.slug).toBe('security');
     expect(flat[1]?.slug).toBe('security/code-application');
     expect(flat[16]?.slug).toBe('coding-software');
