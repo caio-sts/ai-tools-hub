@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import { t } from '../../src/lib/i18n/index.ts';
-import { countBySlug, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
+import { countBySlug, countDomain, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -66,8 +66,15 @@ const expanded = [
   ...withLeaves.filter((domain) => domain.slug === 'security'),
   ...withLeaves.filter((domain) => domain.slug !== 'security'),
 ];
+const headingHtml = (html: string, slug: string): string | undefined =>
+  html.match(new RegExp(`<h2[^>]*id="${slug}-heading"[^>]*>([\\s\\S]*?)</h2>`))?.[1];
+/** The h2 text without its count, read through the link when there is one. */
 const heading = (html: string, slug: string): string | undefined =>
-  html.match(new RegExp(`<h2[^>]*id="${slug}-heading"[^>]*>([^<]*)</h2>`))?.[1]?.replaceAll('&amp;', '&');
+  headingHtml(html, slug)
+    ?.replace(/<span[^>]*class="domain__count"[^>]*>[^<]*<\/span>/, '')
+    .replace(/<[^>]+>/g, '')
+    .trim()
+    .replaceAll('&amp;', '&');
 
 describe('the expanded security grid', () => {
   it('renders every security subdomain the taxonomy declares, in taxonomy order', () => {
@@ -205,6 +212,21 @@ describe('every domain with real subdomains', () => {
     for (const domain of expanded) {
       expect(heading(en, domain.slug), `${domain.slug} en heading`).toBe(nodeName(domain.slug, 'en'));
       expect(heading(pt, domain.slug), `${domain.slug} pt heading`).toBe(nodeName(domain.slug, 'pt'));
+    }
+  });
+
+  it('links an active domain heading to the whole domain, with the total its tile showed', () => {
+    for (const domain of expanded) {
+      const total = countDomain(skills, domain.slug);
+      const active = total >= taxonomy.minimumMass;
+      for (const lang of ['en', 'pt'] as const) {
+        const h2 = headingHtml(lang === 'en' ? en : pt, domain.slug) ?? '';
+        const hrefs = [domain.slug, encodeURIComponent(domain.slug)].map(
+          (slug) => `href="/ai-tools-hub/${lang}/catalog/?domain=${slug}"`,
+        );
+        expect(hrefs.some((href) => h2.includes(href)), `${domain.slug} ${lang} link`).toBe(active);
+        expect(h2.includes(`>${total}<`), `${domain.slug} ${lang} total`).toBe(active);
+      }
     }
   });
 

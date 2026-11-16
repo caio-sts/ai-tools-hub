@@ -537,7 +537,9 @@ Chosen from three candidates (Terminal Ledger, Field Guide, Industrial Console).
 > **Amended 2026-11-15:** items 3–4 generalise. Every domain with a leaf besides its `general`
 > overflow renders expanded, its leaves as a grid in their own section, security first; only
 > domains holding nothing but `general` stay as tiles below. The rule is derived from the taxonomy
-> (`homeDomains` in `src/lib/taxonomy.ts`), so a new subdomain needs no home-page change.
+> (`homeDomains` in `src/lib/taxonomy.ts`), so a new subdomain needs no home-page change. An
+> expanded section's heading keeps what its tile had: when the domain is Active it links to the
+> catalog filtered to the whole domain and shows the domain total.
 
 No marketing page. Structure:
 
