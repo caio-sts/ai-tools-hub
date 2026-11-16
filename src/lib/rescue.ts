@@ -54,7 +54,7 @@ export function buildRescueDocs(skills: Skill[], taxonomy: Taxonomy, lang: Lang)
       name: node.name[lang],
       aliases: aliasTermsFor(node.slug, byTarget).join(' '),
       // Rule 4: the catalog is the only list surface, so a node suggestion is a filtered catalog.
-      path: `/${lang}/catalog/?subdomain=${node.slug}`,
+      path: `/${lang}/catalog/?${node.slug.includes('/') ? 'subdomain' : 'domain'}=${node.slug}`,
     });
   }
 
