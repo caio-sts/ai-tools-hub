@@ -49,10 +49,13 @@ const en = built('en/index.html');
 const pt = built('pt/index.html');
 const taxonomy = loadTaxonomy();
 const skills = loadSkills();
-const others = taxonomy.domains.filter((domain) => domain.slug !== 'security');
+// The expansion rule restated, not read from homeDomains, so a misclassified domain fails here.
+const others = taxonomy.domains.filter(
+  (domain) => !(domain.children ?? []).some((child) => child.slug !== `${domain.slug}/general`),
+);
 
 describe('the other top-level domains', () => {
-  it('renders every domain except security, once each, in taxonomy order', () => {
+  it('renders every domain that does not expand, once each, in taxonomy order', () => {
     const slugs = nodes(en, 'domains').map((node) => node.slug);
     expect(slugs).toEqual(others.map((domain) => domain.slug));
     expect(slugs).not.toContain('security');

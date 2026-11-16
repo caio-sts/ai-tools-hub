@@ -7,9 +7,9 @@ import type { Lang } from '../../types.ts';
  */
 const en = {
   'home.description':
-    'A small, deep, auditable catalog of agent skills: the security domain fully expanded, every other domain present and honestly thin.',
-  'home.securityLead':
-    'Every security subdomain, expanded — including the ones nothing has been filed under yet.',
+    'A small, deep, auditable catalog of agent skills: every domain with real subdomains fully expanded, the rest present and honestly thin.',
+  'home.domainLead':
+    'Every subdomain, expanded — including the ones nothing has been filed under yet.',
   'home.otherHeading': 'Other domains',
   'home.otherLead':
     'Present, and honestly thin. A domain link opens the catalog filtered to everything beneath it.',
@@ -34,9 +34,9 @@ const en = {
 /** The annotation makes a missing or extra pt-BR key a compile error, not a silent English leak. */
 const pt: Record<keyof typeof en, string> = {
   'home.description':
-    'Um catálogo pequeno, profundo e auditável de skills de agentes: o domínio de segurança totalmente expandido, os demais presentes e honestamente rasos.',
-  'home.securityLead':
-    'Todos os subdomínios de segurança, expandidos — inclusive aqueles onde nada foi classificado ainda.',
+    'Um catálogo pequeno, profundo e auditável de skills de agentes: domínios com subdomínios reais expandidos, os demais presentes e honestamente rasos.',
+  'home.domainLead':
+    'Todos os subdomínios, expandidos — inclusive aqueles onde nada foi classificado ainda.',
   'home.otherHeading': 'Outros domínios',
   'home.otherLead':
     'Presentes, e honestamente rasos. O link de um domínio abre o catálogo filtrado por tudo que está abaixo dele.',

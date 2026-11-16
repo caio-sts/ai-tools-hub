@@ -4,6 +4,7 @@ import { t } from '../../src/lib/i18n/index.ts';
 
 const KEYS = [
   'home.description',
+  'home.domainLead',
   'home.filterClear',
   'home.filterCount',
   'home.filterEmpty',
@@ -13,7 +14,6 @@ const KEYS = [
   'home.nodeThin',
   'home.otherHeading',
   'home.otherLead',
-  'home.securityLead',
   'home.staleNote',
   'stats.coverageOf',
   'stats.domains',

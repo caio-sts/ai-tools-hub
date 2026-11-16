@@ -36,6 +36,23 @@ export function flattenTaxonomy(tax: Taxonomy): TaxonomyNode[] {
   return out;
 }
 
+/**
+ * Spec §10.1: a domain with any leaf besides its `general` overflow expands on the home, security
+ * first; the rest stay single tiles, in taxonomy order.
+ */
+export function homeDomains(tax: Taxonomy): { expanded: TaxonomyNode[]; tiles: TaxonomyNode[] } {
+  const expands = (domain: TaxonomyNode) =>
+    (domain.children ?? []).some((child) => child.slug !== `${domain.slug}/general`);
+  const expanding = tax.domains.filter(expands);
+  return {
+    expanded: [
+      ...expanding.filter((domain) => domain.slug === 'security'),
+      ...expanding.filter((domain) => domain.slug !== 'security'),
+    ],
+    tiles: tax.domains.filter((domain) => !expands(domain)),
+  };
+}
+
 export function nodeName(slug: string, lang: Lang): string {
   const node = flattenTaxonomy(loadTaxonomy()).find((n) => n.slug === slug);
   if (node === undefined) throw new Error(`nodeName: unknown taxonomy slug "${slug}"`);

@@ -3,7 +3,7 @@ import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { loadSkills } from '../../src/lib/data.ts';
 import { t } from '../../src/lib/i18n/index.ts';
-import { countBySlug, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
+import { countBySlug, countDomain, loadTaxonomy, nodeName } from '../../src/lib/taxonomy.ts';
 
 const ROOT = fileURLToPath(new URL('../../', import.meta.url));
 
@@ -58,6 +58,23 @@ const taxonomy = loadTaxonomy();
 const skills = loadSkills();
 const counts = countBySlug(skills);
 const securityChildren = taxonomy.domains.find((d) => d.slug === 'security')?.children ?? [];
+// The expansion rule restated, not read from homeDomains, so a misclassified domain fails here.
+const withLeaves = taxonomy.domains.filter(
+  (domain) => (domain.children ?? []).some((child) => child.slug !== `${domain.slug}/general`),
+);
+const expanded = [
+  ...withLeaves.filter((domain) => domain.slug === 'security'),
+  ...withLeaves.filter((domain) => domain.slug !== 'security'),
+];
+const headingHtml = (html: string, slug: string): string | undefined =>
+  html.match(new RegExp(`<h2[^>]*id="${slug}-heading"[^>]*>([\\s\\S]*?)</h2>`))?.[1];
+/** The h2 text without its count, read through the link when there is one. */
+const heading = (html: string, slug: string): string | undefined =>
+  headingHtml(html, slug)
+    ?.replace(/<span[^>]*class="domain__count"[^>]*>[^<]*<\/span>/, '')
+    .replace(/<[^>]+>/g, '')
+    .trim()
+    .replaceAll('&amp;', '&');
 
 describe('the expanded security grid', () => {
   it('renders every security subdomain the taxonomy declares, in taxonomy order', () => {
@@ -165,9 +182,76 @@ describe('the expanded security grid', () => {
   });
 
   it('heads and anchors the section with the taxonomy own label for security', () => {
+    const sections = expanded.length;
+    const leads = (html: string, lang: 'en' | 'pt') => html.split(t('home.domainLead', lang)).length - 1;
     expect(en.includes('id="taxonomy"'), 'no #taxonomy anchor on the home page').toBe(true);
-    expect(en.includes(t('home.securityLead', 'en')), 'no en security lead').toBe(true);
+    expect(leads(en, 'en'), 'not one en lead per expanded section').toBe(sections);
     expect(showsLabel(pt, nodeName('security', 'pt')), 'no pt security heading').toBe(true);
-    expect(pt.includes(t('home.securityLead', 'pt')), 'no pt security lead').toBe(true);
+    expect(leads(pt, 'pt'), 'not one pt lead per expanded section').toBe(sections);
+  });
+});
+
+describe('every domain with real subdomains', () => {
+  it('gets its own grid of every leaf, in taxonomy order, in both locales', () => {
+    for (const domain of expanded) {
+      const leaves = (domain.children ?? []).map((child) => child.slug);
+      expect(nodes(en, domain.slug).map((node) => node.slug), `${domain.slug} en`).toEqual(leaves);
+      expect(nodes(pt, domain.slug).map((node) => node.slug), `${domain.slug} pt`).toEqual(leaves);
+    }
+  });
+
+  it('renders security first and the thin domains last', () => {
+    const order = [...expanded.map((domain) => domain.slug), 'domains'].map((key) =>
+      en.indexOf(`data-grid="${key}"`),
+    );
+    expect(order[0], 'security is not the first grid').toBe(en.indexOf('data-grid='));
+    expect(order).toEqual([...order].sort((a, b) => a - b));
+  });
+
+  it('heads each section with the domain label, in the page locale', () => {
+    for (const domain of expanded) {
+      expect(heading(en, domain.slug), `${domain.slug} en heading`).toBe(nodeName(domain.slug, 'en'));
+      expect(heading(pt, domain.slug), `${domain.slug} pt heading`).toBe(nodeName(domain.slug, 'pt'));
+    }
+  });
+
+  it('links an active domain heading to the whole domain, with the total its tile showed', () => {
+    for (const domain of expanded) {
+      const total = countDomain(skills, domain.slug);
+      const active = total >= taxonomy.minimumMass;
+      for (const lang of ['en', 'pt'] as const) {
+        const h2 = headingHtml(lang === 'en' ? en : pt, domain.slug) ?? '';
+        const hrefs = [domain.slug, encodeURIComponent(domain.slug)].map(
+          (slug) => `href="/ai-tools-hub/${lang}/catalog/?domain=${slug}"`,
+        );
+        expect(hrefs.some((href) => h2.includes(href)), `${domain.slug} ${lang} link`).toBe(active);
+        expect(h2.includes(`>${total}<`), `${domain.slug} ${lang} total`).toBe(active);
+      }
+    }
+  });
+
+  it('lets the group filter find every leaf by its domain name, in both locales', () => {
+    const fold = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+    for (const domain of expanded) {
+      for (const [html, lang] of [[en, 'en'], [pt, 'pt']] as const) {
+        for (const node of nodes(html, domain.slug)) {
+          const search = (/data-search="([^"]*)"/.exec(node.html)?.[1] ?? '').replaceAll('&amp;', '&');
+          expect(search, `${node.slug} (${lang})`).toContain(fold(nodeName(domain.slug, lang)));
+        }
+      }
+    }
+  });
+
+  it('counts, states and links each leaf exactly as the security grid does', () => {
+    const mass = taxonomy.minimumMass;
+    for (const domain of expanded) {
+      for (const node of nodes(en, domain.slug)) {
+        expect(node.count, `${node.slug} count`).toBe(counts.get(node.slug) ?? 0);
+        const state = node.count === 0 ? 'empty' : node.count < mass ? 'thin' : 'active';
+        expect(node.state, `${node.slug} state`).toBe(state);
+        const href = `href="/ai-tools-hub/en/catalog/?subdomain=${encodeURIComponent(node.slug)}"`;
+        expect(node.html.includes(href), `${node.slug} link`).toBe(state === 'active');
+      }
+    }
   });
 });
