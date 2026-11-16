@@ -63,6 +63,25 @@ Rules the session must hold to:
   every run (§5.1). An entry evicted from its listing still needs a classification and still
   counts in the queued-unclassified row, but has no page while evicted.
 
+### Judgement rules
+
+Leaf scopes and boundaries live in spec §3.3. These rules came out of reviewing the 2026-11-15
+pass, where each one was broken at least once:
+
+- **Original over copy.** Compare the description with the other stored rows before assigning. A
+  mirror (`managedcode/dotnet-skills` copies `dotnet/skills`) or a copy bundled inside an app loses
+  to the author's repo. De-duplicating by name misses a renamed mirror.
+- **Usable outside its home.** A workflow bound to one project, or one that only runs under a
+  specific tool's install, stays unclassified.
+- **No republished leaks.** Skip repositories that republish vendors' leaked prompts.
+- **No fixtures.** Paths under `tests/`, `fixtures/`, `evals/` or `examples/` are not promoted.
+- **Language guides.** A guide that makes code idiomatic or lint-clean is
+  `coding-software/quality-refactoring`; a guide to building with a stack stays in `general`.
+- **Security as an axis.** A general code reviewer that names security among its axes carries
+  `security/code-application` in `also`; a review led by vulnerabilities is that leaf's primary.
+- **Rule before batch.** Write a new rule here before the batch that needs it, or two batches
+  will apply it two ways.
+
 ### Translation rules
 
 - Translate only skill descriptions, written onto the skill record's `descriptionPt` and `longPt`
